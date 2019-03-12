@@ -176,6 +176,7 @@ class BPSols(ScanData):
                 plt.ylim(0,1.8)
             plt.legend()
             plt.savefig('{2}/BP_amp_{0}_{1}.png'.format(ant,self.scan,imagepath))
+            plt.clf()
             
     def plot_phase(self,imagepath=None):
         #plot phase, one plot per antenna
@@ -213,6 +214,7 @@ class BPSols(ScanData):
                 plt.ylim(-180,180)
             plt.legend()
             plt.savefig('{2}/BP_phase_{0}_{1}.png'.format(ant,self.scan,imagepath))
+            plt.clf()
             
             
         
@@ -314,6 +316,7 @@ class GainSols(ScanData):
                 plt.ylim(10,30)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Gain_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
             
     def plot_phase(self,imagepath=None):
         #first define imagepath if not given by user
@@ -350,6 +353,7 @@ class GainSols(ScanData):
                 plt.ylim(-180,180)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Gain_phase_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
 
         
 class ModelData(ScanData):
@@ -406,6 +410,7 @@ class ModelData(ScanData):
             #plt.ylim(10,30)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Model_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
             
     def plot_phase(self,imagepath=None):
         #first define imagepath if not given by user
@@ -437,6 +442,7 @@ class ModelData(ScanData):
             #plt.ylim(10,30)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Model_phase_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
             
         
 class CorrectedData(ScanData):
@@ -523,6 +529,7 @@ class CorrectedData(ScanData):
                 plt.ylim(10,30)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Corrected_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
             
     def plot_phase(self,imagepath=None):
         #first define imagepath if not given by user
@@ -561,6 +568,7 @@ class CorrectedData(ScanData):
                 plt.ylim(-3,3)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Corrected_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
                          
 class RawData(ScanData):
     def __init__(self,scan,fluxcal):
@@ -646,6 +654,7 @@ class RawData(ScanData):
                 plt.ylim(10,30)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Raw_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
             
     def plot_phase(self,imagepath=None):
         #first define imagepath if not given by user
@@ -684,6 +693,7 @@ class RawData(ScanData):
                 plt.ylim(-3,3)
             plt.legend()
             plt.savefig(plt.savefig('{2}/Raw_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.clf()
     
 
 
