@@ -106,30 +106,38 @@ class BPSols(ScanData):
         #get the data
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             bptable = "{0}/raw/{1}.Bscan".format(path,self.fluxcal)
-            taql_command = ("SELECT TIME,abs(CPARAM) AS amp, arg(CPARAM) AS phase, "
-                            "FLAG FROM {0}").format(bptable)
-            t=pt.taql(taql_command)
-            times = t.getcol('TIME')
-            amp_sols=t.getcol('amp')
-            phase_sols = t.getcol('phase')
-            flags = t.getcol('FLAG')
-            taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(bptable)
-            t= pt.taql(taql_antnames)
-            ant_names=t.getcol("NAME") 
-            taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(bptable)
-            t = pt.taql(taql_freq)
-            freqs = t.getcol('CHAN_FREQ')
+            if os.path.isfile(bptable):
+                taql_command = ("SELECT TIME,abs(CPARAM) AS amp, arg(CPARAM) AS phase, "
+                                "FLAG FROM {0}").format(bptable)
+                t=pt.taql(taql_command)
+                times = t.getcol('TIME')
+                amp_sols=t.getcol('amp')
+                phase_sols = t.getcol('phase')
+                flags = t.getcol('FLAG')
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(bptable)
+                t= pt.taql(taql_antnames)
+                ant_names=t.getcol("NAME") 
+                taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(bptable)
+                t = pt.taql(taql_freq)
+                freqs = t.getcol('CHAN_FREQ')
             
-            #check for flags and mask
-            amp_sols[flags] = np.nan
-            phase_sols[flags] = np.nan
-            
-            self.ants[i] = ant_names
-            self.time[i] = times
-            self.phase[i] = phase_sols *180./np.pi #put into degrees
-            self.amp[i] = amp_sols
-            self.flags[i] = flags
-            self.freq[i] = freqs
+                #check for flags and mask
+                amp_sols[flags] = np.nan
+                phase_sols[flags] = np.nan
+                
+                self.ants[i] = ant_names
+                self.time[i] = times
+                self.phase[i] = phase_sols *180./np.pi #put into degrees
+                self.amp[i] = amp_sols
+                self.flags[i] = flags
+                self.freq[i] = freqs
+                
+            else:
+                self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
+                self.time[i] = np.array(np.nan)
+                self.phase[i] = np.full((12,1,2),np.nan)
+                self.amp[i] = np.full((12,1,2),np.nan)
+                self.freq[i] = np.full((1,1),np.nan)
             
     def plot_amp(self,imagepath=None):
         #first define imagepath if not given by user
@@ -220,46 +228,56 @@ class GainSols(ScanData):
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             gaintable = "{0}/raw/{1}.G1ap".format(path,self.fluxcal)
-            taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(gaintable)
-            t= pt.taql(taql_antnames)
-            ant_names=t.getcol("NAME")
+            #check if table exists
+            #otherwise, place NaNs in place for everything
+            if os.path.isfile(gaintable):
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(gaintable)
+                t= pt.taql(taql_antnames)
+                ant_names=t.getcol("NAME")
     
-            #then get number of times
-            #need this for setting shape
-            taql_time =  "select TIME from {0} orderby unique TIME".format(gaintable)
-            t= pt.taql(taql_time)
-            times = t.getcol('TIME') 
+                #then get number of times
+                #need this for setting shape
+                taql_time =  "select TIME from {0} orderby unique TIME".format(gaintable)
+                t= pt.taql(taql_time)
+                times = t.getcol('TIME') 
     
-            #then iterate over antenna
-            #set array sahpe to be [n_ant,n_time,n_stokes]
-            #how can I get n_stokes? Could be 2 or 4, want to find from data
-            #get 1 data entry
-            taql_stokes = "SELECT abs(CPARAM) AS amp from {0} limit 1" .format(gaintable)
-            t_pol = pt.taql(taql_stokes)
-            pol_array = t_pol.getcol('amp')
-            n_stokes = pol_array.shape[2] #shape is time, one, nstokes
+                #then iterate over antenna
+                #set array sahpe to be [n_ant,n_time,n_stokes]
+                #how can I get n_stokes? Could be 2 or 4, want to find from data
+                #get 1 data entry
+                taql_stokes = "SELECT abs(CPARAM) AS amp from {0} limit 1" .format(gaintable)
+                t_pol = pt.taql(taql_stokes)
+                pol_array = t_pol.getcol('amp')
+                n_stokes = pol_array.shape[2] #shape is time, one, nstokes
     
-            amp_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=object)
-            phase_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=object)
-            flags_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=bool)
+                amp_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=object)
+                phase_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=object)
+                flags_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=bool)
         
-            for ant in xrange(len(ant_names)):
-                taql_command = ("SELECT abs(CPARAM) AS amp, arg(CPARAM) AS phase, FLAG FROM {0} " 
-                                "WHERE ANTENNA1={1}").format(gaintable,ant)
-                t = pt.taql(taql_command)
-                amp_ant_array[ant,:,:] = t.getcol('amp')[:,0,:]
-                phase_ant_array[ant,:,:] = t.getcol('phase')[:,0,:]
-                flags_ant_array[ant,:,:] = t.getcol('FLAG')[:,0,:]
+                for ant in xrange(len(ant_names)):
+                    taql_command = ("SELECT abs(CPARAM) AS amp, arg(CPARAM) AS phase, FLAG FROM {0} " 
+                                    "WHERE ANTENNA1={1}").format(gaintable,ant)
+                    t = pt.taql(taql_command)
+                    amp_ant_array[ant,:,:] = t.getcol('amp')[:,0,:]
+                    phase_ant_array[ant,:,:] = t.getcol('phase')[:,0,:]
+                    flags_ant_array[ant,:,:] = t.getcol('FLAG')[:,0,:]
                 
-            #check for flags and mask
-            amp_ant_array[flags_ant_array] = np.nan
-            phase_ant_array[flags_ant_array] = np.nan
+                #check for flags and mask
+                amp_ant_array[flags_ant_array] = np.nan
+                phase_ant_array[flags_ant_array] = np.nan
             
-            self.amp[i] = amp_ant_array
-            self.phase[i] = phase_ant_array * 180./np.pi #put into degrees
-            self.ants[i] = ant_names
-            self.time[i] = times
-            self.flags[i] = flags_ant_array
+                self.amp[i] = amp_ant_array
+                self.phase[i] = phase_ant_array * 180./np.pi #put into degrees
+                self.ants[i] = ant_names
+                self.time[i] = times
+                self.flags[i] = flags_ant_array
+                
+            else:
+                self.amp[i] = np.full((12,1,2),np.nan)
+                self.phase[i] = np.full((12,1,2),np.nan)
+                self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
+                self.time[i] = np.full((1),np.nan)
+                self.flags[i] = np.full((12,1,2),np.nan)
             
     def plot_amp(self,imagepath=None):
         #first define imagepath if not given by user
@@ -342,13 +360,17 @@ class ModelData(ScanData):
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path,self.fluxcal)
-            taql_command = "SELECT abs(gmeans(MODEL_DATA)) AS amp, arg(gmeans(MODEL_DATA)) AS phase FROM {0}".format(msfile)
-            t = pt.taql(taql_command)
-            amp = t.getcol('amp')[0,:,:]
-            phase = t.getcol('phase')[0,:,:]
             taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
             t = pt.taql(taql_freq)
             freqs = t.getcol('CHAN_FREQ')[0,:]
+            try:
+                taql_command = "SELECT abs(gmeans(MODEL_DATA)) AS amp, arg(gmeans(MODEL_DATA)) AS phase FROM {0}".format(msfile)
+                t = pt.taql(taql_command)
+                amp = t.getcol('amp')[0,:,:]
+                phase = t.getcol('phase')[0,:,:]
+            except:
+                amp = np.empty((len(freqs),4),np.nan)
+                phase = np.empty((len(freqs),4),np.nan)
             
             self.amp[i] = amp
             self.phase[i] = phase
@@ -446,14 +468,18 @@ class CorrectedData(ScanData):
             phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
     
             for ant in xrange(len(ant_names)):
-                taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp, "
-                                "arg(gmeans(CORRECTED_DATA[FLAG])) AS phase FROM {0} "
-                                "WHERE ANTENNA1!=ANTENNA2 && "
-                                "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
-                t = pt.taql(taql_command)
-                test=t.getcol('amp')
-                amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
-                phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
+                try:
+                    taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp, "
+                                    "arg(gmeans(CORRECTED_DATA[FLAG])) AS phase FROM {0} "
+                                    "WHERE ANTENNA1!=ANTENNA2 && "
+                                    "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
+                    t = pt.taql(taql_command)
+                    test=t.getcol('amp')
+                    amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
+                    phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
+                except:
+                    amp_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan)
+                    phase_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan)
                 
             self.phase[i] = phase_ant_array
             self.amp[i] = amp_ant_array
@@ -565,14 +591,18 @@ class RawData(ScanData):
             phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
     
             for ant in xrange(len(ant_names)):
-                taql_command = ("SELECT abs(gmeans(RAW_DATA[FLAG])) AS amp, "
-                                "arg(gmeans(RAW_DATA[FLAG])) AS phase FROM {0} "
-                                "WHERE ANTENNA1!=ANTENNA2 && "
-                                "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
-                t = pt.taql(taql_command)
-                test=t.getcol('amp')
-                amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
-                phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
+                try:
+                    taql_command = ("SELECT abs(gmeans(RAW_DATA[FLAG])) AS amp, "
+                                    "arg(gmeans(RAW_DATA[FLAG])) AS phase FROM {0} "
+                                    "WHERE ANTENNA1!=ANTENNA2 && "
+                                    "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
+                    t = pt.taql(taql_command)
+                    test=t.getcol('amp')
+                    amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
+                    phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
+                except:
+                    amp_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan) #t.getcol('amp')[0,:,:]
+                    phase_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan) #t.getcol('phase')[0,:,:]
                 
             self.phase[i] = phase_ant_array
             self.amp[i] = amp_ant_array
