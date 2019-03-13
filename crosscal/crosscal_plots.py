@@ -106,7 +106,8 @@ class BPSols(ScanData):
         #get the data
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             bptable = "{0}/raw/{1}.Bscan".format(path,self.fluxcal)
-            if os.path.isfile(bptable):
+            #print bptable
+            if os.path.isdir(bptable):
                 taql_command = ("SELECT TIME,abs(CPARAM) AS amp, arg(CPARAM) AS phase, "
                                 "FLAG FROM {0}").format(bptable)
                 t=pt.taql(taql_command)
@@ -133,11 +134,12 @@ class BPSols(ScanData):
                 self.freq[i] = freqs
                 
             else:
+                print 'Filling with NaNs. BP table not present for B{}'.format(beam)
                 self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
                 self.time[i] = np.array(np.nan)
-                self.phase[i] = np.full((12,1,2),np.nan)
-                self.amp[i] = np.full((12,1,2),np.nan)
-                self.freq[i] = np.full((1,1),np.nan)
+                self.phase[i] = np.full((12,2,2),np.nan)
+                self.amp[i] = np.full((12,2,2),np.nan)
+                self.freq[i] = np.full((2,2),np.nan)
             
     def plot_amp(self,imagepath=None):
         #first define imagepath if not given by user
@@ -161,16 +163,17 @@ class BPSols(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Bandpass amplitude for Antenna {0}'.format(ant))
+            plt.suptitle('Bandpass amplitude for Antenna {0}'.format(ant),size=20)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
+                #print beamnum
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n][0,:],self.amp[n][a,:,0],
-                            label='XX, {0}'.format(self.time[n][a]),
+                            label='XX',
                             marker=',',s=1)
                 plt.scatter(self.freq[n][0,:],self.amp[n][a,:,1],
-                            label='YY, {0}'.format(self.time[n][a]),
+                            label='YY',
                             marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(0,1.8)
@@ -205,10 +208,10 @@ class BPSols(ScanData):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n][0,:],self.phase[n][a,:,0],
-                            label='XX, {0}'.format(self.time[n][a]),
+                            label='XX',
                             marker=',',s=1)
                 plt.scatter(self.freq[n][0,:],self.phase[n][a,:,1],
-                            label='YY, {0}'.format(self.time[n][a]),
+                            label='YY',
                             marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180,180)
@@ -232,7 +235,7 @@ class GainSols(ScanData):
             gaintable = "{0}/raw/{1}.G1ap".format(path,self.fluxcal)
             #check if table exists
             #otherwise, place NaNs in place for everything
-            if os.path.isfile(gaintable):
+            if os.path.isdir(gaintable):
                 taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(gaintable)
                 t= pt.taql(taql_antnames)
                 ant_names=t.getcol("NAME")
@@ -275,11 +278,11 @@ class GainSols(ScanData):
                 self.flags[i] = flags_ant_array
                 
             else:
-                self.amp[i] = np.full((12,1,2),np.nan)
-                self.phase[i] = np.full((12,1,2),np.nan)
+                self.amp[i] = np.full((12,2,2),np.nan)
+                self.phase[i] = np.full((12,2,2),np.nan)
                 self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
-                self.time[i] = np.full((1),np.nan)
-                self.flags[i] = np.full((12,1,2),np.nan)
+                self.time[i] = np.full((2),np.nan)
+                self.flags[i] = np.full((12,2,2),np.nan)
             
     def plot_amp(self,imagepath=None):
         #first define imagepath if not given by user
@@ -308,10 +311,12 @@ class GainSols(ScanData):
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
-                plt.plot(self.time[n],self.amp[n][a,:,0],
-                         label='XX, {0}'.format(self.time[n][0]))
-                plt.plot(self.time[n],self.amp[n][a,:,1],
-                         label='YY, {0}'.format(self.time[n][0]))
+                plt.scatter(self.time[n],self.amp[n][a,:,0],
+                           label='XX',
+                           marker=',',s=1)
+                plt.scatter(self.time[n],self.amp[n][a,:,1],
+                           label='YY',
+                           marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(10,30)
             plt.legend()
@@ -345,10 +350,10 @@ class GainSols(ScanData):
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
-                plt.plot(self.time[n],self.phase[n][a,:,0],
-                         label='XX, {0}'.format(self.time[n][0]))
-                plt.plot(self.time[n],self.phase[n][a,:,1],
-                         label='YY, {0}'.format(self.time[n][0]))
+                plt.scatter(self.time[n],self.phase[n][a,:,0],
+                           label='XX',marker=',',s=1)
+                plt.scatter(self.time[n],self.phase[n][a,:,1],
+                           label='YY',marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180,180)
             plt.legend()
