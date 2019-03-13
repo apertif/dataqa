@@ -28,6 +28,8 @@ BP.get_data()
 BP.plot_amp(imagepath=args.path)
 BP.plot_phase(imagepath=args.path)
 
+print 'Done with bandpass plots'
+
 
 #Get Gain plots
 Gain = ccplots.GainSols(args.scan,args.fluxcal)
@@ -35,11 +37,15 @@ Gain.get_data()
 Gain.plot_amp(imagepath=args.path)
 Gain.plot_phase(imagepath=args.path)
 
+print 'Done with gainplots'
+
 #Get Raw data
 Raw = ccplots.RawData(args.scan,args.fluxcal)
 Raw.get_data()
 Raw.plot_amp(imagepath=args.path)
 Raw.plot_phase(imagepath=args.path)
+
+print 'Done with plotting raw data'
 
 #Get model data
 Model = ccplots.ModelData(args.scan,args.fluxcal)
@@ -47,12 +53,15 @@ Model.get_data()
 Model.plot_amp(imagepath=args.path)
 Model.plot_phase(imagepath=args.path)
 
+print 'Done with plotting model data'
+
 #Get corrected data
 Corrected = ccplots.CorrectedData(args.scan,args.fluxcal)
 Corrected.get_data()
 Corrected.plot_amp(imagepath=args.path)
 Corrected.plot_phase(imagepath=args.path)
 
+print 'Done with plotting corrected data'
 
 end = timer()
 print 'Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format((end - start)/60.) 
