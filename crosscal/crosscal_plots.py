@@ -606,8 +606,8 @@ class RawData(ScanData):
     
             for ant in xrange(len(ant_names)):
                 try:
-                    taql_command = ("SELECT abs(gmeans(RAW_DATA[FLAG])) AS amp, "
-                                    "arg(gmeans(RAW_DATA[FLAG])) AS phase FROM {0} "
+                    taql_command = ("SELECT abs(gmeans(DATA[FLAG])) AS amp, "
+                                    "arg(gmeans(DATA[FLAG])) AS phase FROM {0} "
                                     "WHERE ANTENNA1!=ANTENNA2 && "
                                     "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
                     t = pt.taql(taql_command)
