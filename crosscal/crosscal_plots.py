@@ -278,6 +278,7 @@ class GainSols(ScanData):
                 self.flags[i] = flags_ant_array
                 
             else:
+                print 'Filling with NaNs. Gain table not present for B{}'.format(beam)
                 self.amp[i] = np.full((12,2,2),np.nan)
                 self.phase[i] = np.full((12,2,2),np.nan)
                 self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
@@ -414,7 +415,7 @@ class ModelData(ScanData):
             plt.title('Beam {0}'.format(beam))
             #plt.ylim(10,30)
             plt.legend()
-            plt.savefig(plt.savefig('{2}/Model_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.savefig(plt.savefig('{1}/Model_amp_{0}.png'.format(self.scan,imagepath)))
             plt.clf()
             
     def plot_phase(self,imagepath=None):
@@ -446,15 +447,15 @@ class ModelData(ScanData):
             plt.title('Beam {0}'.format(beam))
             #plt.ylim(10,30)
             plt.legend()
-            plt.savefig(plt.savefig('{2}/Model_phase_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.savefig(plt.savefig('{1}/Model_phase_{0}.png'.format(self.scan,imagepath)))
             plt.clf()
             
         
 class CorrectedData(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
-        self.freq = np.empty(len(scanlist),dtype=np.ndarray)
-        self.ants = np.empty(len(scanlist),dtype=np.object)
+        self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
+        self.ants = np.empty(len(self.dirlist),dtype=np.object)
         
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
@@ -489,8 +490,8 @@ class CorrectedData(ScanData):
                     amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
                     phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
                 except:
-                    amp_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan)
-                    phase_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan)
+                    amp_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan)
+                    phase_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan)
                 
             self.phase[i] = phase_ant_array
             self.amp[i] = amp_ant_array
@@ -519,16 +520,16 @@ class CorrectedData(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Corrected amplitude for Antenna {0}'.format(ant))
+            plt.suptitle('Corrected amplitude for Antenna {0} (baselines averaged)'.format(ant),size=20)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.amp[n][a,:,0],
-                           label='XX, {0}'.format(scan),
+                           label='XX',
                            marker=',',s=1)
                 plt.scatter(self.freq[n],self.amp[n][a,:,3],
-                           label='YY, {0}'.format(scan),
+                           label='YY',
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(10,30)
@@ -558,16 +559,16 @@ class CorrectedData(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Corrected phase for Antenna {0}'.format(ant))
+            plt.suptitle('Corrected phase for Antenna {0} (baselines averaged)'.format(ant))
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.phase[n][a,:,0],
-                           label='XX, {0}'.format(scan),
+                           label='XX',
                            marker=',',s=1)
                 plt.scatter(self.freq[n],self.phase[n][a,:,3],
-                           label='YY, {0}'.format(scan),
+                           label='YY',
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-3,3)
@@ -578,8 +579,8 @@ class CorrectedData(ScanData):
 class RawData(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
-        self.freq = np.empty(len(scanlist),dtype=np.ndarray)
-        self.ants = np.empty(len(scanlist),dtype=np.object)
+        self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
+        self.ants = np.empty(len(self.dirlist),dtype=np.object)
         
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
@@ -614,8 +615,8 @@ class RawData(ScanData):
                     amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
                     phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
                 except:
-                    amp_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan) #t.getcol('amp')[0,:,:]
-                    phase_ant_array[ant,:,:] = np.full((0,len(freqs),n_stokes),np.nan) #t.getcol('phase')[0,:,:]
+                    amp_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan) #t.getcol('amp')[0,:,:]
+                    phase_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan) #t.getcol('phase')[0,:,:]
                 
             self.phase[i] = phase_ant_array
             self.amp[i] = amp_ant_array
@@ -644,16 +645,16 @@ class RawData(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Raw amplitude for Antenna {0}'.format(ant))
+            plt.suptitle('Raw amplitude for Antenna {0} (baselines averaged)'.format(ant),size=20)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.amp[n][a,:,0],
-                           label='XX, {0}'.format(scan),
+                           label='XX',
                            marker=',',s=1)
                 plt.scatter(self.freq[n],self.amp[n][a,:,3],
-                           label='YY, {0}'.format(scan),
+                           label='YY',
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(10,30)
@@ -683,21 +684,21 @@ class RawData(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Raw phase for Antenna {0}'.format(ant))
+            plt.suptitle('Raw phase for Antenna {0} (baselines averaged)'.format(ant),size=20)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.phase[n][a,:,0],
-                           label='XX, {0}'.format(scan),
+                           label='XX',
                            marker=',',s=1)
                 plt.scatter(self.freq[n],self.phase[n][a,:,3],
-                           label='YY, {0}'.format(scan),
+                           label='YY',
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
-                plt.ylim(-3,3)
+                plt.ylim(-180,180)
             plt.legend()
-            plt.savefig(plt.savefig('{2}/Raw_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.savefig(plt.savefig('{2}/Raw_phase_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
     
 
