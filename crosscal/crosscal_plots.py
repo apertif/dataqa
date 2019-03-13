@@ -314,10 +314,10 @@ class GainSols(ScanData):
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.time[n],self.amp[n][a,:,0],
                            label='XX',
-                           marker=',',s=1)
+                           marker=',',s=5)
                 plt.scatter(self.time[n],self.amp[n][a,:,1],
                            label='YY',
-                           marker=',',s=1)
+                           marker=',',s=5)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(10,30)
             plt.legend(markerscale=3,fontsize=14)
@@ -352,9 +352,9 @@ class GainSols(ScanData):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.time[n],self.phase[n][a,:,0],
-                           label='XX',marker=',',s=1)
+                           label='XX',marker=',',s=5)
                 plt.scatter(self.time[n],self.phase[n][a,:,1],
-                           label='YY',marker=',',s=1)
+                           label='YY',marker=',',s=5)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180,180)
             plt.legend(markerscale=3,fontsize=14)
