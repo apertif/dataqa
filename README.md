@@ -13,15 +13,15 @@ crosscal<br>
 
 2. Clone the repository to your home
 
-- Example: git clone https://github.com/apertif/dataqa.git
+- Example: `git clone https://github.com/apertif/dataqa.git`
 
-3. Go to the cloned directory (e.g., /home/<user>/dataqa)
+3. Go to the cloned directory (e.g., `/home/<user>/dataqa`)
 
 4. Run set_up_qa.py 
 
-python set_up_qa.py <obs_id>
+- Example: `python set_up_qa.py <obs_id>`
 
-- this will create the directory structure by default to /home/<user>/qa_science_demo_2019/<obs_id>
+- This will create the directory structure by default to `/home/<user>/qa_science_demo_2019/<obs_id>`
 
 5. Run crosscal qa 
 
