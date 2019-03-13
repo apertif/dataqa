@@ -573,7 +573,7 @@ class CorrectedData(ScanData):
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-3,3)
             plt.legend(markerscale=3,fontsize=14)
-            plt.savefig(plt.savefig('{2}/Corrected_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.savefig(plt.savefig('{2}/Corrected_phase_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
                          
 class RawData(ScanData):
