@@ -163,7 +163,7 @@ class BPSols(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Bandpass amplitude for Antenna {0}'.format(ant),size=20)
+            plt.suptitle('Bandpass amplitude for Antenna {0}'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
@@ -177,7 +177,7 @@ class BPSols(ScanData):
                             marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(0,1.8)
-            plt.legend()
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig('{2}/BP_amp_{0}_{1}.png'.format(ant,self.scan,imagepath))
             plt.clf()
             
@@ -202,7 +202,7 @@ class BPSols(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Bandpass phases for Antenna {0}'.format(ant))
+            plt.suptitle('Bandpass phases for Antenna {0}'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
@@ -215,7 +215,7 @@ class BPSols(ScanData):
                             marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180,180)
-            plt.legend()
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig('{2}/BP_phase_{0}_{1}.png'.format(ant,self.scan,imagepath))
             plt.clf()
             
@@ -307,7 +307,7 @@ class GainSols(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Gain amplitude for Antenna {0}'.format(ant))
+            plt.suptitle('Gain amplitude for Antenna {0}'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
@@ -320,7 +320,7 @@ class GainSols(ScanData):
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(10,30)
-            plt.legend()
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig(plt.savefig('{2}/Gain_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
             
@@ -346,7 +346,7 @@ class GainSols(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Gain phase for Antenna {0}'.format(ant))
+            plt.suptitle('Gain phase for Antenna {0}'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
@@ -357,7 +357,7 @@ class GainSols(ScanData):
                            label='YY',marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180,180)
-            plt.legend()
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig(plt.savefig('{2}/Gain_phase_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
 
@@ -414,7 +414,7 @@ class ModelData(ScanData):
                      label='YY')
             plt.title('Beam {0}'.format(beam))
             #plt.ylim(10,30)
-            plt.legend()
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig(plt.savefig('{1}/Model_amp_{0}.png'.format(self.scan,imagepath)))
             plt.clf()
             
@@ -435,7 +435,7 @@ class ModelData(ScanData):
         xsize = nx*4
         ysize = ny*4
         plt.figure(figsize=(xsize,ysize))           
-        plt.suptitle('Model phase')
+        plt.suptitle('Model phase',size=30)
             
         for n,beam in enumerate(self.beamlist):
             beamnum = int(beam)
@@ -446,9 +446,9 @@ class ModelData(ScanData):
                      label='YY')
             plt.title('Beam {0}'.format(beam))
             #plt.ylim(10,30)
-            plt.legend()
-            plt.savefig(plt.savefig('{1}/Model_phase_{0}.png'.format(self.scan,imagepath)))
-            plt.clf()
+        plt.legend(markerscale=3,fontsize=14)
+        plt.savefig(plt.savefig('{1}/Model_phase_{0}.png'.format(self.scan,imagepath)))
+        plt.clf()
             
         
 class CorrectedData(ScanData):
@@ -520,7 +520,7 @@ class CorrectedData(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Corrected amplitude for Antenna {0} (baselines averaged)'.format(ant),size=20)
+            plt.suptitle('Corrected amplitude for Antenna {0} (baselines averaged)'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
@@ -532,8 +532,8 @@ class CorrectedData(ScanData):
                            label='YY',
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
-                plt.ylim(10,30)
-            plt.legend()
+                plt.ylim(0,30)
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig(plt.savefig('{2}/Corrected_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
             
@@ -572,7 +572,7 @@ class CorrectedData(ScanData):
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-3,3)
-            plt.legend()
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig(plt.savefig('{2}/Corrected_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
                          
@@ -645,7 +645,7 @@ class RawData(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Raw amplitude for Antenna {0} (baselines averaged)'.format(ant),size=20)
+            plt.suptitle('Raw amplitude for Antenna {0} (baselines averaged)'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
@@ -657,8 +657,8 @@ class RawData(ScanData):
                            label='YY',
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
-                plt.ylim(10,30)
-            plt.legend()
+                #plt.ylim(10,30)
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig(plt.savefig('{2}/Raw_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
             
@@ -684,7 +684,7 @@ class RawData(ScanData):
             xsize = nx*4
             ysize = ny*4
             plt.figure(figsize=(xsize,ysize))
-            plt.suptitle('Raw phase for Antenna {0} (baselines averaged)'.format(ant),size=20)
+            plt.suptitle('Raw phase for Antenna {0} (baselines averaged)'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
@@ -697,7 +697,7 @@ class RawData(ScanData):
                            marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180,180)
-            plt.legend()
+            plt.legend(markerscale=3,fontsize=14)
             plt.savefig(plt.savefig('{2}/Raw_phase_{0}_{1}.png'.format(ant,self.scan,imagepath)))
             plt.clf()
     
