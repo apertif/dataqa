@@ -13,7 +13,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from ..scandata import ScanData
 
-def make_all_ccal_plots(scan, output_path):
+def make_all_ccal_plots(scan, fluxcal, output_path):
     # Get BP plots
     BP = BPSols(scan, fluxcal)
     BP.get_data()

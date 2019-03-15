@@ -29,7 +29,7 @@ if args.path is None:
 else:
     output_path = args.path
 
-crosscal_plots.make_all_ccal_plots(args.scan, output_path)
+crosscal_plots.make_all_ccal_plots(args.scan, args.fluxcal, output_path)
 
 end = timer()
 print 'Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(
