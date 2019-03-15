@@ -29,47 +29,7 @@ if args.path is None:
 else:
     output_path = args.path
 
-
-# Get BP plots
-BP = crosscal_plots.BPSols(args.scan, args.fluxcal)
-BP.get_data()
-BP.plot_amp(imagepath=output_path)
-BP.plot_phase(imagepath=output_path)
-
-print 'Done with bandpass plots'
-
-
-# Get Gain plots
-Gain = crosscal_plots.GainSols(args.scan, args.fluxcal)
-Gain.get_data()
-Gain.plot_amp(imagepath=output_path)
-Gain.plot_phase(imagepath=output_path)
-
-print 'Done with gainplots'
-
-# Get Raw data
-Raw = crosscal_plots.RawData(args.scan, args.fluxcal)
-Raw.get_data()
-Raw.plot_amp(imagepath=output_path)
-Raw.plot_phase(imagepath=output_path)
-
-print 'Done with plotting raw data'
-
-# Get model data
-Model = crosscal_plots.ModelData(args.scan, args.fluxcal)
-Model.get_data()
-Model.plot_amp(imagepath=output_path)
-Model.plot_phase(imagepath=output_path)
-
-print 'Done with plotting model data'
-
-# Get corrected data
-Corrected = crosscal_plots.CorrectedData(args.scan, args.fluxcal)
-Corrected.get_data()
-Corrected.plot_amp(imagepath=output_path)
-Corrected.plot_phase(imagepath=output_path)
-
-print 'Done with plotting corrected data'
+crosscal_plots.make_all_ccal_plots(scan, output_path)
 
 end = timer()
 print 'Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(

@@ -13,6 +13,42 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from ..scandata import ScanData
 
+def make_all_ccal_plots(scan, output_path):
+    # Get BP plots
+    BP = BPSols(scan, fluxcal)
+    BP.get_data()
+    BP.plot_amp(imagepath=output_path)
+    BP.plot_phase(imagepath=output_path)
+    print 'Done with bandpass plots'
+
+    # Get Gain plots
+    Gain = GainSols(scan, fluxcal)
+    Gain.get_data()
+    Gain.plot_amp(imagepath=output_path)
+    Gain.plot_phase(imagepath=output_path)
+    print 'Done with gainplots'
+
+    # Get Raw data
+    Raw = RawData(scan, fluxcal)
+    Raw.get_data()
+    Raw.plot_amp(imagepath=output_path)
+    Raw.plot_phase(imagepath=output_path)
+    print 'Done with plotting raw data'
+
+    # Get model data
+    Model = ModelData(scan, fluxcal)
+    Model.get_data()
+    Model.plot_amp(imagepath=output_path)
+    Model.plot_phase(imagepath=output_path)
+    print 'Done with plotting model data'
+
+    # Get corrected data
+    Corrected = CorrectedData(scan, fluxcal)
+    Corrected.get_data()
+    Corrected.plot_amp(imagepath=output_path)
+    Corrected.plot_phase(imagepath=output_path)
+    print 'Done with plotting corrected data'
+
 
 class BPSols(ScanData):
     def __init__(self,scan,fluxcal):
