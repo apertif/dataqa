@@ -19,7 +19,7 @@ def get_default_imagepath(scan):
     Returns:
         str: Path for storing images
     """
-    return '/data/{scan}/qa/'.format(scan=scan)
+    return '/data/apertif/{scan}/qa/'.format(scan=scan)
 
 
 class ScanData(object):
