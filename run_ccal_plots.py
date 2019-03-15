@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Script to automatically run crosscal plots
 Requires a scan number
