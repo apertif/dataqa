@@ -51,7 +51,7 @@ class ScanData(object):
             allfiles = os.listdir(path)
             for f in allfiles:
                 full_path = os.path.join(path, f)
-                if os.path.isdir(full_path):
+                if os.path.isdir(full_path) and len(f)==2 and f.isnumeric():
                     self.dirlist.append(full_path)
                     #create a list of all directories with full path. 
                     #This should be all beams - there should be no other directories
