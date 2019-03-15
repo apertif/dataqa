@@ -45,55 +45,31 @@ class ScanData(object):
         #first check what happili node on
         #if not happili-01, print a warning and only search locally
         hostname = os.uname()[1]
+        paths = []
         if hostname != 'happili-01':
             print 'Not on happili-01, only search local {} for data'.format(hostname)
             path = '/data/apertif/{}'.format(self.scan)
+            paths = [path]
+        else:
+            #On happili-01, so search all nodes
+            #ignoring happili-05 - may have to fix this eventually
+            paths += ['/data/apertif/{}'.format(self.scan)]
+            paths += ['/data2/apertif/{}'.format(self.scan)]
+            paths += ['/data3/apertif/{}'.format(self.scan)]
+            paths += ['/data4/apertif/{}'.format(self.scan)]
+
+        for path in paths:
             allfiles = os.listdir(path)
             for f in allfiles:
                 full_path = os.path.join(path, f)
-                if os.path.isdir(full_path) and len(f)==2 and f.isnumeric():
+                if os.path.isdir(full_path) and len(f)==2 and unicode(f, 'utf-8').isnumeric():
                     self.dirlist.append(full_path)
                     #create a list of all directories with full path. 
                     #This should be all beams - there should be no other directories
                     #f is a string, so add to beam list to also track info about beams
                     self.beamlist.append(f)
-        else:
-            #On happili-01, so search all nodes
-            #ignoring happili-05 - may have to fix this eventually
-            path ='/data/apertif/{}'.format(self.scan)
-            path2 = '/data2/apertif/{}'.format(self.scan)
-            path3 = '/data3/apertif/{}'.format(self.scan)
-            path4 = '/data4/apertif/{}'.format(self.scan)            
-            files01 = os.listdir(path)
-            files02 = os.listdir(path2)
-            files03 = os.listdir(path3)
-            files04 = os.listdir(path4)
-            #have to go through one by one - easiest
-            for f in files01:
-                full_path = os.path.join(path, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)
-            for f in files02:
-                full_path = os.path.join(path2, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)
-            for f in files03:
-                full_path = os.path.join(path3, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)
-            for f in files04:
-                full_path = os.path.join(path4, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)        
-        #initiatlizae phase & amp arrays - common to all types of 
+
+        # Initialize phase & amp arrays - common to all types of 
         self.phase = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.amp = np.empty(len(self.dirlist),dtype=np.ndarray)
 
