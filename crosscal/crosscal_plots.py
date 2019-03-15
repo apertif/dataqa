@@ -23,9 +23,14 @@ This specifies the location of all data, assuming setup of automatic pipeline
 """
 
 class ScanData(object):
-    #Initilailze with source name, scalist and beamlist
-    #and place holders for phase and amplitude
     def __init__(self,scan,fluxcal):
+        """
+        Initialize with scan (taskid) and source name
+        and place holders for phase and amplitude
+        Args:
+            scan (int): scan number, e.g. 190303083
+            fluxcal (str): name of flux calibrator, e.g. "3C48"
+        """
         self.scan = scan
         self.fluxcal = fluxcal
         #check if fluxcal is given as 3CXXX.MS or 3CXXX
@@ -91,6 +96,25 @@ class ScanData(object):
         #initiatlizae phase & amp arrays - common to all types of 
         self.phase = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.amp = np.empty(len(self.dirlist),dtype=np.ndarray)
+
+    def_create_imagepath(imagepath):
+        """
+        Create the image path. If imagepath is None, return a default one (and create it).
+
+        Args:
+            imagepath (str): path where images should be stored (e.g. "/data/dijkema/190303084" or None)
+
+        Returns:
+            str: image path that was created. Will be equal to input imagepath, or a generated path
+        """
+        if not imagepath:
+            imagepath = '/data/{scan}/qa/'.format(scan=self.scan)
+
+        if not os.path.exists(imagepath):
+            print "{} doesn't exist, creating".format(imagepath)
+            os.makedirs(imagepath)
+
+        return imagepath
         
 class BPSols(ScanData):
     def __init__(self,scan,fluxcal):
@@ -141,17 +165,9 @@ class BPSols(ScanData):
                 self.amp[i] = np.full((12,2,2),np.nan)
                 self.freq[i] = np.full((2,2),np.nan)
             
-    def plot_amp(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
-        #plot amplitude, one plot per antenna
+    def plot_amp(self, imagepath=None):
+        """Plot amplitude, one plot per antenna"""
+        imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
@@ -178,22 +194,14 @@ class BPSols(ScanData):
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(0,1.8)
         plt.legend(markerscale=3,fontsize=14)
-        plt.savefig('{2}/BP_amp_{0}_{1}.png'.format(ant,self.scan,imagepath))
+        plt.savefig('{imagepath}/BP_amp_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
         #plt.clf()
         # to really close the plot, this will do
         plt.close('all')
             
-    def plot_phase(self,imagepath=None):
-        #plot phase, one plot per antenna
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
+    def plot_phase(self, imagepath=None):
+        """Plot phase, one plot per antenna"""
+        imagepath = self.create_imagepath(imagepath)
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
         for a,ant in enumerate(ant_names):
@@ -218,7 +226,7 @@ class BPSols(ScanData):
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180,180)
             plt.legend(markerscale=3,fontsize=14)
-            plt.savefig('{2}/BP_phase_{0}_{1}.png'.format(ant,self.scan,imagepath))
+            plt.savefig('{imagepath}/BP_phase_{ant}_{scan}.png'.format(ant=ant,scan=self.scan,imagepath=imagepath))
             #plt.clf()
             # to really close the plot, this will do
             plt.close('all')
@@ -289,17 +297,10 @@ class GainSols(ScanData):
                 self.time[i] = np.full((2),np.nan)
                 self.flags[i] = np.full((12,2,2),np.nan)
             
-    def plot_amp(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
-        #plot amplitude, one plot per antenna
+    def plot_amp(self, imagepath=None):
+        """Plot amplitude, one plot per antenna"""
+        imagepath = self.create_imagepath(imagepath)
+
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
@@ -331,16 +332,9 @@ class GainSols(ScanData):
             plt.close('all')
             
     def plot_phase(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
-        #plot amplitude, one plot per antenna
+        """Plot phase, one plot per antenna"""
+        imagepath = self.create_imagepath(imagepath)
+
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
@@ -395,16 +389,8 @@ class ModelData(ScanData):
             self.freq[i] = freqs
             
     def plot_amp(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
-        #plot amplitude, one subplot per beam
+        """Plot amplitude, one subplot per beam"""
+        imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         nx = 8
         ny = 5
@@ -429,16 +415,8 @@ class ModelData(ScanData):
         plt.close('all')
             
     def plot_phase(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
-        #plot amplitude, one subplot per beam
+        """Plot amplitude, one subplot per beam"""
+        imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         nx = 8
         ny = 5
@@ -512,14 +490,8 @@ class CorrectedData(ScanData):
             
     def plot_amp(self,imagepath=None):
         #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
+        imagepath = self.create_imagepath(imagepath)
+
         #plot amplitude, one plot per antenna
         #put plots in default place w/ default name
         ant_names = self.ants[0]
@@ -552,16 +524,8 @@ class CorrectedData(ScanData):
             plt.close('all')
             
     def plot_phase(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
         #plot amplitude, one plot per antenna
+        imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
@@ -640,16 +604,8 @@ class RawData(ScanData):
             self.ants[i] = ant_names
             
     def plot_amp(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
         #plot amplitude, one plot per antenna
+        imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
@@ -681,16 +637,9 @@ class RawData(ScanData):
             plt.close('all')
             
     def plot_phase(self,imagepath=None):
-        #first define imagepath if not given by user
-        if imagepath == None:
-            #write in user's home directory (know that have write access there)
-            myusername = os.environ['USER']
-            imagepath = '/home/{}/dataqa_plots'.format(myusername)
-        #check if imagepath exists, create if necessary
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
         #plot amplitude, one plot per antenna
+        imagepath = self.create_imagepath(imagepath)
+
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
@@ -720,7 +669,3 @@ class RawData(ScanData):
             #plt.clf()
             # to really close the plot, this will do
             plt.close('all')
-    
-
-
-
