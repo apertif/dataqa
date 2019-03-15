@@ -5,8 +5,8 @@ Requires a scan number
 Optionally takes a directory for writing plots
 """
 
-import os
-from crosscal import crosscal_plots as ccplots
+from dataqa.crosscal import crosscal_plots
+from dataqa.scandata import get_default_imagepath
 import argparse
 from timeit import default_timer as timer
 
@@ -25,15 +25,13 @@ args = parser.parse_args()
 
 # If no path is given change to default QA path
 if args.path is None:
-    home_dir = os.path.expanduser('~')
-    output_path = "{0:s}/qa_science_demo_2019/{1:s}/crosscal".format(
-        home_dir, args.scan)
+    output_path = get_default_imagepath(args.scan)
 else:
     output_path = args.path
 
 
 # Get BP plots
-BP = ccplots.BPSols(args.scan, args.fluxcal)
+BP = crosscal_plots.BPSols(args.scan, args.fluxcal)
 BP.get_data()
 BP.plot_amp(imagepath=output_path)
 BP.plot_phase(imagepath=output_path)
@@ -42,7 +40,7 @@ print 'Done with bandpass plots'
 
 
 # Get Gain plots
-Gain = ccplots.GainSols(args.scan, args.fluxcal)
+Gain = crosscal_plots.GainSols(args.scan, args.fluxcal)
 Gain.get_data()
 Gain.plot_amp(imagepath=output_path)
 Gain.plot_phase(imagepath=output_path)
@@ -50,7 +48,7 @@ Gain.plot_phase(imagepath=output_path)
 print 'Done with gainplots'
 
 # Get Raw data
-Raw = ccplots.RawData(args.scan, args.fluxcal)
+Raw = crosscal_plots.RawData(args.scan, args.fluxcal)
 Raw.get_data()
 Raw.plot_amp(imagepath=output_path)
 Raw.plot_phase(imagepath=output_path)
@@ -58,7 +56,7 @@ Raw.plot_phase(imagepath=output_path)
 print 'Done with plotting raw data'
 
 # Get model data
-Model = ccplots.ModelData(args.scan, args.fluxcal)
+Model = crosscal_plots.ModelData(args.scan, args.fluxcal)
 Model.get_data()
 Model.plot_amp(imagepath=output_path)
 Model.plot_phase(imagepath=output_path)
@@ -66,7 +64,7 @@ Model.plot_phase(imagepath=output_path)
 print 'Done with plotting model data'
 
 # Get corrected data
-Corrected = ccplots.CorrectedData(args.scan, args.fluxcal)
+Corrected = crosscal_plots.CorrectedData(args.scan, args.fluxcal)
 Corrected.get_data()
 Corrected.plot_amp(imagepath=output_path)
 Corrected.plot_phase(imagepath=output_path)
