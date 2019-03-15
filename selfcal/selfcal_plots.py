@@ -109,7 +109,7 @@ class PHSols(ScanData):
                 self.phants[i] = misc.create_antnames()
                 self.phtimes[i] = times
                 self.phases[i] = phgains
-                self.phnants[i], self.phnbins[i], self.phnsols[i] = readmirlog.get_dims(phdata)
+                self.phnants[i], self.phnbins[i], self.phnsols[i] = readmirlog.get_ndims(phdata)
             else:
                 print 'Filling with NaNs. Phase self-calibration not present for B{}'.format(beam)
                 self.phants[i] = misc.create_antnames()
