@@ -8,6 +8,8 @@ import numpy as np
 from astropy.io import ascii
 import apercal
 import casacore.tables as pt
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from ..scandata import ScanData
 
