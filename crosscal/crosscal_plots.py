@@ -9,113 +9,9 @@ from astropy.io import ascii
 import apercal
 import casacore.tables as pt
 import matplotlib.pyplot as plt
+from ..scandata import ScanData
 
 
-
-  
-"""
-Define object classes for holding data related to scans
-The key thing to specify an object is the scan of the target field
-Also need name of fluxcal (for cross-cal solutions)
-Want to add functionality for pol-cal for pol solutions (secondary)
-This specifies the location of all data, assuming setup of automatic pipeline
-(/data/apertif, distributed across happili nodes)
-"""
-
-class ScanData(object):
-    def __init__(self,scan,fluxcal):
-        """
-        Initialize with scan (taskid) and source name
-        and place holders for phase and amplitude
-        Args:
-            scan (int): scan number, e.g. 190303083
-            fluxcal (str): name of flux calibrator, e.g. "3C48"
-        """
-        self.scan = scan
-        self.fluxcal = fluxcal
-        #check if fluxcal is given as 3CXXX.MS or 3CXXX
-        #Fix to not include .MS no matter what
-        if self.fluxcal[0:2] != '3C':
-            print "Fluxcal doesnt' start with 3C - are you sure?"
-        elif self.fluxcal[-2:] == 'MS':
-            self.fluxcal = self.fluxcal[:-3]
-        #also get a directory list and beamlist
-        self.dirlist =[]
-        self.beamlist=[]
-        #first check what happili node on
-        #if not happili-01, print a warning and only search locally
-        hostname = os.uname()[1]
-        if hostname != 'happili-01':
-            print 'Not on happili-01, only search local {} for data'.format(hostname)
-            path = '/data/apertif/{}'.format(self.scan)
-            allfiles = os.listdir(path)
-            for f in allfiles:
-                full_path = os.path.join(path, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #create a list of all directories with full path. 
-                    #This should be all beams - there should be no other directories
-                    #f is a string, so add to beam list to also track info about beams
-                    self.beamlist.append(f)
-        else:
-            #On happili-01, so search all nodes
-            #ignoring happili-05 - may have to fix this eventually
-            path ='/data/apertif/{}'.format(self.scan)
-            path2 = '/data2/apertif/{}'.format(self.scan)
-            path3 = '/data3/apertif/{}'.format(self.scan)
-            path4 = '/data4/apertif/{}'.format(self.scan)            
-            files01 = os.listdir(path)
-            files02 = os.listdir(path2)
-            files03 = os.listdir(path3)
-            files04 = os.listdir(path4)
-            #have to go through one by one - easiest
-            for f in files01:
-                full_path = os.path.join(path, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)
-            for f in files02:
-                full_path = os.path.join(path2, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)
-            for f in files03:
-                full_path = os.path.join(path3, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)
-            for f in files04:
-                full_path = os.path.join(path4, f)
-                if os.path.isdir(full_path):
-                    self.dirlist.append(full_path)
-                    #also add to beamlist
-                    self.beamlist.append(f)        
-        #initiatlizae phase & amp arrays - common to all types of 
-        self.phase = np.empty(len(self.dirlist),dtype=np.ndarray)
-        self.amp = np.empty(len(self.dirlist),dtype=np.ndarray)
-
-    def_create_imagepath(imagepath):
-        """
-        Create the image path. If imagepath is None, return a default one (and create it).
-
-        Args:
-            imagepath (str): path where images should be stored (e.g. "/data/dijkema/190303084" or None)
-
-        Returns:
-            str: image path that was created. Will be equal to input imagepath, or a generated path
-        """
-        if not imagepath:
-            imagepath = '/data/{scan}/qa/'.format(scan=self.scan)
-
-        if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
-            os.makedirs(imagepath)
-
-        return imagepath
-        
 class BPSols(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
@@ -129,7 +25,7 @@ class BPSols(ScanData):
     def get_data(self):
         #get the data
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
-            bptable = "{0}/raw/{1}.Bscan".format(path,self.fluxcal)
+            bptable = "{0}/raw/{1}.Bscan".format(path,self.sourcename)
             #print bptable
             if os.path.isdir(bptable):
                 taql_command = ("SELECT TIME,abs(CPARAM) AS amp, arg(CPARAM) AS phase, "
@@ -244,7 +140,7 @@ class GainSols(ScanData):
         
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
-            gaintable = "{0}/raw/{1}.G1ap".format(path,self.fluxcal)
+            gaintable = "{0}/raw/{1}.G1ap".format(path,self.sourcename)
             #check if table exists
             #otherwise, place NaNs in place for everything
             if os.path.isdir(gaintable):
@@ -326,7 +222,7 @@ class GainSols(ScanData):
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(10,30)
             plt.legend(markerscale=3,fontsize=14)
-            plt.savefig(plt.savefig('{2}/Gain_amp_{0}_{1}.png'.format(ant,self.scan,imagepath)))
+            plt.savefig(plt.savefig('{imagepath}/Gain_amp_{ant}_{scan}.png'.format(ant=ant,scan=self.scan,imagepath=imagepath)))
             #plt.clf()
             # to really close the plot, this will do
             plt.close('all')
@@ -371,7 +267,7 @@ class ModelData(ScanData):
         
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
-            msfile = "{0}/raw/{1}.MS".format(path,self.fluxcal)
+            msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
             taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
             t = pt.taql(taql_freq)
             freqs = t.getcol('CHAN_FREQ')[0,:]
@@ -449,7 +345,7 @@ class CorrectedData(ScanData):
         
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
-            msfile = "{0}/raw/{1}.MS".format(path,self.fluxcal)
+            msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
             taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
             t= pt.taql(taql_antnames)
             ant_names=t.getcol("NAME")
@@ -564,7 +460,7 @@ class RawData(ScanData):
         
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
-            msfile = "{0}/raw/{1}.MS".format(path,self.fluxcal)
+            msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
             taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
             t= pt.taql(taql_antnames)
             ant_names=t.getcol("NAME")
