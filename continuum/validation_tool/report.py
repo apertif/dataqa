@@ -811,12 +811,16 @@ class report(object):
                 #Get the pixels from the r.m.s. map where SNR*r.m.s. < flux
                 if rms_map is not None:
                     solid_angs[i] = get_pixel_area(rms_map, flux=S[i]/self.cat.SNR, w=w)[1]
-
+                    # print solid_angs
                 #otherwise use the fixed value passed in
                 else:
                     solid_angs[i] = solid_ang
 
             #compute the differential Euclidean source counts and uncertanties in linear space
+
+# FIXME: this workaround looks ugly
+            solid_angs[solid_angs == 0] = 1e-19
+
             counts = (S**2.5)*dN/dS/solid_angs
             err = (S**2.5)*np.sqrt(dN)/dS/solid_angs
 

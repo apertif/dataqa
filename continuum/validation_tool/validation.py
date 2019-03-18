@@ -114,7 +114,7 @@ noise = new_path(parse_string(args['--noise']))
 
 if __name__ == "__main__":
 
-    #Run Aegean for source finding or use input Selavy catalogue
+    #Run Aegean / PyBDSF for source finding or use input Selavy catalogue
     if selavy_cat is not None:
         main_cat = selavy_cat
         finder = 'selavy'
@@ -134,16 +134,21 @@ if __name__ == "__main__":
     #Load image
     changeDir(img,suffix, verbose=verbose)
     img = new_path(img)
-    IMG = radio_image(img, verbose=verbose, rms_map=noise, SNR=snr)
+    IMG = radio_image(img, verbose=verbose, finder=finder, rms_map=noise, SNR=snr)
 
     #Run BANE if user hasn't input noise map
     if noise is None:
         IMG.run_BANE(ncores=ncores, redo=refind)
 
+
     #Run Aegean if user didn't pass in Selavy catalogue
     if finder == 'aegean':
         main_cat = IMG.cat_comp
-        IMG.run_Aegean(ncores=ncores,redo=refind, params=aegean_params, write=write_any)
+        IMG.run_Aegean(ncores=ncores, redo=refind, params=aegean_params, write=write_any)
+    elif finder == 'pybdsf':
+        main_cat = IMG.cat_comp
+        IMG.run_PyBDSF(ncores=ncores, redo=refind, params=aegean_params, write=write_any)
+
 
     #Create catalogue object
     CAT = catalogue(main_cat, 'APERTIF', finder=finder, image=IMG, SNR=snr,

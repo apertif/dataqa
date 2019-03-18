@@ -1,4 +1,4 @@
-filename=TGSS.fits
+filename=/data/apertif/cats/TGSS.fits
 name=TGSS
 frequency=150
 finder=None

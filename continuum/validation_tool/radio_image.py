@@ -11,6 +11,8 @@ from astropy.utils.exceptions import AstropyWarning
 import warnings
 from inspect import currentframe, getframeinfo
 
+import logging
+
 #ignore annoying astropy warnings and set my own obvious warning output
 warnings.simplefilter('ignore', category=AstropyWarning)
 cf = currentframe()
@@ -18,7 +20,7 @@ WARN = '\n\033[91mWARNING: \033[0m' + getframeinfo(cf).filename
 
 class radio_image(object):
 
-    def __init__(self, filepath, aegean_suffix='_aegean', aegean_extn='fits',
+    def __init__(self, filepath, finder='aegean', extn='fits',
                  rms_map=None, SNR=5, verbose=False):
 
         """Initialise a radio image object.
@@ -53,11 +55,19 @@ class radio_image(object):
         self.name = filepath.split('/')[-1]
         self.rms_map = rms_map
 
+        if finder == 'aegean':
+            suffix = '_aegean'
+        elif finder == 'pybdsf':
+            suffix = '_pybdsf'
+
         #Aegean format
-        self.basename = remove_extn(self.name) + aegean_suffix
+        self.basename = remove_extn(self.name) + suffix
         self.bkg = '../{0}_bkg.fits'.format(self.basename)
-        self.cat_name = '../{0}.{1}'.format(self.basename,aegean_extn)
-        self.cat_comp = '../{0}_comp.{1}'.format(self.basename,aegean_extn)
+        self.cat_name = '../{0}.{1}'.format(self.basename, extn)
+        if finder == 'pybdsf':
+            self.cat_comp = '../{0}_comp.csv'.format(self.basename)
+        else:
+            self.cat_comp = '../{0}_comp.{1}'.format(self.basename, extn)
         self.residual = '../{0}_residual.fits'.format(self.basename)
         self.model = '../{0}_model.fits'.format(self.basename)
 
@@ -284,8 +294,45 @@ class radio_image(object):
 
 
 # TODO:
-    def run_PyBDSF():
-        pass
+    def run_PyBDSF(self, params='', ncores=8, write=True, redo=False):
+        """
+        Perform source finding on image using PyBDSF, producing just a component catalogue by default.
+
+        Keyword arguments:
+        ------------------
+        params : string
+            Any extra parameters to pass into PyBDSF (apart from cores, noise, background and table).
+        ncores : int
+            The number of cores to use (per node) when running BANE and Aegean.
+        write : bool
+            Write the fitted model and residual images.
+        redo : bool
+            Perform source finding, even if output catalogue(s) exist."""
+
+        try:
+            import bdsf
+        except:
+            logging.error("Can not import bdsf module")
+            return 1
+
+        if redo:
+            print "Re-doing source finding. Overwriting all PyBDSF files."
+
+        if not os.path.exists(self.cat_comp) or redo:
+
+            print "--------------------------------"
+            print "| Running PyBDSF for catalogue |"
+            print "--------------------------------"
+
+            #Run PyBDSF source finder to produce catalogue of image
+            img = bdsf.process_image(self.filepath, quiet=True)
+            img.write_catalog(outfile=self.cat_comp, format="csv", catalog_type="srl")
+
+            #Print error message when no sources are found and catalogue not created.
+            if not os.path.exists(self.cat_comp):
+                warnings.warn_explicit('Catalogue not created. Check output from PyBDSF.\n',UserWarning,WARN,cf.f_lineno)
+        else:
+            print "'{0}' already exists. Skipping PyBDSF.".format(self.cat_comp)
 
 
     def correct_img(self,dRA,dDEC,flux_factor=1.0):

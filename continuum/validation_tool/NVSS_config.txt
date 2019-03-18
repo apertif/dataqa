@@ -1,4 +1,4 @@
-filename=NVSS.fits.gz
+filename=/data/apertif/cats/NVSS.fits.gz
 name=NVSS
 frequency=1400
 finder=None

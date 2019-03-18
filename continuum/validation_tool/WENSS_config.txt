@@ -1,4 +1,4 @@
-filename=WENSS.fits
+filename=/data/apertif/cats/WENSS.fits
 name=WENSS
 frequency=325
 finder=None

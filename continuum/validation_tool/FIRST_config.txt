@@ -1,4 +1,4 @@
-filename=FIRST.fits.gz
+filename=/data/apertif/cats/FIRST.fits.gz
 name=FIRST
 frequency=1400
 finder=None
