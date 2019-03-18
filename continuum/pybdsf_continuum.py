@@ -12,50 +12,69 @@ import socket
 from apercal.libs import lib
 import sys
 import glob
+from astropy.io import fits
+from astropy.wcs import WCS
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
-def qa_continuum_pybdsf_convert_mir2fits(obs_id, mir_image, fits_image):
-    """This function converts a miriad image to a fits image
 
-    Paramter:
-        obs_id : int
-            Observation number which is processed
+def qa_continuum_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
+    """This function creates quick plots of the diagnostic fits files
 
-        mir_image : str
-            Full path name of miriad image to be converted
-
-        fits_image : str
-            Name of fits image which the miriad image will be converted into
-
-    Return:
-        1 if conversion was successful
-        -1 if conversion was unsuccessful
     """
 
-    # get only the name of the image
-    mir_image_name = os.path.basename(mir_image)
+    # number of files
+    n_fits_files = len(fits_file_list)
 
-    # create a link to the miriad file
-    os.symlink(mir_image, mir_image_name)
+    print("Plotting PyBDSF diagnostic plots")
 
-    logging.info("Convert {0:s} to {1:s}".format(mir_image_name, fits_image))
+    # go through the types of images and plot them
+    for k in range(n_fits_files):
 
-    fits = lib.miriad('fits')
-    fits.op = 'xyout'
-    fits.in_ = mir_image_name
-    fits.out = fits_image
-    fits.go()
+        fits_hdulist = fits.open(fits_file_list[k])
 
-    # check that the beam was actually created
-    if os.path.exists(fits_image):
-        return 1
-    else:
-        # conversion failed
-        return -1
+        # get WCS header of cube
+        wcs = WCS(fits_hdulist[0].header)
+
+        if wcs.naxis == 4:
+            wcs = wcs.dropaxis(3)
+            wcs = wcs.dropaxis(2)
+            img = fits_hdulist[0].data[0][0]
+        elif wcs.naxis == 3:
+            wcs = wcs.dropaxis(2)
+            img = fits_hdulist[0].data[0]
+        else:
+            img = fits_hdulist[0].data
+
+        # set up plot
+        ax = plt.subplot(projection=wcs)
+
+        # create image
+        fig = ax.imshow(img * 1.e3, origin='lower')
+
+        cbar = plt.colorbar(fig)
+        cbar.set_label('Flux Density [mJy/beam]')
+
+        ax.coords[0].set_axislabel('Right Ascension')
+        ax.coords[1].set_axislabel('Declination')
+        ax.coords[0].set_major_formatter('hh:mm')
+        ax.set_title("{0:s}".format(os.path.basename(fits_file_list[k])))
+
+        output = plot_name_list[k]
+
+        if plot_format == "pdf":
+            plt.savefig(output.replace(".png", ".pdf"),
+                        overwrite=True, bbox_inches='tight')
+        else:
+            plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=400)
+
+        plt.close("all")
+
+    print("Plotting PyBDSF diagnostic plots. Done")
 
 
-def qa_continuum_run_pybdsf(obs_id, data_basedir_list, qa_pybdsf_dir):
+def qa_continuum_run_pybdsf(obs_id, data_basedir_list, qa_pybdsf_dir, overwrite=True):
     """This function runs pybdsf on the continuum image of each beam
 
     This function will create a new directory for each beam. In this sub-directory
@@ -117,7 +136,7 @@ def qa_continuum_run_pybdsf(obs_id, data_basedir_list, qa_pybdsf_dir):
             logging.info("Found {0:d} beams".format(n_beams))
 
         # get a list of only the beams
-        beam_list = [beam.split('/')[-1] for beam in beam_data_dir_list]
+        beam_list = [os.path.basename(beam) for beam in beam_data_dir_list]
 
         # Now go through each beam
         for k in range(n_beams):
@@ -134,44 +153,26 @@ def qa_continuum_run_pybdsf(obs_id, data_basedir_list, qa_pybdsf_dir):
                 logging.info(
                     "Creating directory {0:s}".format(beam_pybdsf_dir))
 
-            # change to this directory
-            os.chdir(beam_pybdsf_dir)
+            # # change to this directory
+            # os.chdir(beam_pybdsf_dir)
 
             # directory of continuum images
             continuum_image_dir = "{0:s}/continuum".format(beam_data_dir)
 
-            # Collect all the images that are in this directory
-            mir_image_list = glob.glob(
-                "{0:s}/image_mf_[0-9][0-9]".format(continuum_image_dir))
+            # Get the fits image
+            fits_image = glob.glob("{0:s}/*.fits".format(continuum_image_dir))
 
-            # check that there actually is an image, if not continue with next beam
-            if len(mir_image_list) == 0:
+            if len(fits_image) == 0:
                 logging.error(
-                    "No image found for beam {0:s}. Continue with next beam".format(beam))
-                n_images_failed += 1
+                    "Did not find any fits image for beam {0:s}".format(beam))
                 continue
-
-            # sort the image list
-            mir_image_list.sort()
-
-            # get the image with the highest number
-            # should be the last in the array after sorting
-            mir_image = mir_image_list[-1]
-
-            # name of the fits image
-            fits_image = "{0:d}_beam_{1:s}_continuum_image.fits".format(
-                obs_id, beam)
-
-            # convert the image to fits
-            convert_stat = qa_continuum_pybdsf_convert_mir2fits(
-                obs_id, mir_image, fits_image)
-
-            if convert_stat == 1:
-                logging.info("Convert was successful")
+            elif len(fits_image) == 1:
+                fits_image = fits_image[0]
             else:
-                logging.error("Convert failed. Continue with next beam")
-                n_images_failed += 1
-                continue
+                fits_image.sort()
+                logging.warning(
+                    "Found more than one fits image for beam {0:s}. Take the last one".format(beam))
+                fits_image = fits_image[-1]
 
             # run pybdsf
             logging.info("# Running pybdsf")
@@ -179,21 +180,33 @@ def qa_continuum_run_pybdsf(obs_id, data_basedir_list, qa_pybdsf_dir):
                 img = bdsf.process_image(fits_image, quiet=True)
 
                 # Check/create catalogue name
-                cat_file = fits_image.replace(".fits", "_pybdsf_cat.csv")
+                cat_file = "{0:s}/{1:s}".format(beam_pybdsf_dir, os.path.basename(
+                    fits_image).replace(".fits", "_pybdsf_cat.fits"))
 
                 # Write catalogue as csv file
                 logging.info("# Writing catalogue")
-                img.write_catalog(outfile=cat_file, format='csv', clobber=True)
+                img.write_catalog(outfile=cat_file,
+                                  format='fits', clobber=True)
 
                 # Save plots
                 logging.info("# Saving pybdsf plots")
                 plot_type_list = ['rms', 'mean',
                                   'gaus_model', 'gaus_resid', 'island_mask']
-                for plot_type in plot_type_list:
-                    plot_name = cat_file.replace(
-                        ".csv", "_{0:s}.fits".format(plot_type))
-                    img.export_image(outfile=plot_name, clobber=True,
-                                     img_type=plot_type)
+                fits_names = [cat_file.replace(
+                    ".fits", "_{0:s}.fits".format(plot)) for plot in plot_type_list]
+                plot_names = [fits.replace(
+                    ".fits", ".png") for fits in fits_names]
+
+                # number of plots
+                n_plots = len(plot_type_list)
+
+                for k in range(n_plots):
+                    img.export_image(outfile=fits_names[k],
+                                     clobber=overwrite, img_type=plot_type_list[k])
+
+                # create images without a lot of adjusting
+                qa_continuum_plot_pybdsf_images(fits_names, plot_names)
+
             except Exception as e:
                 logger.error(e)
                 n_pybdsf_failed += 1

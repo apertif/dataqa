@@ -5,28 +5,30 @@ import os
 import time
 import logging
 import socket
-#from apercal.libs import lib
+from apercal.libs import lib
 import sys
 import glob
 from astropy.io import fits
 from astropy.wcs import WCS
-
 import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
 
-def qa_mosaic_plot_pybdsf_images(fits_names, plot_format="png"):
+def qa_mosaic_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
     """This function creates quick plots of the diagnostic fits files
 
     """
 
+    # number of files
+    n_fits_files = len(fits_file_list)
+
     print("Plotting PyBDSF diagnostic plots")
 
     # go through the types of images and plot them
-    for fits_file in fits_names:
+    for k in range(n_fits_files):
 
-        fits_hdulist = fits.open(fits_file)
+        fits_hdulist = fits.open(fits_file_list[k])
 
         # get WCS header of cube
         wcs = WCS(fits_hdulist[0].header)
@@ -53,9 +55,9 @@ def qa_mosaic_plot_pybdsf_images(fits_names, plot_format="png"):
         ax.coords[0].set_axislabel('Right Ascension')
         ax.coords[1].set_axislabel('Declination')
         ax.coords[0].set_major_formatter('hh:mm')
-        ax.set_title("{0:s}".format(os.path.basename(fits_file)))
+        ax.set_title("{0:s}".format(os.path.basename(fits_file_list[k])))
 
-        output = fits_file.replace("fits", plot_format)
+        output = plot_name_list[k]
 
         if plot_format == "pdf":
             plt.savefig(output.replace(".png", ".pdf"),
@@ -99,14 +101,16 @@ def qa_mosaic_run_pybdsf(obs_id, mosaic_name, qa_pybdsf_dir, output_name='', ove
 
     """
 
-    # change the working directory to where the qa directory
-    os.chdir(qa_pybdsf_dir)
+    # # change the working directory to where the qa directory
+    # os.chdir(qa_pybdsf_dir)
 
-    # Create a link to the fits file so that the pybdsf log file is stored in the qa directory
-    image_name = os.path.basename(mosaic_name)
+    # # Create a link to the fits file so that the pybdsf log file is stored in the qa directory
+    # image_name = os.path.basename(mosaic_name)
 
-    if not os.path.exists(image_name):
-        os.symlink(mosaic_name, image_name)
+    # if not os.path.exists(image_name):
+    #     os.symlink(mosaic_name, image_name)
+
+    image_name = mosaic_name
 
     # try:
     #     os.symlink(mosaic_name, image_name)
@@ -115,8 +119,8 @@ def qa_mosaic_run_pybdsf(obs_id, mosaic_name, qa_pybdsf_dir, output_name='', ove
 
     # Check/create catalogue name
     if output_name == '':
-        cat_file = "{0:s}/{1:d}_mosaic_pybdsf.fits".format(
-            qa_pybdsf_dir, obs_id)
+        cat_file = "{0:s}/{1:s}".format(
+            qa_pybdsf_dir, os.path.basename(image_name).replace("fits", "_pybdsf_cat.fits"))
     else:
         cat_file = output_name
 
@@ -138,19 +142,21 @@ def qa_mosaic_run_pybdsf(obs_id, mosaic_name, qa_pybdsf_dir, output_name='', ove
         logging.info("#### Saving pybdsf plots")
         plot_type_list = ['rms', 'mean',
                           'gaus_model', 'gaus_resid', 'island_mask']
-        plot_names = [cat_file.replace(
+        fits_names = [cat_file.replace(
             ".fits", "_{0:s}.fits".format(plot)) for plot in plot_type_list]
+        plot_names = [fits.replace(
+            ".fits", ".png") for fits in fits_names]
         # plot_type_list = ['gaus_model', 'gaus_resid', 'island_mask']
 
         # number of plots
         n_plots = len(plot_type_list)
 
         for k in range(n_plots):
-            img.export_image(outfile=plot_names[k],
+            img.export_image(outfile=fits_names[k],
                              clobber=overwrite, img_type=plot_type_list[k])
 
         # create images without a lot of adjusting
-        qa_mosaic_plot_pybdsf_images(plot_names)
+        qa_mosaic_plot_pybdsf_images(fits_names, plot_names)
 
     except Exception as e:
         logger.error(e)
