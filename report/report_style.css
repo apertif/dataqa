@@ -49,6 +49,7 @@ ul {
     padding: 0;
     overflow: hidden;
     background-color: #333;
+    margin-bottom: 5px;
 }
 
 li {
@@ -73,6 +74,34 @@ li a:hover {
   background-color: rgb(252, 152, 95);
 }
 
+
+/******************************
+Buttons
+******************************/
+
+button {
+  background-color: rgb(252, 152, 95);
+  width: 100%;
+  margin: auto;
+  font-size: x-large;
+  margin-bottom: 5px;
+}
+button:hover {
+  background-color: rgb(255, 123, 46);
+}
+
+.button_continuum {
+  background-color: rgb(192, 192, 192);
+  width: 100%;
+  margin: auto;
+  font-size: large;
+  margin-bottom: 5px;
+}
+
+.button_continuum:hover {
+  background-color: rgb(153, 153, 153);
+}
+
 /******************************
 Gallery
 ******************************/
@@ -81,16 +110,6 @@ div.plots {
   margin: auto;
   clear: both;
   padding: 0px 0px;
-}
-
-button {
-  background-color: rgb(252, 152, 95);
-  width: 100%;
-  margin: auto;
-  font-size: x-large;
-}
-button:hover {
-  background-color: rgb(255, 123, 46);
 }
 
 .gallery {
@@ -116,6 +135,30 @@ button:hover {
   font-weight: bold;
 }
 
+.gallery_row{
+  display: none;
+  flex-wrap: wrap;
+  -ms-flex-wrap: wrap; /* IE10 */
+  padding: 4px 4px;
+  margin: auto;
+}
+
+.gallery_column {
+  -ms-flex: 32%; /* IE10 */
+  flex: 32%;
+  max-width: 32%;
+  padding: 0px 4px;
+}
+
+
+/* .mosaic_img{
+  border: 1px solid #ccc;
+  vertical-align: bottom;
+}
+.mosaic_img:hover {
+  border: 1px solid #777;
+} */
+
 /******************************
 logfiles
 ******************************/
@@ -130,12 +173,22 @@ logfiles
 }
 
 /******************************
+continuum
+******************************/
+
+.beam_continuum{
+  margin: auto;
+  display: none;
+  width: 95%;
+}
+
+/******************************
 Validation tool
 ******************************/
 #validation_tool {
   margin: auto;
   width: 95%;
-  height: 600px;
+  height: 1000px;
   border-style: solid;
   border-width: 1px;
   border-color: #777;

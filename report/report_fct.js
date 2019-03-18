@@ -15,7 +15,12 @@ function show_hide_plots(gallery_name) {
         style_display = style.getPropertyValue('display');
 
         if (style_display === "none") {
-            gallery[i].style.display = "block";
+            if (gallery_name === "mosaic_gallery") {
+                gallery[i].style.display = "flex";
+            }
+            else {
+                gallery[i].style.display = "block";
+            }
         }
         else {
             gallery[i].style.display = "none";

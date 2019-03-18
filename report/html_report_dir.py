@@ -56,7 +56,8 @@ def create_report_dirs(obs_id, qa_dir, subpages):
                 "Directory 'report/{0:d}/{1:s}' does not exists and will be created".format(obs_id, page))
             os.mkdir(qa_dir_subpage)
 
-        # link the specific files for the html document
+        # Create links for files from prepare QA
+        # ++++++++++++++++++++++++++++++++++++++
         if page == "prepare":
 
             # get beams
@@ -106,7 +107,9 @@ def create_report_dirs(obs_id, qa_dir, subpages):
             else:
                 print("ERROR: No beams found for prepare found")
 
-        if page == "crosscal":
+        # Create links for files from crosscal QA
+        # +++++++++++++++++++++++++++++++++++++++
+        elif page == "crosscal":
 
             # get the images in the subdirectory
             images_crosscal = glob.glob(
@@ -132,7 +135,80 @@ def create_report_dirs(obs_id, qa_dir, subpages):
             else:
                 print("ERROR: No images found for crosscal")
 
-        if page == "mosaic":
+        # Create links for files from continuum QA
+        # +++++++++++++++++++++++++++++++++++++++
+        elif page == "continuum":
+
+            # get beams
+            beam_list = glob.glob(
+                "{0:s}/{1:s}/[0-3][0-9]".format(qa_dir, page))
+
+            # number of beams
+            n_beams = len(beam_list)
+
+            if n_beams != 0:
+
+                beam_list.sort()
+
+                # go through all beams
+                for beam in beam_list:
+
+                    qa_dir_subpage_prepare_beam = "{0:s}/{1:s}".format(
+                        qa_dir_subpage, os.path.basename(beam))
+
+                    # create a subdirectory in the report dir
+                    try:
+                        os.mkdir(qa_dir_subpage_prepare_beam)
+                    except Exception as e:
+                        logging.error(e)
+
+                    # get the images in the beam directory and link them
+                    images_in_beam = glob.glob(
+                        "{0:s}/pybdsf/*png".format(beam))
+
+                    if len(images_in_beam) != 0:
+
+                        images_in_beam.sort()
+
+                        for image in images_in_beam:
+                            link_name = "{0:s}/{1:s}".format(
+                                qa_dir_subpage_prepare_beam, os.path.basename(image))
+
+                            # check if link exists
+                            if not os.path.exists(link_name):
+                                os.symlink(image, link_name)
+                            else:
+                                os.unlink(link_name)
+                                os.symlink(image, link_name)
+                    else:
+                        print("ERROR: No images in beam {0:s} found".format(
+                            beam))
+
+                    # link the validation tool
+                    validation_tool = "{0:s}/validation_tool".format(
+                        beam)
+
+                    # check that the directory for the validation tool exists
+                    if os.path.exists(validation_tool):
+
+                        link_name = "{0:s}/{1:s}".format(
+                            qa_dir_subpage_prepare_beam, os.path.basename(validation_tool))
+
+                        # check if link exists
+                        if not os.path.exists(link_name):
+                            os.symlink(validation_tool, link_name)
+                        else:
+                            os.unlink(link_name)
+                            os.symlink(validation_tool, link_name)
+                    else:
+                        print(
+                            "ERROR: No validation tool output found for continuum QA of beam {0:s}".format(beam))
+            else:
+                print("ERROR: No beams found for continuum found")
+
+        # Create links for files from mosaic QA
+        # +++++++++++++++++++++++++++++++++++++++
+        elif page == "mosaic":
             # get the images in the subdirectory
             images_mosaic = glob.glob(
                 "{0:s}/{1:s}/pybdsf/*.png".format(qa_dir, page))
@@ -153,7 +229,6 @@ def create_report_dirs(obs_id, qa_dir, subpages):
                     else:
                         os.unlink(link_name)
                         os.symlink(image, link_name)
-
             else:
                 print("ERROR: No images found for mosaic")
 
@@ -173,10 +248,11 @@ def create_report_dirs(obs_id, qa_dir, subpages):
                 else:
                     os.unlink(link_name)
                     os.symlink(validation_tool, link_name)
-
             else:
                 print("ERROR: No validation tool output found for mosaic")
 
+        # Create links for files from aperca log
+        # ++++++++++++++++++++++++++++++++++++++
         if page == "apercal_log":
 
             # check first on which happili we are:
@@ -206,7 +282,22 @@ def create_report_dirs(obs_id, qa_dir, subpages):
                 else:
                     os.unlink(link_name)
                     os.symlink(image, link_name)
+            # just for testing
+            elif socket.gethostname() == "dop387":
 
+                apercal_log_file = "{0:s}/apercal.log".format(qa_dir)
+
+                link_name = "{0:s}/{1:s}".format(
+                    qa_dir_subpage, os.path.basename(apercal_log_file))
+
+                link_name = link_name.replace(".log", "_beam_00-09.log")
+
+                # check if link exists
+                if not os.path.exists(link_name):
+                    os.symlink(apercal_log_file, link_name)
+                else:
+                    os.unlink(link_name)
+                    os.symlink(apercal_log_file, link_name)
             else:
                 apercal_log_file_list = [
                     "/data/apertif/{0:d}/apercal.log".format(obs_id), "/data2/apertif/{0:d}/apercal.log".format(obs_id), "/data3/apertif/{0:d}/apercal.log".format(obs_id), "/data4/apertif/{0:d}/apercal.log".format(obs_id)]
@@ -230,22 +321,5 @@ def create_report_dirs(obs_id, qa_dir, subpages):
                         os.symlink(image, link_name)
 
                     log_file_counter += 1
-
-            # just for testing
-            if socket.gethostname() == "dop387":
-
-                apercal_log_file = "{0:s}/apercal.log".format(qa_dir)
-
-                link_name = "{0:s}/{1:s}".format(
-                    qa_dir_subpage, os.path.basename(apercal_log_file))
-
-                link_name = link_name.replace(".log", "_beam_00-09.log")
-
-                # check if link exists
-                if not os.path.exists(link_name):
-                    os.symlink(apercal_log_file, link_name)
-                else:
-                    os.unlink(link_name)
-                    os.symlink(apercal_log_file, link_name)
 
     return 1
