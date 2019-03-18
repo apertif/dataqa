@@ -18,7 +18,7 @@ Arguments:
 Options:
   -h --help                 Show this help message.
   -S --Selavy=<cat>         Use this Selavy catalogue of the input image. Default is to run Aegean [default: None].
-  -P --PyBDSF=<cat>          Use this Pybdsf catalogue of the input image. Default is to run Aegean [default: None].
+  -P --PyBDSF               Run or Use the Pybdsf catalogue of the input image. Default is to run Aegean [default: None].
   -N --noise=<map>          Use this fits image of the local rms. Default is to run BANE [default: None].
   -C --catalogues=<list>    A comma-separated list of filepaths to catalogue config files corresponding to catalogues to use
                             (will look in --main-dir for each file not found in given path) [default: FIRST_config.txt, NVSS_config.txt, TGSS_config.txt].
