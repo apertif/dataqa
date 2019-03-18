@@ -13,7 +13,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from ..scandata import ScanData
 
-def make_all_ccal_plots(scan, fluxcal, output_path=output_path):
+def make_all_ccal_plots(scan, fluxcal, output_path=None):
     """
     Create crosscal QA plots
 
