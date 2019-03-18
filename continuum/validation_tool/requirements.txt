@@ -1,0 +1,11 @@
+AegeanTools
+astropy
+docopt
+matplotlib>=2.0.0
+mpld3
+numpy
+pandas
+seaborn
+scipy
+#git+https://github.com/PaulHancock/Aegean.git
+#git+https://github.com/mpld3/mpld3.git
