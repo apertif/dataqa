@@ -34,6 +34,9 @@ parser = argparse.ArgumentParser(
 parser.add_argument("obs_id", type=int,
                     help='Observation Number')
 
+parser.add_argument('-p', '--path', default=None,
+                    help='Destination for images')
+
 args = parser.parse_args()
 
 # Basic parameters
