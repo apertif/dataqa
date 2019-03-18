@@ -63,6 +63,8 @@ def qa_mosaic_plot_pybdsf_images(fits_names, plot_format="png"):
         else:
             plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=400)
 
+        plt.close("all")
+
     print("Plotting PyBDSF diagnostic plots. Done")
 
 
