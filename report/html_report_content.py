@@ -131,6 +131,53 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
             print("ERROR: No crosscal plots found")
             return -1
 
+    # create html content for subpage crosscal
+    # ++++++++++++++++++++++++++++++++++++++++
+    elif page_type == 'mosaic':
+
+        # get the diagnostic plots
+        if obs_id != 0:
+            image_list = glob.glob(
+                "{0:s}/{1:d}/{2:s}/*png".format(qa_report_path, obs_id, page_type))
+        else:
+            image_list = glob.glob(
+                "{0:s}/{1:s}/*png".format(qa_report_path, page_type))
+
+        n_images = len(image_list)
+
+        if n_images != 0:
+
+            div_name = "gallery0"
+
+            html_code += """<button onclick="show_hide_plots('{0:s}')">
+                        PyBDSF Diagnostic plots
+                    </button>\n""".format(div_name)
+
+            # go throught the different types of plots
+            for k in range(n_images):
+                html_code += """<div class="gallery" name="{0:s}">
+                        <a href="{1:s}/{2:s}">
+                            <img src="{1:s}/{2:s}" alt="No image", width="100%">
+                        </a>
+                    </div>\n""".format(div_name, page_type, os.path.basename(image_list[k]))
+                html_code += """\n"""
+        else:
+            print("ERROR: No mosaic plots found")
+            return -1
+
+        # add the validation tool
+        frame_name = "validation_tool"
+
+        button_name = "Validation tool for mosaic"
+
+        html_code += """<button onclick="show_hide_plots('{0:s}')">
+                            {1:s}
+                        </button>\n""".format(frame_name, button_name)
+
+        html_code += """<p>
+                        <iframe id="validation_tool" name="{0:s}" src="{1:s}/{2:s}/index.html"></iframe>
+                    </p>\n""".format(frame_name, page_type, "validation_tool")
+
     # create html content for subpage prepare
     # +++++++++++++++++++++++++++++++++++++++
     elif page_type == "apercal_log":

@@ -96,6 +96,9 @@ def create_report_dirs(obs_id, qa_dir, subpages):
                             # check if link exists
                             if not os.path.exists(link_name):
                                 os.symlink(image, link_name)
+                            else:
+                                os.unlink(link_name)
+                                os.symlink(image, link_name)
 
                     else:
                         print("ERROR: No images in beam {0:s} found".format(
@@ -122,9 +125,57 @@ def create_report_dirs(obs_id, qa_dir, subpages):
                     # check if link exists
                     if not os.path.exists(link_name):
                         os.symlink(image, link_name)
+                    else:
+                        os.unlink(link_name)
+                        os.symlink(image, link_name)
 
             else:
                 print("ERROR: No images found for crosscal")
+
+        if page == "mosaic":
+            # get the images in the subdirectory
+            images_mosaic = glob.glob(
+                "{0:s}/{1:s}/pybdsf/*.png".format(qa_dir, page))
+
+            if len(images_mosaic) != 0:
+
+                images_mosaic.sort()
+
+                # go through all beams
+                for image in images_mosaic:
+
+                    link_name = "{0:s}/{1:s}".format(
+                        qa_dir_subpage, os.path.basename(image))
+
+                    # check if link exists
+                    if not os.path.exists(link_name):
+                        os.symlink(image, link_name)
+                    else:
+                        os.unlink(link_name)
+                        os.symlink(image, link_name)
+
+            else:
+                print("ERROR: No images found for mosaic")
+
+            # link the validation tool
+            validation_tool = "{0:s}/{1:s}/validation_tool".format(
+                qa_dir, page)
+
+            # check that the directory for the validation tool exists
+            if os.path.exists(validation_tool):
+
+                link_name = "{0:s}/{1:s}".format(
+                    qa_dir_subpage, os.path.basename(validation_tool))
+
+                # check if link exists
+                if not os.path.exists(link_name):
+                    os.symlink(validation_tool, link_name)
+                else:
+                    os.unlink(link_name)
+                    os.symlink(validation_tool, link_name)
+
+            else:
+                print("ERROR: No validation tool output found for mosaic")
 
         if page == "apercal_log":
 
