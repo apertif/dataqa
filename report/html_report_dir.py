@@ -11,9 +11,10 @@ import logging
 import glob
 import time
 import socket
+from shutil import copy
 
 
-def create_report_dirs(obs_id, qa_dir, subpages):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
     """
     Function to create the directory structure for the
     report/html document.
@@ -29,6 +30,19 @@ def create_report_dirs(obs_id, qa_dir, subpages):
         logging.warning(
             "Directory 'report' does not exists and will be created")
         os.mkdir(qa_dir_report)
+
+    # copy the js and css files
+    try:
+        copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
+                                           os.path.basename(js_file)))
+    except Exception as e:
+        logging.error(e)
+
+    try:
+        copy(css_file,
+             "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
+    except Exception as e:
+        logging.error(e)
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined

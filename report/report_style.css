@@ -33,7 +33,16 @@ table
     {
         padding: 15px;
     }
-    tr:nth-child(even) {background-color: #f2f2f2;}
+    tr:nth-child(even) {background-color: #333;}
+
+    td:hover{
+      background-color: rgb(255, 123, 46);
+    }
+
+
+.obs_links{
+  color: white;
+}
 
 /* *****************
 Navigation 

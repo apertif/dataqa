@@ -44,17 +44,23 @@ if __name__ == "__main__":
 
     print("Create report directory structure")
 
+    # copy the js and css files
+    js_file_name = "report/report_fct.js"
+    css_file_name = "report/report_style.css"
+
     # Check that qa_dir and the other directories exists
     if not os.path.exists(qa_dir):
         logging.error("Directory {0:s} does not exists. Abort".format(qa_dir))
         sys.exit(-1)
     else:
         # Create directory structure for the report
-        create_dir_stat = hpd.create_report_dirs(obs_id, qa_dir, subpages)
+        create_dir_stat = hpd.create_report_dirs(
+            obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name)
 
     print("Creating report")
 
-    create_main_html_stat = hp.create_main_html(qa_dir, obs_id, subpages)
+    create_main_html_stat = hp.create_main_html(
+        qa_dir, obs_id, subpages, css_file=css_file_name, js_file=js_file_name)
 
     if create_main_html_stat == 1:
         print("Creating report succesfull")

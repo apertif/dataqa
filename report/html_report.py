@@ -10,23 +10,21 @@ import html_report_content as hrc
 # from __future__ import with_statement
 
 
-def write_html_header(html_file_name, page_type='index', css_style=None, js_file=None, obs_id=0):
+def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_id=0):
     """
     This function creates the header for an html document
     """
-
-    if css_style is None:
-        css_style = "/home/schulz/Software/apercal/dataqa/dataqa/report/report_style.css"
-
-    if js_file is None:
-        js_file = "/home/schulz/Software/apercal/dataqa/dataqa/report/report_fct.js"
 
     if page_type == 'index':
         page_title = 'APERTIF Science Demonstration Overview'
     elif page_type == 'obs_page':
         page_title = 'Observation {0:d}'.format(obs_id)
+        css_file = "../{0:s}".format(css_file)
+        js_file = "../{0:s}".format(js_file)
     else:
         page_title = '{0:d} {1:s}'.format(obs_id, page_type)
+        css_file = "../{0:s}".format(css_file)
+        js_file = "../{0:s}".format(js_file)
 
     html_file = open(html_file_name, 'w')
     html_file.write("""<!DOCTYPE HTML>
@@ -40,7 +38,7 @@ def write_html_header(html_file_name, page_type='index', css_style=None, js_file
             <link rel="stylesheet" type="text/css" href="{1}" />
         </head>
         <body>
-            <h1>{2:s}</h1>\n""".format(js_file, css_style, page_title))
+            <h1>{2:s}</h1>\n""".format(js_file, css_file, page_title))
 
     html_file.close()
 
@@ -91,13 +89,13 @@ def write_html_obs_index(html_file_name, obs_id):
             <th colspan="7">{0:d}</th>
         </tr>
         <tr>
-            <td > <a href="{0:d}/{0:d}_prepare.html">prepare</a> </td>
-            <td > <a href="{0:d}/{0:d}_crosscal.html">crosscal</a> </td>
-            <td > <a href="{0:d}/{0:d}_selfcal.html">selfcal</a> </td>
-            <td > <a href="{0:d}/{0:d}_continuum.html">continuum</a> </td>
-            <td > <a href="{0:d}/{0:d}_line.html">line</a> </td>
-            <td > <a href="{0:d}/{0:d}_mosaic.html">mosaic</a> </td>
-            <td > <a href="{0:d}/{0:d}_apercal_log.html">apercal.log</a> </td>
+            <td > <a class="obs_links" href="{0:d}/{0:d}_prepare.html">prepare</a> </td>
+            <td > <a class="obs_links" href="{0:d}/{0:d}_crosscal.html">crosscal</a> </td>
+            <td > <a class="obs_links" href="{0:d}/{0:d}_selfcal.html">selfcal</a> </td>
+            <td > <a class="obs_links" href="{0:d}/{0:d}_continuum.html">continuum</a> </td>
+            <td > <a class="obs_links" href="{0:d}/{0:d}_line.html">line</a> </td>
+            <td > <a class="obs_links" href="{0:d}/{0:d}_mosaic.html">mosaic</a> </td>
+            <td > <a class="obs_links" href="{0:d}/{0:d}_apercal_log.html">apercal.log</a> </td>
         </tr>\n""".format(obs_id)
 
     obs_index += """</table>
@@ -118,7 +116,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
 
     html_code = """
         <ul>
-            <li style="float:right"><a href="index.html">List of Observations</a></li>
+            <li style="float:right"><a href="../index.html">List of Observations</a></li>
         """
     for page in links:
         if page == page_type:
@@ -139,7 +137,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         print("ERROR")
 
 
-def write_obs_page(qa_report_path, obs_id, subpages=None):
+def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
     """
     Function to create the subpages
     """
@@ -155,7 +153,7 @@ def write_obs_page(qa_report_path, obs_id, subpages=None):
 
             # create the header
             write_html_header(
-                page_name, page_type=page, obs_id=obs_id)
+                page_name, css_file, js_file, page_type=page, obs_id=obs_id)
 
             write_html_navbar(page_name, subpages,
                               page_type=page, obs_id=obs_id)
@@ -167,7 +165,7 @@ def write_obs_page(qa_report_path, obs_id, subpages=None):
             write_html_end(page_name)
 
 
-def create_main_html(qa_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True):
+def create_main_html(qa_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None):
     """
     Function to create the main HTML file
     """
@@ -226,7 +224,8 @@ def create_main_html(qa_dir, obs_id, subpages, continuum=True, crosscal=True, li
     index_file = '{0:s}/index.html'.format(qa_report_dir)
 
     # create the header
-    write_html_header(index_file, page_type='index')
+    write_html_header(index_file, os.path.basename(css_file),
+                      os.path.basename(js_file), page_type='index')
 
     # Add a list of Observations
     write_html_obs_index(index_file, obs_id)
@@ -238,6 +237,7 @@ def create_main_html(qa_dir, obs_id, subpages, continuum=True, crosscal=True, li
 
     # obs_report_path = '{0:s}/{1:s}'.format(qa_report_dir, obs_ids[k])
 
-    write_obs_page(qa_report_dir, obs_id, subpages=subpages)
+    write_obs_page(qa_report_dir, obs_id, os.path.basename(css_file),
+                   os.path.basename(js_file), subpages=subpages)
 
     return 1
