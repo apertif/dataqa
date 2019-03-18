@@ -2,12 +2,15 @@
 #Will want to plot calibration solutions
 #also potential for raw and corrected data
 
+from __future__ import print_function
+
 #load necessary packages
 import os
 import numpy as np
 from astropy.io import ascii
 import apercal
 import casacore.tables as pt
+import logging
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -27,35 +30,35 @@ def make_all_ccal_plots(scan, fluxcal, output_path=None):
     BP.get_data()
     BP.plot_amp(imagepath=output_path)
     BP.plot_phase(imagepath=output_path)
-    print 'Done with bandpass plots'
+    logging.info('Done with bandpass plots')
 
     # Get Gain plots
     Gain = GainSols(scan, fluxcal)
     Gain.get_data()
     Gain.plot_amp(imagepath=output_path)
     Gain.plot_phase(imagepath=output_path)
-    print 'Done with gainplots'
+    logging.info('Done with gainplots')
 
     # Get Raw data
     Raw = RawData(scan, fluxcal)
     Raw.get_data()
     Raw.plot_amp(imagepath=output_path)
     Raw.plot_phase(imagepath=output_path)
-    print 'Done with plotting raw data'
+    logging.info('Done with plotting raw data')
 
     # Get model data
     Model = ModelData(scan, fluxcal)
     Model.get_data()
     Model.plot_amp(imagepath=output_path)
     Model.plot_phase(imagepath=output_path)
-    print 'Done with plotting model data'
+    logging.info('Done with plotting model data')
 
     # Get corrected data
     Corrected = CorrectedData(scan, fluxcal)
     Corrected.get_data()
     Corrected.plot_amp(imagepath=output_path)
     Corrected.plot_phase(imagepath=output_path)
-    print 'Done with plotting corrected data'
+    logging.info('Done with plotting corrected data')
 
 
 class BPSols(ScanData):
@@ -72,7 +75,7 @@ class BPSols(ScanData):
         #get the data
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             bptable = "{0}/raw/{1}.Bscan".format(path,self.sourcename)
-            #print bptable
+            #print(bptable)
             if os.path.isdir(bptable):
                 taql_command = ("SELECT TIME,abs(CPARAM) AS amp, arg(CPARAM) AS phase, "
                                 "FLAG FROM {0}").format(bptable)
@@ -100,7 +103,7 @@ class BPSols(ScanData):
                 self.freq[i] = freqs
                 
             else:
-                print 'Filling with NaNs. BP table not present for B{}'.format(beam)
+                logging.info('Filling with NaNs. BP table not present for B{}'.format(beam))
                 self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
                 self.time[i] = np.array(np.nan)
                 self.phase[i] = np.full((12,2,2),np.nan)
@@ -125,7 +128,7 @@ class BPSols(ScanData):
             
             for n,beam in enumerate(self.beamlist):
                 beamnum = int(beam)
-                #print beamnum
+                #print(beamnum)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n][0,:],self.amp[n][a,:,0],
                             label='XX',
@@ -232,7 +235,7 @@ class GainSols(ScanData):
                 self.flags[i] = flags_ant_array
                 
             else:
-                print 'Filling with NaNs. Gain table not present for B{}'.format(beam)
+                logging.info('Filling with NaNs. Gain table not present for B{}'.format(beam))
                 self.amp[i] = np.full((12,2,2),np.nan)
                 self.phase[i] = np.full((12,2,2),np.nan)
                 self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']

@@ -9,6 +9,7 @@ from dataqa.crosscal import crosscal_plots
 from dataqa.scandata import get_default_imagepath
 import argparse
 from timeit import default_timer as timer
+import logging
 
 start = timer()
 
@@ -29,6 +30,7 @@ if args.path is None:
 else:
     output_path = args.path
 
+logging.basicConfig(level=logging.DEBUG)
 crosscal_plots.make_all_ccal_plots(args.scan, args.fluxcal, output_path=output_path)
 
 end = timer()
