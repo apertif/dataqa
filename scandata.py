@@ -1,5 +1,6 @@
 import os
 import numpy as np  
+import logging
 """
 Define object classes for holding data related to scans
 The key thing to specify an object is the scan of the target field
@@ -36,7 +37,7 @@ class ScanData(object):
         #check if fluxcal is given as 3CXXX.MS or 3CXXX
         #Fix to not include .MS no matter what
         if self.sourcename[0:2] != '3C':
-            print "Fluxcal doesnt' start with 3C - are you sure?"
+            logging.warning("Fluxcal doesnt' start with 3C - are you sure?")
         elif self.sourcename[-2:] == 'MS':
             self.sourcename = self.sourcename[:-3]
         #also get a directory list and beamlist
@@ -47,7 +48,7 @@ class ScanData(object):
         hostname = os.uname()[1]
         paths = []
         if hostname != 'happili-01':
-            print 'Not on happili-01, only search local {} for data'.format(hostname)
+            logging.warning('Not on happili-01, only search local {} for data'.format(hostname))
             path = '/data/apertif/{}'.format(self.scan)
             paths = [path]
         else:
@@ -87,7 +88,7 @@ class ScanData(object):
             imagepath = get_default_imagepath(self.scan)
 
         if not os.path.exists(imagepath):
-            print "{} doesn't exist, creating".format(imagepath)
+            logging.info("{} doesn't exist, creating".format(imagepath))
             os.makedirs(imagepath)
 
         return imagepath
