@@ -13,7 +13,15 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from ..scandata import ScanData
 
-def make_all_ccal_plots(scan, fluxcal, output_path):
+def make_all_ccal_plots(scan, fluxcal, output_path=output_path):
+    """
+    Create crosscal QA plots
+
+    Args:
+        scan (int): Task id of target, e.g. 190311152
+        fluxcal (str): Name of fluxcal, e.g. "3C147"
+        output_path (str): Output path, None for default
+    """
     # Get BP plots
     BP = BPSols(scan, fluxcal)
     BP.get_data()
