@@ -7,7 +7,7 @@ Modification of the original code by Jordan Collier (https://github.com/Jordatio
 
 Usage:
   validation.py -h | --help
-  validation.py [-S --Selavy=<cat>] [-P --PyBDSF=<cat>] [-N --noise=<map>] [-C --catalogues=<list>]
+  validation.py [-S --Selavy=<cat>] [-z --bdsm] [-P --PyBDSFcat=<cat>] [-N --noise=<map>] [-C --catalogues=<list>]
   [-F --filter=<config>] [-R --snr=<ratio>] [-v --verbose] [-f --refind] [-r --redo] [-p --peak-flux]
   [-w --write] [-x --no-write] [-m --SEDs=<models>] [-e --SEDfig=<extn>] [-d --main-dir=<path>]
   [-n --ncores=<num>] [-b --nbins=<num>] [-s --source=<src>] [-a --aegean-params] <fits-file>
@@ -18,7 +18,8 @@ Arguments:
 Options:
   -h --help                 Show this help message.
   -S --Selavy=<cat>         Use this Selavy catalogue of the input image. Default is to run Aegean [default: None].
-  -P --PyBDSF               Run or Use the Pybdsf catalogue of the input image. Default is to run Aegean [default: None].
+  -z --bdsm                 Run PyBDSM [default: False]
+  -P --PyBDSFcat=<cat>          Use this Pybdsf catalogue of the input image. Default is to run Aegean [default: None].
   -N --noise=<map>          Use this fits image of the local rms. Default is to run BANE [default: None].
   -C --catalogues=<list>    A comma-separated list of filepaths to catalogue config files corresponding to catalogues to use
                             (will look in --main-dir for each file not found in given path) [default: FIRST_config.txt, NVSS_config.txt, TGSS_config.txt].
@@ -76,7 +77,6 @@ main_dir = args['--main-dir']
 if main_dir == 'None':
     main_dir, _ = os.path.split(os.path.realpath(__file__))
 
-print main_dir
 
 
 #Set paramaters passed in by user
@@ -95,6 +95,8 @@ snr = float(args['--snr'])
 config_files = args['--catalogues'].split(',')
 SEDs = args['--SEDs'].split(',')
 SEDextn = parse_string(args['--SEDfig'])
+do_PyBDSF = args['--bdsm']
+
 if args['--SEDs'] == 'None':
     SEDs = 'pow'
     fit_flux=False
@@ -109,7 +111,7 @@ if not write_any:
 #we'll create and move into a directory for output files
 filter_config = new_path(parse_string(args['--filter']))
 selavy_cat = new_path(parse_string(args['--Selavy']))
-pybdsf_cat = new_path(parse_string(args['--PyBDSF']))
+pybdsf_cat = new_path(parse_string(args['--PyBDSFcat']))
 noise = new_path(parse_string(args['--noise']))
 
 if __name__ == "__main__":
@@ -118,7 +120,7 @@ if __name__ == "__main__":
     if selavy_cat is not None:
         main_cat = selavy_cat
         finder = 'selavy'
-    elif pybdsf_cat is not None:
+    elif pybdsf_cat is not None or do_PyBDSF:
         main_cat = pybdsf_cat
         finder = 'pybdsf'
     else:
