@@ -349,8 +349,9 @@ class catalogue(object):
 
             img_data = img.fits.data
 
-            if self.finder == 'aegean' or self.finder == 'pybdsf':
-                img_data = img_data[0][0]
+            # if self.finder == 'aegean' or self.finder == 'pybdsf':
+                # img_data = img_data[0][0]
+
             self.img_peak = np.max(img_data[~np.isnan(img_data)])
             self.rms_bounds = rms_map.data > 0
             self.img_rms = int(np.median(rms_map.data[self.rms_bounds])*1e6) #uJy

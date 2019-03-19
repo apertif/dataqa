@@ -53,7 +53,7 @@ class radio_image(object):
 
         self.filepath = filepath
         self.name = filepath.split('/')[-1]
-        self.rms_map = rms_map
+
 
         if finder == 'aegean':
             suffix = '_aegean'
@@ -70,6 +70,11 @@ class radio_image(object):
             self.cat_comp = '../{0}_comp.{1}'.format(self.basename, extn)
         self.residual = '../{0}_residual.fits'.format(self.basename)
         self.model = '../{0}_model.fits'.format(self.basename)
+
+        # if finder == 'pybdsf:
+        self.rms_map = '../{}_rms.fits'.format(self.basename)
+        # else:
+        #     self.rms_map = rms_map
 
         #open fits image and store header specs
         self.fits = f.open(filepath)[0] #HDU axis 0
@@ -326,9 +331,19 @@ class radio_image(object):
 
             #Run PyBDSF source finder to produce catalogue of image
             img = bdsf.process_image(self.filepath, quiet=True, ncores=ncores)
-            img.export_image(outfile='{}_pybdsf_rms.fits'.format(self.basename), img_type='rms')
+            plot_type_list = ['rms', 'mean',
+                         'gaus_model', 'gaus_resid', 'island_mask']
+            fits_names = ["../{}_{}.fits".format(self.basename, _) for _ in plot_type_list]
 
-            img.write_catalog(outfile=self.cat_comp, format="csv", catalog_type="srl")
+            # number of plots
+            n_plots = len(plot_type_list)
+
+            for k in range(n_plots):
+                img.export_image(outfile=fits_names[k],
+                                clobber=True, img_type=plot_type_list[k])
+
+            img.write_catalog(outfile=self.cat_comp, format="csv",
+                              clobber=True, catalog_type="srl")
 
             #Print error message when no sources are found and catalogue not created.
             if not os.path.exists(self.cat_comp):
