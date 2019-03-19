@@ -99,10 +99,10 @@ if __name__ == '__main__':
 
     if run_mode == 'continuum':
         qa_pybdsf_dir = "{0:s}/continuum".format(
-            qa_dir, obs_id)
+            qa_dir)
     else:
         qa_pybdsf_dir = "{0:s}/mosaic".format(
-            qa_dir, obs_id)
+            qa_dir)
 
     # check that this directory exists (just in case)
     if not os.path.exists(qa_pybdsf_dir):
