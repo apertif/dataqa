@@ -26,8 +26,8 @@ from apercal.libs import lib
 import sys
 import glob
 from dataqa.scandata import get_default_imagepath
-from continuum.pybdsf_continuum import qa_continuum_run_pybdsf
-from mosaic.pybdsf_mosaic import qa_mosaic_run_pybdsf
+from continuum.qa_continuum import qa_continuum_run_pybdsf_validation
+from mosaic.qa__mosaic import qa_mosaic_run_pybdsf_validation
 
 
 if __name__ == '__main__':
@@ -139,7 +139,7 @@ if __name__ == '__main__':
 
     # run through continuum mode
     if run_mode == 'continuum':
-        pybdsf_run_status = qa_continuum_run_pybdsf(
+        pybdsf_run_status = qa_continuum_run_pybdsf_validation(
             obs_id, data_basedir_list, qa_pybdsf_dir)
         if pybdsf_run_status == 1:
             logger.info("Finished pybdsf successfully.")
@@ -154,7 +154,7 @@ if __name__ == '__main__':
             logger.error(
                 "Image {0:s} not found. Abort".format(mosaic_name))
 
-        pybdsf_run_status = qa_mosaic_run_pybdsf(
+        pybdsf_run_status = qa_mosaic_run_pybdsf_validation(
             obs_id, mosaic_name, qa_pybdsf_dir)
         if pybdsf_run_status == 1:
             logger.info("Finished pybdsf successfully")

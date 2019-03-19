@@ -15,12 +15,25 @@ import glob
 from astropy.io import fits
 from astropy.wcs import WCS
 import matplotlib.pyplot as plt
+import validation
 
 logger = logging.getLogger(__name__)
 
 
-def qa_continuum_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
+def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
     """This function creates quick plots of the diagnostic fits files
+
+    Note:
+        By default the images are created in png format with 400dpi, but it
+        is possible to choose pdf
+
+    Parameter:
+        fits_file_list : list
+            A list of strings with the file names of the fits files
+        plot_name : list
+            A list of strings with the names of the plots to save
+        plot_format : str (default png)
+            The format of the plot for matplotlib
 
     """
 
@@ -37,6 +50,7 @@ def qa_continuum_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format=
         # get WCS header of cube
         wcs = WCS(fits_hdulist[0].header)
 
+        # remove unnecessary axis
         if wcs.naxis == 4:
             wcs = wcs.dropaxis(3)
             wcs = wcs.dropaxis(2)
@@ -74,7 +88,7 @@ def qa_continuum_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format=
     print("Plotting PyBDSF diagnostic plots. Done")
 
 
-def qa_continuum_run_pybdsf(obs_id, data_basedir_list, qa_pybdsf_dir, overwrite=True):
+def qa_continuum_run_pybdsf_validation(obs_id, data_basedir_list, qa_pybdsf_dir, overwrite=True):
     """This function runs pybdsf on the continuum image of each beam
 
     This function will create a new directory for each beam. In this sub-directory
@@ -175,72 +189,100 @@ def qa_continuum_run_pybdsf(obs_id, data_basedir_list, qa_pybdsf_dir, overwrite=
                 fits_image = fits_image[-1]
 
             # run pybdsf
-            logging.info("# Running pybdsf")
+            logging.info("# Running validation tool and pybdsf")
             try:
-                img = bdsf.process_image(fits_image, quiet=True)
 
-                # Check/create catalogue name
-                cat_file = "{0:s}/{1:s}".format(beam_pybdsf_dir, os.path.basename(
-                    fits_image).replace(".fits", "_pybdsf_cat.fits"))
+                # change into the directory where the QA products should be produced
+                # This is necessary for the current implementation of the validation tool
+                # Should it return to the initial directory?
+                os.chdir(qa_pybdsf_dir)
 
-                # Write catalogue as csv file
-                logging.info("# Writing catalogue")
-                img.write_catalog(outfile=cat_file,
-                                  format='fits', clobber=True)
+                # run validation tool and pybdsf combined
+                validation.run(fits_image)
 
-                # Save plots
-                logging.info("# Saving pybdsf plots")
-                plot_type_list = ['rms', 'mean',
-                                  'gaus_model', 'gaus_resid', 'island_mask']
-                fits_names = [cat_file.replace(
-                    ".fits", "_{0:s}.fits".format(plot)) for plot in plot_type_list]
-                plot_names = [fits.replace(
-                    ".fits", ".png") for fits in fits_names]
+                # img = bdsf.process_image(fits_image, quiet=True)
 
-                # number of plots
-                n_plots = len(plot_type_list)
+                # # Check/create catalogue name
+                # cat_file = "{0:s}/{1:s}".format(beam_pybdsf_dir, os.path.basename(
+                #     fits_image).replace(".fits", "_pybdsf_cat.fits"))
 
-                for k in range(n_plots):
-                    img.export_image(outfile=fits_names[k],
-                                     clobber=overwrite, img_type=plot_type_list[k])
+                # # Write catalogue as csv file
+                # logging.info("# Writing catalogue")
+                # img.write_catalog(outfile=cat_file,
+                #                   format='fits', clobber=True)
 
-                # create images without a lot of adjusting
-                qa_continuum_plot_pybdsf_images(fits_names, plot_names)
+                # # Save plots
+                # logging.info("# Saving pybdsf plots")
+                # plot_type_list = ['rms', 'mean',
+                #                   'gaus_model', 'gaus_resid', 'island_mask']
+                # fits_names = [cat_file.replace(
+                #     ".fits", "_{0:s}.fits".format(plot)) for plot in plot_type_list]
+                # plot_names = [fits.replace(
+                #     ".fits", ".png") for fits in fits_names]
 
+                # # number of plots
+                # n_plots = len(plot_type_list)
+
+                # for k in range(n_plots):
+                #     img.export_image(outfile=fits_names[k],
+                #                      clobber=overwrite, img_type=plot_type_list[k])
+
+                logging.info("# Running validation tool and pybdsf. Done")
             except Exception as e:
                 logger.error(e)
+                logger.error("# Running validation tool and pybdsf failed.")
                 n_pybdsf_failed += 1
 
+            plot_type_list = ['rms', 'mean',
+                              'gaus_model', 'gaus_resid', 'island_mask']
+            fits_names = [os.path.basename(fits_image).replace(
+                ".fits", "pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
+
+            plot_names = [fits.replace(
+                ".fits", ".png") for fits in fits_names]
+
+            # add the continuum image
+            fits_names.append(fits_image)
+            plot_names.append(os.path.basename(
+                fits_image).replace(".fits", ".png"))
+
+            # create images without a lot of adjusting
+            try:
+                qa_plot_pybdsf_images(fits_names, plot_names)
+            except Exception as e:
+                logger.error(e)
+                logger.error("Plotting PyBDSF diagnostic images failed")
+
     # assuming everything went fine
-    run_pybdsf_status = 1
+    run_pybdsf_validation_status = 1
 
     # Check how many data directories failed as a whole
     if n_data_dir_failed == n_data_basedir:
         logging.error("No beams found in all data directories")
-        run_pybdsf_status = -1
+        run_pybdsf_validation_status = -1
     elif n_data_dir_failed < n_data_basedir:
         logging.warning("Could not find any beams in {0:d} data directories (out of {1:d}). Check log file".format(
             n_data_dir_failed, n_data_basedir))
-        run_pybdsf_status = 2
+        run_pybdsf_validation_status = 2
 
     # Check how many beams failed
     if n_images_failed == n_beams_total:
         logging.error(
             "Did not find any continuum images to convert or conversion failed")
-        run_pybdsf_status = -1
+        run_pybdsf_validation_status = -1
     elif n_images_failed < n_beams_total:
         logging.warning("Could not find or convert {0:d} continuum images (out of {1:d}). Check log file".format(
             n_images_failed, n_beams_total))
-        run_pybdsf_status = 2
+        run_pybdsf_validation_status = 2
 
     # Check how often pybdsf failed
     if n_pybdsf_failed == n_beams_total:
         logging.error(
-            "PyBDSF failed on all images")
-        run_pybdsf_status = -1
+            "PyBDSF and validation tool failed on all images")
+        run_pybdsf_validation_status = -1
     elif n_pybdsf_failed < n_beams_total:
-        logging.warning("PyBDSF failed on {0:d} continuum images (out of {1:d}). Check log file".format(
+        logging.warning("PyBDSF and validation tool failed on {0:d} continuum images (out of {1:d}). Check log file".format(
             n_pybdsf_failed, n_beams_total))
-        run_pybdsf_status = 2
+        run_pybdsf_validation_status = 2
 
-    return run_pybdsf_status
+    return run_pybdsf_validation_status
