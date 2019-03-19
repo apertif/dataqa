@@ -34,6 +34,7 @@ class ScanData(object):
         """
         self.scan = scan
         self.sourcename = sourcename
+        self.imagepathsuffix = ""
         #check if fluxcal is given as 3CXXX.MS or 3CXXX
         #Fix to not include .MS no matter what
         if self.sourcename[0:2] != '3C':
@@ -74,6 +75,12 @@ class ScanData(object):
         self.phase = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.amp = np.empty(len(self.dirlist),dtype=np.ndarray)
 
+    def get_default_imagepath(self, scan):
+        """
+        Wrapper around get_default_imagepath, this can be overridden in scal, ccal with a suffix
+        """
+        return os.path.join(get_default_imagepath(scan), self.imagepathsuffix)
+
     def create_imagepath(self, imagepath):
         """
         Create the image path. If imagepath is None, return a default one (and create it).
@@ -85,7 +92,7 @@ class ScanData(object):
             str: image path that was created. Will be equal to input imagepath, or a generated path
         """
         if not imagepath:
-            imagepath = get_default_imagepath(self.scan)
+            imagepath = self.get_default_imagepath(self.scan)
 
         if not os.path.exists(imagepath):
             logging.info("{} doesn't exist, creating".format(imagepath))

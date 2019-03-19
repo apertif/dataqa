@@ -64,6 +64,7 @@ def make_all_ccal_plots(scan, fluxcal, output_path=None):
 class BPSols(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
+        self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.time = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -181,6 +182,7 @@ class BPSols(ScanData):
 class GainSols(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
+        self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.time = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.flags = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -312,6 +314,7 @@ class GainSols(ScanData):
 class ModelData(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
+        self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         
     def get_data(self):
@@ -389,6 +392,7 @@ class ModelData(ScanData):
 class CorrectedData(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
+        self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         
@@ -504,6 +508,7 @@ class CorrectedData(ScanData):
 class RawData(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
+        self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         
