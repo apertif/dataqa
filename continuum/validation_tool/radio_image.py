@@ -325,7 +325,9 @@ class radio_image(object):
             print "--------------------------------"
 
             #Run PyBDSF source finder to produce catalogue of image
-            img = bdsf.process_image(self.filepath, quiet=True, rms_map=True, ncores=ncores)
+            img = bdsf.process_image(self.filepath, quiet=True, ncores=ncores)
+            img.export_image(outfile='{}_pybdsf_rms.fits'.format(self.basename), img_type='rms')
+
             img.write_catalog(outfile=self.cat_comp, format="csv", catalog_type="srl")
 
             #Print error message when no sources are found and catalogue not created.

@@ -139,8 +139,10 @@ if __name__ == "__main__":
     IMG = radio_image(img, verbose=verbose, finder=finder, rms_map=noise, SNR=snr)
 
     #Run BANE if user hasn't input noise map
-    if noise is None:
-        IMG.run_BANE(ncores=ncores, redo=refind)
+
+# TODO : not working on happili
+    # if noise is None:
+        # IMG.run_BANE(ncores=ncores, redo=refind)
 
 
     #Run Aegean if user didn't pass in Selavy catalogue
