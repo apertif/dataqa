@@ -82,10 +82,10 @@ def run(fits_image, finder='pybdsf', snr=5.0, verbose=True, refind=False, redo=F
 
     #Fit radio SED models using all fluxes except
     #, and derive the flux at frequency
-    if len(CAT.cat_list) > 1:
-        CAT.fit_spectra(redo=redo, models=None, GLEAM_subbands='int',
-                        GLEAM_nchans=4, cat_name=None, write=write_all,
-                        fit_flux=True)
+    # if len(CAT.cat_list) > 1:
+    #     CAT.fit_spectra(redo=redo, models=None, GLEAM_subbands='int',
+    #                     GLEAM_nchans=4, cat_name=None, write=write_all,
+    #                     fit_flux=True)
 
     print "----------------------------"
     print "| Running validation tests |"
