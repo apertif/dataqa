@@ -7,7 +7,7 @@ from astropy.wcs import WCS
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 
-def changeDir(filepath,suffix,verbose=False):
+def changeDir(filepath, suffix, verbose=False):
 
     """Derive a directory name from an input file to store all output files, create it, and then change to it.
 

@@ -960,7 +960,9 @@ class catalogue(object):
         self.set_key_fields(cat=cat)
 
 
-    def fit_spectra(self,cat_name=None,match_perc=0,models=['pow'],fig_extn=None,GLEAM_subbands=None,GLEAM_nchans=None,fit_flux=False,redo=False,write=True):
+    def fit_spectra(self, cat_name=None, match_perc=0, models=['pow'], fig_extn=None,
+                    GLEAM_subbands=None, GLEAM_nchans=None, fit_flux=False, redo=False,
+                    write=True):
 
         """Derive radio spectra for this catalogue, using the input SED models. This will add new columns to the table, including the spectral index
         and error, and optionally, the fitted flux at the frequency of this instance and the ratio between this and the measured flux.
