@@ -8,7 +8,7 @@ from inspect import currentframe, getframeinfo
 cf = currentframe()
 WARN = '\n\033[91mWARNING: \033[0m' + getframeinfo(cf).filename
 
-from functions import find_file, config2dic
+from functions import find_file, config2dic, changeDir
 from radio_image import radio_image
 from catalogue import catalogue
 from report import report
@@ -24,12 +24,13 @@ def run(fits_image, finder='pybdsf', snr=5.0, verbose=True, refind=False, redo=F
     #Set paramaters passed in by user
     img = os.path.abspath(fits_image)
 
-#Run Aegean / PyBDSF for source finding
     suffix = '{0}_snr{1}_'.format(finder, snr)
     if use_peak:
         suffix += 'peak'
     else:
         suffix += 'int'
+
+    changeDir(img, suffix, verbose=verbose)
 
     #Load image
     IMG = radio_image(img, verbose=verbose, finder=finder, SNR=snr)
