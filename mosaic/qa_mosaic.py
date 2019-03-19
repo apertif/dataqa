@@ -83,7 +83,7 @@ logger = logging.getLogger(__name__)
 #     print("Plotting PyBDSF diagnostic plots. Done")
 
 
-def qa_mosaic_run_pybdsf_validation(obs_id, mosaic_name, qa_pybdsf_dir, output_name='', overwrite=True):
+def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', overwrite=True):
     """This function runs pybdsf on a mosaic image.
 
     It can also be used to run pybdsf on a single image.
@@ -92,9 +92,6 @@ def qa_mosaic_run_pybdsf_validation(obs_id, mosaic_name, qa_pybdsf_dir, output_n
         The function assumes that the mosaic image is a fits file
 
     Parameter:
-        obs_id : int
-            Observation number
-
         mosaic_name : str
             Name of the mosaic image fits
 

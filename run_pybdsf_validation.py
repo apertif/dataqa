@@ -140,7 +140,7 @@ if __name__ == '__main__':
     # run through continuum mode
     if run_mode == 'continuum':
         pybdsf_run_status = qa_continuum_run_pybdsf_validation(
-            obs_id, data_basedir_list, qa_pybdsf_dir)
+            data_basedir_list, qa_pybdsf_dir)
         if pybdsf_run_status == 1:
             logger.info("Finished pybdsf successfully.")
         else:
@@ -155,7 +155,7 @@ if __name__ == '__main__':
                 "Image {0:s} not found. Abort".format(mosaic_name))
 
         pybdsf_run_status = qa_mosaic_run_pybdsf_validation(
-            obs_id, mosaic_name, qa_pybdsf_dir)
+            mosaic_name, qa_pybdsf_dir)
         if pybdsf_run_status == 1:
             logger.info("Finished pybdsf successfully")
         else:

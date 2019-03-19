@@ -88,7 +88,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
     print("Plotting PyBDSF diagnostic plots. Done")
 
 
-def qa_continuum_run_pybdsf_validation(obs_id, data_basedir_list, qa_pybdsf_dir, overwrite=True):
+def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwrite=True):
     """This function runs pybdsf on the continuum image of each beam
 
     This function will create a new directory for each beam. In this sub-directory
@@ -100,9 +100,6 @@ def qa_continuum_run_pybdsf_validation(obs_id, data_basedir_list, qa_pybdsf_dir,
         The function will always overwrite existing files.
 
     Parameter:
-        obs_id : int
-            Observation number
-
         data_basedir_list : list
             List of data directories on the happili node
 
