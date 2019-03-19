@@ -117,7 +117,7 @@ class catalogue(object):
             self.finder = None
         else:
             self.finder = finder.lower()
-        self.knownFinder = (self.finder in ['aegean','selavy','pybdsf'])
+        self.knownFinder = (self.finder in ['aegean', 'selavy', 'pybdsf'])
 
 
         #set names of all output catalogues
@@ -319,7 +319,7 @@ class catalogue(object):
             df = table.to_pandas()
         #otherwise, load straight into pandas as csv or 'sep' delimited file
         elif extn == 'csv':
-            if 'pybdsf' in self.finder:
+            if self.finder == 'pybdsf':
                 df = pd.read_csv(filepath, skip_blank_lines=True, skiprows=5, skipinitialspace=True)
             else:
                 df = pd.read_csv(filepath)
