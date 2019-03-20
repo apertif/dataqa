@@ -26,9 +26,9 @@ from apercal.libs import lib
 import sys
 import glob
 from dataqa.scandata import get_default_imagepath
-from dataqa.continuum.qa_continuum import qa_continuum_run_pybdsf_validation
+from dataqa.continuum.qa_continuum import qa_continuum_run_validation
 from dataqa.continuum.qa_continuum import qa_get_image_noise_dr_gaussianity
-from dataqa.mosaic.qa_mosaic import qa_mosaic_run_pybdsf_validation
+from dataqa.mosaic.qa_mosaic import qa_mosaic_run_validation
 
 
 if __name__ == '__main__':
@@ -38,24 +38,24 @@ if __name__ == '__main__':
     # Create and parse argument list
     # ++++++++++++++++++++++++++++++
     parser = argparse.ArgumentParser(
-        description='Create directory structure for qa of an observation')
+        description='Run validation for continuum or mosaic QA')
 
     # main argument: Observation number
     parser.add_argument("obs_id", type=int,
                         help='Observation Number / Scan Number / TASK-ID')
 
     # Optional argument
-    parser.add_argument("--overwrite", action="store_true", default=True,
-                        help='Overwrite existing files')
+    parser.add_argument("--mosaic_name", type=str, default='',
+                        help='Provide name of the moasic image. This will run the validation only on this image.')
 
-    parser.add_argument("--beam", type=list, default=[],
-                        help='Specify a single beam or a list of beams to run pybdsf')
+    # parser.add_argument("--overwrite", action="store_true", default=True,
+    #                     help='Overwrite existing files')
+
+    # parser.add_argument("--beam", type=list, default=[],
+    #                     help='Specify a single beam or a list of beams to run pybdsf')
 
     parser.add_argument("-p", "--path", type=str, default=None,
                         help='Directory to store the output in')
-
-    parser.add_argument("--mosaic_name", type=str, default='',
-                        help='Provide name of the moasic image. This will run pybdsf only on this image')
 
     # parser.add_argument("--n_processes", type=int, default=1,
     #                     help='Number of cores to use for processing')
@@ -98,55 +98,64 @@ if __name__ == '__main__':
     else:
         qa_dir = args.path
 
+    # check the mode to run the validation
     if run_mode == 'continuum':
-        qa_pybdsf_dir = "{0:s}/continuum".format(
+        qa_validation_dir = "{0:s}/continuum".format(
             qa_dir)
     else:
-        qa_pybdsf_dir = "{0:s}/mosaic".format(
+        qa_validation_dir = "{0:s}/mosaic".format(
             qa_dir)
 
     # check that this directory exists (just in case)
-    if not os.path.exists(qa_pybdsf_dir):
+    if not os.path.exists(qa_validation_dir):
         print("Directory {0:s} does not exist and will be created".format(
-            qa_pybdsf_dir))
-        os.mkdir(qa_pybdsf_dir)
+            qa_validation_dir))
+        os.mkdir(qa_validation_dir)
 
-    # 'create another directory to store the pybdsf output
-    qa_pybdsf_dir = '{0:s}/pybdsf'.format(qa_pybdsf_dir)
-    if not os.path.exists(qa_pybdsf_dir):
-        print("Directory {0:s} does not exist and will be created".format(
-            qa_pybdsf_dir))
-        os.mkdir(qa_pybdsf_dir)
+    # # 'create another directory to store the pybdsf output
+    # qa_validation_dir = '{0:s}/validation'.format(qa_validation_dir)
+    # if not os.path.exists(qa_validation_dir):
+    #     print("Directory {0:s} does not exist and will be created".format(
+    #         qa_validation_dir))
+    #     os.mkdir(qa_validation_dir)
 
-    # base directory for data
-    if host_name != "happili-01":
-        data_basedir_list = ['/data/apertif/']
-    else:
-        data_basedir_list = ['/data/apertif/', '/data2/apertif/',
-                             '/data3/apertif/', '/data4/apertif/']
-
-    # Run PyBDSF depending on the chosen mode
-    # +++++++++++++++++++++++++++++++++++++++
+    # Run validation depending on the chosen mode
+    # +++++++++++++++++++++++++++++++++++++++++++
 
     # Create logging file
     lib.setup_logger(
-        'debug', logfile='{0:s}/{1:d}_{2:s}_pybdsf.log'.format(qa_pybdsf_dir, obs_id, run_mode))
+        'debug', logfile='{0:s}/{1:d}_{2:s}_pybdsf.log'.format(qa_validation_dir, obs_id, run_mode))
     logger = logging.getLogger(__name__)
 
-    # logging.basicConfig(filename='{0:s}/{1:d}_{2:s}_pybdsf.log'.format(qa_pybdsf_dir, obs_id, run_mode), level=logging.DEBUG,
+    # logging.basicConfig(filename='{0:s}/{1:d}_{2:s}_pybdsf.log'.format(qa_validation_dir, obs_id, run_mode), level=logging.DEBUG,
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
     # logger = logging.getLogger(__name__)
 
     # run through continuum mode
     if run_mode == 'continuum':
-        pybdsf_run_status = qa_continuum_run_pybdsf_validation(
-            data_basedir_list, qa_pybdsf_dir)
-        if pybdsf_run_status == 1:
-            logger.info("Finished pybdsf and validation tool successfully.")
+
+        # base directory for data
+        if host_name != "happili-01":
+            data_basedir_list = ['/data/apertif/{0:d}'.format(obs_id)]
         else:
-            logger.error(
-                "Did not finish pybdsf and validation tool successfully. Check logfile")
+            data_basedir_list = ['/data/apertif/{0:d}'.format(obs_id), '/data2/apertif/{0:d}'.format(obs_id),
+                                 '/data3/apertif/{0:d}'.format(obs_id), '/data4/apertif/{0:d}'.format(obs_id)]
+
+        # run the continuum validation (with pybdsf)
+        try:
+            qa_continuum_run_validation(data_basedir_list, qa_validation_dir)
+        except Exception as e:
+            logger.error(e)
+            logger.error("Running continuum validation was not successful")
+
+        # # that it ran through
+        # if validation_run_status == 1:
+        #     logger.info("Finished pybdsf and validation tool successfully.")
+        # else:
+        #     logger.error(
+        #         "Did not finish pybdsf and validation tool successfully. Check logfile")
+
     # run through mosaic mode
     else:
         # check that the file name exists
@@ -156,17 +165,21 @@ if __name__ == '__main__':
             logger.error(
                 "Image {0:s} not found. Abort".format(mosaic_name))
 
-        # run the validation tool and pybdsf
-        pybdsf_run_status = qa_mosaic_run_pybdsf_validation(
-            mosaic_name, qa_pybdsf_dir)
-        if pybdsf_run_status == 1:
-            logger.info("Finished pybdsf and validation tool successfully")
-        else:
-            logger.error(
-                "Did not finish pybdsf and validation tool successfully. Check logfile")
+        # run the validation tool with pybdsf
+        try:
+            qa_mosaic_run_validation(mosaic_name, qa_validation_dir)
+        except Exception as e:
+            logger.error(e)
+            logger.error("Running continuum validation was not successful")
+
+        # if validation_run_status == 1:
+        #     logger.info("Finished pybdsf and validation tool successfully")
+        # else:
+        #     logger.error(
+        #         "Did not finish pybdsf and validation tool successfully. Check logfile")
 
         # Get additional QA information
-        qa_get_image_noise_dr_gaussianity(mosaic_name, qa_pybdsf_dir)
+        qa_get_image_noise_dr_gaussianity(mosaic_name, qa_validation_dir)
 
-    logger.info("Running pybdsf for {0:d} done. (time {1:.0f}s)".format(
+    logger.info("Running validation for {0:d} done. (time {1:.0f}s)".format(
         obs_id, time.time()-start_time))

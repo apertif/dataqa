@@ -83,7 +83,7 @@ logger = logging.getLogger(__name__)
 #     print("Plotting PyBDSF diagnostic plots. Done")
 
 
-def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', overwrite=True):
+def qa_mosaic_run_validation(mosaic_name, qa_validation_dir, output_name='', overwrite=True):
     """This function runs pybdsf on a mosaic image.
 
     It can also be used to run pybdsf on a single image.
@@ -95,7 +95,7 @@ def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', 
         mosaic_name : str
             Name of the mosaic image fits
 
-        qa_pybdsf_dir : str
+        qa_validation_dir : str
             The directory of the QA where the output will be saved.
             Most likely this is /home/<user>/qa_science_demo_2019/mosaic/pybdsf/
 
@@ -106,13 +106,13 @@ def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', 
             Set whether existing pybdsf files should be overwritten
 
     Return:
-        run_pybdsf_validation_status : int
+        run_mosaic_validation_status : int
             Status of how well this function performed
 
     """
 
     # # change the working directory to where the qa directory
-    # os.chdir(qa_pybdsf_dir)
+    # os.chdir(qa_validation_dir)
 
     # # Create a link to the fits file so that the pybdsf log file is stored in the qa directory
     # image_name = os.path.basename(mosaic_name)
@@ -130,12 +130,12 @@ def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', 
     # # Check/create catalogue name
     # if output_name == '':
     #     cat_file = "{0:s}/{1:s}".format(
-    #         qa_pybdsf_dir, os.path.basename(image_name).replace("fits", "_pybdsf_cat.fits"))
+    #         qa_validation_dir, os.path.basename(image_name).replace("fits", "_pybdsf_cat.fits"))
     # else:
     #     cat_file = output_name
 
     # assuming pybdsf will work
-    run_pybdsf_validation_status = 1
+    run_mosaic_validation_status = 1
 
     # Run pybdsf on the input image
     logging.info("#### Running pybdsf")
@@ -144,7 +144,7 @@ def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', 
         # change into the directory where the QA products should be produced
         # This is necessary for the current implementation of the validation tool
         # Should it return to the initial directory?
-        os.chdir(qa_pybdsf_dir)
+        os.chdir(qa_validation_dir)
 
         # run validation tool and pybdsf combined
         validation.run(image_name)
@@ -177,7 +177,7 @@ def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', 
         logger.error(e)
         logger.error(
             "PyBDSF and validation tool failed on image {0:s}".format(image_name))
-        run_pybdsf_validation_status = -1
+        run_mosaic_validation_status = -1
 
     plot_type_list = ['rms', 'mean',
                       'gaus_model', 'gaus_resid', 'island_mask']
@@ -198,4 +198,4 @@ def qa_mosaic_run_pybdsf_validation(mosaic_name, qa_pybdsf_dir, output_name='', 
         logger.error(e)
         logger.error("Plotting PyBDSF diagnostic images failed")
 
-    return run_pybdsf_validation_status
+    return run_mosaic_validation_status
