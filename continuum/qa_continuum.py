@@ -14,10 +14,171 @@ import sys
 import glob
 from astropy.io import fits
 from astropy.wcs import WCS
+from astropy.Table import Table
 import matplotlib.pyplot as plt
 import validation
+import scipy
 
 logger = logging.getLogger(__name__)
+
+
+def get_image_from_fits(fits_file):
+    """Function to get the image from a fits file
+
+    Parameter:
+        fits_file : str
+            File name of the image fits file
+
+    Return:
+        img : array
+            The image from the fits file of an array
+    """
+
+    its_file = fits.open(fits_file)
+
+    # check the number image axis
+    wcs = WCS(fits_hdulist[0].header)
+    if wcs.naxis == 4:
+        img = fits_hdulist[0].data[0][0]
+    elif wcs.naxis == 3:
+        img = fits_hdulist[0].data[0]
+    else:
+        img = fits_hdulist[0].data
+
+    # close the fits file
+    fits_file.close()
+
+    return img
+
+
+def qa_check_image_gaussianity(fits_file, alpha=1.e-2):
+    """Check if an image has gaussian distribution
+
+    Note:
+        Function was taken from apercal.subs.qa.checkimagegaussianity
+
+    Parameter:
+        fits_file : str
+            The name of the fits image to process
+        alpha : float (default 1e-2)
+            Parameter to judge the gaussianity, default taken from apercal conifg
+
+    Returns:
+        True if image is ok, False otherwise
+    """
+
+    img = get_image_from_fits(fits_file)
+
+    # determin gaussianity
+    k2, p = scipy.stats.normaltest(img, nan_policy='omit', axis=None)
+    if p < alpha:
+        return True
+    else:
+        return False
+
+
+def qa_get_image_dr(fits_file, rms):
+    """Function to determine the image dynamic range
+
+    Note:
+        fits_file : str
+            The name of the fits image to process
+        rms : float
+            The noise level of the image
+
+    Returns:
+        image_dr : float
+            The image dynamic range
+    """
+
+    img = get_image_from_fits(fits_file)
+
+    image_dr = np.max(img) / rms
+
+    return image_dr
+
+
+def qa_get_source_cat_dr(fits_file, rms, qa_pybdsf_dir):
+    """Function to determine the dynamic range in the source catalog
+
+    Note:
+        fits_file : str
+            The name of the fits image to process
+        rms : float
+            The noise level of the image
+        qa_pybdsf_dir : str
+            The path to the directory where the QA (and pybdsft output) is stored
+
+    Returns:
+        source_cat_dr : float
+            The dynamic range in the source catalogue
+    """
+
+    # get name of source catalogue
+    source_cat_name = "{0:s}/{1:s}".format(qa_pybdsf_dir, os.path.basename(
+        fits_file).replace(".fits", "_pybdsf_cat.csv"))
+
+    # read pybdsf catalog
+    cat_data = Table.read(source_cat_name, format=source_cat_name.split(
+        ".")[-1], header_start=4, data_start=5)
+
+    # search for dynamic range in catalogue
+
+    return 0
+
+
+def qa_get_image_noise_dr_gaussianity(fits_file, qa_pybdsf_dir):
+    """This functions determines additional image QA informaiton.
+
+    Note:
+        The function determines the image noise, the local dynamic range and gaussianity of an image
+
+    Parameter:
+        fits_file : str
+            The file name of the fits image to process
+        qa_pybdsf_dir : str
+            The directory of the continuum or mosaic QA where the output should be saved to
+
+    """
+
+    logger.info("# Performing additional QA tests...")
+
+    # Checking noise noise
+    # +++++++++++++++++++
+
+    # get the residual continuum image
+    rms = 1
+
+    # Checking image dynamic range
+    # ++++++++++++++++++++++++++++
+    logger.info("Determining image dynamic range ...")
+    image_dyanmic_range = qa_get_image_dr(fits_file, rms)
+    logger.info("Image dynamic range is: {0:.3g}".format(image_dyanmic_range))
+
+    # Checking source dynamic range
+    # +++++++++++++++++++++++++++++
+    logger.info("Determining source catalogue dynamic range ...")
+    source_cat_dyanmic_range = qa_get_source_cat_dr(
+        fits_file, rms, qa_pybdsf_dir)
+    logger.info("Source catalogue dynamic range is: {0:.3g}".format(
+        source_cat_dyanmic_range))
+
+    # Checking local dynamic range
+    # ++++++++++++++++++++++++++++
+
+    # Checkking gaussianity
+    # +++++++++++++++++++++
+
+    logger.info("Testing Gaussianity ...")
+
+    gaussianity_confirm = qa_check_image_gaussianity(fits_file)
+
+    logger.info("Image fullfills gaussianity: {0}".format(gaussianity_confirm))
+
+    # Write output file as xml
+    # ++++++++++++++++++++++++
+    output_file_name = "{0:s}/{1:s}".format(
+        qa_pybdsf_dir, os.path.basename(fits_file).replace(".fits", "QA_info.xml"))
 
 
 def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
@@ -40,7 +201,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
     # number of files
     n_fits_files = len(fits_file_list)
 
-    print("Plotting PyBDSF diagnostic plots")
+    logger("Plotting PyBDSF diagnostic plots")
 
     # go through the types of images and plot them
     for k in range(n_fits_files):
@@ -85,7 +246,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
 
         plt.close("all")
 
-    print("Plotting PyBDSF diagnostic plots. Done")
+    logger("Plotting PyBDSF diagnostic plots. Done")
 
 
 def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwrite=True):
@@ -113,7 +274,7 @@ def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwri
 
     """
 
-    logging.info("#### Running pybdsf for each beam")
+    logger.info("#### Running pybdsf for each beam")
 
     # number of directories to go through
     n_data_basedir = len(data_basedir_list)
@@ -140,11 +301,11 @@ def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwri
 
         # check that beams exists
         if n_beams == 0:
-            logging.error("No beams found. Abort")
+            logger.error("No beams found. Abort")
             n_data_dir_failed += 1
             continue
         else:
-            logging.info("Found {0:d} beams".format(n_beams))
+            logger.info("Found {0:d} beams".format(n_beams))
 
         # get a list of only the beams
         beam_list = [os.path.basename(beam) for beam in beam_data_dir_list]
@@ -155,13 +316,13 @@ def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwri
             beam = beam_list[k]
             beam_data_dir = beam_data_dir_list[k]
 
-            logging.info("## Processing beam {0:02d}".format(int(beam)))
+            logger.info("## Processing beam {0:02d}".format(int(beam)))
 
             beam_pybdsf_dir = "{0:s}/{1:s}".format(qa_pybdsf_dir, beam)
 
             # check/create beam directory
             if not os.path.exists(beam_pybdsf_dir):
-                logging.info(
+                logger.info(
                     "Creating directory {0:s}".format(beam_pybdsf_dir))
 
             # # change to this directory
@@ -174,19 +335,19 @@ def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwri
             fits_image = glob.glob("{0:s}/*.fits".format(continuum_image_dir))
 
             if len(fits_image) == 0:
-                logging.error(
+                logger.error(
                     "Did not find any fits image for beam {0:s}".format(beam))
                 continue
             elif len(fits_image) == 1:
                 fits_image = fits_image[0]
             else:
                 fits_image.sort()
-                logging.warning(
+                logger.warning(
                     "Found more than one fits image for beam {0:s}. Take the last one".format(beam))
                 fits_image = fits_image[-1]
 
             # run pybdsf
-            logging.info("# Running validation tool and pybdsf")
+            logger.info("# Running validation tool and pybdsf")
             try:
 
                 # change into the directory where the QA products should be produced
@@ -204,12 +365,12 @@ def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwri
                 #     fits_image).replace(".fits", "_pybdsf_cat.fits"))
 
                 # # Write catalogue as csv file
-                # logging.info("# Writing catalogue")
+                # logger.info("# Writing catalogue")
                 # img.write_catalog(outfile=cat_file,
                 #                   format='fits', clobber=True)
 
                 # # Save plots
-                # logging.info("# Saving pybdsf plots")
+                # logger.info("# Saving pybdsf plots")
                 # plot_type_list = ['rms', 'mean',
                 #                   'gaus_model', 'gaus_resid', 'island_mask']
                 # fits_names = [cat_file.replace(
@@ -224,7 +385,7 @@ def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwri
                 #     img.export_image(outfile=fits_names[k],
                 #                      clobber=overwrite, img_type=plot_type_list[k])
 
-                logging.info("# Running validation tool and pybdsf. Done")
+                logger.info("# Running validation tool and pybdsf. Done")
             except Exception as e:
                 logger.error(e)
                 logger.error("# Running validation tool and pybdsf failed.")
@@ -255,30 +416,30 @@ def qa_continuum_run_pybdsf_validation(data_basedir_list, qa_pybdsf_dir, overwri
 
     # Check how many data directories failed as a whole
     if n_data_dir_failed == n_data_basedir:
-        logging.error("No beams found in all data directories")
+        logger.error("No beams found in all data directories")
         run_pybdsf_validation_status = -1
     elif n_data_dir_failed < n_data_basedir:
-        logging.warning("Could not find any beams in {0:d} data directories (out of {1:d}). Check log file".format(
+        logger.warning("Could not find any beams in {0:d} data directories (out of {1:d}). Check log file".format(
             n_data_dir_failed, n_data_basedir))
         run_pybdsf_validation_status = 2
 
     # Check how many beams failed
     if n_images_failed == n_beams_total:
-        logging.error(
+        logger.error(
             "Did not find any continuum images to convert or conversion failed")
         run_pybdsf_validation_status = -1
     elif n_images_failed < n_beams_total:
-        logging.warning("Could not find or convert {0:d} continuum images (out of {1:d}). Check log file".format(
+        logger.warning("Could not find or convert {0:d} continuum images (out of {1:d}). Check log file".format(
             n_images_failed, n_beams_total))
         run_pybdsf_validation_status = 2
 
     # Check how often pybdsf failed
     if n_pybdsf_failed == n_beams_total:
-        logging.error(
+        logger.error(
             "PyBDSF and validation tool failed on all images")
         run_pybdsf_validation_status = -1
     elif n_pybdsf_failed < n_beams_total:
-        logging.warning("PyBDSF and validation tool failed on {0:d} continuum images (out of {1:d}). Check log file".format(
+        logger.warning("PyBDSF and validation tool failed on {0:d} continuum images (out of {1:d}). Check log file".format(
             n_pybdsf_failed, n_beams_total))
         run_pybdsf_validation_status = 2
 
