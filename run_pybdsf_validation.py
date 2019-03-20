@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     # main argument: Observation number
     parser.add_argument("obs_id", type=int,
-                        help='Observation Number')
+                        help='Observation Number / Scan Number / TASK-ID')
 
     # Optional argument
     parser.add_argument("--overwrite", action="store_true", default=True,
@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
     # directory where the output will be of pybdsf will be stored
     if args.path is None:
-        qa_dir = get_default_imagepath(args.scan)
+        qa_dir = get_default_imagepath(obs_id)
     else:
         qa_dir = args.path
 
