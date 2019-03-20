@@ -274,7 +274,7 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
 
     # create table with columns of a beam id, the actual beam name, and the fits image path
     beam_id = np.arange(n_beams_total)
-    beams = ['{0:02d'.format(beam) for beam in range(n_beams_total)]
+    beams = ['{0:02d}'.format(beam) for beam in range(n_beams_total)]
     beam_exists = [False for beam in range(n_beams_total)]
     fits_image_exists = [False for beam in range(n_beams_total)]
     fits_file_path = ['' for beam in range(n_beams_total)]
