@@ -27,7 +27,8 @@ import sys
 import glob
 from dataqa.scandata import get_default_imagepath
 from continuum.qa_continuum import qa_continuum_run_pybdsf_validation
-from mosaic.qa__mosaic import qa_mosaic_run_pybdsf_validation
+from continuum.qa_continuum import qa_get_noise_dr_gaussianity
+from mosaic.qa_mosaic import qa_mosaic_run_pybdsf_validation
 
 
 if __name__ == '__main__':
@@ -78,7 +79,7 @@ if __name__ == '__main__':
     obs_id = args.obs_id
 
     # users home directory
-    home_dir = os.path.expanduser('~')
+    # home_dir = os.path.expanduser('~')
 
     # the mode in which the script runs
     # beam: run on a single beam
@@ -140,11 +141,12 @@ if __name__ == '__main__':
     # run through continuum mode
     if run_mode == 'continuum':
         pybdsf_run_status = qa_continuum_run_pybdsf_validation(
-            obs_id, data_basedir_list, qa_pybdsf_dir)
+            data_basedir_list, qa_pybdsf_dir)
         if pybdsf_run_status == 1:
-            logger.info("Finished pybdsf successfully.")
+            logger.info("Finished pybdsf and validation tool successfully.")
         else:
-            logger.error("Did not finish pybdsf successfully. Check logfile")
+            logger.error(
+                "Did not finish pybdsf and validation tool successfully. Check logfile")
     # run through mosaic mode
     else:
         # check that the file name exists
@@ -154,12 +156,17 @@ if __name__ == '__main__':
             logger.error(
                 "Image {0:s} not found. Abort".format(mosaic_name))
 
+        # run the validation tool and pybdsf
         pybdsf_run_status = qa_mosaic_run_pybdsf_validation(
-            obs_id, mosaic_name, qa_pybdsf_dir)
+            mosaic_name, qa_pybdsf_dir)
         if pybdsf_run_status == 1:
-            logger.info("Finished pybdsf successfully")
+            logger.info("Finished pybdsf and validation tool successfully")
         else:
-            logger.error("Did not finish pybdsf successfully. Check logfile")
+            logger.error(
+                "Did not finish pybdsf and validation tool successfully. Check logfile")
+
+        # Get additional QA information
+        qa_get_image_noise_dr_gaussianity(mosaic_name, qa_pybdsf_dir)
 
     logger.info("Running pybdsf for {0:d} done. (time {1:.0f}s)".format(
         obs_id, time.time()-start_time))
