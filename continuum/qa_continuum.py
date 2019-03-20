@@ -15,7 +15,7 @@ import glob
 from astropy.io import fits
 from astropy.wcs import WCS
 import matplotlib.pyplot as plt
-import validation
+from validation_tool import validation
 
 logger = logging.getLogger(__name__)
 

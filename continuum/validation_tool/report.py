@@ -114,7 +114,7 @@ class report(object):
             self.css_style = css_style
         else:
             self.css_style = """<?php include("base.inc"); ?>
-            <meta name="DCTERMS.Creator" lang="en" content="personalName=Collier,Jordan" />
+            <meta name="DCTERMS.Creator" lang="en" content="" />
             <meta name="DC.Title" lang="en" content="Continuum Validation Report" />
             <meta name="DC.Description" lang="en" content="Continuum validation report summarising science readiness of data via several metrics" />
             <?php standard_head(); ?>
