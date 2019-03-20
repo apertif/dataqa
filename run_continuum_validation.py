@@ -95,6 +95,12 @@ if __name__ == '__main__':
     # directory where the output will be of pybdsf will be stored
     if args.path is None:
         qa_dir = get_default_imagepath(obs_id)
+
+        # check that path exists
+        if not os.path.exists(qa_dir):
+            print(
+                "Directory {0:s} does not exist and will be created".format(qa_dir))
+            os.mkdir(qa_dir)
     else:
         qa_dir = args.path
 
