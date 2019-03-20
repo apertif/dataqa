@@ -100,10 +100,10 @@ if __name__ == '__main__':
 
     # check the mode to run the validation
     if run_mode == 'continuum':
-        qa_validation_dir = "{0:s}/continuum".format(
+        qa_validation_dir = "{0:s}continuum".format(
             qa_dir)
     else:
-        qa_validation_dir = "{0:s}/mosaic".format(
+        qa_validation_dir = "{0:s}mosaic".format(
             qa_dir)
 
     # check that this directory exists (just in case)
