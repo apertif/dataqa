@@ -26,9 +26,9 @@ from apercal.libs import lib
 import sys
 import glob
 from dataqa.scandata import get_default_imagepath
-from continuum.qa_continuum import qa_continuum_run_pybdsf_validation
-from continuum.qa_continuum import qa_get_noise_dr_gaussianity
-from mosaic.qa_mosaic import qa_mosaic_run_pybdsf_validation
+from dataqa.continuum.qa_continuum import qa_continuum_run_pybdsf_validation
+from dataqa.continuum.qa_continuum import qa_get_image_noise_dr_gaussianity
+from dataqa.mosaic.qa_mosaic import qa_mosaic_run_pybdsf_validation
 
 
 if __name__ == '__main__':

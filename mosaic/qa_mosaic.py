@@ -11,8 +11,8 @@ import glob
 from astropy.io import fits
 from astropy.wcs import WCS
 import matplotlib.pyplot as plt
-from ..continuum.validation import validation
-from ..continuum.qa_continuum import qa_plot_pybdsf_images
+from dataqa.continuum.validation_tool import validation
+from dataqa.continuum.qa_continuum import qa_plot_pybdsf_images
 
 logger = logging.getLogger(__name__)
 
