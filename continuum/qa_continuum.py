@@ -16,8 +16,8 @@ from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.Table import Table
 import matplotlib.pyplot as plt
-import validation
 import scipy
+from validation_tool import validation
 
 logger = logging.getLogger(__name__)
 
