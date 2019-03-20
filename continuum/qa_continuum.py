@@ -419,10 +419,11 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
         fits_image = fits_file_table['fits_image_path'][beam_index]
 
         if fits_image == '':
-            logger.warning("No fits image for beam {0:d}")
-
+            logger.warning("No fits image for beam {0:d}".format(
+                fits_file_table['beam_name'][beam_index]))
+        else:
             # run pybdsf
-            logger.info("# Running validation tool and pybdsf")
+            logger.info("## Running validation tool and pybdsf")
             try:
 
                 # change into the directory where the QA products should be produced
@@ -433,10 +434,10 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 # run validation tool and pybdsf combined
                 validation.run(fits_image)
 
-                logger.info("# Running validation tool. Done")
+                logger.info("## Running validation tool. Done")
             except Exception as e:
                 logger.error(e)
-                logger.error("# Running validation tool failed.")
+                logger.error("## Running validation tool failed.")
 
             plot_type_list = ['rms', 'mean',
                               'gaus_model', 'gaus_resid', 'island_mask']
@@ -456,7 +457,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 qa_plot_pybdsf_images(fits_names, plot_names)
             except Exception as e:
                 logger.error(e)
-                logger.error("Plotting PyBDSF diagnostic images failed")
+                logger.error("## Plotting PyBDSF diagnostic images failed")
 
     #     # Go through all the different data directories
     # for data_basedir in data_basedir_list:

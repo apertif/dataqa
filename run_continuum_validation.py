@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     # Create logging file
     lib.setup_logger(
-        'debug', logfile='{0:s}/{1:d}_{2:s}_pybdsf.log'.format(qa_validation_dir, obs_id, run_mode))
+        'debug', logfile='{0:s}/{1:d}_{2:s}_validation.log'.format(qa_validation_dir, obs_id, run_mode))
     logger = logging.getLogger(__name__)
 
     # logging.basicConfig(filename='{0:s}/{1:d}_{2:s}_pybdsf.log'.format(qa_validation_dir, obs_id, run_mode), level=logging.DEBUG,
