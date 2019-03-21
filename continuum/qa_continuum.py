@@ -232,7 +232,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
         ax = plt.subplot(projection=wcs)
 
         # create image
-        if plot_type_list[k] == 'cont' and plot_type_list[k] == 'gaus_resid':
+        if plot_type_list[k] == 'cont' or plot_type_list[k] == 'gaus_resid':
             # using log norm here set to 0.1mJy/beam
             fig = ax.imshow(
                 img * 1.e3, norm=mc.SymLogNorm(0.2),  origin='lower')
@@ -246,14 +246,14 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
             fig = ax.imshow(img * 1.e3, origin='lower')
 
         cbar = plt.colorbar(fig)
-        cbar.set_label('Flux Density [mJy/beam]')
+        if not plot_type_list[k] == 'island_mask':
+            cbar.set_label('Flux Density [mJy/beam]')
 
         ax.coords[0].set_axislabel('Right Ascension')
         ax.coords[1].set_axislabel('Declination')
         ax.coords[0].set_major_formatter('hh:mm')
 
-        if not plot_type_list[k] == 'island_mask':
-            ax.set_title("{0:s}".format(os.path.basename(fits_file_list[k])))
+        ax.set_title("{0:s}".format(os.path.basename(fits_file_list[k])))
 
         output = plot_name_list[k]
 
