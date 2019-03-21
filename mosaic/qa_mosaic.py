@@ -179,8 +179,7 @@ def qa_mosaic_run_validation(mosaic_name, qa_validation_dir, output_name='', ove
             "PyBDSF and validation tool failed on image {0:s}".format(image_name))
         run_mosaic_validation_status = -1
 
-    plot_type_list = ['rms', 'mean',
-                      'gaus_model', 'gaus_resid', 'island_mask']
+    plot_type_list = ['gaus_model', 'gaus_resid', 'rms', 'mean', 'island_mask']
     fits_names = [image_name.replace(
         ".fits", "pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
     plot_names = [fits.replace(
@@ -193,7 +192,7 @@ def qa_mosaic_run_validation(mosaic_name, qa_validation_dir, output_name='', ove
 
     # create images without a lot of adjusting
     try:
-        qa_plot_pybdsf_images(fits_names, plot_names)
+        qa_plot_pybdsf_images(fits_names, plot_names, plot_type_list)
     except Exception as e:
         logger.error(e)
         logger.error("Plotting PyBDSF diagnostic images failed")

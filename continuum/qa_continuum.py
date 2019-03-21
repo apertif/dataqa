@@ -16,6 +16,7 @@ from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.table import Table
 import matplotlib.pyplot as plt
+import matplotlib.colors as mc
 import scipy
 from dataqa.continuum.validation_tool import validation
 
@@ -181,7 +182,7 @@ def qa_get_image_noise_dr_gaussianity(fits_file, qa_validation_dir):
         qa_validation_dir, os.path.basename(fits_file).replace(".fits", "QA_info.xml"))
 
 
-def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
+def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_format="png"):
     """This function creates quick plots of the diagnostic fits files
 
     Note:
@@ -191,8 +192,10 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
     Parameter:
         fits_file_list : list
             A list of strings with the file names of the fits files
-        plot_name : list
+        plot_name_list : list
             A list of strings with the names of the plots to save
+        plot_type_list : list
+            List of the types of plots which controls some plot settings.
         plot_format : str (default png)
             The format of the plot for matplotlib
 
@@ -226,7 +229,12 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format="png"):
         ax = plt.subplot(projection=wcs)
 
         # create image
-        fig = ax.imshow(img * 1.e3, origin='lower')
+        if plot_type_list[k] == 'gaus_model' or k == n_fits_files-1:
+            # using log norm here set to 0.1mJy/beam
+            fig = ax.imshow(
+                img * 1.e3, norm=mc.SymLogNorm(0.1),  origin='lower')
+        else:
+            fig = ax.imshow(img * 1.e3, origin='lower')
 
         cbar = plt.colorbar(fig)
         cbar.set_label('Flux Density [mJy/beam]')
@@ -313,6 +321,11 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
         # Now go through each beam
         for beam_dir in beam_data_dir_list:
 
+            # get the index for the table where path should be stored
+            table_beam_index = np.where(
+                fits_file_table['beam_name'] == beam)[0]
+            fits_file_table['beam_exists'][table_beam_index] = True
+
             # get a list of only the beams
             beam = os.path.basename(beam_dir)
 
@@ -338,14 +351,9 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
                 fits_image = fits_image[-1]
                 n_fits_images_found += 1
 
-            # get the index for the table where path should be stored
-            table_beam_index = np.where(
-                fits_file_table['beam_name'] == beam)[0]
-
             # there should always be a match, but just in case
             try:
                 fits_file_table['fits_image_path'][table_beam_index] = fits_image
-                fits_file_table['beam_exists'][table_beam_index] = True
                 fits_file_table['fits_image_exists'][table_beam_index] = True
             except Exception as e:
                 logger.error(e)
@@ -357,7 +365,7 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
         logger.warning("Found {0:d} out of {1:d} beams".format(
             n_beams_found_total, n_beams_total))
     else:
-        logger.info("Found all {0:d} images".format(n_beams_found_total))
+        logger.info("Found all {0:d} beams".format(n_beams_found_total))
 
     # check how many fits files were found
     if n_fits_images_found < n_beams_found_total:
@@ -420,7 +428,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
         fits_image = fits_file_table['fits_image_path'][beam_index]
 
         if fits_image == '':
-            logger.warning("No fits image for beam {0:d}".format(
+            logger.warning("No fits image for beam {0:s}".format(
                 fits_file_table['beam_name'][beam_index]))
         else:
             # run pybdsf
@@ -440,8 +448,8 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 logger.error(e)
                 logger.error("## Running validation tool failed.")
 
-            plot_type_list = ['rms', 'mean',
-                              'gaus_model', 'gaus_resid', 'island_mask']
+            plot_type_list = ['gaus_model', 'gaus_resid', 'rms', 'mean',
+                              , 'island_mask']
             fits_names = [os.path.basename(fits_image).replace(
                 ".fits", "pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
 
@@ -455,7 +463,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
             # create images without a lot of adjusting
             try:
-                qa_plot_pybdsf_images(fits_names, plot_names)
+                qa_plot_pybdsf_images(fits_names, plot_names, plot_type_list)
             except Exception as e:
                 logger.error(e)
                 logger.error("## Plotting PyBDSF diagnostic images failed")
