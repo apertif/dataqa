@@ -20,11 +20,11 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
     if page_type == 'index':
         page_title = 'APERTIF Science Demonstration Overview'
     elif page_type == 'obs_page':
-        page_title = 'Observation {0:d}'.format(obs_id)
+        page_title = 'Observation {0:s}'.format(obs_id)
         css_file = "../{0:s}".format(css_file)
         js_file = "../{0:s}".format(js_file)
     else:
-        page_title = '{0:d} {1:s}'.format(obs_id, page_type)
+        page_title = '{0:s} {1:s}'.format(obs_id, page_type)
         css_file = "../{0:s}".format(css_file)
         js_file = "../{0:s}".format(js_file)
 
@@ -88,16 +88,16 @@ def write_html_obs_index(html_file_name, obs_id):
     #     </table
 
     obs_index += """<tr>
-            <th colspan="7">{0:d}</th>
+            <th colspan="7">{0:s}</th>
         </tr>
         <tr>
-            <td > <a class="obs_links" href="{0:d}/{0:d}_prepare.html">prepare</a> </td>
-            <td > <a class="obs_links" href="{0:d}/{0:d}_crosscal.html">crosscal</a> </td>
-            <td > <a class="obs_links" href="{0:d}/{0:d}_selfcal.html">selfcal</a> </td>
-            <td > <a class="obs_links" href="{0:d}/{0:d}_continuum.html">continuum</a> </td>
-            <td > <a class="obs_links" href="{0:d}/{0:d}_line.html">line</a> </td>
-            <td > <a class="obs_links" href="{0:d}/{0:d}_mosaic.html">mosaic</a> </td>
-            <td > <a class="obs_links" href="{0:d}/{0:d}_apercal_log.html">apercal.log</a> </td>
+            <td > <a class="obs_links" href="{0:s}/{0:s}_prepare.html">prepare</a> </td>
+            <td > <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
+            <td > <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
+            <td > <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
+            <td > <a class="obs_links" href="{0:s}/{0:s}_line.html">line</a> </td>
+            <td > <a class="obs_links" href="{0:s}/{0:s}_mosaic.html">mosaic</a> </td>
+            <td > <a class="obs_links" href="{0:s}/{0:s}_apercal_log.html">apercal.log</a> </td>
         </tr>\n""".format(obs_id)
 
     obs_index += """</table>
@@ -122,10 +122,10 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         """
     for page in links:
         if page == page_type:
-            html_code += """<li><a class="active" href="{0:d}_{1:s}.html">{1:s}</a></li>\n""".format(
+            html_code += """<li><a class="active" href="{0:s}_{1:s}.html">{1:s}</a></li>\n""".format(
                 obs_id, page)
         else:
-            html_code += """<li><a href="{0:d}_{1:s}.html">{1:s}</a></li>\n""".format(
+            html_code += """<li><a href="{0:s}_{1:s}.html">{1:s}</a></li>\n""".format(
                 obs_id, page)
 
     html_code += """</ul>\n"""
@@ -150,7 +150,7 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
 
             print("   Creating page {0:s}".format(page))
 
-            page_name = "{0:s}/{1:d}/{1:d}_{2:s}.html".format(
+            page_name = "{0:s}/{1:s}/{1:s}_{2:s}.html".format(
                 qa_report_path, obs_id, page)
 
             # create the header
@@ -235,7 +235,7 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
     # Close the index file
     write_html_end(index_file)
 
-    print("Writing subpages for observation {0:d}".format(obs_id))
+    print("Writing subpages for observation {0:s}".format(obs_id))
 
     # obs_report_path = '{0:s}/{1:s}'.format(qa_report_dir, obs_ids[k])
 

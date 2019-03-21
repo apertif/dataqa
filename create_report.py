@@ -26,7 +26,7 @@ if __name__ == "__main__":
         description='Create overview for QA')
 
     # 1st argument: Observation number
-    parser.add_argument("obs_id", type=int,
+    parser.add_argument("obs_id", type=str,
                         help='Observation Number')
 
     parser.add_argument("-p", "--path", type=str,

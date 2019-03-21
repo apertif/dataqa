@@ -32,7 +32,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
         # get beams
         if obs_id != 0:
             beam_list = glob.glob(
-                "{0:s}/{1:d}/{2:s}/[0-3][0-9]".format(qa_report_path, obs_id, page_type))
+                "{0:s}/{1:s}/{2:s}/[0-3][0-9]".format(qa_report_path, obs_id, page_type))
         else:
             beam_list = glob.glob(
                 "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_path, page_type))
@@ -89,7 +89,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
         # get the images
         if obs_id != 0:
             image_list = glob.glob(
-                "{0:s}/{1:d}/{2:s}/*png".format(qa_report_path, obs_id, page_type))
+                "{0:s}/{1:s}/{2:s}/*png".format(qa_report_path, obs_id, page_type))
         else:
             image_list = glob.glob(
                 "{0:s}/{1:s}/*png".format(qa_report_path, page_type))
@@ -140,7 +140,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
         # get beams
         if obs_id != 0:
             beam_list = glob.glob(
-                "{0:s}/{1:d}/{2:s}/[0-3][0-9]".format(qa_report_path, obs_id, page_type))
+                "{0:s}/{1:s}/{2:s}/[0-3][0-9]".format(qa_report_path, obs_id, page_type))
         else:
             beam_list = glob.glob(
                 "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_path, page_type))
@@ -220,7 +220,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
         # get the diagnostic plots
         if obs_id != 0:
             image_list = glob.glob(
-                "{0:s}/{1:d}/{2:s}/*png".format(qa_report_path, obs_id, page_type))
+                "{0:s}/{1:s}/{2:s}/*png".format(qa_report_path, obs_id, page_type))
         else:
             image_list = glob.glob(
                 "{0:s}/{1:s}/*png".format(qa_report_path, page_type))
@@ -279,7 +279,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
 
         # get the log files in linke to the apercal_log report directory:
         log_file_list = glob.glob(
-            "{0:s}/{1:d}/apercal_log/apercal_beam*.log".format(qa_report_path, obs_id))
+            "{0:s}/{1:s}/apercal_log/apercal_beam*.log".format(qa_report_path, obs_id))
 
         n_log_files = len(log_file_list)
 

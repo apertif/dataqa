@@ -41,13 +41,13 @@ def create_report_dirs(obs_id, qa_report_dir, subpages, css_file='', js_file='')
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined
-    qa_dir_report_obs = "{0:s}/{1:d}".format(qa_dir_report, obs_id)
+    qa_dir_report_obs = "{0:s}/{1:s}".format(qa_dir_report, obs_id)
 
     if os.path.exists(qa_dir_report_obs):
         logger.info("Directory 'report' already exists")
     else:
         logger.warning(
-            "Directory 'report/{0:d}' does not exists and will be created".format(obs_id))
+            "Directory 'report/{0:s}' does not exists and will be created".format(obs_id))
         os.mkdir(qa_dir_report_obs)
 
     # go through the subpages and create the directories for them
@@ -62,7 +62,7 @@ def create_report_dirs(obs_id, qa_report_dir, subpages, css_file='', js_file='')
             logger.info("Directory 'report' already exists")
         else:
             logger.warning(
-                "Directory 'report/{0:d}/{1:s}' does not exists and will be created".format(obs_id, page))
+                "Directory 'report/{0:s}/{1:s}' does not exists and will be created".format(obs_id, page))
             os.mkdir(qa_dir_subpage)
 
         # Create links for files from prepare QA
@@ -271,7 +271,7 @@ def create_report_dirs(obs_id, qa_report_dir, subpages, css_file='', js_file='')
                 logger.warning("You are not working on happili-01.")
                 logger.warning("The script will not process all beams")
                 logger.warning("Please switch to happili-01")
-                apercal_log_file = "/data/apertif/{0:d}/apercal.log".format(
+                apercal_log_file = "/data/apertif/{0:s}/apercal.log".format(
                     obs_id)
 
                 link_name = "{0:s}/{1:s}".format(
@@ -309,7 +309,7 @@ def create_report_dirs(obs_id, qa_report_dir, subpages, css_file='', js_file='')
                     os.symlink(apercal_log_file, link_name)
             else:
                 apercal_log_file_list = [
-                    "/data/apertif/{0:d}/apercal.log".format(obs_id), "/data2/apertif/{0:d}/apercal.log".format(obs_id), "/data3/apertif/{0:d}/apercal.log".format(obs_id), "/data4/apertif/{0:d}/apercal.log".format(obs_id)]
+                    "/data/apertif/{0:s}/apercal.log".format(obs_id), "/data2/apertif/{0:s}/apercal.log".format(obs_id), "/data3/apertif/{0:s}/apercal.log".format(obs_id), "/data4/apertif/{0:s}/apercal.log".format(obs_id)]
 
                 log_file_counter = 0
 
