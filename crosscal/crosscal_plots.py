@@ -139,11 +139,11 @@ class BPSols(ScanData):
                             marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(0,1.8)
-        plt.legend(markerscale=3,fontsize=14)
-        plt.savefig('{imagepath}/BP_amp_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
-        #plt.clf()
-        # to really close the plot, this will do
-        plt.close('all')
+            plt.legend(markerscale=3,fontsize=14)
+            plt.savefig('{imagepath}/BP_amp_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
+            #plt.clf()
+            # to really close the plot, this will do
+            plt.close('all')
             
     def plot_phase(self, imagepath=None):
         """Plot phase, one plot per antenna"""
