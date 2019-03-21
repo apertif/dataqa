@@ -185,7 +185,7 @@ if __name__ == '__main__':
         #         "Did not finish pybdsf and validation tool successfully. Check logfile")
 
         # Get additional QA information
-        qa_get_image_noise_dr_gaussianity(mosaic_name, qa_validation_dir)
+        #qa_get_image_noise_dr_gaussianity(mosaic_name, qa_validation_dir)
 
     logger.info("Running validation for {0:s} done. (time {1:.0f}s)".format(
         obs_id, time.time()-start_time))

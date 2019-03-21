@@ -36,7 +36,7 @@ def get_image_from_fits(fits_file):
             The image from the fits file of an array
     """
 
-    its_file = fits.open(fits_file)
+    fits_file = fits.open(fits_file)
 
     # check the number image axis
     wcs = WCS(fits_hdulist[0].header)
@@ -103,6 +103,8 @@ def qa_get_image_dr(fits_file, rms):
 def qa_get_source_cat_dr(fits_file, rms, qa_validation_dir):
     """Function to determine the dynamic range in the source catalog
 
+    NOT FINISHED
+
     Note:
         fits_file : str
             The name of the fits image to process
@@ -131,6 +133,8 @@ def qa_get_source_cat_dr(fits_file, rms, qa_validation_dir):
 
 def qa_get_image_noise_dr_gaussianity(fits_file, qa_validation_dir):
     """This functions determines additional image QA informaiton.
+
+    NOT FINISHED
 
     Note:
         The function determines the image noise, the local dynamic range and gaussianity of an image
