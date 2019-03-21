@@ -324,10 +324,10 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
 
                     # check if link exists
                     if not os.path.exists(link_name):
-                        os.symlink(image, link_name)
+                        os.symlink(apercal_log_file, link_name)
                     else:
                         os.unlink(link_name)
-                        os.symlink(image, link_name)
+                        os.symlink(apercal_log_file, link_name)
 
                     log_file_counter += 1
 

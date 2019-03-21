@@ -224,6 +224,7 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
     # Create index file
     # +++++++++++++++++
     index_file = '{0:s}/index.html'.format(qa_report_dir)
+    logging.info("#### Creating index file: {0:s}".format(index_file))
 
     # create the header
     write_html_header(index_file, os.path.basename(css_file),
@@ -235,7 +236,9 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
     # Close the index file
     write_html_end(index_file)
 
-    print("Writing subpages for observation {0:s}".format(obs_id))
+    # Creating subpages
+    # +++++++++++++++++
+    logging.info("#### Writing subpages for observation {0:s}".format(obs_id))
 
     # obs_report_path = '{0:s}/{1:s}'.format(qa_report_dir, obs_ids[k])
 
