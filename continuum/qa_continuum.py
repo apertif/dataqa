@@ -232,7 +232,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
         ax = plt.subplot(projection=wcs)
 
         # create image
-        if plot_type_list[k] == 'gaus_model' or k == n_fits_files-1:
+        if plot_type_list[k] == 'gaus_model' or plot_type_list[k] == 'cont':
             # using log norm here set to 0.1mJy/beam
             fig = ax.imshow(
                 img * 1.e3, norm=mc.SymLogNorm(0.1),  origin='lower')
@@ -467,6 +467,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
             fits_names.append(fits_image)
             plot_names.append("{0:s}/{1:s}".format(qa_validation_beam_dir, os.path.basename(
                 fits_image)).replace(".fits", ".png"))
+            plot_type_list.append("cont")
 
             # create images without a lot of adjusting
             try:
