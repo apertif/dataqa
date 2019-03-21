@@ -424,6 +424,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
         if not os.path.exists(qa_validation_beam_dir):
             logger.info("Creating {0:s}".format(qa_validation_beam_dir))
+            os.mkdir(qa_validation_beam_dir)
 
         fits_image = fits_file_table['fits_image_path'][beam_index]
 
@@ -438,7 +439,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 # change into the directory where the QA products should be produced
                 # This is necessary for the current implementation of the validation tool
                 # Should it return to the initial directory?
-                os.chdir(qa_validation_dir)
+                os.chdir(qa_validation_beam_dir)
 
                 # run validation tool and pybdsf combined
                 validation.run(fits_image)
