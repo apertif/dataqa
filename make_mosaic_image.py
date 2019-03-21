@@ -110,8 +110,6 @@ convert_fits()
 #-----------------------------------
 # create mosaic image with linmos
 
-print('/data/apertif/'+str(data_dir)+'/mosaic/cont_tmp/image_mf_*.mir')
-
 linmos = lib.miriad('linmos')
 linmos.in_ = '/data/apertif/'+str(data_dir)+'/mosaic/cont_tmp/image_mf_*.mir'
 linmos.out = '/data/apertif/'+str(data_dir)+'/mosaic/'+str(data_dir)+'_mosaic_image'
