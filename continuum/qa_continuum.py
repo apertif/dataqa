@@ -282,10 +282,15 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
 
     # create table with columns of a beam id, the actual beam name, and the fits image path
     beam_id = np.arange(n_beams_total)
-    beam_names = ['{0:02d}'.format(beam) for beam in range(n_beams_total)]
-    beam_exists = [False for beam in range(n_beams_total)]
-    fits_image_exists = [False for beam in range(n_beams_total)]
-    fits_file_path = ['' for beam in range(n_beams_total)]
+    beam_names = np.array(['{0:02d}'.format(beam)
+                           for beam in range(n_beams_total)])
+    beam_exists = np.array([False for beam in range(n_beams_total)])
+    fits_image_exists = np.array([False for beam in range(n_beams_total)])
+    fits_file_path = np.array(['' for beam in range(n_beams_total)])
+
+    # create astropy table
+    fits_file_table = Table([beam_id, beam_names, fits_file_path, beam_exists, fits_image_exists], names=(
+        'beam_id', 'beam_name', 'fits_image_path', 'beam_exists', 'fits_image_exists'))
 
     # count how many beams and fits files were found
     n_beams_found_total = 0
@@ -323,8 +328,8 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
 
             # get the index for the table where path should be stored
             table_beam_index = np.where(
-                beam_names == beam)[0]
-            beam_exists[table_beam_index] = True
+                fits_file_table['beam_name'] == beam)[0]
+            fits_file_table['beam_exists'][table_beam_index] = True
 
             # directory of continuum images
             continuum_image_dir = "{0:s}/continuum".format(beam_dir)
@@ -335,6 +340,7 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
             # check whether no fits file was found, one or more fits file
             # the latter case should not exists, but I do not want it to stop
             if len(fits_image) == 0:
+                fits_file_table['fits_image_path'][table_beam_index] = ''
                 logger.error(
                     "Did not find any fits image for beam {0:s}".format(beam))
                 continue
@@ -350,8 +356,8 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
 
             # there should always be a match, but just in case
             try:
-                fits_file_path[table_beam_index] = fits_image
-                fits_image_exists[table_beam_index] = True
+                fits_file_table['fits_image_path'][table_beam_index] = fits_image
+                fits_file_table['fits_image_exists'][table_beam_index] = True
             except Exception as e:
                 logger.error(e)
                 logger.error(
@@ -371,10 +377,6 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
     else:
         logger.info("Found a fits file for each of the {0:d}".format(
             n_beams_found_total))
-
-    # create astropy table
-    fits_file_table = Table([beam_id, beam_names, fits_file_path, beam_exists, fits_image_exists], names=(
-        'beam_id', 'beam_name', 'fits_image_path', 'beam_exists', 'fits_image_exists'))
 
     # save the file
     if save_table:
