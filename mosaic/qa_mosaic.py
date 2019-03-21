@@ -180,15 +180,15 @@ def qa_mosaic_run_validation(mosaic_name, qa_validation_dir, output_name='', ove
         run_mosaic_validation_status = -1
 
     plot_type_list = ['gaus_model', 'gaus_resid', 'rms', 'mean', 'island_mask']
-    fits_names = [image_name.replace(
+    fits_names = ["{0:s}/{1:s}".format(qa_validation_dir, os.path.basename(image_name)).replace(
         ".fits", "_pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
     plot_names = [fits.replace(
         ".fits", ".png") for fits in fits_names]
 
     # add the continuum image
     fits_names.append(image_name)
-    plot_names.append(os.path.basename(
-        image_name).replace(".fits", ".png"))
+    plot_names.append("{0:s}/{1:s}".format(qa_validation_dir, os.path.basename(
+        image_name)).replace(".fits", ".png"))
     plot_type_list.append("cont")
 
     # create images without a lot of adjusting
