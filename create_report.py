@@ -14,7 +14,7 @@ import argparse
 from apercal.libs import lib
 from dataqa.report import html_report as hp
 from dataqa.report import html_report_dir as hpd
-from datqa.scandata import get_default_imagepath
+from dataqa.scandata import get_default_imagepath
 
 if __name__ == "__main__":
 
