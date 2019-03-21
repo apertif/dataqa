@@ -32,11 +32,14 @@ WARN = '\n\033[91mWARNING: \033[0m' + getframeinfo(cf).filename
 
 class report(object):
 
-    def __init__(self,cat,main_dir,img=None,plot_to='html',css_style=None,fig_font={'fontname':'Serif', 'fontsize' : 18},
-                 fig_size={'figsize' : (8,8)},
-                 label_size={'labelsize' : 12},markers={'s' : 20, 'linewidth' : 1, 'marker' : 'o', 'color' : 'b'},
-                 colour_markers={'marker' : 'o', 's' : 30, 'linewidth' : 0},cmap='plasma',cbins=20,
-                 arrows={'color' : 'r', 'width' : 0.04, 'scale' : 20},src_cnt_bins=50,redo=False,write=True,verbose=True):
+    def __init__(self, cat, main_dir, img=None, plot_to='html', css_style=None,
+                 src_cnt_bins=50, redo=False, write=True, verbose=True,
+                 fig_font={'fontname':'Serif', 'fontsize' : 18},
+                 fig_size={'figsize' : (8,8)}, cmap='plasma', cbins=20,
+                 label_size={'labelsize' : 12},
+                 markers={'s' : 20, 'linewidth' : 1, 'marker' : 'o', 'color' : 'b'},
+                 colour_markers={'marker' : 'o', 's' : 30, 'linewidth' : 0},
+                 arrows={'color' : 'r', 'width' : 0.04, 'scale' : 20}):
 
         """Initialise a report object for writing a html report of the image and cross-matches, including plots.
 
@@ -212,6 +215,15 @@ class report(object):
         return aver, apath
 
 
+    # def get_dynamic_range(self, radius=30, box=50):
+    #     """
+    #     get source and local dynamic range for the sources
+    #     within the radius [arcmin] of the beam center
+    #     The box [pixels] is the box to estimate local DR.
+    #     """
+
+
+
     def write_html_head(self):
 
         """Open the report html file and write the head."""
@@ -273,12 +285,14 @@ class report(object):
         <h4 align="middle"><i>File: '{0}'</i></h3>
         <table class="reportTable">
             <tr>
-                <th>APERCAL<br>version</th>
-                <th>APERCAL<br>path</th>
+                <th>IMAGE SIZE<br>(pixels)</th>
+                <th>PIXEL SIZE<br>(arcsec)</th>
                 <th>Synthesised Beam<br>(arcsec)</th>
                 <th>Median r.m.s.<br>(uJy)</th>
                 <th>Image peak<br>(Jy)</th>
-                <th>Dynamic Range</th>
+                <th>Image DR</th>
+                <th>Source DR</th>
+                <th>Local DR</th>
                 <th>Sky Area<br>(deg<sup>2</sup>)</th>
             </tr>
             <tr>
@@ -287,18 +301,23 @@ class report(object):
                 <td>{3:.1f} x {4:.1f}</td>
                 <td>{5}</td>
                 <td>{6:.2f}</td>
-                <td>{7:.0E}</td>
-                <td>{8:.2f}</td>
+                <td>{7:.0f} </td>
+                <td>{8:.0f} - {9:.0f}  </td>
+                <td>{10:.0f} - {11:.0f} </td>
+                <td>{10:.2f}</td>
             </tr>
         </table>""".format( img.name,
-                            self.apercal_version,
-                            self.apercal_path,
+                            img.imsizestr,
+                            img.pixsizestr,
                             img.bmaj,
                             img.bmin,
                             self.cat.img_rms,
                             self.cat.img_peak,
                             self.cat.dynamic_range,
+                            self.cat.source_dynrange[0], self.cat.source_dynrange[1],
+                            self.cat.local_dynrange[0], self.cat.local_dynrange[1],
                             self.cat.area))
+
 
     def write_html_cat_table(self):
 

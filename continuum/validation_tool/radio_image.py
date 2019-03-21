@@ -60,6 +60,7 @@ class radio_image(object):
         elif finder == 'pybdsf':
             suffix = '_pybdsf'
 
+
         #Aegean format
         self.basename = remove_extn(self.name) + suffix
         self.bkg = '../{0}_bkg.fits'.format(self.basename)
@@ -68,7 +69,8 @@ class radio_image(object):
             self.cat_comp = '../{0}_comp.csv'.format(self.basename)
         else:
             self.cat_comp = '../{0}_comp.{1}'.format(self.basename, extn)
-        self.residual = '../{0}_residual.fits'.format(self.basename)
+
+        self.residual = '../{0}_gaus_resid.fits'.format(self.basename)
         self.model = '../{0}_model.fits'.format(self.basename)
 
         # if finder == 'pybdsf:
@@ -78,7 +80,7 @@ class radio_image(object):
 
         #open fits image and store header specs
         self.fits = f.open(filepath)[0] #HDU axis 0
-        self.header_specs(self.fits,verbose=verbose)
+        self.header_specs(self.fits, verbose=verbose)
 
         #expected positional error, given by FWHM/SNR (Condon, 1997)
         self.posErr = int(round(self.bmaj/SNR))
@@ -186,7 +188,9 @@ class radio_image(object):
             axis += 1
 
         #Get the area and solid angle from all non-nan pixels in this image
-        self.area,self.solid_ang = get_pixel_area(fits, nans=True, ra_axis=self.ra_axis, dec_axis=self.dec_axis, w=w)
+        self.area, self.solid_ang = get_pixel_area(fits, nans=True,
+                                                   ra_axis=self.ra_axis,
+                                                   dec_axis=self.dec_axis, w=w)
 
         #store the RA/DEC of the image as centre pixel and store image vertices
         naxis1 = int(head['NAXIS1'])
@@ -204,6 +208,10 @@ class radio_image(object):
             print "Found psf axes {0:.2f} x {1:.2f} arcsec at PA {2}.".format(self.bmaj,self.bmin,self.bpa)
             print "Found a frequency of {0} MHz.".format(self.freq)
             print "Found a field centre of {0}.".format(self.centre)
+
+
+        self.imsizestr = "{}x{}".format(head['NAXIS1'], head['NAXIS2'])
+        self.pixsizestr = "{:.1f}".format(self.decPS)
 
 
     def run_BANE(self, ncores=8, redo=False):
@@ -382,3 +390,5 @@ class radio_image(object):
         self.fits.header['CRVAL' + str(self.dec_axis+1)] += dDEC/3600
         self.fits.data[0][0] *= flux_factor
         self.fits.writeto(filename,clobber=True)
+
+
