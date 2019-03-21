@@ -204,18 +204,20 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
     # number of files
     n_fits_files = len(fits_file_list)
 
-    logger("Plotting PyBDSF diagnostic plots")
+    logger.info("Plotting PyBDSF diagnostic plots")
 
     # go through the types of images and plot them
-    for k in range(n_fits_files):
+    for k in range(n_fits_files)
 
-        fits_hdulist = fits.open(fits_file_list[k])
+    logger.info("Plotting {0:s}".format(fits_file_list[k]))
 
-        # get WCS header of cube
-        wcs = WCS(fits_hdulist[0].header)
+     fits_hdulist = fits.open(fits_file_list[k])
 
-        # remove unnecessary axis
-        if wcs.naxis == 4:
+      # get WCS header of cube
+      wcs = WCS(fits_hdulist[0].header)
+
+       # remove unnecessary axis
+       if wcs.naxis == 4:
             wcs = wcs.dropaxis(3)
             wcs = wcs.dropaxis(2)
             img = fits_hdulist[0].data[0][0]
@@ -254,7 +256,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
 
         plt.close("all")
 
-    logger("Plotting PyBDSF diagnostic plots. Done")
+    logger.info("Plotting PyBDSF diagnostic plots. Done")
 
 
 def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=True):
