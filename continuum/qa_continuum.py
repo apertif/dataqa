@@ -207,17 +207,17 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
     logger.info("Plotting PyBDSF diagnostic plots")
 
     # go through the types of images and plot them
-    for k in range(n_fits_files)
+    for k in range(n_fits_files):
 
-    logger.info("Plotting {0:s}".format(fits_file_list[k]))
+        logger.info("Plotting {0:s}".format(fits_file_list[k]))
 
-     fits_hdulist = fits.open(fits_file_list[k])
+        fits_hdulist = fits.open(fits_file_list[k])
 
-      # get WCS header of cube
-      wcs = WCS(fits_hdulist[0].header)
+        # get WCS header of cube
+        wcs = WCS(fits_hdulist[0].header)
 
-       # remove unnecessary axis
-       if wcs.naxis == 4:
+        # remove unnecessary axis
+        if wcs.naxis == 4:
             wcs = wcs.dropaxis(3)
             wcs = wcs.dropaxis(2)
             img = fits_hdulist[0].data[0][0]
