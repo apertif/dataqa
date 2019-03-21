@@ -1,7 +1,13 @@
 #!/usr/bin/python2.7
 
 """
-Test script to create an html overview
+Script to create an html overview
+
+# NOTE:
+ Crosscal plots are now distributed over notes.
+
+ Preflag plots are also distributed over the notes
+
 """
 
 import os
@@ -87,7 +93,7 @@ if __name__ == "__main__":
     logger.info("### Creating report")
 
     create_main_html_stat = hp.create_main_html(
-        qa_dir, obs_id, subpages, css_file=css_file_name, js_file=js_file_name)
+        qa_report_dir, obs_id, subpages, css_file=css_file_name, js_file=js_file_name)
 
     if create_main_html_stat == 1:
         logger.info("Creating report succesfull")

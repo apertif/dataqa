@@ -279,11 +279,11 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
 
                 # rename the link to the log file according to host
                 if host_name == "happili-02":
-                    link_name = link_name.replace(".log", "_beam_10-19.log")
+                    link_name = link_name.replace(".log", "_beam_10-19.txt")
                 elif host_name == "happili-03":
-                    link_name = link_name.replace(".log", "_beam_20-29.log")
+                    link_name = link_name.replace(".log", "_beam_20-29.txt")
                 elif host_name == "happili-04":
-                    link_name = link_name.replace(".log", "_beam_30-39.log")
+                    link_name = link_name.replace(".log", "_beam_30-39.txt")
 
                 # check if link exists
                 if not os.path.exists(link_name):
@@ -294,12 +294,12 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
             # just for testing
             elif socket.gethostname() == "dop387":
 
-                apercal_log_file = "{0:s}/apercal.log".format(qa_dir)
+                apercal_log_file = "{0:s}/apercal.txt".format(qa_dir)
 
                 link_name = "{0:s}/{1:s}".format(
                     qa_dir_subpage, os.path.basename(apercal_log_file))
 
-                link_name = link_name.replace(".log", "_beam_00-09.log")
+                link_name = link_name.replace(".log", "_beam_00-09.txt")
 
                 # check if link exists
                 if not os.path.exists(link_name):
@@ -320,7 +320,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                         qa_dir_subpage, os.path.basename(apercal_log_file))
 
                     link_name = link_name.replace(
-                        ".log", "_beam_{0:d}0-{0:d}9.log".format(log_file_counter))
+                        ".log", "_beam_{0:d}0-{0:d}9.txt".format(log_file_counter))
 
                     # check if link exists
                     if not os.path.exists(link_name):
