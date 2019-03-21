@@ -181,7 +181,7 @@ def qa_mosaic_run_validation(mosaic_name, qa_validation_dir, output_name='', ove
 
     plot_type_list = ['gaus_model', 'gaus_resid', 'rms', 'mean', 'island_mask']
     fits_names = [image_name.replace(
-        ".fits", "pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
+        ".fits", "_pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
     plot_names = [fits.replace(
         ".fits", ".png") for fits in fits_names]
 
