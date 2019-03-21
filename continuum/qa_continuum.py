@@ -1,24 +1,25 @@
 """
 This script contains function to run pybdsf for the continuum QA.
 """
+import matplotlib
+matplotlib.use('Agg')
 
+import matplotlib.pyplot as plt
+import matplotlib.colors as mc
+from astropy.wcs import WCS
 import numpy as np
 import logging
 import bdsf
 import os
 import time
-import logging
 import socket
 from apercal.libs import lib
 import sys
 import glob
-from astropy.io import fits
-from astropy.wcs import WCS
-from astropy.table import Table
-import matplotlib.pyplot as plt
-import matplotlib.colors as mc
-import scipy
 from dataqa.continuum.validation_tool import validation
+import scipy
+from astropy.io import fits
+from astropy.table import Table
 
 logger = logging.getLogger(__name__)
 
