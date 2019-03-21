@@ -286,7 +286,7 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
                            for beam in range(n_beams_total)])
     beam_exists = np.array([False for beam in range(n_beams_total)])
     fits_image_exists = np.array([False for beam in range(n_beams_total)])
-    fits_file_path = np.array(['' for beam in range(n_beams_total)])
+    fits_file_path = np.array([str for beam in range(n_beams_total)])
 
     # create astropy table
     fits_file_table = Table([beam_id, beam_names, fits_file_path, beam_exists, fits_image_exists], names=(
