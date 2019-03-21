@@ -172,43 +172,43 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
     Function to create the main HTML file
     """
 
-    # qa_report_dir = '{0:s}/report'.format(qa_dir)
-    # # Check that qa_dir and the other directories exists
+    # qa_report_dir = '{0:s}/report'.format(qa_report_dir)
+    # # Check that qa_report_dir and the other directories exists
     # if not os.path.exists(qa_report_dir):
     #     logger.warning(
     #         "Directory {0:s} does not exists. Abort".format(qa_report_dir))
-    #     logger.info("Creating directory {0:s}".format(qa_dir))
+    #     logger.info("Creating directory {0:s}".format(qa_report_dir))
     #     os.mkdir(qa_report_dir)
     # else:
     #     logger.info("Directory {0:s} exists".format(qa_report_dir))
 
     # if continuum:
-    #     if not os.path.exists('{0:s}/continuum'.format(qa_dir):
+    #     if not os.path.exists('{0:s}/continuum'.format(qa_report_dir):
     #         logger.error("Directory for continuum does not exists")
     #         return -1
 
     # if crosscal:
-    #     if not os.path.exists('{0:s}/crosscal'.format(qa_dir):
+    #     if not os.path.exists('{0:s}/crosscal'.format(qa_report_dir):
     #         logger.error("Directory for crosscal does not exists")
     #         return -1
 
     # if line:
-    #     if not os.path.exists('{0:s}/line'.format(qa_dir):
+    #     if not os.path.exists('{0:s}/line'.format(qa_report_dir):
     #         logger.error("Directory for line does not exists")
     #         return -1
 
     # if mosaic:
-    #     if not os.path.exists('{0:s}/mosaic'.format(qa_dir):
+    #     if not os.path.exists('{0:s}/mosaic'.format(qa_report_dir):
     #         logger.error("Directory for mosaic does not exists")
     #         return -1
 
     # if selfcal:
-    #     if not os.path.exists('{0:s}/selfcal'.format(qa_dir):
+    #     if not os.path.exists('{0:s}/selfcal'.format(qa_report_dir):
     #         logger.error("Directory for selfcal does not exists")
     #         return -1
 
     # get a list of observations in this directory
-    # obs_dir_list = glob.glob('{0:s}/{1:s}'.format(qa_dir, '[0-9]'*9))
+    # obs_dir_list = glob.glob('{0:s}/{1:s}'.format(qa_report_dir, '[0-9]'*9))
 
     # if len(obs_dir_list) == 0:
     #     obs_dir_list =[obs_id]

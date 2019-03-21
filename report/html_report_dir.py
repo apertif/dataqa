@@ -16,7 +16,7 @@ from shutil import copy
 logger = logging.getLogger(__name__)
 
 
-def create_report_dirs(obs_id, qa_report_dir, subpages, css_file='', js_file=''):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
     """
     Function to create the directory structure for the
     report/html document.
@@ -24,7 +24,7 @@ def create_report_dirs(obs_id, qa_report_dir, subpages, css_file='', js_file='')
     """
 
     # first check that the subdirectory report exists
-    qa_dir_report = qa_report_dir
+    qa_dir_report = "{0:s}report".format(qa_dir)
 
     # copy the js and css files
     try:
