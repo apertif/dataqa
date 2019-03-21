@@ -294,6 +294,7 @@ class report(object):
                 <th>Source DR</th>
                 <th>Local DR</th>
                 <th>Sky Area<br>(deg<sup>2</sup>)</th>
+                <th>Normaltest</th>
             </tr>
             <tr>
                 <td>{1}</td>
@@ -304,7 +305,8 @@ class report(object):
                 <td>{7:.0f} </td>
                 <td>{8:.0f} - {9:.0f}  </td>
                 <td>{10:.0f} - {11:.0f} </td>
-                <td>{10:.2f}</td>
+                <td>{12:.2f}</td>
+                <td>{13:s}</td>
             </tr>
         </table>""".format( img.name,
                             img.imsizestr,
@@ -316,7 +318,8 @@ class report(object):
                             self.cat.dynamic_range,
                             self.cat.source_dynrange[0], self.cat.source_dynrange[1],
                             self.cat.local_dynrange[0], self.cat.local_dynrange[1],
-                            self.cat.area))
+                            self.cat.area,
+                            img.gaussianity))
 
 
     def write_html_cat_table(self):

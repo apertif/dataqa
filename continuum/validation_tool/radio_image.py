@@ -11,6 +11,7 @@ from astropy.utils.exceptions import AstropyWarning
 import warnings
 from inspect import currentframe, getframeinfo
 
+from scipy.stats import normaltest
 import logging
 
 #ignore annoying astropy warnings and set my own obvious warning output
@@ -212,6 +213,23 @@ class radio_image(object):
 
         self.imsizestr = "{}x{}".format(head['NAXIS1'], head['NAXIS2'])
         self.pixsizestr = "{:.1f}".format(self.decPS)
+
+# Check gaussianity:
+
+        if w.naxis == 4:
+            img = fits.data[0][0]
+        elif w.naxis == 3:
+            img = fits.data[0]
+        else:
+            img = fits.data
+
+        # determin gaussianity
+        k2, p = normaltest(img, nan_policy='omit', axis=None)
+        if p < 1e-2:
+            self.gaussianity = "Passed"
+        else:
+            self.gaussianity = "Failed"
+
 
 
     def run_BANE(self, ncores=8, redo=False):
