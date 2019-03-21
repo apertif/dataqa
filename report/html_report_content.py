@@ -12,6 +12,8 @@ import glob
 import time
 import socket
 
+logger = logging.getLogger(__name__)
+
 
 def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
     """
@@ -65,10 +67,10 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
                             </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
                     html_code += """\n"""
                 else:
-                    print("ERROR: No images in beam {0:s} found".format(
+                    logger.error("No images in beam {0:s} found".format(
                         beam_list[k]))
         else:
-            print("ERROR: No beams found for prepare found")
+            logger.error("No beams found for prepare found")
             return -1
 
     # create html content for subpage crosscal
@@ -128,7 +130,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
                             </div>\n""".format(div_name, page_type, os.path.basename(image))
                     html_code += """\n"""
         else:
-            print("ERROR: No crosscal plots found")
+            logger.error("No crosscal plots found")
             return -1
 
     # create html content for subpage continuum
@@ -192,7 +194,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
 
                     html_code += """</div>\n"""
                 else:
-                    print("ERROR: No mosaic plots found")
+                    logger.error("No mosaic plots found")
 
                 # add the validation tool
                 frame_name = "validation_tool"
@@ -208,7 +210,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
                     </p>
                     </div>\n""".format(frame_name, page_type, os.path.basename(beam_list[k]), "validation_tool")
         else:
-            print("ERROR: No beams for continuum QA found")
+            logger.error("No beams for continuum QA found")
             return -1
 
     # create html content for subpage mosaic
@@ -251,7 +253,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
 
             html_code += """</div>\n"""
         else:
-            print("ERROR: No mosaic plots found")
+            logger.error("No mosaic plots found")
             return -1
 
         # add the validation tool
@@ -328,11 +330,11 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
                     html_file.write(html_code_iframe_page)
                     html_file.close()
                 except Exception as e:
-                    logging.error(e)
-                    print("ERROR writing iframe page content")
+                    logger.error(e)
+                    logger.error("writing iframe page content")
 
         else:
-            print("ERROR: No apercal log files found")
+            logger.error("No apercal log files found")
             return -1
 
     try:
@@ -340,8 +342,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
         html_file.write(html_code)
         html_file.close()
     except Exception as e:
-        logging.error(e)
-        print("ERROR writing obs content")
+        logger.error(e)
+        logger.error("writing obs content")
         return -1
 
     return 1

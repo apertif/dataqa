@@ -9,6 +9,8 @@ import socket
 import html_report_content as hrc
 # from __future__ import with_statement
 
+logger = logging.getLogger(__name__)
+
 
 def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_id=0):
     """
@@ -53,7 +55,7 @@ def write_html_end(html_file_name):
         html_file.write("""</body>\n</html>""")
         html_file.close()
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
 
 
 def write_html_obs_index(html_file_name, obs_id):
@@ -106,7 +108,7 @@ def write_html_obs_index(html_file_name, obs_id):
         html_file.write(obs_index)
         html_file.close()
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
 
 
 def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
@@ -133,7 +135,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         html_file.write(html_code)
         html_file.close()
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         print("ERROR")
 
 
@@ -165,44 +167,44 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
             write_html_end(page_name)
 
 
-def create_main_html(qa_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None):
+def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None):
     """
     Function to create the main HTML file
     """
 
-    qa_report_dir = '{0:s}/report'.format(qa_dir)
-    # Check that qa_dir and the other directories exists
-    if not os.path.exists(qa_report_dir):
-        logging.warning(
-            "Directory {0:s} does not exists. Abort".format(qa_report_dir))
-        logging.info("Creating directory {0:s}".format(qa_dir))
-        os.mkdir(qa_report_dir)
-    else:
-        logging.info("Directory {0:s} exists".format(qa_report_dir))
+    # qa_report_dir = '{0:s}/report'.format(qa_dir)
+    # # Check that qa_dir and the other directories exists
+    # if not os.path.exists(qa_report_dir):
+    #     logger.warning(
+    #         "Directory {0:s} does not exists. Abort".format(qa_report_dir))
+    #     logger.info("Creating directory {0:s}".format(qa_dir))
+    #     os.mkdir(qa_report_dir)
+    # else:
+    #     logger.info("Directory {0:s} exists".format(qa_report_dir))
 
     # if continuum:
     #     if not os.path.exists('{0:s}/continuum'.format(qa_dir):
-    #         logging.error("Directory for continuum does not exists")
+    #         logger.error("Directory for continuum does not exists")
     #         return -1
 
     # if crosscal:
     #     if not os.path.exists('{0:s}/crosscal'.format(qa_dir):
-    #         logging.error("Directory for crosscal does not exists")
+    #         logger.error("Directory for crosscal does not exists")
     #         return -1
 
     # if line:
     #     if not os.path.exists('{0:s}/line'.format(qa_dir):
-    #         logging.error("Directory for line does not exists")
+    #         logger.error("Directory for line does not exists")
     #         return -1
 
     # if mosaic:
     #     if not os.path.exists('{0:s}/mosaic'.format(qa_dir):
-    #         logging.error("Directory for mosaic does not exists")
+    #         logger.error("Directory for mosaic does not exists")
     #         return -1
 
     # if selfcal:
     #     if not os.path.exists('{0:s}/selfcal'.format(qa_dir):
-    #         logging.error("Directory for selfcal does not exists")
+    #         logger.error("Directory for selfcal does not exists")
     #         return -1
 
     # get a list of observations in this directory
@@ -210,7 +212,7 @@ def create_main_html(qa_dir, obs_id, subpages, continuum=True, crosscal=True, li
 
     # if len(obs_dir_list) == 0:
     #     obs_dir_list =[obs_id]
-    #     logging.error("No observation found in QA directory. Abort")
+    #     logger.error("No observation found in QA directory. Abort")
 
     # obs_dir_list.sort()
 

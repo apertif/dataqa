@@ -13,8 +13,10 @@ import time
 import socket
 from shutil import copy
 
+logger = logging.getLogger(__name__)
 
-def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
+
+def create_report_dirs(obs_id, qa_report_dir, subpages, css_file='', js_file=''):
     """
     Function to create the directory structure for the
     report/html document.
@@ -22,36 +24,29 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
     """
 
     # first check that the subdirectory report exists
-    qa_dir_report = "{0:s}/report".format(qa_dir)
-
-    if os.path.exists(qa_dir_report):
-        logging.info("Directory 'report' already exists")
-    else:
-        logging.warning(
-            "Directory 'report' does not exists and will be created")
-        os.mkdir(qa_dir_report)
+    qa_dir_report = qa_report_dir
 
     # copy the js and css files
     try:
         copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
                                            os.path.basename(js_file)))
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
 
     try:
         copy(css_file,
              "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined
     qa_dir_report_obs = "{0:s}/{1:d}".format(qa_dir_report, obs_id)
 
     if os.path.exists(qa_dir_report_obs):
-        logging.info("Directory 'report' already exists")
+        logger.info("Directory 'report' already exists")
     else:
-        logging.warning(
+        logger.warning(
             "Directory 'report/{0:d}' does not exists and will be created".format(obs_id))
         os.mkdir(qa_dir_report_obs)
 
@@ -64,9 +59,9 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
             qa_dir_report_obs, page)
 
         if os.path.exists(qa_dir_subpage):
-            logging.info("Directory 'report' already exists")
+            logger.info("Directory 'report' already exists")
         else:
-            logging.warning(
+            logger.warning(
                 "Directory 'report/{0:d}/{1:s}' does not exists and will be created".format(obs_id, page))
             os.mkdir(qa_dir_subpage)
 
@@ -95,7 +90,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                     try:
                         os.mkdir(qa_dir_subpage_prepare_beam)
                     except Exception as e:
-                        logging.error(e)
+                        logger.error(e)
 
                     # get the images in the beam directory and link them
                     images_in_beam = glob.glob("{0:s}/*png".format(beam))
@@ -116,10 +111,10 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                                 os.symlink(image, link_name)
 
                     else:
-                        print("ERROR: No images in beam {0:s} found".format(
+                        logger.error("No images in beam {0:s} found".format(
                             beam))
             else:
-                print("ERROR: No beams found for prepare found")
+                logger.error("No beams found for prepare found")
 
         # Create links for files from crosscal QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -147,7 +142,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                         os.symlink(image, link_name)
 
             else:
-                print("ERROR: No images found for crosscal")
+                logger.error("No images found for crosscal")
 
         # Create links for files from continuum QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -174,7 +169,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                     try:
                         os.mkdir(qa_dir_subpage_prepare_beam)
                     except Exception as e:
-                        logging.error(e)
+                        logger.error(e)
 
                     # get the images in the beam directory and link them
                     images_in_beam = glob.glob(
@@ -195,7 +190,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                                 os.unlink(link_name)
                                 os.symlink(image, link_name)
                     else:
-                        print("ERROR: No images in beam {0:s} found".format(
+                        logger.error("No images in beam {0:s} found".format(
                             beam))
 
                     # link the validation tool
@@ -215,10 +210,10 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                             os.unlink(link_name)
                             os.symlink(validation_tool, link_name)
                     else:
-                        print(
-                            "ERROR: No validation tool output found for continuum QA of beam {0:s}".format(beam))
+                        logger.error(
+                            "No validation tool output found for continuum QA of beam {0:s}".format(beam))
             else:
-                print("ERROR: No beams found for continuum found")
+                logger.error("No beams found for continuum found")
 
         # Create links for files from mosaic QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -244,7 +239,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                         os.unlink(link_name)
                         os.symlink(image, link_name)
             else:
-                print("ERROR: No images found for mosaic")
+                logging.error("No images found for mosaic")
 
             # link the validation tool
             validation_tool = "{0:s}/{1:s}/validation_tool".format(
@@ -263,7 +258,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                     os.unlink(link_name)
                     os.symlink(validation_tool, link_name)
             else:
-                print("ERROR: No validation tool output found for mosaic")
+                logger.error("No validation tool output found for mosaic")
 
         # Create links for files from aperca log
         # ++++++++++++++++++++++++++++++++++++++
@@ -273,9 +268,9 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
             host_name = socket.gethostname()
 
             if host_name != "happili-01":
-                print("WARNING: You are not working on happili-01.")
-                print("WARNING: The script will not process all beams")
-                print("Please switch to happili-01")
+                logger.warning("You are not working on happili-01.")
+                logger.warning("The script will not process all beams")
+                logger.warning("Please switch to happili-01")
                 apercal_log_file = "/data/apertif/{0:d}/apercal.log".format(
                     obs_id)
 

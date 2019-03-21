@@ -76,12 +76,13 @@ if __name__ == "__main__":
 
     # Check that qa_dir and the other directories exists
     if not os.path.exists(qa_dir):
-        logger.error("Directory {0:s} does not exists. Abort".format(qa_dir))
+        logger.error(
+            "Directory {0:s} does not exists. Abort".format(qa_report_dir))
         sys.exit(-1)
     else:
         # Create directory structure for the report
         create_dir_stat = hpd.create_report_dirs(
-            obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name)
+            obs_id, qa_report_dir, subpages, css_file=css_file_name, js_file=js_file_name)
 
     logger.info("### Creating report")
 
