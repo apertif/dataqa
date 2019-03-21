@@ -456,7 +456,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
             plot_type_list = ['gaus_model', 'gaus_resid',
                               'rms', 'mean', 'island_mask']
-            fits_names = [os.path.basename(fits_image).replace(
+            fits_names = ["{0:s}/{1:s}".format(qa_validation_beam_dir, os.path.basename(fits_image)).replace(
                 ".fits", "_pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
 
             plot_names = [fits.replace(
@@ -464,8 +464,8 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
             # add the continuum image
             fits_names.append(fits_image)
-            plot_names.append(os.path.basename(
-                fits_image).replace(".fits", ".png"))
+            plot_names.append("{0:s}/{1:s}".format(qa_validation_beam_dir, os.path.basename(
+                fits_image)).replace(".fits", ".png"))
 
             # create images without a lot of adjusting
             try:
