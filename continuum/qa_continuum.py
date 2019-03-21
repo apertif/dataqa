@@ -420,7 +420,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
         # create a subdirectory for the beam in the qa directory
         qa_validation_beam_dir = "{0:s}/{1:s}".format(
-            qa_validation_dir, fits_file_table['beam_name'])
+            qa_validation_dir, fits_file_table['beam_name'][beam_index])
 
         if not os.path.exists(qa_validation_beam_dir):
             logger.info("Creating {0:s}".format(qa_validation_beam_dir))
