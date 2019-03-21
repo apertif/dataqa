@@ -45,11 +45,11 @@ if __name__ == '__main__':
                         help='Observation Number / Scan Number / TASK-ID')
 
     # Optional argument
-    parser.add_argument("--mosaick_name", type=str, default='',
+    parser.add_argument("--mosaic_name", type=str, default='',
                         help='Provide name of the moasic image. This will run the validation only on this image.')
 
     # Optional argument
-    parser.add_argument("--for_mosaick", action="store_true", default=False,
+    parser.add_argument("--for_mosaic", action="store_true", default=False,
                         help='Set to run for mosaic QA.')
 
     # parser.add_argument("--overwrite", action="store_true", default=True,
@@ -87,8 +87,8 @@ if __name__ == '__main__':
 
     # the mode in which the script runs
     # mosaic: run on a file
-    if args.for_mosaick or args.mosaick_name != '':
-        run_mode = 'mosaick'
+    if args.for_mosaic or args.mosaic_name != '':
+        run_mode = 'mosaic'
     else:
         run_mode = 'continuum'
 
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         qa_validation_dir = "{0:s}continuum".format(
             qa_dir)
     else:
-        qa_validation_dir = "{0:s}mosaick".format(
+        qa_validation_dir = "{0:s}mosaic".format(
             qa_dir)
 
     # check that this directory exists (just in case)
@@ -164,21 +164,21 @@ if __name__ == '__main__':
 
     # run through mosaic mode
     else:
-        if args.mosaick_name == '':
-            mosaick_name = "/data/apertif/{0:s}/mosaick/{0:s}_mosaick_image.fits".format(
+        if args.mosaic_name == '':
+            mosaic_name = "/data/apertif/{0:s}/mosaic/{0:s}_mosaic_image.fits".format(
                 obs_id)
         else:
-            mosaick_name = args.mosaick_name
+            mosaic_name = args.mosaic_name
         # check that the file name exists
-        if os.path.exists(mosaick_name):
-            logger.info("Found image file {0:s}".format(mosaick_name))
+        if os.path.exists(mosaic_name):
+            logger.info("Found image file {0:s}".format(mosaic_name))
         else:
             logger.error(
-                "Image {0:s} not found. Abort".format(mosaick_name))
+                "Image {0:s} not found. Abort".format(mosaic_name))
 
         # run the validation tool with pybdsf
         try:
-            qa_mosaic_run_validation(mosaick_name, qa_validation_dir)
+            qa_mosaic_run_validation(mosaic_name, qa_validation_dir)
         except Exception as e:
             logger.error(e)
             logger.error("Running continuum validation was not successful")
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         #         "Did not finish pybdsf and validation tool successfully. Check logfile")
 
         # Get additional QA information
-        #qa_get_image_noise_dr_gaussianity(mosaick_name, qa_validation_dir)
+        #qa_get_image_noise_dr_gaussianity(mosaic_name, qa_validation_dir)
 
     logger.info("Running validation for {0:s} done. (time {1:.0f}s)".format(
         obs_id, time.time()-start_time))
