@@ -448,8 +448,8 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 logger.error(e)
                 logger.error("## Running validation tool failed.")
 
-            plot_type_list = ['gaus_model', 'gaus_resid', 'rms', 'mean',
-                              , 'island_mask']
+            plot_type_list = ['gaus_model', 'gaus_resid',
+                              'rms', 'mean', 'island_mask']
             fits_names = [os.path.basename(fits_image).replace(
                 ".fits", "pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
 
