@@ -189,6 +189,7 @@ def qa_mosaic_run_validation(mosaic_name, qa_validation_dir, output_name='', ove
     fits_names.append(image_name)
     plot_names.append(os.path.basename(
         image_name).replace(".fits", ".png"))
+    plot_type_list.append("cont")
 
     # create images without a lot of adjusting
     try:
