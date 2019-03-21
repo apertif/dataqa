@@ -41,7 +41,7 @@ if __name__ == '__main__':
         description='Run validation for continuum or mosaic QA')
 
     # main argument: Observation number
-    parser.add_argument("obs_id", type=int,
+    parser.add_argument("obs_id", type=str,
                         help='Observation Number / Scan Number / TASK-ID')
 
     # Optional argument
@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     # Create logging file
     lib.setup_logger(
-        'debug', logfile='{0:s}/{1:d}_{2:s}_validation.log'.format(qa_validation_dir, obs_id, run_mode))
+        'debug', logfile='{0:s}/{1:s}_{2:s}_validation.log'.format(qa_validation_dir, obs_id, run_mode))
     logger = logging.getLogger(__name__)
 
     # logging.basicConfig(filename='{0:s}/{1:d}_{2:s}_pybdsf.log'.format(qa_validation_dir, obs_id, run_mode), level=logging.DEBUG,
@@ -143,10 +143,10 @@ if __name__ == '__main__':
 
         # base directory for data
         if host_name != "happili-01":
-            data_basedir_list = ['/data/apertif/{0:d}'.format(obs_id)]
+            data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id)]
         else:
-            data_basedir_list = ['/data/apertif/{0:d}'.format(obs_id), '/data2/apertif/{0:d}'.format(obs_id),
-                                 '/data3/apertif/{0:d}'.format(obs_id), '/data4/apertif/{0:d}'.format(obs_id)]
+            data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id), '/data2/apertif/{0:s}'.format(obs_id),
+                                 '/data3/apertif/{0:s}'.format(obs_id), '/data4/apertif/{0:s}'.format(obs_id)]
 
         # run the continuum validation (with pybdsf)
         try:
@@ -187,5 +187,5 @@ if __name__ == '__main__':
         # Get additional QA information
         qa_get_image_noise_dr_gaussianity(mosaic_name, qa_validation_dir)
 
-    logger.info("Running validation for {0:d} done. (time {1:.0f}s)".format(
+    logger.info("Running validation for {0:s} done. (time {1:.0f}s)".format(
         obs_id, time.time()-start_time))
