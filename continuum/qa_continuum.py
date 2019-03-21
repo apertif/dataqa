@@ -457,7 +457,7 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
             plot_type_list = ['gaus_model', 'gaus_resid',
                               'rms', 'mean', 'island_mask']
             fits_names = [os.path.basename(fits_image).replace(
-                ".fits", "pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
+                ".fits", "_pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
 
             plot_names = [fits.replace(
                 ".fits", ".png") for fits in fits_names]
