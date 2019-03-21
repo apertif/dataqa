@@ -307,13 +307,14 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
                 "No beams found in {0:s}. Go to next data directory".format(data_basedir))
             continue
         else:
-            logger.info("Found {0:d} beams".format(n_beams))
+            logger.info("Found {0:d} beams in {1:s}".format(
+                n_beams, data_basedir))
 
         # Now go through each beam
         for beam_dir in beam_data_dir_list:
 
             # get a list of only the beams
-            beam = os.path.basename(beam)
+            beam = os.path.basename(beam_dir)
 
             # directory of continuum images
             continuum_image_dir = "{0:s}/continuum".format(beam_dir)
