@@ -49,7 +49,7 @@ if __name__ == '__main__':
                         help='Provide name of the moasic image. This will run the validation only on this image.')
 
     # Optional argument
-    parser.add_argument("--for_mosaick", type="store_true", default=False,
+    parser.add_argument("--for_mosaick", action="store_true", default=False,
                         help='Set to run for mosaic QA.')
 
     # parser.add_argument("--overwrite", action="store_true", default=True,
