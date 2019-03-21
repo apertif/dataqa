@@ -87,8 +87,8 @@ if __name__ == '__main__':
 
     # the mode in which the script runs
     # mosaic: run on a file
-    if args.for_mosaic or args.mosaick_name != '':
-        run_mode = 'mosaic'
+    if args.for_mosaick or args.mosaick_name != '':
+        run_mode = 'mosaick'
     else:
         run_mode = 'continuum'
 
