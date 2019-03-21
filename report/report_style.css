@@ -1,0 +1,205 @@
+@charset 'UTF-8';
+/* 
+@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,700,900');
+@import url('font-awesome.min.css'); */
+h1 
+{
+    text-align: center;
+    text-decoration: underline;
+}
+
+h3 
+{
+    text-align: center;
+    text-decoration: underline;
+    background-color: rgb(252, 152, 95);
+    padding: 0px 0px;
+    color: black;
+}
+
+#obs_index
+{
+    text-align: center;
+}
+
+table 
+{
+    border-collapse: collapse;
+    table-layout: auto;
+    width: 100%;
+    font-size: large;
+}
+    th,td
+    {
+        padding: 15px;
+    }
+    tr:nth-child(even) {background-color: #333;}
+
+    td:hover{
+      background-color: rgb(255, 123, 46);
+    }
+
+
+.obs_links{
+  color: white;
+}
+
+/* *****************
+Navigation 
+****************** */
+
+ul {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    margin-bottom: 5px;
+}
+
+li {
+  float: left;
+  border-right: 1px solid #bbb;
+}
+
+li a {
+  display: block;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+  background-color: rgb(255, 123, 46);
+}
+
+.active {
+  background-color: rgb(252, 152, 95);
+}
+
+
+/******************************
+Buttons
+******************************/
+
+button {
+  background-color: rgb(252, 152, 95);
+  width: 100%;
+  margin: auto;
+  font-size: x-large;
+  margin-bottom: 5px;
+}
+button:hover {
+  background-color: rgb(255, 123, 46);
+}
+
+.button_continuum {
+  background-color: rgb(192, 192, 192);
+  width: 100%;
+  margin: auto;
+  font-size: large;
+  margin-bottom: 5px;
+}
+
+.button_continuum:hover {
+  background-color: rgb(153, 153, 153);
+}
+
+/******************************
+Gallery
+******************************/
+
+div.plots {
+  margin: auto;
+  clear: both;
+  padding: 0px 0px;
+}
+
+.gallery {
+  margin: auto;
+  border: 1px solid #ccc;
+  float: left;
+  width: 33%;
+  display: none;
+}
+
+.gallery:hover {
+  border: 1px solid #777;
+}
+
+.gallery img {
+  width: 100%;
+  height: auto;
+}
+
+.caption {
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.gallery_row{
+  display: none;
+  flex-wrap: wrap;
+  -ms-flex-wrap: wrap; /* IE10 */
+  padding: 4px 4px;
+  margin: auto;
+}
+
+.gallery_column {
+  -ms-flex: 32%; /* IE10 */
+  flex: 32%;
+  max-width: 32%;
+  padding: 0px 4px;
+}
+
+
+/* .mosaic_img{
+  border: 1px solid #ccc;
+  vertical-align: bottom;
+}
+.mosaic_img:hover {
+  border: 1px solid #777;
+} */
+
+/******************************
+logfiles
+******************************/
+#log {
+  margin: auto;
+  width: 95%;
+  height: 600px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #777;
+  display: none;
+}
+
+/******************************
+continuum
+******************************/
+
+.beam_continuum{
+  margin: auto;
+  display: none;
+  width: 95%;
+}
+
+/******************************
+Validation tool
+******************************/
+#validation_tool {
+  margin: auto;
+  width: 95%;
+  height: 1000px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #777;
+  display: none;
+}
