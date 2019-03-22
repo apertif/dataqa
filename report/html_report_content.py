@@ -22,8 +22,8 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     logging.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p> 
-            Here you can go through the different plots created by preflag. 
+        <p>
+            Here you can go through the different plots created by preflag.
             Please not that you can only look at beams for which these plots have been created.
         </p>\n
         """
@@ -70,6 +70,84 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     return html_code
 
 
+def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for crosscal
+    """
+
+    logging.info("Writing html code for page {0:s}".format(page_type))
+
+    html_code += """
+        <p>
+            Here you can go through the different plots created by crosscal.
+        </p>\n
+        """
+    # the different plots
+    categories = ["BP_amp", "BP_phase", "Corrected_amp", "Corrected_phase",
+                  "Gain_amp", "Gain_phase", "Model_amp", "Model_phase", "Raw_amp", "Raw_phase"]
+
+    categories_titles = ["Bandpass Amplitude", "Bandpass Phase", "Corrected Amplitude", "Corrected Phase",
+                         "Gain factors Amplitude", "Gain factors Phase", "Model Amplitude", "Model Phase", "Raw visibility Amplitude", "Raw Visibility Phase"]
+
+    n_cats = len(categories)
+
+    # get the images
+    image_list = glob.glob(
+        "{0:s}/{1:s}/*png".format(qa_report_obs_path, page_type))
+
+    if len(image_list) != 0:
+        # go throught the different types of plots
+        for k in range(n_cats):
+
+            # get list of plots for this category
+            cat_plots = [pl for pl in image_list if categories[k] in pl]
+
+            if len(cat_plots) != 0:
+
+                # html_code += """<div class="plots">
+                #     <button onclick="show_hide_plots()">
+                #         <h3>{0:s}</h3>
+                #     </button>\n""".format(categories_titles[k])
+
+                # for image in cat_plots:
+                #     html_code += """<div class="gallery" id="gallery">
+                #             <a href="{0:s}">
+                #                 <img src="{0:s}" alt="No image", width="100%">
+                #             </a>
+                #         </div>\n""".format(image)
+                # html_code += """</div>\n"""
+
+                div_name = "gallery{0:d}".format(k)
+
+                html_code += """<button onclick="show_hide_plots('{0:s}')">
+                        {1:s}
+                    </button>\n""".format(div_name, categories_titles[k])
+
+                for image in cat_plots:
+                    html_code += """<div class="gallery" name="{0:s}">
+                            <a href="{1:s}/{2:s}">
+                                <img src="{1:s}/{2:s}" alt="No image", width="100%">
+                            </a>
+                        </div>\n""".format(div_name, page_type, os.path.basename(image))
+                html_code += """\n"""
+            else:
+
+                div_name = "gallery{0:d}".format(k)
+
+                html_code += """<button onclick="show_hide_plots('{0:s}')">
+                        {1:s}
+                    </button>\n""".format(div_name, categories_titles[k])
+
+                html_code += """
+                    <p name="{0:s}">
+                        No plots for {1:s} were found
+                    </p>\n""".format(div_name, categories_titles[k])
+
+    else:
+        logger.error("No crosscal plots found")
+
+    return html_code
+
+
 def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
     """
     Function to write Observation content
@@ -96,61 +174,11 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
     # ++++++++++++++++++++++++++++++++++++++++
     elif page_type == 'crosscal':
 
-        # the different plots
-        categories = ["BP_amp", "BP_phase", "Corrected_amp", "Corrected_phase",
-                      "Gain_amp", "Gain_phase", "Model_amp", "Model_phase", "Raw_amp", "Raw_phase"]
-
-        categories_titles = ["Bandpass Amplitude", "Bandpass Phase", "Corrected Amplitude", "Corrected Phase",
-                             "Gain factors Amplitude", "Gain factors Phase", "Model Amplitude", "Model Phase", "Raw visibility Amplitude", "Raw Visibility Phase"]
-
-        n_cats = len(categories)
-
-        # get the images
-        if obs_id != 0:
-            image_list = glob.glob(
-                "{0:s}/{1:s}/{2:s}/*png".format(qa_report_path, obs_id, page_type))
-        else:
-            image_list = glob.glob(
-                "{0:s}/{1:s}/*png".format(qa_report_path, page_type))
-
-        if len(image_list) != 0:
-            # go throught the different types of plots
-            for k in range(n_cats):
-
-                # get list of plots for this category
-                cat_plots = [pl for pl in image_list if categories[k] in pl]
-
-                if len(cat_plots) != 0:
-
-                    # html_code += """<div class="plots">
-                    #     <button onclick="show_hide_plots()">
-                    #         <h3>{0:s}</h3>
-                    #     </button>\n""".format(categories_titles[k])
-
-                    # for image in cat_plots:
-                    #     html_code += """<div class="gallery" id="gallery">
-                    #             <a href="{0:s}">
-                    #                 <img src="{0:s}" alt="No image", width="100%">
-                    #             </a>
-                    #         </div>\n""".format(image)
-                    # html_code += """</div>\n"""
-
-                    div_name = "gallery{0:d}".format(k)
-
-                    html_code += """<button onclick="show_hide_plots('{0:s}')">
-                            {1:s}
-                        </button>\n""".format(div_name, categories_titles[k])
-
-                    for image in cat_plots:
-                        html_code += """<div class="gallery" name="{0:s}">
-                                <a href="{1:s}/{2:s}">
-                                    <img src="{1:s}/{2:s}" alt="No image", width="100%">
-                                </a>
-                            </div>\n""".format(div_name, page_type, os.path.basename(image))
-                    html_code += """\n"""
-        else:
-            logger.error("No crosscal plots found")
-            return -1
+        try:
+            html_code = write_obs_content_crosscal(
+                html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
 
     # create html content for subpage continuum
     # +++++++++++++++++++++++++++++++++++++++++
