@@ -52,8 +52,8 @@ def create_report_dir_prepare(obs_id, qa_dir, qa_dir_report_obs_subpage):
                     qa_dir_report_obs_subpage, os.path.basename(qa_prepare_dir_beam))
 
                 # create a subdirectory in the report dir
-                if not os.path.exists(qa_dir_report_obs_subpage_prepare_beam)
-                   try:
+                if not os.path.exists(qa_dir_report_obs_subpage_prepare_beam):
+                    try:
                         os.mkdir(qa_dir_report_obs_subpage_prepare_beam)
                     except Exception as e:
                         logger.error(e)
@@ -81,9 +81,9 @@ def create_report_dir_prepare(obs_id, qa_dir, qa_dir_report_obs_subpage):
 
                 else:
                     logger.warning("No images in beam {0:s} found".format(
-                        beam))
+                        qa_prepare_dir_beam))
         else:
-            logger.warning("No beams found for prepare QA in {0:s}"format(qa_prepare_dir))
+            logger.warning("No beams found for prepare QA in {0:s}".format(qa_prepare_dir))
 
     logger.info(
         "## Creating report directory for prepare and linking files. Done")
@@ -241,10 +241,11 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
                 qa_dir_report_obs_subpage, os.path.basename(beam))
 
             # create a subdirectory in the report dir
-            try:
-                os.mkdir(qa_dir_report_obs_subpage_continuum_beam)
-            except Exception as e:
-                logger.error(e)
+            if not os.path.exists(qa_dir_report_obs_subpage_continuum_beam):
+                try:
+                    os.mkdir(qa_dir_report_obs_subpage_continuum_beam)
+                except Exception as e:
+                    logger.error(e)
 
             # get the images in the beam directory and link them
             images_in_beam = glob.glob(
@@ -328,10 +329,11 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage):
                 qa_dir_report_obs_subpage, os.path.basename(beam))
 
             # create a subdirectory in the report dir
-            try:
-                os.mkdir(qa_dir_report_obs_subpage_line_beam)
-            except Exception as e:
-                logger.error(e)
+            if not os.path.exists(qa_dir_report_obs_subpage_line_beam):
+                try:
+                    os.mkdir(qa_dir_report_obs_subpage_line_beam)
+                except Exception as e:
+                    logger.error(e)
 
             # get the images in the beam directory and link them
             images_in_beam = glob.glob(
@@ -454,10 +456,10 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
 
             # check if link exists
             if not os.path.exists(link_name):
-                os.symlink(image, link_name)
+                os.symlink(apercal_log_file, link_name)
             else:
                 os.unlink(link_name)
-                os.symlink(image, link_name)
+                os.symlink(apercal_log_file, link_name)
         else:
             logger.error("Could not find {0:s}".format(apercal_log_file))
     else:
@@ -556,7 +558,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         elif page == "crosscal":
 
             try:
-                create_report_dir_prepare(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)
         
