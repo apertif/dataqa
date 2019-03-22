@@ -265,7 +265,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
             plt.savefig(output.replace(".png", ".pdf"),
                         overwrite=True, bbox_inches='tight')
         else:
-            plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=400)
+            plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=300)
 
         plt.close("all")
 
