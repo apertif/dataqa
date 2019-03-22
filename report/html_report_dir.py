@@ -138,55 +138,79 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
     logger.info(
         "## Creating report directory for selfcal and linking files...")
 
-    # get beams
-    beam_list = glob.glob(
-        "{0:s}line/[0-3][0-9]".format(qa_dir))
+    # get the images in the subdirectory
+    images_crosscal = glob.glob(
+        "{0:s}selfcal/*.png".format(qa_dir))
 
-    # number of beams
-    n_beams = len(beam_list)
+    if len(images_crosscal) != 0:
 
-    if n_beams != 0:
-
-        beam_list.sort()
+        images_crosscal.sort()
 
         # go through all beams
-        for beam in beam_list:
+        for image in images_crosscal:
 
-            qa_dir_report_obs_subpage_line_beam = "{0:s}/{1:s}".format(
-                qa_dir_report_obs_subpage, os.path.basename(beam))
+            link_name = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage, os.path.basename(image))
 
-            # create a subdirectory in the report dir
-            try:
-                os.mkdir(qa_dir_report_obs_subpage_line_beam)
-            except Exception as e:
-                logger.error(e)
-
-            # get the images in the beam directory and link them
-            images_in_beam = glob.glob(
-                "{0:s}/*png".format(beam))
-
-            if len(images_in_beam) != 0:
-
-                images_in_beam.sort()
-
-                for image in images_in_beam:
-                    link_name = "{0:s}/{1:s}".format(
-                        qa_dir_report_obs_subpage_line_beam, os.path.basename(image))
-
-                    # check if link exists
-                    if not os.path.exists(link_name):
-                        os.symlink(image, link_name)
-                    else:
-                        os.unlink(link_name)
-                        os.symlink(image, link_name)
+            # check if link exists
+            if not os.path.exists(link_name):
+                os.symlink(image, link_name)
             else:
-                logger.warning("No images in beam {0:s} found".format(
-                    beam))
+                os.unlink(link_name)
+                os.symlink(image, link_name)
     else:
-        logger.warning("No beams found for selfcal found")
+        logger.warning("No images found for selfcal found")
+
+
+    # # get beams
+    # beam_list = glob.glob(
+    #     "{0:s}selfcal/[0-3][0-9]".format(qa_dir))
+
+    # # number of beams
+    # n_beams = len(beam_list)
+
+    # if n_beams != 0:
+
+    #     beam_list.sort()
+
+    #     # go through all beams
+    #     for beam in beam_list:
+
+    #         qa_dir_report_obs_subpage_line_beam = "{0:s}/{1:s}".format(
+    #             qa_dir_report_obs_subpage, os.path.basename(beam))
+
+    #         # create a subdirectory in the report dir
+    #         try:
+    #             os.mkdir(qa_dir_report_obs_subpage_line_beam)
+    #         except Exception as e:
+    #             logger.error(e)
+
+    #         # get the images in the beam directory and link them
+    #         images_in_beam = glob.glob(
+    #             "{0:s}/*png".format(beam))
+
+    #         if len(images_in_beam) != 0:
+
+    #             images_in_beam.sort()
+
+    #             for image in images_in_beam:
+    #                 link_name = "{0:s}/{1:s}".format(
+    #                     qa_dir_report_obs_subpage_line_beam, os.path.basename(image))
+
+    #                 # check if link exists
+    #                 if not os.path.exists(link_name):
+    #                     os.symlink(image, link_name)
+    #                 else:
+    #                     os.unlink(link_name)
+    #                     os.symlink(image, link_name)
+    #         else:
+    #             logger.warning("No images in beam {0:s} found".format(
+    #                 beam))
+    # else:
+    #     logger.warning("No beams found for selfcal found")
 
     logger.info(
-        "## Creating report directory for continuum and linking files. Done")
+        "## Creating report directory for selfcal and linking files. Done")
 
 def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
     """Function to create the continuum directory for the report
