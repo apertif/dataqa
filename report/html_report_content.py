@@ -25,9 +25,9 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
 
     # html_code = """<p>NOTE: When clicking on the buttons for the first time, please click twice (small bug)</p>"""
 
-    # create html content for subpage prepare
+    # create html content for subpage preflag
     # +++++++++++++++++++++++++++++++++++++++
-    if page_type == 'prepare':
+    if page_type == 'preflag':
 
         # get beams
         if obs_id != 0:
@@ -70,7 +70,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
                     logger.error("No images in beam {0:s} found".format(
                         beam_list[k]))
         else:
-            logger.error("No beams found for prepare found")
+            logger.error("No beams found for preflag found")
             return -1
 
     # create html content for subpage crosscal

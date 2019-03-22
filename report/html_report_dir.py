@@ -16,50 +16,50 @@ from shutil import copy
 logger = logging.getLogger(__name__)
 
 
-def create_report_dir_prepare(obs_id, qa_dir, qa_dir_report_obs_subpage):
-    """Function to create the prepare directory for the report
+def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage):
+    """Function to create the preflag directory for the report
 
     Note:
         All necessary files will be linked to this directory
-        from the prepare QA directory
+        from the preflag QA directory
     """
 
-    logger.info("## Creating report directory for prepare and linking files...")
+    logger.info("## Creating report directory for preflag and linking files...")
 
     if socket.gethostname() != 'happili-01':
-        qa_prepare_dir_list = ["{0:s}prepare".format(qa_dir)]
+        qa_preflag_dir_list = ["{0:s}preflag".format(qa_dir)]
     else:
-        qa_prepare_dir_list = ["{0:s}prepare".format(qa_dir), "{0:s}prepare".format(qa_dir).replace(
-            "data", "data2"), "{0:s}prepare".format(qa_dir).replace("data", "data3"), "{0:s}prepare".format(qa_dir).replace("data", "data4")]
+        qa_preflag_dir_list = ["{0:s}preflag".format(qa_dir), "{0:s}preflag".format(qa_dir).replace(
+            "data", "data2"), "{0:s}preflag".format(qa_dir).replace("data", "data3"), "{0:s}preflag".format(qa_dir).replace("data", "data4")]
 
-    for qa_prepare_dir in qa_prepare_dir_list:
+    for qa_preflag_dir in qa_preflag_dir_list:
 
         # get beams
-        qa_prepare_dir_beam_list = glob.glob(
-            "{0:s}/[0-3][0-9]".format(qa_prepare_dir))
+        qa_preflag_dir_beam_list = glob.glob(
+            "{0:s}/[0-3][0-9]".format(qa_preflag_dir))
 
         # number of beams
-        n_beams = len(qa_prepare_dir_beam_list)
+        n_beams = len(qa_preflag_dir_beam_list)
 
         if n_beams != 0:
 
-            qa_prepare_dir_beam_list.sort()
+            qa_preflag_dir_beam_list.sort()
 
             # go through all beams
-            for qa_prepare_dir_beam in qa_prepare_dir_beam_list:
+            for qa_preflag_dir_beam in qa_preflag_dir_beam_list:
 
-                qa_dir_report_obs_subpage_prepare_beam = "{0:s}/{1:s}".format(
-                    qa_dir_report_obs_subpage, os.path.basename(qa_prepare_dir_beam))
+                qa_dir_report_obs_subpage_preflag_beam = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(qa_preflag_dir_beam))
 
                 # create a subdirectory in the report dir
-                if not os.path.exists(qa_dir_report_obs_subpage_prepare_beam):
+                if not os.path.exists(qa_dir_report_obs_subpage_preflag_beam):
                     try:
-                        os.mkdir(qa_dir_report_obs_subpage_prepare_beam)
+                        os.mkdir(qa_dir_report_obs_subpage_preflag_beam)
                     except Exception as e:
                         logger.error(e)
 
                 # get the images in the beam directory and link them
-                images_in_beam = glob.glob("{0:s}/*png".format(qa_prepare_dir_beam))
+                images_in_beam = glob.glob("{0:s}/*png".format(qa_preflag_dir_beam))
 
                 # check that there are images in there
                 if len(images_in_beam) != 0:
@@ -69,7 +69,7 @@ def create_report_dir_prepare(obs_id, qa_dir, qa_dir_report_obs_subpage):
                     # go through the images and link them
                     for image in images_in_beam:
                         link_name = "{0:s}/{1:s}".format(
-                            qa_dir_report_obs_subpage_prepare_beam, os.path.basename(image))
+                            qa_dir_report_obs_subpage_preflag_beam, os.path.basename(image))
 
                         # check if link exists
                         if not os.path.exists(link_name):
@@ -81,12 +81,12 @@ def create_report_dir_prepare(obs_id, qa_dir, qa_dir_report_obs_subpage):
 
                 else:
                     logger.warning("No images in beam {0:s} found".format(
-                        qa_prepare_dir_beam))
+                        qa_preflag_dir_beam))
         else:
-            logger.warning("No beams found for prepare QA in {0:s}".format(qa_prepare_dir))
+            logger.warning("No beams found for preflag QA in {0:s}".format(qa_preflag_dir))
 
     logger.info(
-        "## Creating report directory for prepare and linking files. Done")
+        "## Creating report directory for preflag and linking files. Done")
 
 
 def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage):
@@ -543,12 +543,12 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                 "Directory '{0:s} does not exists and will be created".format(qa_dir_report_obs_subpage))
             os.mkdir(qa_dir_report_obs_subpage)
 
-        # Create links for files from prepare QA
+        # Create links for files from preflag QA
         # ++++++++++++++++++++++++++++++++++++++
-        if page == "prepare":
+        if page == "preflag":
 
             try:
-                create_report_dir_prepare(
+                create_report_dir_preflag(
                     obs_id, qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)

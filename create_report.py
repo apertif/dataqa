@@ -82,7 +82,7 @@ if __name__ == "__main__":
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
     # the subpages to be created
-    subpages = ['prepare', 'crosscal',
+    subpages = ['preflag', 'crosscal',
                 'continuum', 'selfcal', 'line', 'mosaic', 'apercal_log']
 
     logger.info("#### Create report directory structure")

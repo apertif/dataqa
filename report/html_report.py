@@ -96,7 +96,7 @@ def write_html_obs_index(html_file_name, obs_id):
                     <th colspan="7">{0:s}</th>
                 </tr>
                 <tr>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_prepare.html">prepare</a> </td>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_preflag.html">preflag</a> </td>
                     <td> <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
                     <td> <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
                     <td> <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
