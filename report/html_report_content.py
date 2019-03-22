@@ -15,7 +15,59 @@ import socket
 logger = logging.getLogger(__name__)
 
 
-def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
+def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for preflag
+    """
+
+    html_code += """
+        <p> 
+            Here you can go through the different plots created by preflag. 
+            Please not that you can only look at beams for which these plots have been created.
+        </p>\n
+        """
+
+    # get beams
+    beam_list = glob.glob(
+        "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
+
+    n_beams = len(beam_list)
+
+    if n_beams != 0:
+
+        beam_list.sort()
+
+        for k in range(n_beams):
+
+            # get the images
+            images_in_beam = glob.glob("{0:s}/*png".format(beam_list[k]))
+
+            if len(images_in_beam) != 0:
+
+                images_in_beam.sort()
+
+                div_name = "gallery{0:d}".format(k)
+
+                html_code += """<button onclick="show_hide_plots('{0:s}')">
+                        Beam {1:s}
+                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+
+                for image in images_in_beam:
+                    html_code += """<div class="gallery" name="{0:s}">
+                            <a href="{1:s}/{2:s}/{3:s}">
+                                <img src="{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
+                            </a>
+                            <div class="caption">{3:s}</div>
+                        </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
+                html_code += """\n"""
+            else:
+                logger.warning("No images in beam {0:s} found".format(
+                    beam_list[k]))
+    else:
+        logger.warning("No beams found for preflag found")
+        return -1
+
+
+def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
     """
     Function to write Observation content
     """
@@ -25,53 +77,16 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=0):
 
     # html_code = """<p>NOTE: When clicking on the buttons for the first time, please click twice (small bug)</p>"""
 
+    qa_report_obs_path = "{0:s}/{1:s}".format(qa_report_path, obs_id)
+
     # create html content for subpage preflag
     # +++++++++++++++++++++++++++++++++++++++
     if page_type == 'preflag':
 
-        # get beams
-        if obs_id != 0:
-            beam_list = glob.glob(
-                "{0:s}/{1:s}/{2:s}/[0-3][0-9]".format(qa_report_path, obs_id, page_type))
-        else:
-            beam_list = glob.glob(
-                "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_path, page_type))
-
-        n_beams = len(beam_list)
-
-        if n_beams != 0:
-
-            beam_list.sort()
-
-            for k in range(n_beams):
-
-                # get the images
-                images_in_beam = glob.glob("{0:s}/*png".format(beam_list[k]))
-
-                if len(images_in_beam) != 0:
-
-                    images_in_beam.sort()
-
-                    div_name = "gallery{0:d}".format(k)
-
-                    html_code += """<button onclick="show_hide_plots('{0:s}')">
-                            Beam {1:s}
-                        </button>\n""".format(div_name, os.path.basename(beam_list[k]))
-
-                    for image in images_in_beam:
-                        html_code += """<div class="gallery" name="{0:s}">
-                                <a href="{1:s}/{2:s}/{3:s}">
-                                    <img src="{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
-                                </a>
-                                <div class="caption">{3:s}</div>
-                            </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
-                    html_code += """\n"""
-                else:
-                    logger.error("No images in beam {0:s} found".format(
-                        beam_list[k]))
-        else:
-            logger.error("No beams found for preflag found")
-            return -1
+        try:
+            write_obs_content_preflag(html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
 
     # create html content for subpage crosscal
     # ++++++++++++++++++++++++++++++++++++++++
