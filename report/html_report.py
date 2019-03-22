@@ -32,15 +32,15 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
     html_file.write("""<!DOCTYPE HTML>
     <html lang="en">
     <head>
-    \t<title>APERTIF Science Demonstration 2019</title>
-    \t<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    \t<meta name="description" content="" />
-    \t<meta name="keywords" content="" />
-    \t<script src="{0}"></script>
-    \t<link rel="stylesheet" type="text/css" href="{1}" />
+        <title>APERTIF Science Demonstration 2019</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <script src="{0}"></script>
+        <link rel="stylesheet" type="text/css" href="{1}" />
     </head>
     <body>
-    \t<h1>{2:s}</h1>\n""".format(js_file, css_file, page_title))
+        <h1>{2:s}</h1>\n""".format(js_file, css_file, page_title))
 
     html_file.close()
 
@@ -65,12 +65,12 @@ def write_html_obs_index(html_file_name, obs_id):
 
     # write the html content for the index of observations
     obs_index = """
-    \t<div id="obs_index">
-    \t\t<h2> List of Observations </h2>
-    \t\t<p>Note: This website will allow you to go through the different qualitiy assessment products
-    \t\tin addition to the apercal logfile from each node. It will not give you access to fits
-    \t\timages and the source catalogue</p>
-    \t\t<table class="obs_index">\n"""
+        <div id="obs_index">
+            <h2> List of Observations </h2>
+            <p>Note: This website will allow you to go through the different qualitiy assessment products
+            in addition to the apercal logfile from each node. It will not give you access to fits
+            images and the source catalogue</p>
+            <table class="obs_index">\n"""
 
     # <table class = "reportTable" >
     #         <tr >
@@ -92,22 +92,22 @@ def write_html_obs_index(html_file_name, obs_id):
     #     </table
 
     obs_index += """
-    \t\t\t<tr>
-    \t\t\t\t<th colspan="7">{0:s}</th>
-    \t\t\t</tr>
-    \t\t\t<tr>
-    \t\t\t\t<td> <a class="obs_links" href="{0:s}/{0:s}_prepare.html">prepare</a> </td>
-    \t\t\t\t<td> <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
-    \t\t\t\t<td> <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
-    \t\t\t\t<td> <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
-    \t\t\t\t<td> <a class="obs_links" href="{0:s}/{0:s}_line.html">line</a> </td>
-    \t\t\t\t<td> <a class="obs_links" href="{0:s}/{0:s}_mosaic.html">mosaic</a> </td>
-    \t\t\t\t<td> <a class="obs_links" href="{0:s}/{0:s}_apercal_log.html">apercal.log</a> </td>
-    \t\t\t</tr>\n""".format(obs_id)
+                <tr>
+                    <th colspan="7">{0:s}</th>
+                </tr>
+                <tr>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_prepare.html">prepare</a> </td>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_line.html">line</a> </td>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_mosaic.html">mosaic</a> </td>
+                    <td> <a class="obs_links" href="{0:s}/{0:s}_apercal_log.html">apercal.log</a> </td>
+                </tr>\n""".format(obs_id)
 
     obs_index += """
-    \t\t</table>
-    \t</div>\n"""
+            </table>
+        </div>\n"""
 
     try:
         html_file = open(html_file_name, 'a')
