@@ -32,9 +32,9 @@ def sources_within_radius(pybdsfcat, image, radius=30):
     a = pd.read_csv(pybdsfcat, skip_blank_lines=True, skiprows=5, skipinitialspace=True)
     center, _ = get_image_center_beam(image)
     coords = SkyCoord(ra=a.RA, dec=a.DEC, unit='deg')
-    seps = center.separation(coords).to('arcmin')
+    seps = center.separation(coords).to('arcmin').value
     a['Center_sep'] = seps
-    res = a.query('@seps < @radius')
+    res = a.query('Center_sep < @radius')
     return res
 
 
