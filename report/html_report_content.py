@@ -42,11 +42,11 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
             # get the images
             images_in_beam = glob.glob("{0:s}/*png".format(beam_list[k]))
 
+            div_name = "gallery{0:d}".format(k)
+
             if len(images_in_beam) != 0:
 
                 images_in_beam.sort()
-
-                div_name = "gallery{0:d}".format(k)
 
                 html_code += """
                     <button onclick="show_hide_plots('{0:s}')">
@@ -118,6 +118,8 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
             # get list of plots for this category
             cat_plots = [pl for pl in image_list if categories[k] in pl]
 
+            div_name = "gallery{0:d}".format(k)
+
             if len(cat_plots) != 0:
 
                 # html_code += """<div class="plots">
@@ -132,8 +134,6 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                 #             </a>
                 #         </div>\n""".format(image)
                 # html_code += """</div>\n"""
-
-                div_name = "gallery{0:d}".format(k)
 
                 html_code += """<button onclick="show_hide_plots('{0:s}')">
                         {1:s}
@@ -173,6 +173,108 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
     return html_code
 
 
+def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for crosscal
+    """
+
+    logger.info("Writing html code for page {0:s}".format(page_type))
+
+    html_code += """
+        <p class="info">
+            Here you can inspect for each beam the continuum image, PyBDSF diagnostic plots and the validation tool. The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.
+            Of course, all of this only exists for beams with a continuum image created by the pipeline.<br>
+            This page will only have content after the continuum QA step has been performed.
+        </p>\n
+        """
+
+    # get beams
+    beam_list = glob.glob(
+        "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
+
+    n_beams = len(beam_list)
+
+    if n_beams != 0:
+
+        beam_list.sort()
+
+        for k in range(n_beams):
+
+            button_html_name = "beam{0:d}".format(k)
+            div_name = "continuum_gallery{0:d}".format(k)
+
+            # get the diagnostic plots
+            image_list = glob.glob("{0:s}/*png".format(beam_list[k]))
+
+            n_images = len(image_list)
+
+            if n_images != 0:
+
+                image_list.sort()
+
+                html_code += """<button onclick="show_hide_plots('{0:s}')">
+                            Beam {1:s}
+                        </button>
+                        <div class="beam_continuum" name="{0:s}">
+                            <button class="button_continuum" onclick="show_hide_plots('{2:s}')">
+                                PyBDSF Diagnostic plots
+                            </button>
+                        \n""".format(button_html_name, os.path.basename(beam_list[k]), div_name)
+
+                html_code += """<div class="gallery_row" name="{0:s}">\n""".format(
+                    div_name)
+
+                # go throught the different types of plots
+                # they require a different layout because the plot sizes vary
+                for m in range(n_images):
+                    if m % 2 == 0:
+                        html_code += """<div class="gallery_column">"""
+
+                    html_code += """<div class="mosaic_img">
+                            <a href="{0:s}/{1:s}/{2:s}">
+                                <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
+                            </a>
+                        </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image_list[m]))
+
+                    if m % 2 != 0 or m == n_images-1:
+                        html_code += """</div>\n"""
+
+                html_code += """</div>\n"""
+
+                # add the validation tool
+                frame_name = "validation_tool"
+
+                button_name = "Validation tool"
+
+                html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                            {1:s}
+                        </button>\n""".format(frame_name, button_name)
+
+                html_code += """<p>
+                        <iframe id="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
+                    </p>
+                    </div>\n""".format(frame_name, page_type, os.path.basename(beam_list[k]), "validation_tool")
+            else:
+                logger.warning("No continuum plots and validation found")
+                html_code += """
+                <button onclick="show_hide_plots('{0:s}')">
+                        Beam {1:s}
+                    </button>\n""".format(button_html_name, os.path.basename(beam_list[k]))
+
+                html_code += """
+                    <div class="gallery" name="{0:s}">
+                        <p class="warning">
+                            No plots were found for {1:s}
+                        </p>
+                    </div>\n""".format(button_html_name, page_type)
+
+    else:
+        logger.warning("No beams for continuum QA found")
+        html_code += """
+        <p class="warning">
+            No beams and plots were found for continuum.
+        </p>\n"""
+
+
 def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for apercal_log
     """
@@ -181,7 +283,9 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
     html_code += """
         <p class="info">
-            Here you can go through the four log files created by apercal.
+            Here you can go through the four log files created by apercal. 
+            Click on one of the buttons and then on the link to open the log file. 
+            You can use the search function of your browser to search the log files.
         </p>\n
         """
 
@@ -285,81 +389,11 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
     # +++++++++++++++++++++++++++++++++++++++++
     elif page_type == 'continuum':
 
-        # get beams
-        if obs_id != 0:
-            beam_list = glob.glob(
-                "{0:s}/{1:s}/{2:s}/[0-3][0-9]".format(qa_report_path, obs_id, page_type))
-        else:
-            beam_list = glob.glob(
-                "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_path, page_type))
-
-        n_beams = len(beam_list)
-
-        if n_beams != 0:
-
-            beam_list.sort()
-
-            for k in range(n_beams):
-
-                # get the diagnostic plots
-                image_list = glob.glob("{0:s}/*png".format(beam_list[k]))
-
-                n_images = len(image_list)
-
-                if n_images != 0:
-
-                    image_list.sort()
-
-                    button_html_name = "beam{0:d}".format(k)
-                    div_name = "continuum_gallery{0:d}".format(k)
-
-                    html_code += """<button onclick="show_hide_plots('{0:s}')">
-                                Beam {1:s}
-                            </button>
-                            <div class="beam_continuum" name="{0:s}">
-                                <button class="button_continuum" onclick="show_hide_plots('{2:s}')">
-                                    PyBDSF Diagnostic plots
-                                </button>
-                            \n""".format(button_html_name, os.path.basename(beam_list[k]), div_name)
-
-                    html_code += """<div class="gallery_row" name="{0:s}">\n""".format(
-                        div_name)
-
-                    # go throught the different types of plots
-                    # they require a different layout because the plot sizes vary
-                    for m in range(n_images):
-                        if m % 2 == 0:
-                            html_code += """<div class="gallery_column">"""
-
-                        html_code += """<div class="mosaic_img">
-                                <a href="{0:s}/{1:s}/{2:s}">
-                                    <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
-                                </a>
-                            </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image_list[m]))
-
-                        if m % 2 != 0 or m == n_images-1:
-                            html_code += """</div>\n"""
-
-                    html_code += """</div>\n"""
-                else:
-                    logger.error("No mosaic plots found")
-
-                # add the validation tool
-                frame_name = "validation_tool"
-
-                button_name = "Validation tool"
-
-                html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
-                            {1:s}
-                        </button>\n""".format(frame_name, button_name)
-
-                html_code += """<p>
-                        <iframe id="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
-                    </p>
-                    </div>\n""".format(frame_name, page_type, os.path.basename(beam_list[k]), "validation_tool")
-        else:
-            logger.error("No beams for continuum QA found")
-            return -1
+        try:
+            html_code = write_obs_content_continuum(
+                html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
 
     # create html content for subpage mosaic
     # ++++++++++++++++++++++++++++++++++++++
