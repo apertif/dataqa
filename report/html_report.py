@@ -32,12 +32,12 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
     html_file.write("""<!DOCTYPE HTML>
         <html lang="en">
         <head>
-            <title>APERTIF Science Demonstration 2019</title>
-            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	        <meta name="description" content="" />
-	        <meta name="keywords" content="" />
-            <script src="{0}"></script>
-            <link rel="stylesheet" type="text/css" href="{1}" />
+            \t<title>APERTIF Science Demonstration 2019</title>
+            \t<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	        \t<meta name="description" content="" />
+	        \t<meta name="keywords" content="" />
+            \t<script src="{0}"></script>
+            \t<link rel="stylesheet" type="text/css" href="{1}" />
         </head>
         <body>
             <h1>{2:s}</h1>\n""".format(js_file, css_file, page_title))
@@ -66,6 +66,9 @@ def write_html_obs_index(html_file_name, obs_id):
     # write the html content for the index of observations
     obs_index = """<div id="obs_index">
         <h2> List of Observations </h2>
+        <p>Note: This website will allow you to go through the different qualitiy assessment products
+        in addition to the apercal logfile from each node. It will not give you access to fits
+        images and the source catalogue</p>
         <table class="obs_index">\n"""
 
     # <table class = "reportTable" >
@@ -91,13 +94,13 @@ def write_html_obs_index(html_file_name, obs_id):
             <th colspan="7">{0:s}</th>
         </tr>
         <tr>
-            <td > <a class="obs_links" href="{0:s}/{0:s}_prepare.html">prepare</a> </td>
-            <td > <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
-            <td > <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
-            <td > <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
-            <td > <a class="obs_links" href="{0:s}/{0:s}_line.html">line</a> </td>
-            <td > <a class="obs_links" href="{0:s}/{0:s}_mosaic.html">mosaic</a> </td>
-            <td > <a class="obs_links" href="{0:s}/{0:s}_apercal_log.html">apercal.log</a> </td>
+            <td> <a class="obs_links" href="{0:s}/{0:s}_prepare.html">prepare</a> </td>
+            <td> <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
+            <td> <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
+            <td> <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
+            <td> <a class="obs_links" href="{0:s}/{0:s}_line.html">line</a> </td>
+            <td> <a class="obs_links" href="{0:s}/{0:s}_mosaic.html">mosaic</a> </td>
+            <td> <a class="obs_links" href="{0:s}/{0:s}_apercal_log.html">apercal.log</a> </td>
         </tr>\n""".format(obs_id)
 
     obs_index += """</table>
@@ -113,12 +116,13 @@ def write_html_obs_index(html_file_name, obs_id):
 
 def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
     """
-    Function to add a navigation bar at the top of a sight
+    Function to add a navigation bar at the top of the website for each QA
     """
 
     html_code = """
         <ul>
             <li style="float:right"><a href="../index.html">List of Observations</a></li>
+            <li style="float:right"><a href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guid</a></li>
         """
     for page in links:
         if page == page_type:
@@ -148,7 +152,7 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
 
         for page in subpages:
 
-            print("   Creating page {0:s}".format(page))
+            print("Creating page {0:s}".format(page))
 
             page_name = "{0:s}/{1:s}/{1:s}_{2:s}.html".format(
                 qa_report_path, obs_id, page)
