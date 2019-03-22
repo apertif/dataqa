@@ -19,7 +19,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for preflag
     """
 
-    logging.info("Writing html code for page {0:s}".format(page_type))
+    logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
         <p class="info">
@@ -91,7 +91,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for crosscal
     """
 
-    logging.info("Writing html code for page {0:s}".format(page_type))
+    logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
         <p class="info">
@@ -177,7 +177,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for apercal_log
     """
 
-    logging.info("Writing html code for page {0:s}".format(page_type))
+    logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
         <p class="info">
@@ -234,6 +234,8 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
             iframe_page_name = "{0:s}/{1:s}/{2:s}".format(qa_report_obs_path, page_type, os.path.basename(
                 log_file_list[k]).replace(".txt", ".html"))
             try:
+                logger.info(
+                    "Writing apercal log iframe page {0:s}".format(iframe_page_name))
                 html_file = open(iframe_page_name, 'w')
                 html_file.write(html_code_iframe_page)
                 html_file.close()
