@@ -143,7 +143,6 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         html_file.close()
     except Exception as e:
         logger.error(e)
-        print("ERROR")
 
 
 def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
@@ -155,7 +154,7 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
 
         for page in subpages:
 
-            print("Creating page {0:s}".format(page))
+            logger.info("# Creating page {0:s}".format(page))
 
             page_name = "{0:s}/{1:s}/{1:s}_{2:s}.html".format(
                 qa_report_path, obs_id, page)
@@ -231,7 +230,7 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
     # Create index file
     # +++++++++++++++++
     index_file = '{0:s}/index.html'.format(qa_report_dir)
-    logging.info("#### Creating index file: {0:s}".format(index_file))
+    logging.info("## Creating index file: {0:s}".format(index_file))
 
     # create the header
     write_html_header(index_file, os.path.basename(css_file),
@@ -245,11 +244,12 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
 
     # Creating subpages
     # +++++++++++++++++
-    logging.info("#### Writing subpages for observation {0:s}".format(obs_id))
+    logging.info("## Writing subpages for observation {0:s}".format(obs_id))
 
     # obs_report_path = '{0:s}/{1:s}'.format(qa_report_dir, obs_ids[k])
 
-    write_obs_page(qa_report_dir, obs_id, os.path.basename(css_file),
-                   os.path.basename(js_file), subpages=subpages)
-
-    return 1
+    try:
+        write_obs_page(qa_report_dir, obs_id, os.path.basename(css_file),
+                       os.path.basename(js_file), subpages=subpages)
+    except Exception as e:
+        logger.error(e)

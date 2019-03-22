@@ -19,6 +19,8 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for preflag
     """
 
+    logging.info("Writing html code for page {0:s}".format(page_type))
+
     html_code += """
         <p> 
             Here you can go through the different plots created by preflag. 

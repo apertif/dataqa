@@ -98,18 +98,19 @@ if __name__ == "__main__":
         sys.exit(-1)
     else:
         # Create directory structure for the report
-        create_dir_stat = hpd.create_report_dirs(
-            obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name)
+        try:
+            hpd.create_report_dirs(
+                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name)
+        except Exception as e:
+            logger.error(e)
 
-    logger.info("### Creating report")
+    logger.info("#### Creating report")
 
-    create_main_html_stat = hp.create_main_html(
-        qa_report_dir, obs_id, subpages, css_file=css_file_name, js_file=js_file_name)
+    try:
+        hp.create_main_html(qa_report_dir, obs_id, subpages,
+                            css_file=css_file_name, js_file=js_file_name)
+    except Exception as e:
+        logger.error(e)
 
-    if create_main_html_stat == 1:
-        logger.info("Creating report succesfull")
-    else:
-        logger.error("Creating report failed")
-
-    logger.info("Report. Done ({0:.0f}s)".format(
+    logger.info("#### Report. Done ({0:.0f}s)".format(
         time.time()-start_time))
