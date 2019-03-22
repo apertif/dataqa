@@ -24,7 +24,6 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     html_code += """
         <p class="info">
             Here you can go through the different plots created by preflag.
-            Please not that you can only look at beams for which these plots have been created.
         </p>\n
         """
 
@@ -49,12 +48,14 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
 
                 div_name = "gallery{0:d}".format(k)
 
-                html_code += """<button onclick="show_hide_plots('{0:s}')">
+                html_code += """
+                    <button onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
                     </button>\n""".format(div_name, os.path.basename(beam_list[k]))
 
                 for image in images_in_beam:
-                    html_code += """<div class="gallery" name="{0:s}">
+                    html_code += """
+                        <div class="gallery" name="{0:s}">
                             <a href="{1:s}/{2:s}/{3:s}">
                                 <img src="{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
                             </a>
@@ -64,6 +65,18 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
             else:
                 logger.warning("No images in beam {0:s} found".format(
                     beam_list[k]))
+
+                html_code += """
+                <button onclick="show_hide_plots('{0:s}')">
+                        Beam {1:s}
+                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+
+                html_code += """
+                    <div class="gallery" name="{0:s}">
+                        <p class="warning">
+                            No plots were found for {1:s}
+                        </p>
+                    </div>\n""".format(div_name, page_type)
     else:
         logger.warning("No beams found for preflag found")
         html_code += """
@@ -127,7 +140,8 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                     </button>\n""".format(div_name, categories_titles[k])
 
                 for image in cat_plots:
-                    html_code += """<div class="gallery" name="{0:s}">
+                    html_code += """
+                        <div class="gallery" name="{0:s}">
                             <a href="{1:s}/{2:s}">
                                 <img src="{1:s}/{2:s}" alt="No image", width="100%">
                             </a>
@@ -137,14 +151,17 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
 
                 div_name = "gallery{0:d}".format(k)
 
-                html_code += """<button onclick="show_hide_plots('{0:s}')">
+                html_code += """
+                    <button onclick="show_hide_plots('{0:s}')">
                         {1:s}
                     </button>\n""".format(div_name, categories_titles[k])
 
                 html_code += """
-                    <p class="warning" name="{0:s}">
-                        No plots were found for {1:s}
-                    </p>\n""".format(div_name, categories_titles[k])
+                    <div class="gallery" name="{0:s}"
+                        <p class="warning">
+                            No plots were found for {1:s}
+                        </p>
+                    </div>\n""".format(div_name, categories_titles[k])
 
     else:
         logger.error("No crosscal plots found")
