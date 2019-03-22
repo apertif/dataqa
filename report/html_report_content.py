@@ -22,7 +22,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     logging.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p>
+        <p class="info">
             Here you can go through the different plots created by preflag.
             Please not that you can only look at beams for which these plots have been created.
         </p>\n
@@ -66,6 +66,10 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                     beam_list[k]))
     else:
         logger.warning("No beams found for preflag found")
+        html_code += """
+        <p class="warning">
+            No plots were found for preflag
+        </p>\n"""
 
     return html_code
 
@@ -77,7 +81,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
     logging.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p>
+        <p class="info">
             Here you can go through the different plots created by crosscal.
         </p>\n
         """
@@ -138,12 +142,16 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                     </button>\n""".format(div_name, categories_titles[k])
 
                 html_code += """
-                    <p name="{0:s}">
-                        No plots for {1:s} were found
+                    <p class="warning" name="{0:s}">
+                        No plots were found for {1:s}
                     </p>\n""".format(div_name, categories_titles[k])
 
     else:
         logger.error("No crosscal plots found")
+        html_code += """
+        <p class="warning">
+            No plots were found for crosscal
+        </p>\n"""
 
     return html_code
 

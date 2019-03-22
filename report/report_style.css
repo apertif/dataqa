@@ -22,6 +22,19 @@ h3
     text-align: center;
 }
 
+#info {
+  font-size: large;
+}
+
+#warning {
+  font-size: large;
+  color: rgb(201, 0, 0) 
+}
+
+/* *****************
+Tables
+****************** */
+
 table 
 {
     border-collapse: collapse;

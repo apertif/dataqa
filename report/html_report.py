@@ -67,7 +67,7 @@ def write_html_obs_index(html_file_name, obs_id):
     obs_index = """
         <div id="obs_index">
             <h2> List of Observations </h2>
-            <p>Note: This website will allow you to go through the different qualitiy assessment products
+            <p class="info">Note: This website will allow you to go through the different qualitiy assessment products
             in addition to the apercal logfile from each node. It will not give you access to fits
             images and the source catalogue</p>
             <table class="obs_index">\n"""
