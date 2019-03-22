@@ -448,11 +448,11 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
 
             # rename the link to the log file according to host
             if host_name == "happili-02":
-                link_name = link_name.replace(".log", "_beam_10-19.txt")
+                link_name = link_name.replace(".log", "_log_{0:s}.txt".format(host_name))
             elif host_name == "happili-03":
-                link_name = link_name.replace(".log", "_beam_20-29.txt")
+                link_name = link_name.replace(".log", "_log_{0:s}.txt".format(host_name))
             elif host_name == "happili-04":
-                link_name = link_name.replace(".log", "_beam_30-39.txt")
+                link_name = link_name.replace(".log", "_log_{0:s}.txt".format(host_name))
 
             # check if link exists
             if not os.path.exists(link_name):
@@ -478,7 +478,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
                     qa_dir_report_obs_subpage, os.path.basename(apercal_log_file))
 
                 link_name = link_name.replace(
-                    ".log", "_happili-{0:02d}.txt".format(log_file_counter+1))
+                    ".log", "_log_happili-{0:02d}.txt".format(log_file_counter+1))
 
                 # check if link exists
                 if not os.path.exists(link_name):
