@@ -461,7 +461,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
                 os.unlink(link_name)
                 os.symlink(apercal_log_file, link_name)
         else:
-            logger.error("Could not find {0:s}".format(apercal_log_file))
+            logger.warning("Could not find {0:s}".format(apercal_log_file))
     else:
         apercal_log_file_list = [
             qa_dir.replace("qa/","apercal.log"), qa_dir.replace("qa/","apercal.log").replace("data", "data2"), qa_dir.replace("qa/","apercal.log").replace("data", "data3"), qa_dir.replace("qa/","apercal.log").replace("data", "data4")]
@@ -487,7 +487,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
                     os.unlink(link_name)
                     os.symlink(apercal_log_file, link_name)
             else:
-                logger.error("Could not find {0:s}".format(apercal_log_file))
+                logger.warning("Could not find {0:s}".format(apercal_log_file))
             
             log_file_counter += 1
             
@@ -533,7 +533,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for page in subpages:
 
-        qa_dir_report_obs_subpage = "{0:s}{1:s}".format(
+        qa_dir_report_obs_subpage = "{0:s}/{1:s}".format(
             qa_dir_report_obs, page)
 
         if os.path.exists(qa_dir_report_obs_subpage):
