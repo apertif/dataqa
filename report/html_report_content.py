@@ -187,7 +187,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
     # get the log files in linke to the apercal_log report directory:
     log_file_list = glob.glob(
-        "{0:s}/{1:s}/apercal_happili*.txt".format(qa_report_obs_path, page_type))
+        "{0:s}/{1:s}/apercal_log_happili*.txt".format(qa_report_obs_path, page_type))
 
     n_log_files = len(log_file_list)
 
@@ -243,7 +243,8 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 logger.error(e)
                 logger.error("writing iframe page content failed")
     else:
-        logger.warning("No apercal log files found")
+        logger.warning("No apercal log files found in {0:s}/{1:s}/".format(
+            qa_report_obs_path, page_type))
 
     return html_code
 
