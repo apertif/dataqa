@@ -66,7 +66,8 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                     beam_list[k]))
     else:
         logger.warning("No beams found for preflag found")
-        return -1
+
+    return html_code
 
 
 def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
@@ -86,7 +87,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
     if page_type == 'preflag':
 
         try:
-            write_obs_content_preflag(html_code, qa_report_obs_path, page_type)
+            html_code = write_obs_content_preflag(
+                html_code, qa_report_obs_path, page_type)
         except Exception as e:
             logger.error(e)
 
