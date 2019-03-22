@@ -22,6 +22,19 @@ h3
     text-align: center;
 }
 
+.info {
+  font-size: large;
+}
+
+.warning {
+  font-size: large;
+  color: rgb(201, 0, 0) 
+}
+
+/* *****************
+Tables
+****************** */
+
 table 
 {
     border-collapse: collapse;
@@ -95,9 +108,16 @@ button {
   font-size: x-large;
   margin-bottom: 5px;
 }
+
 button:hover {
   background-color: rgb(255, 123, 46);
 }
+
+/* button:hover, button:nth-child(even):hover {
+  background-color: rgb(255, 123, 46);
+} */
+
+/* button:nth-child(even) {background-color: rgb(252, 179, 137);} */
 
 .button_continuum {
   background-color: rgb(192, 192, 192);
@@ -194,7 +214,7 @@ continuum
 /******************************
 Validation tool
 ******************************/
-#validation_tool {
+.validation_tool {
   margin: auto;
   width: 95%;
   height: 1000px;
