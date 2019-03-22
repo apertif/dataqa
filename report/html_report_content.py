@@ -274,6 +274,8 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
             No beams and plots were found for continuum.
         </p>\n"""
 
+    return html_code
+
 
 def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for apercal_log
