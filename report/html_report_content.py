@@ -173,6 +173,28 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
     return html_code
 
 
+def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for selfcal
+    """
+
+    logger.info("Writing html code for page {0:s}".format(page_type))
+
+    # html_code += """
+    #     <p class="info">
+    #         Here you can inspect the continuum image, PyBDSF diagnostic plots and the validation tool for the mosaic of all available beam images.
+    #         The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.<br>
+    #         This page will only have content after the mosaic was created and the mosaic QA step has been performed.
+    #     </p>\n
+    #     """
+    html_code += """
+        <p class="info">
+            The overview does not cover selfcal QA yet
+        </p>\n
+        """
+
+    return html_code
+
+
 def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for crosscal
     """
@@ -241,18 +263,45 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 html_code += """</div>\n"""
 
                 # add the validation tool
-                frame_name = "validation_tool"
+                frame_name = glob.glob(
+                    "{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(beam_list[k]))
 
-                button_name = "Validation tool"
+                if len(frame_name) != 0 and len(frame_name) == 1:
+                    frame_name = frame_name[0]
 
-                html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
-                            {1:s}
-                        </button>\n""".format(frame_name, button_name)
+                    if os.path.isdir(frame_name):
 
-                html_code += """<p>
-                        <iframe id="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
-                    </p>
-                    </div>\n""".format(frame_name, page_type, os.path.basename(beam_list[k]), "validation_tool")
+                        button_name = "validation_tool{0:d}".format(k)
+
+                        html_code += """
+                                <button class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                    Validation Tool
+                                </button>\n""".format(button_name)
+
+                        html_code += """
+                            <p>
+                                <iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
+                            </p>
+                            </div>\n""".format(button_name, page_type, os.path.basename(beam_list[k]), os.path.basename(frame_name))
+                    else:
+                        logger.warning("No continuum validation tool found for beam {0:s}".format(
+                            os.path.basename(beam_list[k])))
+                        html_code += """
+                            <div class="gallery" name="{0:s}">
+                                <p class="warning">
+                                    No plots and validation tool were found for {1:s}
+                                </p>
+                            </div>\n""".format(button_html_name, page_type)
+                else:
+                    logger.warning("No continuum validation tool found for beam {0:s}".format(
+                        os.path.basename(beam_list[k])))
+                    html_code += """
+                        <div class="gallery" name="{0:s}">
+                            <p class="warning">
+                                No plots and validation tool were found for {1:s}
+                            </p>
+                        </div>\n""".format(button_html_name, page_type)
+
             else:
                 logger.warning("No continuum plots and validation found")
                 html_code += """
@@ -263,7 +312,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 html_code += """
                     <div class="gallery" name="{0:s}">
                         <p class="warning">
-                            No plots were found for {1:s}
+                            No plots and validation tool were found for {1:s}
                         </p>
                     </div>\n""".format(button_html_name, page_type)
 
@@ -271,7 +320,123 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
         logger.warning("No beams for continuum QA found")
         html_code += """
         <p class="warning">
-            No beams and plots were found for continuum.
+            No beams were found for continuum QA.
+        </p>\n"""
+
+    return html_code
+
+
+def write_obs_content_line(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for mosaic
+    """
+
+    logger.info("Writing html code for page {0:s}".format(page_type))
+
+    # html_code += """
+    #     <p class="info">
+    #         Here you can inspect the continuum image, PyBDSF diagnostic plots and the validation tool for the mosaic of all available beam images.
+    #         The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.<br>
+    #         This page will only have content after the mosaic was created and the mosaic QA step has been performed.
+    #     </p>\n
+    #     """
+    html_code += """
+        <p class="info">
+            The overview does not cover line QA yet
+        </p>\n
+        """
+
+    return html_code
+
+
+def write_obs_content_mosaic(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for mosaic
+    """
+
+    logger.info("Writing html code for page {0:s}".format(page_type))
+
+    html_code += """
+        <p class="info">
+            Here you can inspect the continuum image, PyBDSF diagnostic plots and the validation tool for the mosaic of all available beam images. 
+            The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.<br>
+            This page will only have content after the mosaic was created and the mosaic QA step has been performed.
+        </p>\n
+        """
+
+    # get the diagnostic plots
+    image_list = glob.glob(
+        "{0:s}/{1:s}/*png".format(qa_report_obs_path, page_type))
+
+    n_images = len(image_list)
+
+    if n_images != 0:
+
+        div_name = "mosaic_gallery"
+
+        html_code += """
+                <button onclick="show_hide_plots('{0:s}')">
+                    PyBDSF Diagnostic plots
+                </button>
+                <div class="gallery_row" , name="mosaic_gallery">\n""".format(div_name)
+
+        # go throught the different types of plots
+        # they require a different layout because the plot sizes vary
+        for k in range(n_images):
+            if k % 2 == 0:
+                html_code += """
+                <div class="gallery_column">\n"""
+
+            html_code += """
+                <div class="mosaic_img">
+                    <a href="{0:s}/{1:s}">
+                        <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                    </a>
+                </div>\n""".format(page_type, os.path.basename(image_list[k]))
+
+            if k % 2 != 0 or k == n_images-1:
+                html_code += """
+                            </div>\n"""
+
+        html_code += """
+                    </div>\n"""
+
+        # add the validation tool
+        frame_name = glob.glob(
+            "{0:s}/mosaic/*continuum_validation_pybdsf_snr5.0_int".format(qa_report_obs_path))
+
+        if len(frame_name) != 0 and len(frame_name) == 1:
+            frame_name = frame_name[0]
+
+            if os.path.isdir(frame_name):
+
+                button_name = "Validation tool for mosaic"
+
+                html_code += """
+                    <button onclick="show_hide_plots('{0:s}')">
+                        {1:s}
+                    </button>\n""".format(frame_name, button_name)
+
+                html_code += """
+                    <p>
+                        <iframe id="validation_tool" name="{0:s}" src="{1:s}/{2:s}/index.html"></iframe>
+                    </p>\n""".format(frame_name, page_type, "validation_tool")
+            else:
+                logger.warning("No mosaic plots found")
+                html_code += """
+                <p class="warning">
+                    No validation tool found for mosaic QA.
+                </p>\n"""
+        else:
+            logger.warning("No mosaic plots found")
+            html_code += """
+            <p class="warning">
+                No validation tool found for mosaic QA.
+            </p>\n"""
+
+    else:
+        logger.warning("No mosaic plots found")
+        html_code += """
+        <p class="warning">
+            No plot and validation tool found for mosaic QA.
         </p>\n"""
 
     return html_code
@@ -387,6 +552,16 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
         except Exception as e:
             logger.error(e)
 
+    # create html content for subpage selfcal
+    # ++++++++++++++++++++++++++++++++++++
+    elif page_type == 'selfcal':
+
+        try:
+            html_code = write_obs_content_selfcal(
+                html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
+
     # create html content for subpage continuum
     # +++++++++++++++++++++++++++++++++++++++++
     elif page_type == 'continuum':
@@ -397,61 +572,25 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
         except Exception as e:
             logger.error(e)
 
+    # create html content for subpage line
+    # ++++++++++++++++++++++++++++++++++++
+    elif page_type == 'line':
+
+        try:
+            html_code = write_obs_content_line(
+                html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
+
     # create html content for subpage mosaic
     # ++++++++++++++++++++++++++++++++++++++
     elif page_type == 'mosaic':
 
-        # get the diagnostic plots
-        if obs_id != 0:
-            image_list = glob.glob(
-                "{0:s}/{1:s}/{2:s}/*png".format(qa_report_path, obs_id, page_type))
-        else:
-            image_list = glob.glob(
-                "{0:s}/{1:s}/*png".format(qa_report_path, page_type))
-
-        n_images = len(image_list)
-
-        if n_images != 0:
-
-            div_name = "mosaic_gallery"
-
-            html_code += """<button onclick="show_hide_plots('{0:s}')">
-                        PyBDSF Diagnostic plots
-                    </button>
-                    <div class="gallery_row" , name="mosaic_gallery">\n""".format(div_name)
-
-            # go throught the different types of plots
-            # they require a different layout because the plot sizes vary
-            for k in range(n_images):
-                if k % 2 == 0:
-                    html_code += """<div class="gallery_column">"""
-
-                html_code += """<div class="mosaic_img">
-                        <a href="{0:s}/{1:s}">
-                            <img src="{0:s}/{1:s}" alt="No image", width="100%">
-                        </a>
-                    </div>\n""".format(page_type, os.path.basename(image_list[k]))
-
-                if k % 2 != 0 or k == n_images-1:
-                    html_code += """</div>\n"""
-
-            html_code += """</div>\n"""
-        else:
-            logger.error("No mosaic plots found")
-            return -1
-
-        # add the validation tool
-        frame_name = "validation_tool"
-
-        button_name = "Validation tool for mosaic"
-
-        html_code += """<button onclick="show_hide_plots('{0:s}')">
-                            {1:s}
-                        </button>\n""".format(frame_name, button_name)
-
-        html_code += """<p>
-                        <iframe id="validation_tool" name="{0:s}" src="{1:s}/{2:s}/index.html"></iframe>
-                    </p>\n""".format(frame_name, page_type, "validation_tool")
+        try:
+            html_code = write_obs_content_mosaic(
+                html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
 
     # create html content for subpage apercal
     # as this is a text file, it is a bit more

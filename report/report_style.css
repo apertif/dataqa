@@ -214,7 +214,7 @@ continuum
 /******************************
 Validation tool
 ******************************/
-#validation_tool {
+.validation_tool {
   margin: auto;
   width: 95%;
   height: 1000px;
