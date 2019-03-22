@@ -408,17 +408,17 @@ def write_obs_content_mosaic(html_code, qa_report_obs_path, page_type):
 
             if os.path.isdir(frame_name):
 
-                button_name = "Validation tool for mosaic"
+                button_name = "validation_tool"
 
                 html_code += """
                     <button onclick="show_hide_plots('{0:s}')">
-                        {1:s}
-                    </button>\n""".format(frame_name, button_name)
+                        Validation Tool
+                    </button>\n""".format(button_name)
 
                 html_code += """
                     <p>
-                        <iframe id="validation_tool" name="{0:s}" src="{1:s}/{2:s}/index.html"></iframe>
-                    </p>\n""".format(frame_name, page_type, "validation_tool")
+                        <iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/index.html"></iframe>
+                    </p>\n""".format(button_name, page_type, os.path.basename(frame_name))
             else:
                 logger.warning("No mosaic plots found")
                 html_code += """

@@ -18,7 +18,7 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
     """
 
     if page_type == 'index':
-        page_title = 'APERTIF Science Demonstration Overview'
+        page_title = 'APERTIF Qualitiy Assessment Overview'
     elif page_type == 'obs_page':
         page_title = 'Observation {0:s}'.format(obs_id)
         css_file = "../{0:s}".format(css_file)
@@ -32,7 +32,7 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
     html_file.write("""<!DOCTYPE HTML>
     <html lang="en">
     <head>
-        <title>APERTIF Science Demonstration 2019</title>
+        <title>APERTIF Science Evaluation Period 2019</title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <meta name="description" content="" />
         <meta name="keywords" content="" />
