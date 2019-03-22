@@ -289,8 +289,8 @@ class radio_image(object):
             print "--------------------------------"
 
             #Run Aegean source finder to produce catalogue of image
-            command = 'aegean --cores={0} --noise={1} --background={2} --table={3}'.\
-                       format(ncores, self.rms_map, self.bkg, self.cat_name)
+            command = 'aegean --cores={0} --table={1}'.\
+                       format(ncores, self.cat_name)
 
             #Also write ds9 region file and island fits file when user wants verbose output
             if self.verbose:
