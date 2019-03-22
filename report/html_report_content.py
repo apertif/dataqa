@@ -157,7 +157,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                     </button>\n""".format(div_name, categories_titles[k])
 
                 html_code += """
-                    <div class="gallery" name="{0:s}"
+                    <div class="gallery" name="{0:s}">
                         <p class="warning">
                             No plots were found for {1:s}
                         </p>
