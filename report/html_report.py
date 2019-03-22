@@ -32,12 +32,12 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
     html_file.write("""<!DOCTYPE HTML>
         <html lang="en">
         <head>
-            \t<title>APERTIF Science Demonstration 2019</title>
-            \t<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	        \t<meta name="description" content="" />
-	        \t<meta name="keywords" content="" />
-            \t<script src="{0}"></script>
-            \t<link rel="stylesheet" type="text/css" href="{1}" />
+            <title>APERTIF Science Demonstration 2019</title>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	        <meta name="description" content="" />
+	        <meta name="keywords" content="" />
+            <script src="{0}"></script>
+            <link rel="stylesheet" type="text/css" href="{1}" />
         </head>
         <body>
             <h1>{2:s}</h1>\n""".format(js_file, css_file, page_title))
