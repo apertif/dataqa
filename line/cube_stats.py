@@ -151,7 +151,7 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     ax.plot(
                         cube_info['channel'], cube_info['noise'] * 1.e3, color='blue', linestyle='-')
                     ax.plot(cube_info['channel'], cube_info['gauss'] *
-                            1.e3, color='orange', linestyle=':')
+                            1.e3, color='orange', linestyle='--')
 
                     # add axes labels
                     ax.set_title('Beam {0:s}\n'.format(beam))
@@ -175,11 +175,11 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     # add legend
                     ax.plot([0.73, 0.78], [0.95, 0.95], transform=ax.transAxes,
                             color='blue', linestyle='-')
-                    ax.annotate('Data', xy=(0.7, 0.95), xycoords='axes fraction',
+                    ax.annotate('Data', xy=(0.8, 0.95), xycoords='axes fraction',
                                 va='center', ha='left', color='blue')
 
                     ax.plot([0.73, 0.78], [0.9, 0.9], transform=ax.transAxes,
-                            color='orange', linestyle=':')
+                            color='orange', linestyle='--')
                     ax.annotate('Fit', xy=(0.8, 0.9), xycoords='axes fraction',
                                 va='center', ha='left', color='orange')
 
