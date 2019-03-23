@@ -29,9 +29,16 @@ def gauss(x, *p):
 
 def get_cube_stats(qa_line_dir, data_base_dir_list):
     """Function to get a simple rms per channel
+
+    Parameter:
+        qa_line_dir : str
+            Directory where the line QA output is stored
+        data_base_dir_list : list
+            List of data directories on happili 1 to 4
     """
 
     # go through all four data directories
+    # ++++++++++++++++++++++++++++++++++++
     for data_dir in data_base_dir_list:
 
         start_time_data = time.time()
@@ -48,6 +55,7 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
             data_dir_beam_list.sort()
 
             # going through all the beams that were found
+            # +++++++++++++++++++++++++++++++++++++++++++
             for data_dir_beam in data_dir_beam_list:
 
                 start_time_beam = time.time()
@@ -112,6 +120,7 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     # fitting the width of a histogram of image values.
                     # These give same results for now, but gauss fit could be improved by
                     # e.g. fitting only to part of histogram
+                    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
                     for ch in range(n_channels):
                         # get rms
@@ -129,16 +138,61 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                         # print 'Fitted standard deviation = ', coeff[2]
                         cube_info['gauss'][ch] = coeff[2]
 
+                    # write noise data
                     cube_info.write(
                         "{0:s}/beam_{1:s}_cube_noise_info.csv".format(qa_line_beam_dir, beam), format="csv", overwrite=True)
 
-                    plt.plot(cube_info['channel'], cube_info['noise'])
-                    plt.plot(cube_info['channel'], cube_info['gauss'])
-                    plt.xlabel('Channel number')
-                    plt.ylabel('Noise (Jy)')
+                    # Create plot
+                    # +++++++++++
+                    ax = plt.subplot(projection=wcs)
+
+                    # plot data and fit
+                    ax.plot(
+                        cube_info['channel'], cube_info['noise'] / 1.e3, color='blue', linestyle='-')
+                    ax.plot(cube_info['channel'], cube_info['gauss'] /
+                            1.e3, color='orange', linestyle='--')
+
+                    # add axes labels
+                    ax.title('Beam {0:s}'.format(beam))
+                    ax.xlabel('Channel number')
+                    ax.ylabel('Noise (mJy/beam)')
+                    ax.set_xlim([0, n_channels-1])
+
+                    # add second axes with frequency
+                    ax_x2 = ax.twiny()
+
+                    # get frequency for first and last channel
+                    # freq_ticks = np.array(
+                    #     [wcs.wcs_pix2world([[0, 0, xtick]], 1)[0, 2]] for xtick in ax.get_xticks())
+                    freq_first_ch = wcs.wcs_pix2world([[0, 0, 0]], 1)[0, 2]
+                    freq_last_ch = wcs.wcs_pix2world(
+                        [[0, 0, n_channels]], 1)[0, 2]
+                    ax_x2.set_xlim([freq_first_ch/1.e6, freq_last_ch/1.e6])
+                    ax_x2.xlabel("Frequency [MHz]")
+
+                    # add legend
+                    ax.plot([0.63, 0.68], [0.95, 0.95], transform=ax.transAxes,
+                            color='blue', linestyle='-')
+                    ax.annotate('Data', xy=(0.7, 0.95), xycoords='axes fraction',
+                                va='center', ha='left', color='red')
+
+                    ax.plot([0.63, 0.68], [0.9, 0.9], transform=ax.transAxes,
+                            color='blue', linestyle='-')
+                    ax.annotate('Fit', xy=(0.7, 0.9), xycoords='axes fraction',
+                                va='center', ha='left', color='blue')
+
+                    ax_x2.tick_params(axis='both', bottom='off', top='on',
+                                      left='on', right='on', which='major', direction='in')
+
+                    ax.tick_params(axis='both', bottom='on', top='off', left='on', right='on',
+                                   which='major', direction='in')
+
                     plt.savefig(
-                        '{0:s}/{1:s}_cube_noise.png'.format(qa_line_beam_dir, beam), dpi=300)
+                        '{0:s}/beam_{1:s}_cube_noise.png'.format(qa_line_beam_dir, beam), dpi=300)
                     plt.close('all')
+
+                    # close fits file
+                    fits_hdulist
 
                     logging.info("Finished analyzing beam {0:s} ({1:.1f}s)".format(
                         beam, time.time()-start_time_beam))
