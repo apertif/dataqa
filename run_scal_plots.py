@@ -35,17 +35,17 @@ PH = scplots.PHSols(args.scan, args.target)
 PH.get_data()
 PH.plot_phase(imagepath=output_path)
 
-print 'Done with phase plots'
+print('Done with phase plots')
 
 # Get amp plots
 #AMP = scplots.AMPSols(args.scan, args.target)
-#AMP.get_data()
-#AMP.plot_amp(imagepath=output_path)
+# AMP.get_data()
+# AMP.plot_amp(imagepath=output_path)
 
-#print 'Done with amplitude plots'
+# print 'Done with amplitude plots'
 
 
 #end = timer()
-#print 'Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(
+# print 'Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(
 #    (end - start)/60.)
 #time in minutes

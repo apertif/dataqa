@@ -9,7 +9,7 @@ from apercal.subs import readmirlog
 from apercal.subs import misc
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
-from ..scandata import ScanData
+from dataqa.scandata import ScanData
 
 
 class PHSols(ScanData):
@@ -31,14 +31,16 @@ class PHSols(ScanData):
                 self.phants[i] = misc.create_antnames()
                 self.phtimes[i] = times
                 self.phases[i] = phgains
-                self.phnants[i], self.phnbins[i], self.phnsols[i] = readmirlog.get_ndims(phdata)
+                self.phnants[i], self.phnbins[i], self.phnsols[i] = readmirlog.get_ndims(
+                    phdata)
             else:
                 print 'Filling with NaNs. Phase self-calibration not present for B{}'.format(beam)
                 self.phants[i] = misc.create_antnames()
                 self.phtimes[i] = np.array(np.nan)
                 self.phases[i] = np.array(np.nan)
                 self.phnbins[i] = np.array(np.nan)
-                self.phnants[i], self.phnbins[i], self.phnsols[i] = np.array(np.nan), np.array(np.nan), np.array(np.nan)
+                self.phnants[i], self.phnbins[i], self.phnsols[i] = np.array(
+                    np.nan), np.array(np.nan), np.array(np.nan)
 
     def plot_phase(self, imagepath=None):
         """Plot phase, one plot per antenna"""
@@ -59,12 +61,15 @@ class PHSols(ScanData):
                 plt.subplot(ny, nx, beamnum + 1)
                 color = cm.rainbow(np.linspace(0, 1, self.phnbins[n]))
                 for f, freqbin, i, c in enumerate(self.phnbins), zip(range(self.phnbins[n], color)):
-                    plt.scatter(self.times[n][f], self.phases[n][a, f, :], label='F'+str(f), marker=',', s=1, c=color)
+                    plt.scatter(self.times[n][f], self.phases[n][a, f, :],
+                                label='F'+str(f), marker=',', s=1, c=color)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(-180, 180)
             plt.legend()
-            plt.savefig('{2}/SCAL_phase_{0}_{1}.png'.format(ant, self.scan, imagepath))
+            plt.savefig(
+                '{2}/SCAL_phase_{0}_{1}.png'.format(ant, self.scan, imagepath))
             plt.clf()
+
 
 class AMPSols(ScanData):
     def __init__(self, scan, target):
@@ -72,7 +77,6 @@ class AMPSols(ScanData):
         self.ampants = np.empty(len(self.dirlist), dtype=np.object)
         self.amptimes = np.empty(len(self.dirlist), dtype=np.object)
         self.amps = np.empty(len(self.dirlist), dtype=np.ndarray)
-
 
     def get_data(self):
         for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
@@ -102,16 +106,20 @@ class AMPSols(ScanData):
             xsize = nx * 4
             ysize = ny * 4
             plt.figure(figsize=(xsize, ysize))
-            plt.suptitle('Bandpass amplitude for Antenna {0}'.format(ant), size=20)
+            plt.suptitle(
+                'Bandpass amplitude for Antenna {0}'.format(ant), size=20)
 
             for n, beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 # print beamnum
                 plt.subplot(ny, nx, beamnum + 1)
-                plt.scatter(self.freq[n][0, :], self.amp[n][a, :, 0], label='XX', marker=',', s=1)
-                plt.scatter(self.freq[n][0, :], self.amp[n][a, :, 1], label='YY', marker=',', s=1)
+                plt.scatter(self.freq[n][0, :], self.amp[n]
+                            [a, :, 0], label='XX', marker=',', s=1)
+                plt.scatter(self.freq[n][0, :], self.amp[n]
+                            [a, :, 1], label='YY', marker=',', s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(0, 1.8)
             plt.legend()
-            plt.savefig('{2}/BP_amp_{0}_{1}.png'.format(ant, self.scan, imagepath))
+            plt.savefig(
+                '{2}/BP_amp_{0}_{1}.png'.format(ant, self.scan, imagepath))
             plt.clf()
