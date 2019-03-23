@@ -165,9 +165,11 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     # freq_ticks = np.array(
                     #     [wcs.wcs_pix2world([[0, 0, xtick]], 1)[0, 2]] for xtick in ax.get_xticks())
                     freq_first_ch = wcs.wcs_pix2world([[0, 0, 0]], 1)[0, 2]
+                    print(freq_first_ch)
 
                     freq_last_ch = wcs.wcs_pix2world(
                         [[0, 0, n_channels-1]], 1)[0, 2]
+                    print(freq_last_ch)
                     ax_x2.set_xlim([freq_first_ch/1.e6, freq_last_ch/1.e6])
                     ax_x2.xlabel("Frequency [MHz]")
 
