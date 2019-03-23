@@ -70,7 +70,8 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
 
                 # this directory does not exist create it
                 if not os.path.exists(qa_line_beam_dir):
-                    print("Creating directory {0:s}".format(qa_line_beam_dir))
+                    logging.info(
+                        "Creating directory {0:s}".format(qa_line_beam_dir))
                     os.mkdir(qa_line_beam_dir)
 
                 # set the name of the of the cube file to analyze
@@ -144,7 +145,7 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
 
                     # Create plot
                     # +++++++++++
-                    ax = plt.subplot()
+                    ax = plt.subplot(111)
 
                     # plot data and fit
                     ax.plot(
@@ -153,9 +154,9 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                             1.e3, color='orange', linestyle='--')
 
                     # add axes labels
-                    ax.title('Beam {0:s}'.format(beam))
-                    ax.xlabel('Channel number')
-                    ax.ylabel('Noise (mJy/beam)')
+                    ax.set_title('Beam {0:s}'.format(beam))
+                    ax.set_xlabel('Channel number')
+                    ax.set_ylabel('Noise (mJy/beam)')
                     ax.set_xlim([0, n_channels-1])
 
                     # add second axes with frequency
