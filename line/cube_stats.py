@@ -49,10 +49,10 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
 
                 start_time_beam = time.time()
 
-                logging.info("Analyzing beam {0:s}".format(beam))
-
                 # getting the beam
                 beam = os.path.basename(data_dir_beam)
+
+                logging.info("Analyzing beam {0:s}".format(beam))
 
                 # setting the output directory for the beam
                 qa_line_beam_dir = "{0:s}/{1:s}".format(qa_line_dir, beam)
