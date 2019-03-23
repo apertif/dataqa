@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     # Create logging file
     lib.setup_logger(
-        'debug', logfile='{0:s}get_cube_stats.log'.format(qa_line_dir))
+        'debug', logfile='{0:s}/get_cube_stats.log'.format(qa_line_dir))
     logger = logging.getLogger(__name__)
 
     # check host name
