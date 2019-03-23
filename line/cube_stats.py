@@ -149,12 +149,12 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
 
                     # plot data and fit
                     ax.plot(
-                        cube_info['channel'], cube_info['noise'] / 1.e3, color='blue', linestyle='-')
-                    ax.plot(cube_info['channel'], cube_info['gauss'] /
-                            1.e3, color='orange', linestyle='--')
+                        cube_info['channel'], cube_info['noise'] * 1.e3, color='blue', linestyle='-')
+                    ax.plot(cube_info['channel'], cube_info['gauss'] *
+                            1.e3, color='orange', linestyle=':')
 
                     # add axes labels
-                    ax.set_title('Beam {0:s}'.format(beam))
+                    ax.set_title('Beam {0:s}\n'.format(beam))
                     ax.set_xlabel('Channel number')
                     ax.set_ylabel('Noise (mJy/beam)')
                     ax.set_xlim([0, n_channels-1])
@@ -173,15 +173,15 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     ax_x2.set_xlabel("Frequency [MHz]")
 
                     # add legend
-                    ax.plot([0.63, 0.68], [0.95, 0.95], transform=ax.transAxes,
+                    ax.plot([0.73, 0.78], [0.95, 0.95], transform=ax.transAxes,
                             color='blue', linestyle='-')
                     ax.annotate('Data', xy=(0.7, 0.95), xycoords='axes fraction',
-                                va='center', ha='left', color='red')
-
-                    ax.plot([0.63, 0.68], [0.9, 0.9], transform=ax.transAxes,
-                            color='blue', linestyle='-')
-                    ax.annotate('Fit', xy=(0.7, 0.9), xycoords='axes fraction',
                                 va='center', ha='left', color='blue')
+
+                    ax.plot([0.73, 0.78], [0.9, 0.9], transform=ax.transAxes,
+                            color='orange', linestyle=':')
+                    ax.annotate('Fit', xy=(0.8, 0.9), xycoords='axes fraction',
+                                va='center', ha='left', color='orange')
 
                     ax_x2.tick_params(axis='both', bottom='off', top='on',
                                       left='on', right='on', which='major', direction='in')
