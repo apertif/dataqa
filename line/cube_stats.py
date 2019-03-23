@@ -44,6 +44,9 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
         # checking whether no beam was found
         if len(data_dir_beam_list) != 0:
 
+            # sort beam list
+            data_dir_beam_list.sort()
+
             # going through all the beams that were found
             for data_dir_beam in data_dir_beam_list:
 
