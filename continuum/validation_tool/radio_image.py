@@ -85,6 +85,7 @@ class radio_image(object):
 
         #expected positional error, given by FWHM/SNR (Condon, 1997)
         self.posErr = int(round(self.bmaj/SNR))
+        self.SNR = SNR
 
 
     def header_key(self, header, key, floatify=False):
@@ -325,7 +326,7 @@ class radio_image(object):
 
 
 # TODO:
-    def run_PyBDSF(self, params='', ncores=8, write=True, redo=False):
+    def run_PyBDSF(self, pybdsf_params=dict(), ncores=8, write=True, redo=False):
         """
         Perform source finding on image using PyBDSF, producing just a component catalogue by default.
 
@@ -356,7 +357,11 @@ class radio_image(object):
             print "--------------------------------"
 
             #Run PyBDSF source finder to produce catalogue of image
-            img = bdsf.process_image(self.filepath, quiet=True, ncores=ncores)
+            # if self.SNR is not None:
+            # pybdsf_params.update({'thresh':'hard', 'thresh_pix':self.SNR})
+
+            img = bdsf.process_image(self.filepath, quiet=True, ncores=ncores,
+                                     **pybdsf_params)
             plot_type_list = ['rms', 'mean',
                          'gaus_model', 'gaus_resid', 'island_mask']
             fits_names = ["../{}_{}.fits".format(self.basename, _) for _ in plot_type_list]

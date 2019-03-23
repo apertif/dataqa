@@ -16,7 +16,7 @@ from report import report
 def run(fits_image, finder='pybdsf', snr=5.0, verbose=True, refind=False, redo=False,
         config_files=['FIRST_config.txt', 'NVSS_config.txt', 'TGSS_config.txt'],
         use_peak=False, ncores=8, nbins=50, filter_config=None, write_all=True,
-        aegean_params='--floodclip=3', pybdsf_params=''):
+        aegean_params='--floodclip=3', pybdsf_params=dict()):
 
     #find directory that contains all the necessary files
     main_dir, _ = os.path.split(os.path.realpath(__file__))
@@ -41,7 +41,7 @@ def run(fits_image, finder='pybdsf', snr=5.0, verbose=True, refind=False, redo=F
         IMG.run_Aegean(ncores=ncores, redo=refind, params=aegean_params, write=write_all)
     elif finder == 'pybdsf':
         main_cat = IMG.cat_comp
-        IMG.run_PyBDSF(ncores=ncores, redo=refind, params=pybdsf_params, write=write_all)
+        IMG.run_PyBDSF(ncores=ncores, redo=refind, pybdsf_params=pybdsf_params, write=write_all)
 
 
     #Create catalogue object
