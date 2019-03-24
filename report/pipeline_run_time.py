@@ -79,8 +79,8 @@ def get_pipeline_run_time(obs_id):
                     beam_name_col = np.array([
                         "--" for m in range(n_entries_in_timinginfo)])
                 else:
-                    beam_name_col = np.array(
-                        logfile_name.split("apercal")[-1] for m in range(n_entries_in_timinginfo))
+                    beam_name_col = np.array([
+                        logfile_name.split("apercal")[-1] for m in range(n_entries_in_timinginfo)])
 
                 # create table with the above columns
                 beam_file_table = Table([beam_name_col, file_name_col], names=(
