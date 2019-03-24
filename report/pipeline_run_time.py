@@ -97,8 +97,8 @@ def get_pipeline_run_time(obs_id):
                     tmp_table = hstack([beam_file_table, timinginfo_table])
                     complete_table = vstack([complete_table, tmp_table])
 
-            table_output_name = "{0:s}{1:s}".format(qa_apercal_dir, os.path.basename(apercal_log_list[log_counter])).replace(
-                ".log", "_log_{0:s}.csv".format(host_name_list[k]))
+            table_output_name = "{0:s}apercal_log_{0:s}.csv".format(
+                qa_apercal_dir, host_name_list[k])
 
             try:
                 complete_table.write(table_output_name, format="csv")

@@ -494,7 +494,8 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
             for dir_counter in range(len(data_dir_list)):
 
                 # get the logfile for this data directory
-                apercal_log_file_list = glob.glob("{0:s}apercal*.log")
+                apercal_log_file_list = glob.glob(
+                    "{0:s}apercal*.log".format(data_dir_list[dir_counter]))
 
                 if len(apercal_log_file_list):
 
@@ -540,6 +541,9 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
             else:
                 os.unlink(link_name)
                 os.symlink(time_file, link_name)
+    else:
+        logger.warning(
+            "Did not fine time measurement files in {0:s}apercal_performance/".format(qa_dir))
 
     logger.info(
         "## Creating report directory for apercal log and linking files. Done")
