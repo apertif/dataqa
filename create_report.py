@@ -21,6 +21,7 @@ import socket
 from apercal.libs import lib
 from dataqa.report import html_report as hp
 from dataqa.report import html_report_dir as hpd
+from dataqa.report.pipeline_run_time import get_pipeline_run_time
 from dataqa.scandata import get_default_imagepath
 
 if __name__ == "__main__":
@@ -80,6 +81,12 @@ if __name__ == "__main__":
 
     # logging.basicConfig(filename='{0:s}/create_report.log'.format(qa_dir), level=logging.DEBUG,
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
+
+    # getting timing measurment for apercal
+    try:
+        get_pipeline_run_time(obs_id)
+    except Exception as e:
+        logger.error(e)
 
     # the subpages to be created
     subpages = ['preflag', 'crosscal',
