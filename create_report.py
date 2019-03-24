@@ -14,7 +14,7 @@ import os
 import sys
 from astropy.table import Table
 import logging
-import globq
+import glob
 import time
 import argparse
 import socket
