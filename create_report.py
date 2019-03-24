@@ -14,7 +14,7 @@ import os
 import sys
 from astropy.table import Table
 import logging
-import glob
+import globq
 import time
 import argparse
 import socket
@@ -95,8 +95,10 @@ if __name__ == "__main__":
     logger.info("#### Create report directory structure")
 
     # copy the js and css files
-    js_file_name = "report/report_fct.js"
-    css_file_name = "report/report_style.css"
+    js_file_name = "{0:s}/report_fct.js".format(
+        hp.__file__).split("/html_report.py")[0]
+    css_file_name = "{0:s}/report_style.css".format(
+        hp.__file__).split("/html_report.py")[0]
 
     # Check that qa_dir and the other directories exists
     if not os.path.exists(qa_dir):
