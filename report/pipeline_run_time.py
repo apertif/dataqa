@@ -57,11 +57,11 @@ def get_pipeline_run_time(obs_id):
             timinginfo_table = Table(
                 rows=timinginfo, names=('pipeline_step', 'run_time'))
 
-            table_output_name = "{0:s}{1:s}".format(qa_apercal_dir, apercal_log_list[log_counter]).replace(
+            table_output_name = "{0:s}{1:s}.csv".format(qa_apercal_dir, apercal_log_list[log_counter]).replace(
                 ".log", "_{0:s}.log".format(host_name_list[log_counter]))
 
             try:
-                timinginfo_table.write(table_output_name)
+                timinginfo_table.write(table_output_name, format="csv")
             except Exception as e:
                 logger.error(e)
         else:
