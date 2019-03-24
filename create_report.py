@@ -96,9 +96,9 @@ if __name__ == "__main__":
 
     # copy the js and css files
     js_file_name = "{0:s}/report_fct.js".format(
-        hp.__file__).split("/html_report.py")[0]
+        hp.__file__.split("/html_report.py")[0])
     css_file_name = "{0:s}/report_style.css".format(
-        hp.__file__).split("/html_report.py")[0]
+        hp.__file__.split("/html_report.py")[0])
 
     # Check that qa_dir and the other directories exists
     if not os.path.exists(qa_dir):
