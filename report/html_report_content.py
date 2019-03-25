@@ -202,7 +202,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
         for k in range(n_beams):
 
             button_html_name = "beam{0:d}".format(k)
-            div_name = "continuum_gallery{0:d}".format(k)
+            div_name = "gallery{0:d}".format(k)
 
             # get the diagnostic plots
             image_list = glob.glob("{0:s}/*png".format(beam_list[k]))
