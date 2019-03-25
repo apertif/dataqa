@@ -51,9 +51,9 @@ if __name__ == '__main__':
 
     # get data directories depending on the host name
     if host_name != "happili-01":
-        print("WARNING: You are not working on happili-01.")
-        print("WARNING: The script will not process all beams")
-        print("Please switch to happili-01")
+        logger.warning("You are not working on happili-01.")
+        logger.warning("The script will not process all beams")
+        logger.warning("Please switch to happili-01")
         data_base_dir_list = ['/data/apertif/{0:s}'.format(obs_id)]
     else:
         data_base_dir_list = ['/data/apertif/{0:s}'.format(obs_id), '/data2/apertif/{0:s}'.format(
