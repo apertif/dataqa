@@ -608,7 +608,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         if len(table_pipeline_step_index) != 0:
                             html_code += """
                                     <td>{0:s}</td>
-                                    """.format(timinginfo_table_select['run_time'][table_pipeline_step_index])
+                                    """.format(timinginfo_table_select['run_time'][table_pipeline_step_index[0]])
                         else:
                             html_code += """
                                 <td>N/A</td>

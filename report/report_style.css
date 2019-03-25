@@ -57,15 +57,16 @@ table
     }
 
     .apercal_timing tr:nth-child(even){
-      background-color: rgb(179, 179, 179);
+      background-color: rgb(209, 209, 209);
     }
 
     .apercal_timing td, .apercal_timing th{
       border: 1px solid rgb(156, 156, 156);
+      padding: 5px;
     }
 
     .apercal_timing tr:hover{
-      background-color: rgb(124, 124, 124)
+      background-color: rgb(146, 146, 146)
     }
 
 .obs_links{
