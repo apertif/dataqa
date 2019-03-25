@@ -180,18 +180,107 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
 
     logger.info("Writing html code for page {0:s}".format(page_type))
 
-    # html_code += """
-    #     <p class="info">
-    #         Here you can inspect the continuum image, PyBDSF diagnostic plots and the validation tool for the mosaic of all available beam images.
-    #         The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.<br>
-    #         This page will only have content after the mosaic was created and the mosaic QA step has been performed.
-    #     </p>\n
-    #     """
     html_code += """
         <p class="info">
-            The overview does not cover selfcal QA yet
+            This page shows the images and residuals from every major and minor phase self-cal iteration.
+            Maps from amplitude self-cal is not yet done by the selfcal QA script. Amplitude and phase 
+            gain plots are also not yet available from the selfcal QA script. <br>
+            This page will only have content after the selfcal QA step has been performed.
         </p>\n
         """
+    
+    # get beams
+    beam_list = glob.glob(
+        "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
+
+    n_beams = len(beam_list)
+
+    if n_beams != 0:
+
+        beam_list.sort()
+
+        for k in range(n_beams):
+
+            button_html_name = "beam{0:d}".format(k)
+            div_name = "gallery{0:d}".format(k)
+
+            # get the diagnostic plots
+            image_list = glob.glob("{0:s}/*png".format(beam_list[k]))
+
+            n_images = len(image_list)
+
+            if n_images != 0:
+
+                image_list.sort()
+
+                html_code += """
+                    <button onclick="show_hide_plots('{0:s}')">
+                        Beam {1:s}
+                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+
+                for image in image_list:
+
+                    major_cycle = os.path.basename(image).split("_")[0]
+
+                    minor_cycle = os.path.basename(image).split("_")[1]
+
+                    image_type = os.path.basename(image).split(".")[
+                        0].split("_")[-1]
+                    
+                    if image_type == "image":
+                        caption = "Image: major {0:s}, minor {1:s}".format(major_cycle, minor_cycle)
+                    elif image_type == "residual":
+                        caption = "Residual: major {0:s}, minor {1:s}".format(
+                            major_cycle, minor_cycle)
+                    else:
+                        caption = ""
+
+                    html_code += """
+                        <div class="gallery_selfcal" name="{0:s}">
+                            <a href="{1:s}/{2:s}/{3:s}">
+                                <img src="{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
+                            </a>
+                            <div class="caption">{4:s}</div>
+                        </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image), caption)
+                html_code += """\n"""
+
+                # # go throught the different types of plots
+                # # they require a different layout because the plot sizes vary
+                # html_code += """<div class="gallery_column" name="{0:s}">\n""".format(
+                # div_name)
+                # for m in range(n_images):
+                #     if m % 4 == 0:
+                #         html_code += """<div class="gallery_row">"""
+
+                #     html_code += """<div class="mosaic_img">
+                #             <a href="{0:s}/{1:s}/{2:s}">
+                #                 <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
+                #             </a>
+                #         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image_list[m]))
+
+                #     if m % 2 != 0 or m == n_images-1:
+                #         html_code += """</div>\n"""
+
+            else:
+                logger.warning("No selfcal maps found in {0:s}".format(
+                    os.path.basename(beam_list[k])))
+                html_code += """
+                <button class="disabled" onclick="show_hide_plots('{0:s}')">
+                        Beam {1:s}
+                    </button>\n""".format(button_html_name, os.path.basename(beam_list[k]))
+    
+    else:
+        logger.warning("No beams for continuum QA found")
+        html_code += """
+        <p class="warning">
+            No beams were found for continuum QA.
+        </p>\n"""
+
+    # html_code += """
+    #     <p class="info">
+    #         The overview does not cover selfcal QA yet
+    #     </p>\n
+    #     """
 
     return html_code
 
