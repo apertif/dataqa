@@ -9,6 +9,10 @@ from selfcal import selfcal_plots as scplots
 import argparse
 from timeit import default_timer as timer
 from dataqa.scandata import get_default_imagepath
+from dataqa.selfcal.selfcal_maps import get_selfcal_maps
+import time
+from apercal.libs import lib
+import logging
 
 start = timer()
 
@@ -35,12 +39,32 @@ if args.path is None:
 else:
     output_path = args.path
 
-# Get phase plots
-PH = scplots.PHSols(args.scan, args.target)
-PH.get_data()
-PH.plot_phase(imagepath=output_path)
+# Create log file
+lib.setup_logger(
+    'debug', logfile='{0:s}run_scal_plots.log'.format(output_path))
+logger = logging.getLogger(__name__)
 
-print('Done with phase plots')
+# Get selfcal maps
+try:
+    logger.info("#### Creating selfcal maps ...")
+    start_time_maps = time.time()
+    get_selfcal_maps(args.scan, output_path)
+    logger.info("#### Creating selfcal maps. Done ({0:.0f}s)".format(
+        time.time()-start_time_maps))
+except Exception as e:
+    logger.error(e)
+    logger.error("#### Creating selfcal maps failed")
+
+# Get phase plots
+try:
+    logger.info("#### Creating phase plots")
+    PH = scplots.PHSols(args.scan, args.target)
+    PH.get_data()
+    PH.plot_phase(imagepath=output_path)
+    logger.info('#### Done with phase plots')
+except Exception as e:
+    logger.error(e)
+    logger.error("Creating phase plots failed.")
 
 # Get amp plots
 #AMP = scplots.AMPSols(args.scan, args.target)
