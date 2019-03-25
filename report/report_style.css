@@ -65,8 +65,16 @@ table
       padding: 5px;
     }
 
+    .apercal_timing td{
+      text-align: right;
+    }
+
+    .apercal_timing td:hover{
+      background-color: rgb(255, 179, 136);
+    }
+
     .apercal_timing tr:hover{
-      background-color: rgb(146, 146, 146)
+      background-color: rgb(172, 172, 172)
     }
 
 .obs_links{
@@ -232,6 +240,7 @@ continuum
   margin: auto;
   display: none;
   width: 95%;
+  padding-bottom: 10px;
 }
 
 /******************************
