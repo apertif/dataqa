@@ -303,7 +303,8 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                         </div>\n""".format(button_html_name, page_type)
 
             else:
-                logger.warning("No continuum plots and validation found")
+                logger.warning("No continuum plots and validation found for beam {0:s}".format(
+                    os.path.basename(beam_list[k])))
                 html_code += """
                 <button onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}

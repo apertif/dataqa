@@ -634,6 +634,15 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
             except Exception as e:
                 logger.error(e)
 
+        # Create links for files from line QA
+        # +++++++++++++++++++++++++++++++++++++++
+        elif page == "line":
+
+            try:
+                create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage)
+            except Exception as e:
+                logger.error(e)
+
         # Create links for files from mosaic QA
         # +++++++++++++++++++++++++++++++++++++++
         elif page == "mosaic":
