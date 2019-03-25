@@ -551,10 +551,37 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
                 frame_name = "apercal_gallery_table"
 
-                html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                html_code += """
+                        <button class="button_continuum" onclick="show_hide_plots('{0:s}')">
                             Apercal timing information
                         </button>
+                        <p></p>
                         """.format(frame_name)
+
+                # read in data
+                timinginfo_table = Table.read(csv_file, format="csv")
+
+                pipeline_step_list = ["start_pipeline", "prepare", "ccal", "convert", "scal", "continuum", "line"]
+
+                # create the table
+                # start with the header
+                html_code += """
+                        <div name="{0:s}">
+                            <table class="apercal_timing">
+                                <tr>
+                                    <th>beam</th>
+                        """.format(frame_name)
+                
+                for pipeline_step in pipeline_step_list:
+                    html_code += """
+                                    <th>{0:s}</th>
+                        """.format(pipeline_step)
+                html_code += """</tr>
+                        """
+
+                html_code += """
+                        </div>\n
+                        """
 
             # create buttons and iframes for apercal log files
             # ++++++++++++++++++++++++++++++++++++++++++++++++
