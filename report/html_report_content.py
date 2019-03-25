@@ -602,7 +602,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
                         # get the index of the pipeline step in the table
                         table_pipeline_step_index = np.where(
-                            timinginfo_table_select['pipeline_steps'] == pipeline_step)[0]
+                            timinginfo_table_select['pipeline_step'] == pipeline_step)[0]
                         
                         # not all pipeline steps are in all log files
                         if len(table_pipeline_step_index) != 0:
@@ -619,8 +619,6 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 html_code += """</table>
                         </div>\n
                         """
-
-
             else:
                 logging.warning(
                     "Could not find timing information file {0:s} ".format(csv_file))
