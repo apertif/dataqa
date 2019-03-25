@@ -55,7 +55,7 @@ def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir):
     output = "{0:s}/{1:s}".format(qa_selfcal_beam_dir,
                                   fits_name).replace(".fits", ".png")
 
-    plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=300)
+    plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=200)
 
     # if plot_format == "pdf":
     #     plt.savefig(output.replace(".png", ".pdf"),
@@ -111,7 +111,7 @@ def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
         # plot image if it exists
         if os.path.exists(fits_name):
 
-            logger.info("Plotting {0:s}".format(fits_name))
+            logger.info("Plotting {0:s}".format(mir_image))
 
             plot_selfcal_maps(fits_name, qa_selfcal_beam_dir)
 
