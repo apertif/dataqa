@@ -133,14 +133,14 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir):
     # creating a temporary directory for conversion
     tmp_convert_dir = "{0:s}tmp_conv/".format(qa_selfcal_dir)
 
+    if not os.path.exists(tmp_convert_dir):
+        os.mkdir(tmp_convert_dir)
+
     # get current working directory to go back to at the end of this function
     cwd = os.getcwd()
 
     # change to this directory for shorter path lengths for miriad
     os.chdir(tmp_convert_dir)
-
-    if not os.path.exists(tmp_convert_dir):
-        os.mkdir(tmp_convert_dir)
 
     # check host name
     host_name = socket.gethostname()
