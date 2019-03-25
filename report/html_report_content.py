@@ -182,7 +182,9 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
 
     html_code += """
         <p class="info">
-            This page shows the images and residuals from every major and minor selfcal iteration.<br>
+            This page shows the images and residuals from every major and minor phase self-cal iteration.
+            Maps from amplitude self-cal is not yet done by the selfcal QA script. Amplitude and phase 
+            gain plots are also not yet available from the selfcal QA script. <br>
             This page will only have content after the selfcal QA step has been performed.
         </p>\n
         """
@@ -204,7 +206,6 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
 
             # get the diagnostic plots
             image_list = glob.glob("{0:s}/*png".format(beam_list[k]))
-            residual_list = glob.glob("{0:s}/*residual*png".format(beam_list[k]))
 
             n_images = len(image_list)
 
@@ -215,14 +216,13 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 html_code += """
                     <button onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
-                    </button>
-                    <div class="gallery_row" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
+                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
 
                 for image in image_list:
 
                     major_cycle = os.path.basename(image).split("_")[0]
 
-                    minor_cycle = os.path.basename(image).split(".")[0].split("_")[2]
+                    minor_cycle = os.path.basename(image).split("_")[1]
 
                     caption = "Major cycle {0:s}, minor cycle {1:s}".format(major_cycle, minor_cycle)
 
@@ -235,26 +235,25 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                         </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image), caption)
                 html_code += """\n"""
 
-                html_code += """<div class="gallery_column" name="{0:s}">\n""".format(
-                    div_name)
+                # # go throught the different types of plots
+                # # they require a different layout because the plot sizes vary
+                # html_code += """<div class="gallery_column" name="{0:s}">\n""".format(
+                # div_name)
+                # for m in range(n_images):
+                #     if m % 4 == 0:
+                #         html_code += """<div class="gallery_row">"""
 
-                # go throught the different types of plots
-                # they require a different layout because the plot sizes vary
-                for m in range(n_images):
-                    if m % 4 == 0:
-                        html_code += """<div class="gallery_row">"""
+                #     html_code += """<div class="mosaic_img">
+                #             <a href="{0:s}/{1:s}/{2:s}">
+                #                 <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
+                #             </a>
+                #         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image_list[m]))
 
-                    html_code += """<div class="mosaic_img">
-                            <a href="{0:s}/{1:s}/{2:s}">
-                                <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
-                            </a>
-                        </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image_list[m]))
-
-                    if m % 2 != 0 or m == n_images-1:
-                        html_code += """</div>\n"""
+                #     if m % 2 != 0 or m == n_images-1:
+                #         html_code += """</div>\n"""
 
             else:
-                logger.warning("No continuum plots and validation found for beam {0:s}".format(
+                logger.warning("No selfcal maps found in {0:s}".format(
                     os.path.basename(beam_list[k])))
                 html_code += """
                 <button class="disabled" onclick="show_hide_plots('{0:s}')">

@@ -195,6 +195,10 @@ div.plots {
   font-weight: bold;
 }
 
+.gallery_selfcal .gallery{
+  width: 25%;
+}
+
 .gallery_row{
   display: none;
   flex-wrap: wrap;
