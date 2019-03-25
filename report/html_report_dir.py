@@ -59,7 +59,8 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage):
                         logger.error(e)
 
                 # get the images in the beam directory and link them
-                images_in_beam = glob.glob("{0:s}/*png".format(qa_preflag_dir_beam))
+                images_in_beam = glob.glob(
+                    "{0:s}/*png".format(qa_preflag_dir_beam))
 
                 # check that there are images in there
                 if len(images_in_beam) != 0:
@@ -83,7 +84,8 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage):
                     logger.warning("No images in beam {0:s} found".format(
                         qa_preflag_dir_beam))
         else:
-            logger.warning("No beams found for preflag QA in {0:s}".format(qa_preflag_dir))
+            logger.warning(
+                "No beams found for preflag QA in {0:s}".format(qa_preflag_dir))
 
     logger.info(
         "## Creating report directory for preflag and linking files. Done")
@@ -93,7 +95,7 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage):
     """Function to create the create directory for the report
 
     Note:
-        All necessary files will be linked to this directory 
+        All necessary files will be linked to this directory
         from the crosscal QA directory
     """
 
@@ -127,11 +129,12 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage):
     logger.info(
         "## Creating report directory for crosscal and linking files. Done")
 
+
 def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
     """Function to create the selfcal directory for the report
 
     Note:
-        All necessary files will be linked to this directory 
+        All necessary files will be linked to this directory
         from the selfcal QA directory
     """
 
@@ -160,7 +163,6 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
                 os.symlink(image, link_name)
     else:
         logger.warning("No images found for selfcal found")
-
 
     # # get beams
     # beam_list = glob.glob(
@@ -212,11 +214,12 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
     logger.info(
         "## Creating report directory for selfcal and linking files. Done")
 
+
 def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
     """Function to create the continuum directory for the report
 
     Note:
-        All necessary files will be linked to this directory 
+        All necessary files will be linked to this directory
         from the continuum QA directory
     """
 
@@ -300,11 +303,12 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
     logger.info(
         "## Creating report directory for continuum and linking files. Done")
 
+
 def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage):
     """Function to create the line directory for the report
 
     Note:
-        All necessary files will be linked to this directory 
+        All necessary files will be linked to this directory
         from the line QA directory
     """
 
@@ -362,14 +366,15 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage):
     logger.info(
         "## Creating report directory for line and linking files. Done")
 
+
 def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage):
     """Function to create the mosaic directory for the report
 
     Note:
-        All necessary files will be linked to this directory 
+        All necessary files will be linked to this directory
         from the mosaic QA directory
     """
-    
+
     logger.info(
         "## Creating report directory for mosaic and linking files...")
 
@@ -399,7 +404,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage):
 
     # link the validation tool
     validation_tool_dir = glob.glob("{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(
-                qa_mosaic_dir))
+        qa_mosaic_dir))
 
     # check that the directory for the validation tool exists
     if len(validation_tool_dir) == 1:
@@ -424,6 +429,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage):
     logger.info(
         "## Creating report directory for mosaic and linking files. Done")
 
+
 def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
     """Function to create the apercal log directory for the report
 
@@ -438,21 +444,30 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
     # check first on which happili we are:
     host_name = socket.gethostname()
 
+    # this one does not take parallelisation into account
+    # only the code for running it on happili-01 does
     if host_name != "happili-01":
-        apercal_log_file = qa_dir.replace("qa/","apercal.log")
+
+        logger.warning(
+            "Cannot account for parallalized log files unless running from happili-01 !!!")
+
+        apercal_log_file = qa_dir.replace("qa/", "apercal.log")
 
         link_name = "{0:s}/{1:s}".format(
             qa_dir_report_obs_subpage, os.path.basename(apercal_log_file))
-        
+
         if os.path.exists(apercal_log_file):
 
             # rename the link to the log file according to host
             if host_name == "happili-02":
-                link_name = link_name.replace(".log", "_log_{0:s}.txt".format(host_name))
+                link_name = link_name.replace(
+                    ".log", "_log_{0:s}.txt".format(host_name))
             elif host_name == "happili-03":
-                link_name = link_name.replace(".log", "_log_{0:s}.txt".format(host_name))
+                link_name = link_name.replace(
+                    ".log", "_log_{0:s}.txt".format(host_name))
             elif host_name == "happili-04":
-                link_name = link_name.replace(".log", "_log_{0:s}.txt".format(host_name))
+                link_name = link_name.replace(
+                    ".log", "_log_{0:s}.txt".format(host_name))
 
             # check if link exists
             if not os.path.exists(link_name):
@@ -463,34 +478,73 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
         else:
             logger.warning("Could not find {0:s}".format(apercal_log_file))
     else:
-        apercal_log_file_list = [
-            qa_dir.replace("qa/","apercal.log"), qa_dir.replace("qa/","apercal.log").replace("data", "data2"), qa_dir.replace("qa/","apercal.log").replace("data", "data3"), qa_dir.replace("qa/","apercal.log").replace("data", "data4")]
+        # apercal_log_file_list = [
+        #     qa_dir.replace("qa/","apercal.log"), qa_dir.replace("qa/","apercal.log").replace("data", "data2"), qa_dir.replace("qa/","apercal.log").replace("data", "data3"), qa_dir.replace("qa/","apercal.log").replace("data", "data4")]
 
-        # count the number of log files
-        log_file_counter = 0
+        # get the data directories
+        data_dir_search_name = qa_dir.split(
+            "qa/")[0].replace("/data", "/data*")
+        data_dir_list = glob.glob(data_dir_search_name)
 
-        # go through the files and link them
-        for apercal_log_file in apercal_log_file_list:
+        if len(data_dir_list) != 0:
 
-            if os.path.exists(apercal_log_file):
+            data_dir_list.sort()
 
-                link_name = "{0:s}/{1:s}".format(
-                    qa_dir_report_obs_subpage, os.path.basename(apercal_log_file))
+            # go through the data directories
+            for dir_counter in range(len(data_dir_list)):
 
-                link_name = link_name.replace(
-                    ".log", "_log_happili-{0:02d}.txt".format(log_file_counter+1))
+                # get the logfile for this data directory
+                apercal_log_file_list = glob.glob(
+                    "{0:s}apercal*.log".format(data_dir_list[dir_counter]))
 
-                # check if link exists
-                if not os.path.exists(link_name):
-                    os.symlink(apercal_log_file, link_name)
+                if len(apercal_log_file_list):
+
+                    apercal_log_file_list.sort()
+
+                    # go through the log file list
+                    for log_file in apercal_log_file_list:
+
+                        link_name = "{0:s}/{1:s}".format(
+                            qa_dir_report_obs_subpage, os.path.basename(log_file))
+
+                        link_name = link_name.replace(
+                            ".log", "_log_happili-{0:02d}.txt".format(dir_counter+1))
+
+                        # check if link exists
+                        if not os.path.exists(link_name):
+                            os.symlink(log_file, link_name)
+                        else:
+                            os.unlink(link_name)
+                            os.symlink(log_file, link_name)
                 else:
-                    os.unlink(link_name)
-                    os.symlink(apercal_log_file, link_name)
+                    logger.warning("Could not find any log files in {0:s}".format(
+                        data_dir_list[dir_counter]))
+        else:
+            logger.warning("Did not fine any data directories in {0:s}".format(
+                data_dir_search_name))
+
+    # link the timing measurement files
+    apercal_timeinfo_files = glob.glob(
+        "{0:s}apercal_performance/*.csv".format(qa_dir))
+
+    if len(apercal_timeinfo_files) != 0:
+
+        # go through list and link files
+        for time_file in apercal_timeinfo_files:
+
+            link_name = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage, os.path.basename(time_file))
+
+            # check if link exists
+            if not os.path.exists(link_name):
+                os.symlink(time_file, link_name)
             else:
-                logger.warning("Could not find {0:s}".format(apercal_log_file))
-            
-            log_file_counter += 1
-            
+                os.unlink(link_name)
+                os.symlink(time_file, link_name)
+    else:
+        logger.warning(
+            "Did not fine time measurement files in {0:s}apercal_performance/".format(qa_dir))
+
     logger.info(
         "## Creating report directory for apercal log and linking files. Done")
 
@@ -552,7 +606,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                     obs_id, qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)
-                
+
         # Create links for files from crosscal QA
         # +++++++++++++++++++++++++++++++++++++++
         elif page == "crosscal":
@@ -561,7 +615,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                 create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)
-        
+
         # Create links for files from crosscal QA
         # +++++++++++++++++++++++++++++++++++++++
         elif page == "selfcal":
@@ -570,13 +624,22 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
                 create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)
-                
+
         # Create links for files from continuum QA
         # +++++++++++++++++++++++++++++++++++++++
         elif page == "continuum":
 
             try:
                 create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage)
+            except Exception as e:
+                logger.error(e)
+
+        # Create links for files from line QA
+        # +++++++++++++++++++++++++++++++++++++++
+        elif page == "line":
+
+            try:
+                create_report_dir_line(qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)
 
@@ -594,6 +657,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         if page == "apercal_log":
 
             try:
-                create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_apercal_log(
+                    qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)
