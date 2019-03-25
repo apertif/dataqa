@@ -181,16 +181,32 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir):
                 for major_cycle_dir in major_cycle_dir_list:
 
                     # get all images for this major cycle:
-                    mir_image_list = glob.glob("{0:s}/image*")
+                    mir_image_list = glob.glob(
+                        "{0:s}/image*".format(major_cycle_dir))
 
                     if len(mir_image_list) != 0:
 
-                        # go through the images
+                        # create plots for miriad selfcal images
                         create_selfcal_maps(
                             mir_image_list, qa_selfcal_beam_dir)
+
                     else:
                         logger.warning(
                             "No images found in {0:s}".format(major_cycle_dir))
+
+                    # get all residuals for this major cycle:
+                    mir_image_list = glob.glob(
+                        "{0:s}/residual*".format(major_cycle_dir))
+
+                    if len(mir_image_list) != 0:
+
+                        # create plots for miriad selfcal residuals
+                        create_selfcal_maps(
+                            mir_image_list, qa_selfcal_beam_dir)
+
+                    else:
+                        logger.warning(
+                            "No residual found in {0:s}".format(major_cycle_dir))
 
             else:
                 logger.warning(
