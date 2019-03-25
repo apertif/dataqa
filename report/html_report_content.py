@@ -582,6 +582,9 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 html_code += """
                         </div>\n
                         """
+            else:
+                logging.warning(
+                    "Could not find timing information file {0:s} ".format(csv_file))
 
             # create buttons and iframes for apercal log files
             # ++++++++++++++++++++++++++++++++++++++++++++++++
