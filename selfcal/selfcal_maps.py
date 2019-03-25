@@ -7,6 +7,8 @@ from apercal.libs import lib
 import glob
 import socket
 import logging
+from astropy.io import fits
+from astropy.wcs import WCS
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -98,7 +100,7 @@ def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
         major_cycle = mir_image.split("/")[-2]
 
         fits_name = "{0:s}_{1:s}.fits".format(
-            major_cycle, os.path.basename(major_cycle))
+            major_cycle, link_name)
 
         try:
             convert_mir2fits(link_name, fits_name)
