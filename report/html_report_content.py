@@ -224,7 +224,16 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
 
                     minor_cycle = os.path.basename(image).split("_")[1]
 
-                    caption = "Major cycle {0:s}, minor cycle {1:s}".format(major_cycle, minor_cycle)
+                    image_type = os.path.basename(image).split(".")[
+                        0].split("_")[-1]
+                    
+                    if image_type == "image":
+                        caption = "Image: major {0:s}, minor {1:s}".format(major_cycle, minor_cycle)
+                    elif image_type == "residual":
+                        caption = "Residual: major {0:s}, minor {1:s}".format(
+                            major_cycle, minor_cycle)
+                    else:
+                        caption = ""
 
                     html_code += """
                         <div class="gallery_selfcal" name="{0:s}">
