@@ -354,46 +354,83 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
 
         beam_list.sort()
 
+        div_name = "gallery0"
+
+        html_code += """
+                    <button onclick="show_hide_plots('{0:s}')">
+                        Noise in cubes
+                    </button>\n""".format(div_name)
+
         for k in range(n_beams):
 
             # get the images
-            images_in_beam = glob.glob("{0:s}/*png".format(beam_list[k]))
+            images_in_beam = glob.glob(
+                "{0:s}/beam_*_cube_noise.png".format(beam_list[k]))
 
             div_name = "gallery{0:d}".format(k)
 
             if len(images_in_beam) != 0:
 
-                images_in_beam.sort()
+                image = images_in_beam[0]
 
                 html_code += """
-                    <button onclick="show_hide_plots('{0:s}')">
-                        Beam {1:s}
-                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
-
-                for image in images_in_beam:
-                    html_code += """
-                        <div class="gallery" name="{0:s}">
-                            <a href="{1:s}/{2:s}/{3:s}">
-                                <img src="{1:s}/{2:s}/{3:s}" alt="No cube available for beam {2:s}", width="100%">
-                            </a>
-                            <div class="caption">{3:s}</div>
-                        </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
-                html_code += """\n"""
+                    <div class="gallery" name="{0:s}">
+                        <a href="{1:s}/{2:s}/{3:s}">
+                            <img src="{1:s}/{2:s}/{3:s}" alt="No cube available for beam {2:s}", width="100%">
+                        </a>
+                        <div class="caption">Beam {2:s}</div>
+                    </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
             else:
                 logger.warning("No images in beam {0:s} found".format(
                     beam_list[k]))
 
                 html_code += """
-                <button onclick="show_hide_plots('{0:s}')">
-                        Beam {1:s}
-                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
-
-                html_code += """
                     <div class="gallery" name="{0:s}">
-                        <p class="warning">
-                            No plots were found for {1:s}
-                        </p>
-                    </div>\n""".format(div_name, page_type)
+                        <img src="no_image.jpg" alt="No cube available for beam {1:s}", width="100%">
+                        <div class="caption">Beam {1:s}</div>
+                    </div>\n""".format(div_name, os.path.basename(beam_list[k]))
+        html_code += """\n"""
+
+        # for k in range(n_beams):
+
+        #     # get the images
+        #     images_in_beam = glob.glob("{0:s}/*png".format(beam_list[k]))
+
+        #     div_name = "gallery{0:d}".format(k)
+
+        #     if len(images_in_beam) != 0:
+
+        #         images_in_beam.sort()
+
+        #         html_code += """
+        #             <button onclick="show_hide_plots('{0:s}')">
+        #                 Beam {1:s}
+        #             </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+
+        #         for image in images_in_beam:
+        #             html_code += """
+        #                 <div class="gallery" name="{0:s}">
+        #                     <a href="{1:s}/{2:s}/{3:s}">
+        #                         <img src="{1:s}/{2:s}/{3:s}" alt="No cube available for beam {2:s}", width="100%">
+        #                     </a>
+        #                     <div class="caption">{3:s}</div>
+        #                 </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
+        #         html_code += """\n"""
+        #     else:
+        #         logger.warning("No images in beam {0:s} found".format(
+        #             beam_list[k]))
+
+        #         html_code += """
+        #         <button onclick="show_hide_plots('{0:s}')">
+        #                 Beam {1:s}
+        #             </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+
+        #         html_code += """
+        #             <div class="gallery" name="{0:s}">
+        #                 <p class="warning">
+        #                     No plots were found for {1:s}
+        #                 </p>
+        #             </div>\n""".format(div_name, page_type)
     else:
         logger.warning("No beams found for cube found")
         html_code += """
