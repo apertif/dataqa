@@ -195,9 +195,23 @@ div.plots {
   font-weight: bold;
 }
 
-.gallery_selfcal .gallery{
+.gallery_selfcal{
   width: 25%;
+  margin: auto;
+  border: 1px solid #ccc;
+  float: left;
+  display: none;
 }
+
+.gallery_selfcal:hover {
+  border: 1px solid #777;
+}
+
+.gallery_selfcal img {
+  width: 100%;
+  height: auto;
+}
+
 
 .gallery_row{
   display: none;
