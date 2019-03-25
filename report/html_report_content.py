@@ -67,16 +67,16 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                     beam_list[k]))
 
                 html_code += """
-                <button onclick="show_hide_plots('{0:s}')">
+                <button class="disabled" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
                     </button>\n""".format(div_name, os.path.basename(beam_list[k]))
 
-                html_code += """
-                    <div class="gallery" name="{0:s}">
-                        <p class="warning">
-                            No plots were found for {1:s}
-                        </p>
-                    </div>\n""".format(div_name, page_type)
+                # html_code += """
+                #     <div class="gallery" name="{0:s}">
+                #         <p class="warning">
+                #             No plots were found for {1:s}
+                #         </p>
+                #     </div>\n""".format(div_name, page_type)
     else:
         logger.warning("No beams found for preflag found")
         html_code += """
@@ -152,16 +152,16 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                 div_name = "gallery{0:d}".format(k)
 
                 html_code += """
-                    <button onclick="show_hide_plots('{0:s}')">
+                    <button class="disabled" onclick="show_hide_plots('{0:s}')">
                         {1:s}
                     </button>\n""".format(div_name, categories_titles[k])
 
-                html_code += """
-                    <div class="gallery" name="{0:s}">
-                        <p class="warning">
-                            No plots were found for {1:s}
-                        </p>
-                    </div>\n""".format(div_name, categories_titles[k])
+                # html_code += """
+                #     <div class="gallery" name="{0:s}">
+                #         <p class="warning">
+                #             No plots were found for {1:s}
+                #         </p>
+                #     </div>\n""".format(div_name, categories_titles[k])
 
     else:
         logger.warning("No crosscal plots found")
@@ -306,16 +306,16 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 logger.warning("No continuum plots and validation found for beam {0:s}".format(
                     os.path.basename(beam_list[k])))
                 html_code += """
-                <button onclick="show_hide_plots('{0:s}')">
+                <button class="disabled" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
                     </button>\n""".format(button_html_name, os.path.basename(beam_list[k]))
 
-                html_code += """
-                    <div class="gallery" name="{0:s}">
-                        <p class="warning">
-                            No plots and validation tool were found for {1:s}
-                        </p>
-                    </div>\n""".format(button_html_name, page_type)
+                # html_code += """
+                #     <div class="gallery" name="{0:s}">
+                #         <p class="warning">
+                #             No plots and validation tool were found for {1:s}
+                #         </p>
+                #     </div>\n""".format(button_html_name, page_type)
 
     else:
         logger.warning("No beams for continuum QA found")
@@ -380,7 +380,7 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
                         </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
                 html_code += """\n"""
             else:
-                logger.warning("No images in beam {0:s} found".format(
+                logger.warning("No plot for cube in beam {0:s} found".format(
                     beam_list[k]))
 
                 html_code += """
