@@ -555,15 +555,22 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 # go through the list of log files
                 for log_counter in range(n_log_files):
 
+                    log_file_list.sort()
+
                     frame_name = "apercal_gallery{0:d}".format(log_counter)
 
                     beam = os.path.basename(log_file_list[log_counter]).split(
                         "_")[0].split("apercal")[-1]
 
+                    if beam == "":
+                        log_button_name = "Apercal log"
+                    else:
+                        log_button_name = "Apercal log for beam".format(beam)
+
                     html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
-                            Apercal log for beam {1:s}
+                            {1:s}
                         </button>
-                        """.format(frame_name, beam)
+                        """.format(frame_name, log_button_name)
 
                     html_code += """<p>
                             <iframe id="log" name="{0:s}" src="{1:s}/{2:s}"></iframe>
@@ -612,62 +619,62 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
         # get the csv files
 
-    n_log_files = len(log_file_list)
+    # n_log_files = len(log_file_list)
 
-    if n_log_files != 0:
+    # if n_log_files != 0:
 
-        log_file_list.sort()
+    #     log_file_list.sort()
 
-        # go through the log files and create iframes
-        for k in range(n_log_files):
+    #     # go through the log files and create iframes
+    #     for k in range(n_log_files):
 
-            # create content for iframe
-            frame_name = "logfile{0:d}".format(k)
+    #         # create content for iframe
+    #         frame_name = "logfile{0:d}".format(k)
 
-            log_file_happili = os.path.basename(
-                log_file_list[k]).split("_")[-1].replace("txt", "")
+    #         log_file_happili = os.path.basename(
+    #             log_file_list[k]).split("_")[-1].replace("txt", "")
 
-            button_name = "Apercal logfile for {0:s}".format(
-                log_file_happili)
+    #         button_name = "Apercal logfile for {0:s}".format(
+    #             log_file_happili)
 
-            html_code += """<button onclick="show_hide_plots('{0:s}')">
-                        {1:s}
-                    </button>\n""".format(frame_name, button_name)
+    #         html_code += """<button onclick="show_hide_plots('{0:s}')">
+    #                     {1:s}
+    #                 </button>\n""".format(frame_name, button_name)
 
-            html_code += """<p>
-                    <iframe id="log" name="{0:s}" src="{1:s}/{2:s}"></iframe>
-                </p>\n""".format(frame_name, page_type, os.path.basename(log_file_list[k]).replace(".txt", ".html"))
+    #         html_code += """<p>
+    #                 <iframe id="log" name="{0:s}" src="{1:s}/{2:s}"></iframe>
+    #             </p>\n""".format(frame_name, page_type, os.path.basename(log_file_list[k]).replace(".txt", ".html"))
 
-            # create iframe supbage
-            html_code_iframe_page = """<!DOCTYPE HTML>
-                <html lang="en">
+    #         # create iframe supbage
+    #         html_code_iframe_page = """<!DOCTYPE HTML>
+    #             <html lang="en">
 
-                <head>
-                <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-                <meta name="description" content="" />
-                <meta name="keywords" content="" />
-                </head>
+    #             <head>
+    #             <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    #             <meta name="description" content="" />
+    #             <meta name="keywords" content="" />
+    #             </head>
 
-                <body>
-                <a href="{0:s}" target="_self">Click here to open log file</a>
-                </body>
+    #             <body>
+    #             <a href="{0:s}" target="_self">Click here to open log file</a>
+    #             </body>
 
-                </html>\n""".format(os.path.basename(log_file_list[k]))
+    #             </html>\n""".format(os.path.basename(log_file_list[k]))
 
-            iframe_page_name = "{0:s}/{1:s}/{2:s}".format(qa_report_obs_path, page_type, os.path.basename(
-                log_file_list[k]).replace(".txt", ".html"))
-            try:
-                logger.info(
-                    "Writing apercal log iframe page {0:s}".format(iframe_page_name))
-                html_file = open(iframe_page_name, 'w')
-                html_file.write(html_code_iframe_page)
-                html_file.close()
-            except Exception as e:
-                logger.error(e)
-                logger.error("writing iframe page content failed")
-    else:
-        logger.warning("No apercal log files found in {0:s}/{1:s}/".format(
-            qa_report_obs_path, page_type))
+    #         iframe_page_name = "{0:s}/{1:s}/{2:s}".format(qa_report_obs_path, page_type, os.path.basename(
+    #             log_file_list[k]).replace(".txt", ".html"))
+    #         try:
+    #             logger.info(
+    #                 "Writing apercal log iframe page {0:s}".format(iframe_page_name))
+    #             html_file = open(iframe_page_name, 'w')
+    #             html_file.write(html_code_iframe_page)
+    #             html_file.close()
+    #         except Exception as e:
+    #             logger.error(e)
+    #             logger.error("writing iframe page content failed")
+    # else:
+    #     logger.warning("No apercal log files found in {0:s}/{1:s}/".format(
+    #         qa_report_obs_path, page_type))
 
     return html_code
 
