@@ -557,7 +557,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
                     frame_name = "apercal_gallery{0:d}".format(log_counter)
 
-                    beam = log_file_list[log_counter].split(
+                    beam = os.path.basename(log_file_list[log_counter]).split(
                         "_")[0].split("apercal")[-1]
 
                     html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
