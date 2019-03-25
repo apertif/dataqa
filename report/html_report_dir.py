@@ -143,7 +143,7 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
 
     # get beams
     beam_list = glob.glob(
-        "{0:s}continuum/[0-3][0-9]".format(qa_dir))
+        "{0:s}selfcal/[0-3][0-9]".format(qa_dir))
 
     # number of beams
     n_beams = len(beam_list)
