@@ -569,7 +569,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 # create the table
                 # start with the header
                 html_code += """
-                        <div name="{0:s}">
+                        <div class="beam_continuum" name="{0:s}">
                             <table class="apercal_timing">
                                 <tr>
                                     <th>beam</th>
@@ -582,10 +582,45 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 html_code += """</tr>
                         """
 
-                html_code += """
-                            </table>
+                # get a list of beams in the file
+                timinginfo_beam_list = np.unique(timinginfo_table['beam'])
+
+
+                # go through elements in list and fill the table
+                for timinginfo_beam in timinginfo_beam_list:
+
+                    html_code += """<tr>
+                                    <td>{0:s}</td>
+                            """.format(timinginfo_beam)
+
+                    # get part of the table for the given beam
+                    timinginfo_table_select = timinginfo_table[np.where(timinginfo_table['beam']==timinginfo_beam)]
+
+                    # go through the pipeline steps
+                    #table_pipeline_steps = timinginfo_table_select['pipeline_steps']
+                    for pipeline_step in pipeline_step_list:
+
+                        # get the index of the pipeline step in the table
+                        table_pipeline_step_index = np.where(
+                            timinginfo_table_select['pipeline_steps'] == pipeline_step)[0]
+                        
+                        # not all pipeline steps are in all log files
+                        if len(table_pipeline_step_index) != 0:
+                            html_code += """
+                                    <th>{0:s}</th>
+                                    """.format(timinginfo_table_select['run_time'][table_pipeline_step_index])
+                        else:
+                            html_code += """
+                                <th>-</th>
+                                """
+                    html_code += """</tr>
+                            """
+
+                html_code += """</table>
                         </div>\n
                         """
+
+
             else:
                 logging.warning(
                     "Could not find timing information file {0:s} ".format(csv_file))
