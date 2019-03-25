@@ -607,11 +607,11 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         # not all pipeline steps are in all log files
                         if len(table_pipeline_step_index) != 0:
                             html_code += """
-                                    <th>{0:s}</th>
+                                    <td>{0:s}</td>
                                     """.format(timinginfo_table_select['run_time'][table_pipeline_step_index])
                         else:
                             html_code += """
-                                <th>-</th>
+                                <td>N/A</td>
                                 """
                     html_code += """</tr>
                             """
