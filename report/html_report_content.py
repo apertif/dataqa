@@ -550,9 +550,9 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
             if os.path.exists(csv_file):
 
                 logger.info(
-                    "Creating table with apercal timing information from {0:s}".format(html_code))
+                    "Creating table with apercal timing information from {0:s}".format(node))
 
-                frame_name = "apercal_gallery_table"
+                frame_name = "apercal_gallery_table_{0:s}".format(node)
 
                 html_code += """
                         <button class="button_continuum" onclick="show_hide_plots('{0:s}')">
