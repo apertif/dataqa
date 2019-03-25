@@ -8,6 +8,7 @@ import os
 from selfcal import selfcal_plots as scplots
 import argparse
 from timeit import default_timer as timer
+from dataqa.scandata import get_default_imagepath
 
 start = timer()
 
@@ -24,9 +25,13 @@ args = parser.parse_args()
 
 # If no path is given change to default QA path
 if args.path is None:
-    home_dir = os.path.expanduser('~')
-    output_path = "{0:s}/qa_science_demo_2019/{1:s}/selfcal".format(
-        home_dir, args.scan)
+    output_path = get_default_imagepath(args.scan)
+
+    # check that selfcal qa directory exists
+    output_path = "{0:s}selfcal/".format(output_path)
+
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
 else:
     output_path = args.path
 
