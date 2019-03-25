@@ -564,7 +564,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 # read in data
                 timinginfo_table = Table.read(csv_file, format="csv")
 
-                pipeline_step_list = ["start_pipeline", "prepare", "ccal", "convert", "scal", "continuum", "line"]
+                pipeline_step_list = ["start_pipeline", "prepare", "preflag", "ccal", "convert", "scal", "continuum", "line"]
 
                 # # get the minimum and maximum values for each step
                 # pipeline_step_max_list = np.array([str for pipeline_step in pipeline_step_list])
