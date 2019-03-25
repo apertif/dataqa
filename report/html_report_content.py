@@ -547,6 +547,14 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
             # create a table with the time info
             # +++++++++++++++++++++++++++++++++
+            if os.path.exists(csv_file):
+
+                frame_name = "apercal_gallery_table"
+
+                html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                            Apercal timing information
+                        </button>
+                        """.format(frame_name)
 
             # create buttons and iframes for apercal log files
             # ++++++++++++++++++++++++++++++++++++++++++++++++
@@ -565,7 +573,8 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                     if beam == "":
                         log_button_name = "Apercal log"
                     else:
-                        log_button_name = "Apercal log for beam".format(beam)
+                        log_button_name = "Apercal log for beam {0:s}".format(
+                            beam)
 
                     html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
                             {1:s}
