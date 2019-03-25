@@ -27,6 +27,9 @@ function show_hide_plots(gallery_name) {
             else if (gallery_name.indexOf("continuum_gallery") !== -1) {
                 gallery[i].style.display = "flex";
             }
+            else if (gallery_name.indexOf("apercal_gallery") !== -1) {
+                gallery[i].style.display = "flex";
+            }
             // for other QA use block setting
             else {
                 gallery[i].style.display = "block";

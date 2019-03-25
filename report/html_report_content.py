@@ -549,6 +549,9 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
             # +++++++++++++++++++++++++++++++++
             if os.path.exists(csv_file):
 
+                logger.info(
+                    "Creating table with apercal timing information from {0:s}".format(html_code))
+
                 frame_name = "apercal_gallery_table"
 
                 html_code += """
