@@ -332,18 +332,79 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
 
     logger.info("Writing html code for page {0:s}".format(page_type))
 
-    # html_code += """
-    #     <p class="info">
-    #         Here you can inspect the continuum image, PyBDSF diagnostic plots and the validation tool for the mosaic of all available beam images.
-    #         The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.<br>
-    #         This page will only have content after the mosaic was created and the mosaic QA step has been performed.
-    #     </p>\n
-    #     """
     html_code += """
         <p class="info">
-            The overview does not cover line QA yet
+            Here you can find a plot of the noise versus channel/frequency for all available cubes. 
+            Please note that at this stage, the cube is cleaned and continuum subtracted. The rms is determined over the entire
+            image without taking into account the existenc of continuum sources. The fit is a simple Gaussian fit to the noise of 
+            each channel
+            The noise data is not accessible from this page, but can be found in the QA directory as a csv table.<br>
+            This page will only have content after the line QA step has been performed.
         </p>\n
         """
+
+    # get beams
+    beam_list = glob.glob(
+        "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
+
+    n_beams = len(beam_list)
+
+    if n_beams != 0:
+
+        beam_list.sort()
+
+        for k in range(n_beams):
+
+            # get the images
+            images_in_beam = glob.glob("{0:s}/*png".format(beam_list[k]))
+
+            div_name = "gallery{0:d}".format(k)
+
+            if len(images_in_beam) != 0:
+
+                images_in_beam.sort()
+
+                html_code += """
+                    <button onclick="show_hide_plots('{0:s}')">
+                        Beam {1:s}
+                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+
+                for image in images_in_beam:
+                    html_code += """
+                        <div class="gallery" name="{0:s}">
+                            <a href="{1:s}/{2:s}/{3:s}">
+                                <img src="{1:s}/{2:s}/{3:s}" alt="No cube available for beam {2:s}", width="100%">
+                            </a>
+                            <div class="caption">{3:s}</div>
+                        </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
+                html_code += """\n"""
+            else:
+                logger.warning("No images in beam {0:s} found".format(
+                    beam_list[k]))
+
+                html_code += """
+                <button onclick="show_hide_plots('{0:s}')">
+                        Beam {1:s}
+                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+
+                html_code += """
+                    <div class="gallery" name="{0:s}">
+                        <p class="warning">
+                            No plots were found for {1:s}
+                        </p>
+                    </div>\n""".format(div_name, page_type)
+    else:
+        logger.warning("No beams found for cube found")
+        html_code += """
+        <p class="warning">
+            No plots were found for cube
+        </p>\n"""
+
+    # html_code += """
+    #     <p class="info">
+    #         The overview does not cover line QA yet
+    #     </p>\n0
+    #     """
 
     return html_code
 
