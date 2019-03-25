@@ -125,7 +125,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
     html_code = """
         <ul>
             <li style="float:right"><a href="../index.html">List of Observations</a></li>
-            <li style="float:right"><a href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guid</a></li>
+            <li style="float:right"><a href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank" style="text-decoration:underline">For help check OSA Guide</a></li>
         """
     for page in links:
         if page == page_type:
