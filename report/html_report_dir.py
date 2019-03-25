@@ -639,7 +639,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         elif page == "line":
 
             try:
-                create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_line(qa_dir, qa_dir_report_obs_subpage)
             except Exception as e:
                 logger.error(e)
 
