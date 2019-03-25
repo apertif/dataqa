@@ -58,10 +58,12 @@ except Exception as e:
 # Get phase plots
 try:
     logger.info("#### Creating phase plots")
+    start_time_plots = time.time()
     PH = scplots.PHSols(args.scan, args.target)
     PH.get_data()
     PH.plot_phase(imagepath=output_path)
-    logger.info('#### Done with phase plots')
+    logger.info('#### Done with phase plots ({0:.0f}s)'.format(
+        time.time()-start_time_plots))
 except Exception as e:
     logger.error(e)
     logger.error("Creating phase plots failed.")
