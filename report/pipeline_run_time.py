@@ -97,7 +97,7 @@ def get_pipeline_run_time(obs_id):
                     tmp_table = hstack([beam_file_table, timinginfo_table])
                     complete_table = vstack([complete_table, tmp_table])
 
-            table_output_name = "{0:s}apercal_log_{1:s}.csv".format(
+            table_output_name = "{0:s}apercal_log_timeinfo_{1:s}.csv".format(
                 qa_apercal_dir, host_name_list[k])
 
             try:

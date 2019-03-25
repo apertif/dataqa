@@ -11,6 +11,7 @@ import logging
 import glob
 import time
 import socket
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -518,9 +519,98 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
         </p>\n
         """
 
-    # get the log files in linke to the apercal_log report directory:
-    log_file_list = glob.glob(
-        "{0:s}/{1:s}/apercal_log_happili*.txt".format(qa_report_obs_path, page_type))
+    node_list = np.array(
+        ["happili-01", "happili-02", "happili-03", "happili-04"])
+
+    for node in node_list:
+
+        # get the log files in linke to the apercal_log report directory:
+        log_file_list = glob.glob(
+            "{0:s}/{1:s}/apercal*_log_{2:s}.txt".format(qa_report_obs_path, page_type, node))
+
+        # get the log files in linke to the apercal_log report directory:
+        csv_file = "{0:s}/{1:s}/apercal_log_timeinfo_{2:s}.csv".format(
+            qa_report_obs_path, page_type, node)
+
+        button_name = "Apercal performance on {0:s}".format(node)
+
+        # number of logfiles
+        n_log_files = len(log_file_list)
+
+        if n_log_files != 0 or os.path.exists(csv_file):
+
+            # create button
+            html_code += """<button onclick="show_hide_plots('{0:s}')">
+                    {1:s}
+                </button>
+                <div class = "beam_continuum" name = "{0:s}" >\n""".format(node, button_name)
+
+            # create a table with the time info
+            # +++++++++++++++++++++++++++++++++
+
+            # create buttons and iframes for apercal log files
+            # ++++++++++++++++++++++++++++++++++++++++++++++++
+            if n_log_files != 0:
+
+                # go through the list of log files
+                for log_counter in range(n_log_files):
+
+                    frame_name = "apercal_gallery{0:d}".format(log_counter)
+
+                    beam = log_file_list[log_counter].split(
+                        "_")[0].split("apercal")[-1]
+
+                    html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                            Apercal log for beam {1:s}
+                        </button>
+                        """.format(frame_name, beam)
+
+                    html_code += """<p>
+                            <iframe id="log" name="{0:s}" src="{1:s}/{2:s}"></iframe>
+                        </p>\n""".format(frame_name, page_type, os.path.basename(log_file_list[log_counter]).replace(".txt", ".html"))
+
+                    # create iframe supbage
+                    html_code_iframe_page = """<!DOCTYPE HTML>
+                        <html lang="en">
+
+                        <head>
+                        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+                        <meta name="description" content="" />
+                        <meta name="keywords" content="" />
+                        </head>
+
+                        <body>
+                        <a href="{0:s}" target="_self">Click here to open log file</a>
+                        </body>
+
+                        </html>\n""".format(os.path.basename(log_file_list[log_counter]))
+
+                    iframe_page_name = "{0:s}/{1:s}/{2:s}".format(qa_report_obs_path, page_type, os.path.basename(
+                        log_file_list[log_counter]).replace(".txt", ".html"))
+                    try:
+                        logger.info(
+                            "Writing apercal log iframe page {0:s}".format(iframe_page_name))
+                        html_file = open(iframe_page_name, 'w')
+                        html_file.write(html_code_iframe_page)
+                        html_file.close()
+                    except Exception as e:
+                        logger.error(e)
+                        logger.error("writing iframe page content failed")
+            else:
+                logging.warning(
+                    "No log files found for {0:s}".format(node))
+
+            html_code += """</div>\n"""
+
+        else:
+            logging.warning(
+                "No timing information and log files found for {0:s}".format(node))
+            # create button
+            html_code += """<button class="disabled" onclick="show_hide_plots('{0:s}')">
+                    {1:s}
+                </button>\n""".format(node, button_name)
+
+        # get the csv files
 
     n_log_files = len(log_file_list)
 
