@@ -98,9 +98,10 @@ def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
 
         # get the major cycle
         major_cycle = mir_image.split("/")[-2]
+        minor_cycle = os.path.basename(mir_image).split("_")[-1]
 
-        fits_name = "{0:s}_{1:s}.fits".format(
-            major_cycle, link_name)
+        fits_name = "{0:s}_{1:s}_{2:s}.fits".format(
+            major_cycle, minor_cycle, link_name.split("_")[0])
 
         try:
             convert_mir2fits(link_name, fits_name)
