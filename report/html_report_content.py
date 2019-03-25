@@ -583,6 +583,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         """
 
                 html_code += """
+                            </table>
                         </div>\n
                         """
             else:
