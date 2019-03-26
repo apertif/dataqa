@@ -14,6 +14,8 @@ from astropy.utils.exceptions import AstropyWarning
 import warnings
 from inspect import currentframe, getframeinfo
 
+from dynamic_range import source_dynamic_range, local_dynamic_range
+
 #ignore annoying astropy warnings and set my own obvious warning output
 warnings.simplefilter('ignore', category=AstropyWarning)
 cf = currentframe()
@@ -262,7 +264,7 @@ class catalogue(object):
         self.set_key_fields(set_coords=False)
 
 
-    def unique_col_name(self,col):
+    def unique_col_name(self, col):
 
         """Return a unique column name by appending the catalogue name to the beginning. If column is None, return None.
 
@@ -277,8 +279,9 @@ class catalogue(object):
             Unique column name or None."""
 
         if col is not None:
-            col = '{0}_{1}{2}'.format(self.name,col,self.col_suffix)
+            col = '{0}_{1}{2}'.format(self.name, col, self.col_suffix)
         return col
+
 
     def cat2df(self, filepath, sep, verbose=False):
 
@@ -331,6 +334,7 @@ class catalogue(object):
 
         return df
 
+
     def set_specs(self,img):
 
         """Set the key fields of this catalogue using an input image. This must be done before the catalogue is filtered.
@@ -360,6 +364,18 @@ class catalogue(object):
             self.img_peak_rms = rms_map.data[self.img_peak_pos][0]
             self.dynamic_range = self.img_peak_bounds/self.img_peak_rms
             self.img_flux = np.sum(img_data[~np.isnan(img_data)]) / (1.133*((img.bmaj * img.bmin) / (img.raPS * img.decPS))) #divide by beam area
+
+# ...
+            if os.path.exists(img.residual):
+                self.source_dynrange = source_dynamic_range('../{}'.format(self.filename),
+                                                             img.residual)
+                self.local_dynrange = local_dynamic_range('../{}'.format(self.filename),
+                                                          img.residual)
+            else:
+                self.sources_dynrange = None
+                self.local_dynrange = None
+
+
 
         #Get the approximate area from catalogue
         else:
@@ -838,12 +854,12 @@ class catalogue(object):
                     warnings.warn_explicit("Can't reject resolved sources based on flag since flag column not set.\n",UserWarning,WARN,cf.f_lineno)
 
             #Drop the rejected rows, reset the key fields and write to file
-            self.set_key_fields(indices=self.df.index.tolist(),set_coords=False)
-            self.write_df(write,filename)
+            self.set_key_fields(indices=self.df.index.tolist(), set_coords=False)
+            self.write_df(write, filename)
 
         #if file exists, simply read in catalogue
         else:
-            self.overwrite_df(filename,step='filtering',verbose=verbose)
+            self.overwrite_df(filename, step='filtering', verbose=verbose)
 
 
     def cross_match(self, cat, radius='largest', join_type='1', redo=False, write=True):

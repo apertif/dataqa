@@ -12,9 +12,12 @@ import apercal
 import casacore.tables as pt
 import logging
 import matplotlib
+import time
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from ..scandata import ScanData
+from dataqa.scandata import ScanData
+
+logger = logging.getLogger(__name__)
 
 def make_all_ccal_plots(scan, fluxcal, output_path=None):
     """
@@ -26,39 +29,48 @@ def make_all_ccal_plots(scan, fluxcal, output_path=None):
         output_path (str): Output path, None for default
     """
     # Get BP plots
+    start_time_bp = time.time()
     BP = BPSols(scan, fluxcal)
     BP.get_data()
     BP.plot_amp(imagepath=output_path)
     BP.plot_phase(imagepath=output_path)
-    logging.info('Done with bandpass plots')
+    logger.info('Done with bandpass plots ({0:.0f}s)'.format(time.time() - start_time_bp))
 
     # Get Gain plots
+    start_time_gain = time.time()
     Gain = GainSols(scan, fluxcal)
     Gain.get_data()
     Gain.plot_amp(imagepath=output_path)
     Gain.plot_phase(imagepath=output_path)
-    logging.info('Done with gainplots')
+    logger.info('Done with gainplots ({0:.0f}s)'.format(
+        time.time() - start_time_gain))
 
     # Get Raw data
+    start_time_raw = time.time()
     Raw = RawData(scan, fluxcal)
     Raw.get_data()
     Raw.plot_amp(imagepath=output_path)
     Raw.plot_phase(imagepath=output_path)
-    logging.info('Done with plotting raw data')
+    logger.info('Done with plotting raw data ({0:.0f}s)'.format(
+        time.time() - start_time_raw))
 
     # Get model data
+    start_time_model = time.time()
     Model = ModelData(scan, fluxcal)
     Model.get_data()
     Model.plot_amp(imagepath=output_path)
     Model.plot_phase(imagepath=output_path)
-    logging.info('Done with plotting model data')
+    logger.info('Done with plotting model data  ({0:.0f}s)'.format(
+        time.time() - start_time_model))
 
     # Get corrected data
+    start_time_corrected = time.time()
     Corrected = CorrectedData(scan, fluxcal)
     Corrected.get_data()
     Corrected.plot_amp(imagepath=output_path)
     Corrected.plot_phase(imagepath=output_path)
-    logging.info('Done with plotting corrected data')
+    logger.info('Done with plotting corrected data  ({0:.0f}s)'.format(
+        time.time() - start_time_corrected))
 
 
 class BPSols(ScanData):
@@ -104,7 +116,7 @@ class BPSols(ScanData):
                 self.freq[i] = freqs
                 
             else:
-                logging.info('Filling with NaNs. BP table not present for B{}'.format(beam))
+                logger.info('Filling with NaNs. BP table not present for B{}'.format(beam))
                 self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
                 self.time[i] = np.array(np.nan)
                 self.phase[i] = np.full((12,2,2),np.nan)
@@ -113,6 +125,8 @@ class BPSols(ScanData):
             
     def plot_amp(self, imagepath=None):
         """Plot amplitude, one plot per antenna"""
+
+        logging.info("Creating plots for bandpass amplitude")
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         ant_names = self.ants[0]
@@ -139,14 +153,17 @@ class BPSols(ScanData):
                             marker=',',s=1)
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(0,1.8)
-        plt.legend(markerscale=3,fontsize=14)
-        plt.savefig('{imagepath}/BP_amp_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
-        #plt.clf()
-        # to really close the plot, this will do
-        plt.close('all')
+            plt.legend(markerscale=3,fontsize=14)
+            plt.savefig('{imagepath}/BP_amp_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
+            #plt.clf()
+            # to really close the plot, this will do
+            plt.close('all')
             
     def plot_phase(self, imagepath=None):
         """Plot phase, one plot per antenna"""
+
+        logging.info("Creating plots for bandpass phase")
+        
         imagepath = self.create_imagepath(imagepath)
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
@@ -237,7 +254,7 @@ class GainSols(ScanData):
                 self.flags[i] = flags_ant_array
                 
             else:
-                logging.info('Filling with NaNs. Gain table not present for B{}'.format(beam))
+                logger.info('Filling with NaNs. Gain table not present for B{}'.format(beam))
                 self.amp[i] = np.full((12,2,2),np.nan)
                 self.phase[i] = np.full((12,2,2),np.nan)
                 self.ants[i] = ['RT2','RT3','RT4','RT5','RT6','RT7','RT8','RT9','RTA','RTB','RTC','RTD']
@@ -246,6 +263,9 @@ class GainSols(ScanData):
             
     def plot_amp(self, imagepath=None):
         """Plot amplitude, one plot per antenna"""
+
+        logging.info("Creating plots for gain amplitude")
+
         imagepath = self.create_imagepath(imagepath)
 
         #put plots in default place w/ default name
@@ -280,6 +300,9 @@ class GainSols(ScanData):
             
     def plot_phase(self,imagepath=None):
         """Plot phase, one plot per antenna"""
+
+        logging.info("Creating plots for gain phase")
+
         imagepath = self.create_imagepath(imagepath)
 
         #put plots in default place w/ default name
@@ -338,6 +361,9 @@ class ModelData(ScanData):
             
     def plot_amp(self,imagepath=None):
         """Plot amplitude, one subplot per beam"""
+
+        logging.info("Creating plots for model amplitude")
+
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         nx = 8
@@ -364,6 +390,9 @@ class ModelData(ScanData):
             
     def plot_phase(self,imagepath=None):
         """Plot amplitude, one subplot per beam"""
+
+        logging.info("Creating plots for model phase")
+
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
         nx = 8
@@ -438,6 +467,9 @@ class CorrectedData(ScanData):
             self.ants[i] = ant_names
             
     def plot_amp(self,imagepath=None):
+
+        logging.info("Creating plots for corrected amplitude")
+
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
 
@@ -473,6 +505,9 @@ class CorrectedData(ScanData):
             plt.close('all')
             
     def plot_phase(self,imagepath=None):
+
+        logging.info("Creating plots for corrected phase")
+
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
@@ -554,6 +589,8 @@ class RawData(ScanData):
             self.ants[i] = ant_names
             
     def plot_amp(self,imagepath=None):
+        logging.info("Creating plots for raw amplitude")
+
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
@@ -587,6 +624,9 @@ class RawData(ScanData):
             plt.close('all')
             
     def plot_phase(self,imagepath=None):
+
+        logging.info("Creating plots for raw phase")
+
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
 

@@ -22,6 +22,19 @@ h3
     text-align: center;
 }
 
+.info {
+  font-size: large;
+}
+
+.warning {
+  font-size: large;
+  color: rgb(201, 0, 0) 
+}
+
+/* *****************
+Tables
+****************** */
+
 table 
 {
     border-collapse: collapse;
@@ -38,7 +51,31 @@ table
     td:hover{
       background-color: rgb(255, 123, 46);
     }
+    
+    .apercal_timing th{
+      background-color: rgb(255, 179, 136);
+    }
 
+    .apercal_timing tr:nth-child(even){
+      background-color: rgb(209, 209, 209);
+    }
+
+    .apercal_timing td, .apercal_timing th{
+      border: 1px solid rgb(156, 156, 156);
+      padding: 5px;
+    }
+
+    .apercal_timing td{
+      text-align: right;
+    }
+
+    .apercal_timing td:hover{
+      background-color: rgb(255, 179, 136);
+    }
+
+    .apercal_timing tr:hover{
+      background-color: rgb(172, 172, 172)
+    }
 
 .obs_links{
   color: white;
@@ -59,6 +96,7 @@ ul {
     overflow: hidden;
     background-color: #333;
     margin-bottom: 5px;
+    z-index: 5;
 }
 
 li {
@@ -95,9 +133,16 @@ button {
   font-size: x-large;
   margin-bottom: 5px;
 }
+
 button:hover {
   background-color: rgb(255, 123, 46);
 }
+
+/* button:hover, button:nth-child(even):hover {
+  background-color: rgb(255, 123, 46);
+} */
+
+/* button:nth-child(even) {background-color: rgb(252, 179, 137);} */
 
 .button_continuum {
   background-color: rgb(192, 192, 192);
@@ -109,6 +154,12 @@ button:hover {
 
 .button_continuum:hover {
   background-color: rgb(153, 153, 153);
+}
+
+.disabled {
+  z-index: 3;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /******************************
@@ -144,6 +195,24 @@ div.plots {
   font-weight: bold;
 }
 
+.gallery_selfcal{
+  width: 24%;
+  margin: auto;
+  border: 1px solid #ccc;
+  float: left;
+  display: none;
+}
+
+.gallery_selfcal:hover {
+  border: 1px solid #777;
+}
+
+.gallery_selfcal img {
+  width: 100%;
+  height: auto;
+}
+
+
 .gallery_row{
   display: none;
   flex-wrap: wrap;
@@ -156,6 +225,21 @@ div.plots {
   -ms-flex: 32%; /* IE10 */
   flex: 32%;
   max-width: 32%;
+  padding: 0px 4px;
+}
+
+.gallery_selfcal_row {
+  display: none;
+  flex-wrap: wrap;
+  -ms-flex-wrap: wrap; /* IE10 */
+  padding: 4px 4px;
+  margin: auto;
+}
+
+.gallery_selfcal_column{
+  -ms-flex: 24%; /* IE10 */
+  flex: 24%;
+  max-width: 22%;
   padding: 0px 4px;
 }
 
@@ -189,12 +273,13 @@ continuum
   margin: auto;
   display: none;
   width: 95%;
+  padding-bottom: 10px;
 }
 
 /******************************
 Validation tool
 ******************************/
-#validation_tool {
+.validation_tool {
   margin: auto;
   width: 95%;
   height: 1000px;

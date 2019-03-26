@@ -265,7 +265,7 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
             plt.savefig(output.replace(".png", ".pdf"),
                         overwrite=True, bbox_inches='tight')
         else:
-            plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=400)
+            plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=300)
 
         plt.close("all")
 
@@ -350,7 +350,8 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
             continuum_image_dir = "{0:s}/continuum".format(beam_dir)
 
             # Get the fits image
-            fits_image = glob.glob("{0:s}/*.fits".format(continuum_image_dir))
+            fits_image = glob.glob(
+                "{0:s}/image_mf_*.fits".format(continuum_image_dir))
 
             # check whether no fits file was found, one or more fits file
             # the latter case should not exists, but I do not want it to stop
