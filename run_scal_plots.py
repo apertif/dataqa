@@ -24,6 +24,9 @@ parser.add_argument("target", help='Target name')
 
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
+parser.add_argument('-M', '--maps', default=True, action='store_false', help='Generate selfcal maps')
+parser.add_argument('-P', '--phase', default=True, action='store_false', help='Generate phase plots')
+parser.add_argument('-A', '--amplitude', default=True, action='store_false', help='Generate amplitude plots')
 
 args = parser.parse_args()
 
@@ -41,42 +44,55 @@ else:
 
 # Create log file
 lib.setup_logger(
-    'debug', logfile='{0:s}run_scal_plots.log'.format(output_path))
+    'info', logfile='{0:s}run_scal_plots.log'.format(output_path))
 logger = logging.getLogger(__name__)
 
 # Get selfcal maps
-try:
-    logger.info("#### Creating selfcal maps ...")
-    start_time_maps = time.time()
-    get_selfcal_maps(args.scan, output_path)
-    logger.info("#### Creating selfcal maps. Done ({0:.0f}s)".format(
-        time.time()-start_time_maps))
-except Exception as e:
-    logger.error(e)
-    logger.error("#### Creating selfcal maps failed")
+if args.maps:
+    try:
+        logger.info("#### Creating selfcal maps ...")
+        start_time_maps = time.time()
+        get_selfcal_maps(args.scan, output_path)
+        logger.info("#### Creating selfcal maps. Done ({0:.0f}s)".format(
+            time.time()-start_time_maps))
+    except Exception as e:
+        logger.error(e)
+        logger.error("#### Creating selfcal maps failed")
+else:
+    logger.info("#### Not generating selfcal maps")
 
 # Get phase plots
-try:
-    logger.info("#### Creating phase plots")
-    start_time_plots = time.time()
-    PH = scplots.PHSols(args.scan, args.target)
-    PH.get_data()
-    PH.plot_phase(imagepath=output_path)
-    logger.info('#### Done with phase plots ({0:.0f}s)'.format(
-        time.time()-start_time_plots))
-except Exception as e:
-    logger.error(e)
-    logger.error("Creating phase plots failed.")
+if args.phase:
+    try:
+        logger.info("#### Creating phase plots")
+        start_time_plots = time.time()
+        PH = scplots.PHSols(args.scan, args.target)
+        PH.get_data()
+        PH.plot_phase(imagepath=output_path)
+        logger.info('#### Done with phase plots ({0:.0f}s)'.format(
+            time.time()-start_time_plots))
+    except Exception as e:
+        logger.error(e)
+        logger.error("Creating phase plots failed.")
+else:
+    logger.info("#### Not generating phase plots")
 
-# Get amp plots
-#AMP = scplots.AMPSols(args.scan, args.target)
-# AMP.get_data()
-# AMP.plot_amp(imagepath=output_path)
+# Get amplitude plots
+if args.amplitude:
+    try:
+        logger.info("#### Creating amplitude plots")
+        start_time_plots = time.time()
+        AMP = scplots.AMPSols(args.scan, args.target)
+        AMP.get_data()
+        AMP.plot_amp(imagepath=output_path)
+        logger.info('#### Done with amplitude plots ({0:.0f}s)'.format(
+            time.time()-start_time_plots))
+    except Exception as e:
+        logger.error(e)
+        logger.error("Creating amplitude plots failed.")
+else:
+    logger.info("#### Not generating amplitude plots")
 
-# print 'Done with amplitude plots'
 
-
-#end = timer()
-# print 'Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(
-#    (end - start)/60.)
-#time in minutes
+end = timer()
+print 'Elapsed time to generate self-calibration data QA inpection plots and images is {} minutes'.format((end - start)/60.)
