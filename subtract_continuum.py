@@ -4,7 +4,7 @@
 """
 This script does continuum subtraction on line cubes. 
 
-- It creates a new fits file in: '/'+str(data)+'/apertif/'+str(data_dir)+'/'+str(i)+'/line/cubes/HI_image_cube_contsub.fits' 
+- It creates a new fits file in: '/data*/apertif/<obs_id>/<beam>/line/cubes/HI_image_cube_contsub.fits' 
 
 Parameter
     obs_id : int
@@ -70,7 +70,8 @@ def subract_cont(data, beams):
 
 			contsub = lib.miriad('contsub')
 			contsub.in_ = '/'+str(data)+'/apertif/'+str(data_dir)+'/'+str(i)+'/line/cubes/HI_image_cube.mir'
-			contsub.mode = "poly,1 'contchan=(1,800)'"
+			contsub.mode = 'poly,1'
+			contsub.contchan = '(1,800)'
 			contsub.out = '/'+str(data)+'/apertif/'+str(data_dir)+'/'+str(i)+'/line/cubes/HI_image_cube_contsub.mir'
 			contsub.go()
 
