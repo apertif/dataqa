@@ -65,8 +65,8 @@ def run(fits_image, finder='pybdsf', snr=5.0, verbose=True, refind=False, redo=F
         CAT.filter_sources(**filter_dic)
     else:
     # otherwise use default criteria, selecting reliable point sources for comparison
-        CAT.filter_sources(flux_lim=1e-4, ratio_frac=0, ratio_sigma=0,
-                           reject_blends=False,
+        CAT.filter_sources(flux_lim=1e-3, ratio_frac=1.4, ratio_sigma=0,
+                           reject_blends=True,
                            flags=False, psf_tol=1.5, resid_tol=3,
                            redo=redo, write=write_all, verbose=verbose)
 

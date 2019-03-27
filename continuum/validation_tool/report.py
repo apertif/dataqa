@@ -12,7 +12,7 @@ from matplotlib import cm, ticker, colors
 from mpld3 import plugins
 from matplotlib.patches import Ellipse
 import matplotlib.image as image
-import seaborn
+#import seaborn
 
 from astropy.io import fits as f
 from astropy.io import votable
