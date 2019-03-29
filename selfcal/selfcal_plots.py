@@ -5,6 +5,7 @@
 # load necessary packages
 import os
 import numpy as np
+import datetime
 from apercal.subs import readmirlog
 from apercal.subs import misc
 import matplotlib.pyplot as plt
@@ -45,7 +46,7 @@ class PHSols(ScanData):
     def plot_phase(self, imagepath=None):
         """Plot phase, one plot per antenna"""
         imagepath = self.create_imagepath(imagepath)
-        ant_names = self.ants[0]
+        ant_names = misc.create_antnames()
         for a, ant in enumerate(ant_names):
             # iterate through antennas
             # set up for 8x5 plots (40 beams)
@@ -60,15 +61,19 @@ class PHSols(ScanData):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum + 1)
                 color = cm.rainbow(np.linspace(0, 1, self.phnbins[n]))
-                for f, freqbin, i, c in enumerate(self.phnbins), zip(range(self.phnbins[n], color)):
-                    plt.scatter(self.times[n][f], self.phases[n][a, f, :],
-                                label='F'+str(f), marker=',', s=1, c=color)
+                for f in range(self.phnbins[n]):
+                    plt.scatter(range(len(self.phtimes[n])), self.phases[n][a, f, :], label='F'+str(f), marker=',', s=1, c=color[f])
+                    if n >= 32:
+                        plt.xlabel('Time [solint]')
+                    if n%nx == 0:
+                        plt.ylabel('Phase [deg]')
+
                 plt.title('Beam {0}'.format(beam))
-                plt.ylim(-180, 180)
             plt.legend()
+
             plt.savefig(
                 '{2}/SCAL_phase_{0}_{1}.png'.format(ant, self.scan, imagepath))
-            plt.clf()
+            plt.close("all")
 
 
 class AMPSols(ScanData):
@@ -77,27 +82,31 @@ class AMPSols(ScanData):
         self.ampants = np.empty(len(self.dirlist), dtype=np.object)
         self.amptimes = np.empty(len(self.dirlist), dtype=np.object)
         self.amps = np.empty(len(self.dirlist), dtype=np.ndarray)
+        self.ampnants = np.empty(len(self.dirlist), dtype=np.ndarray)
+        self.ampnbins = np.empty(len(self.dirlist), dtype=np.ndarray)
+        self.ampnsols = np.empty(len(self.dirlist), dtype=np.ndarray)
 
     def get_data(self):
         for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
             ampdata = "{0}/selfcal/{1}_amp.mir".format(path, self.sourcename)
             if os.path.isdir(ampdata):
-                times, ampgains = readmirlog.get_gains(ampdata)
-                self.ampants = misc.create_antnames()
+                ampgains, times = readmirlog.get_phases(ampdata)
+                self.ampants[i] = misc.create_antnames()
                 self.amptimes[i] = times
                 self.amps[i] = ampgains
+                self.ampnants[i], self.ampnbins[i], self.ampnsols[i] = readmirlog.get_ndims(ampdata)
             else:
                 print 'Filling with NaNs. Amplitude self-calibration not present for B{}'.format(beam)
                 self.ampants[i] = misc.create_antnames()
                 self.amptimes[i] = np.array(np.nan)
                 self.amps[i] = np.array(np.nan)
+                self.ampnbins[i] = np.array(np.nan)
+                self.ampnants[i], self.ampnbins[i], self.ampnsols[i] = np.array(np.nan), np.array(np.nan), np.array(np.nan)
 
     def plot_amp(self, imagepath=None):
-        """Plot amplitude, one plot per antenna"""
-        Imagepath = self.create_imagepath(imagepath)
-        # put plots in default place w/ default name
-        ant_names = self.ampants[0]
-        # figlist = ['fig_'+str(i) for i in range(len(ant_names))]
+        """Plot phase, one plot per antenna"""
+        imagepath = self.create_imagepath(imagepath)
+        ant_names = misc.create_antnames()
         for a, ant in enumerate(ant_names):
             # iterate through antennas
             # set up for 8x5 plots (40 beams)
@@ -106,20 +115,21 @@ class AMPSols(ScanData):
             xsize = nx * 4
             ysize = ny * 4
             plt.figure(figsize=(xsize, ysize))
-            plt.suptitle(
-                'Bandpass amplitude for Antenna {0}'.format(ant), size=20)
+            plt.suptitle('Selfcal amplitudes for Antenna {0}'.format(ant))
 
             for n, beam in enumerate(self.beamlist):
                 beamnum = int(beam)
-                # print beamnum
                 plt.subplot(ny, nx, beamnum + 1)
-                plt.scatter(self.freq[n][0, :], self.amp[n]
-                            [a, :, 0], label='XX', marker=',', s=1)
-                plt.scatter(self.freq[n][0, :], self.amp[n]
-                            [a, :, 1], label='YY', marker=',', s=1)
+                color = cm.rainbow(np.linspace(0, 1, self.phnbins[n]))
+                for f in range(self.phnbins[n]):
+                    plt.scatter(range(len(self.amptimes[n])), self.amps[n][a, f, :], label='F' + str(f), marker=',', s=1, c=color[f])
+                    if n >= 32:
+                        plt.xlabel('Time [solint]')
+                    if n % nx == 0:
+                        plt.ylabel('Amp')
+
                 plt.title('Beam {0}'.format(beam))
-                plt.ylim(0, 1.8)
             plt.legend()
-            plt.savefig(
-                '{2}/BP_amp_{0}_{1}.png'.format(ant, self.scan, imagepath))
-            plt.clf()
+
+            plt.savefig('{2}/SCAL_amp_{0}_{1}.png'.format(ant, self.scan, imagepath))
+            plt.close("all")
