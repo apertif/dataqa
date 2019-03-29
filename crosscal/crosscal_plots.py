@@ -241,7 +241,8 @@ class GainSols(ScanData):
                 phase_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=object)
                 flags_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=bool)
 
-                for ant in xrange(len(ant_names)):
+                with pymp.Parallel(20) as p:
+                  for ant in p.range(len(ant_names)):
                     taql_command = ("SELECT abs(CPARAM) AS amp, arg(CPARAM) AS phase, FLAG FROM {0} " 
                                     "WHERE ANTENNA1={1}").format(gaintable,ant)
                     t = pt.taql(taql_command)
@@ -458,7 +459,8 @@ class CorrectedData(ScanData):
             amp_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
             phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
     
-            for ant in xrange(len(ant_names)):
+            with pymp.Parallel(20) as p:
+              for ant in p.range(len(ant_names)):
                 try:
                     taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp, "
                                     "arg(gmeans(CORRECTED_DATA[FLAG])) AS phase FROM {0} "
