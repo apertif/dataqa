@@ -8,6 +8,7 @@ from __future__ import print_function
 import os
 import numpy as np
 from astropy.io import ascii
+import pymp
 import apercal
 import casacore.tables as pt
 import logging
@@ -131,7 +132,10 @@ class BPSols(ScanData):
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
@@ -167,7 +171,9 @@ class BPSols(ScanData):
         imagepath = self.create_imagepath(imagepath)
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
@@ -234,7 +240,7 @@ class GainSols(ScanData):
                 amp_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=object)
                 phase_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=object)
                 flags_ant_array = np.empty((len(ant_names),len(times),n_stokes),dtype=bool)
-        
+
                 for ant in xrange(len(ant_names)):
                     taql_command = ("SELECT abs(CPARAM) AS amp, arg(CPARAM) AS phase, FLAG FROM {0} " 
                                     "WHERE ANTENNA1={1}").format(gaintable,ant)
@@ -271,7 +277,9 @@ class GainSols(ScanData):
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
@@ -308,7 +316,10 @@ class GainSols(ScanData):
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
@@ -477,7 +488,10 @@ class CorrectedData(ScanData):
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
@@ -513,7 +527,10 @@ class CorrectedData(ScanData):
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
@@ -566,10 +583,11 @@ class RawData(ScanData):
             n_stokes = pol_array.shape[2] #shape is time, one, nstokes
     
             #take MS file and get calibrated data
-            amp_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
-            phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
-    
-            for ant in xrange(len(ant_names)):
+            amp_ant_array = pymp.shared.array((len(ant_names),len(freqs),n_stokes),dtype=float)
+            phase_ant_array = pymp.shared.array((len(ant_names),len(freqs),n_stokes),dtype=float)
+  
+            with pymp.Parallel(20) as p:
+              for ant in p.range(len(ant_names)):
                 try:
                     taql_command = ("SELECT abs(gmeans(DATA[FLAG])) AS amp, "
                                     "arg(gmeans(DATA[FLAG])) AS phase FROM {0} "
@@ -596,7 +614,10 @@ class RawData(ScanData):
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
@@ -633,7 +654,10 @@ class RawData(ScanData):
         #put plots in default place w/ default name
         ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
-        for a,ant in enumerate(ant_names):
+
+        with pymp.Parallel(20) as p:
+          for a in p.range(len(ant_names)):
+            ant = ant_names[a]
             #iterate through antennas
             #set up for 8x5 plots (40 beams)
             nx = 8
