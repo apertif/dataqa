@@ -17,6 +17,11 @@ or
 import argparse
 import numpy as np
 import logging
+
+# Need to do this before bdsf import, it sets the default matplotlib backend
+import matplotlib
+matplotlib.use('Agg')
+
 import bdsf
 import os
 import time
