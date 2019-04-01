@@ -15,16 +15,16 @@ import logging
 from dataqa.scandata import get_default_imagepath
 
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
+#from scipy.optimize import curve_fit
 
 logger = logging.getLogger(__name__)
 
 
-def gauss(x, *p):
-    """Function to calculate a Gaussian value
-    """
-    A, mu, sigma = p
-    return A*np.exp(-(x-mu)**2/(2.*sigma**2))
+#def gauss(x, *p):
+#    """Function to calculate a Gaussian value
+#    """
+#    A, mu, sigma = p
+#    return A*np.exp(-(x-mu)**2/(2.*sigma**2))
 
 
 def get_cube_stats(qa_line_dir, data_base_dir_list):
@@ -109,13 +109,12 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     n_channels = cube_shape[0]
 
                     # creating an astropy table to store information about the cube
-                    cube_info = Table([np.arange(n_channels), np.zeros(n_channels), np.zeros(
-                        n_channels)], names=('channel', 'noise', 'gauss'))
+                    cube_info = Table([np.arange(n_channels), np.zeros(n_channels)], names=('channel', 'noise'))
 
                     # define range for histogram
-                    histrange = np.arange(-0.5, 0.5, 0.0001)
+                    #histrange = np.arange(-0.5, 0.5, 0.0001)
                     # p0 is the initial guess for the fitting coefficients (A, mu and sigma above)
-                    p0 = [1., 0., 0.001]
+                    #p0 = [1., 0., 0.001]
 
                     # This determines the noise in each channel, using standard rms and also by
                     # fitting the width of a histogram of image values.
@@ -127,17 +126,17 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                         # get rms
                         cube_info['noise'][ch] = np.std(cube[ch])
                         # determine histogram and fit gaussian
-                        values = cube[ch]
-                        histch, binedges = np.histogram(
-                            values, bins=500, range=(-0.2, 0.2))
-                        bin_centres = binedges[:-1] + np.diff(binedges) / 2
-                        coeff, var_matrix = curve_fit(
-                            gauss, bin_centres, histch, p0=p0)
+                        #values = cube[ch]
+                        #histch, binedges = np.histogram(
+                        #    values, bins=500, range=(-0.2, 0.2))
+                        #bin_centres = binedges[:-1] + np.diff(binedges) / 2
+                        #coeff, var_matrix = curve_fit(
+                        #    gauss, bin_centres, histch, p0=p0)
                         # Get the fitted curve
-                        hist_fit = gauss(bin_centres, *coeff)
+                        #hist_fit = gauss(bin_centres, *coeff)
                         # print 'Fitted mean = ', coeff[1]
                         # print 'Fitted standard deviation = ', coeff[2]
-                        cube_info['gauss'][ch] = coeff[2]
+                        #cube_info['gauss'][ch] = coeff[2]
 
                     # write noise data
                     cube_info.write(
@@ -150,8 +149,8 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     # plot data and fit
                     ax.plot(
                         cube_info['channel'], cube_info['noise'] * 1.e3, color='blue', linestyle='-')
-                    ax.plot(cube_info['channel'], cube_info['gauss'] *
-                            1.e3, color='orange', linestyle='--')
+                    #ax.plot(cube_info['channel'], cube_info['gauss'] *
+                    #        1.e3, color='orange', linestyle='--')
 
                     # add axes labels
                     ax.set_xlabel('Channel number')
@@ -177,10 +176,10 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                     ax.annotate('Data', xy=(0.8, 0.95), xycoords='axes fraction',
                                 va='center', ha='left', color='blue')
 
-                    ax.plot([0.73, 0.78], [0.9, 0.9], transform=ax.transAxes,
-                            color='orange', linestyle='--')
-                    ax.annotate('Fit', xy=(0.8, 0.9), xycoords='axes fraction',
-                                va='center', ha='left', color='orange')
+                    #ax.plot([0.73, 0.78], [0.9, 0.9], transform=ax.transAxes,
+                    #        color='orange', linestyle='--')
+                    #ax.annotate('Fit', xy=(0.8, 0.9), xycoords='axes fraction',
+                    #            va='center', ha='left', color='orange')
 
                     ax_x2.tick_params(axis='both', bottom='off', top='on',
                                       left='on', right='on', which='major', direction='in')
