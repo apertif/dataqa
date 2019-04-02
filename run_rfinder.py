@@ -69,8 +69,14 @@ for b in range(40):
     new2d = "{0:s}/Time_2D_{1:s}.png".format(qapath,args.fluxcal)
     oldaa = "{0:s}/rfi_q/plots/movies/AltAz_movie.gif".format(qapath)
     newaa = "{0:s}/test_AltAz_{1:s}.png".format(qapath,args.fluxcal)
-    os.rename(old2d,new2d)
-    os.rename(oldaa,newaa)
+    try:
+        os.rename(old2d,new2d)
+    except:
+        pass
+    try:
+        os.rename(oldaa,newaa)
+    except:
+        pass
     
 end = timer()
 logger.info('Elapsed time to run RFinder is {} minutes'.format(
