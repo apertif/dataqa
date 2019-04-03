@@ -10,6 +10,7 @@ from apercal.libs import lib
 from dataqa.scandata import get_default_imagepath
 from dataqa.line.cube_stats import get_cube_stats
 
+
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 

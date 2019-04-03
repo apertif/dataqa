@@ -141,6 +141,8 @@ def get_cube_stats_cont(qa_line_dir, data_base_dir_list):
                     # write noise data
                     cube_info.write(
                         "{0:s}/beam_{1:s}_cube_noise_info_contsub.csv".format(qa_line_beam_dir, beam), format="csv", overwrite=True)
+                    themedian = np.median(cube_info['noise'])
+                    print("Median is " + str(round(themedian*1000,2)) + " mJy")
 
                     # Create plot
                     # +++++++++++
@@ -178,8 +180,8 @@ def get_cube_stats_cont(qa_line_dir, data_base_dir_list):
 
                     #ax.plot([0.73, 0.78], [0.9, 0.9], transform=ax.transAxes,
                     #        color='orange', linestyle='--')
-                    #ax.annotate('Fit', xy=(0.8, 0.9), xycoords='axes fraction',
-                    #            va='center', ha='left', color='orange')
+                    ax.annotate('Median = %s mJy'%(str(round(themedian*1000,2))), xy=(0.05, 0.9), xycoords='axes fraction',
+                                va='center', ha='left', color='orange')
 
                     ax_x2.tick_params(axis='both', bottom='off', top='on',
                                       left='on', right='on', which='major', direction='in')
