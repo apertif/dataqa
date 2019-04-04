@@ -634,7 +634,7 @@ class catalogue(object):
                 print "Writing to '{0}'.".format(filename)
             self.df.to_csv(filename,index=False)
 
-    def cutout_box(self,ra,dec,fov=6,redo=False,write=True,verbose=True):
+    def cutout_box(self, ra, dec, fov=8, redo=False, write=True, verbose=True):
 
         """Cut out a box of the catalogue, updating the catalogue to only contain sources within this box.
         Input a central RA and DEC and FOV or four vertices.
@@ -964,6 +964,8 @@ class catalogue(object):
             print "'{0}' already exists. Skipping cross-matching step.".format(filename)
             print 'Setting catalogue to this file.'
             matched_df = pd.read_csv(filename)
+
+        self.matched_df = matched_df
 
         #update basename to this cross-matched catalogue
         self.basename = filename[:-4]

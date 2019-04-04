@@ -1393,7 +1393,9 @@ class report(object):
         self.html.write("""<tr>
                         <td>{0}</td>
                         <td>{1}</td>
-                        <td>{2}""".format(name2,self.cat.freq[name2],self.cat.count[name2]))
+                        <td>{2}""".format(name2,
+                                          self.cat.freq[name2],
+                                          self.cat.count[name2]))
 
         #plot the positional offsets
         fig = plt.figure(**self.fig_size)

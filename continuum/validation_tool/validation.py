@@ -99,5 +99,7 @@ def run(fits_image, finder='pybdsf', snr=5.0, verbose=True, refind=False, redo=F
     REPORT.write_pipeline_offset_params()
     REPORT.write_html_end()
 
+    return IMG, CAT, REPORT
+
 if __name__ == "__main__":
     print("Hello!")
