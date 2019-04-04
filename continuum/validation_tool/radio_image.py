@@ -225,12 +225,15 @@ class radio_image(object):
             img = fits.data
 
         # determin gaussianity
-        k2, p = normaltest(img, nan_policy='omit', axis=None)
-        if p < 1e-2:
-            self.gaussianity = "Passed"
-        else:
-            self.gaussianity = "Failed"
+        try:
+            k2, p = normaltest(img, nan_policy='omit', axis=None)
 
+            if p < 1e-2:
+                self.gaussianity = "Passed"
+            else:
+                self.gaussianity = "Failed"
+        except:
+            self.gaussianity = None
 
 
     def run_BANE(self, ncores=8, redo=False):
