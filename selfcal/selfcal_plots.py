@@ -28,12 +28,19 @@ class PHSols(ScanData):
         for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
             phdata = "{0}/selfcal/{1}.mir".format(path, self.sourcename)
             if os.path.isdir(phdata):
-                phgains, times = readmirlog.get_phases(phdata)
-                self.phants[i] = misc.create_antnames()
-                self.phtimes[i] = times
-                self.phases[i] = phgains
-                self.phnants[i], self.phnbins[i], self.phnsols[i] = readmirlog.get_ndims(
-                    phdata)
+                try:
+                    phgains, times = readmirlog.get_phases(phdata)
+                    self.phants[i] = misc.create_antnames()
+                    self.phtimes[i] = times
+                    self.phases[i] = phgains
+                    self.phnants[i], self.phnbins[i], self.phnsols[i] = readmirlog.get_ndims(phdata)
+                except:
+                    print 'Filling with NaNs. Phase self-calibration not present for B{}'.format(beam)
+                    self.phants[i] = misc.create_antnames()
+                    self.phtimes[i] = np.array(np.nan)
+                    self.phases[i] = np.array(np.nan)
+                    self.phnbins[i] = np.array(np.nan)
+                    self.phnants[i], self.phnbins[i], self.phnsols[i] = np.array(np.nan), np.array(np.nan), np.array(np.nan)
             else:
                 print 'Filling with NaNs. Phase self-calibration not present for B{}'.format(beam)
                 self.phants[i] = misc.create_antnames()
@@ -90,11 +97,19 @@ class AMPSols(ScanData):
         for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
             ampdata = "{0}/selfcal/{1}_amp.mir".format(path, self.sourcename)
             if os.path.isdir(ampdata):
-                ampgains, times = readmirlog.get_phases(ampdata)
-                self.ampants[i] = misc.create_antnames()
-                self.amptimes[i] = times
-                self.amps[i] = ampgains
-                self.ampnants[i], self.ampnbins[i], self.ampnsols[i] = readmirlog.get_ndims(ampdata)
+                try:
+                    ampgains, times = readmirlog.get_phases(ampdata)
+                    self.ampants[i] = misc.create_antnames()
+                    self.amptimes[i] = times
+                    self.amps[i] = ampgains
+                    self.ampnants[i], self.ampnbins[i], self.ampnsols[i] = readmirlog.get_ndims(ampdata)
+                except:
+                    print 'Filling with NaNs. Amplitude self-calibration not present for B{}'.format(beam)
+                    self.ampants[i] = misc.create_antnames()
+                    self.amptimes[i] = np.array(np.nan)
+                    self.amps[i] = np.array(np.nan)
+                    self.ampnbins[i] = np.array(np.nan)
+                    self.ampnants[i], self.ampnbins[i], self.ampnsols[i] = np.array(np.nan), np.array(np.nan), np.array(np.nan)
             else:
                 print 'Filling with NaNs. Amplitude self-calibration not present for B{}'.format(beam)
                 self.ampants[i] = misc.create_antnames()
