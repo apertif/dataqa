@@ -141,7 +141,7 @@ def get_cube_stats_cont(qa_line_dir, data_base_dir_list):
                     # write noise data
                     cube_info.write(
                         "{0:s}/beam_{1:s}_cube_noise_info_contsub.csv".format(qa_line_beam_dir, beam), format="csv", overwrite=True)
-                    themedian = np.median(cube_info['noise'])
+                    themedian = np.nanmedian(cube_info['noise'])
                     print("Median is " + str(round(themedian*1000,2)) + " mJy")
 
                     # Create plot
