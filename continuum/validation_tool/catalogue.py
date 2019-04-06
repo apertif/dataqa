@@ -634,7 +634,7 @@ class catalogue(object):
                 print "Writing to '{0}'.".format(filename)
             self.df.to_csv(filename,index=False)
 
-    def cutout_box(self, ra, dec, fov=8, redo=False, write=True, verbose=True):
+    def cutout_box(self, ra, dec, fov=12, redo=False, write=True, verbose=True):
 
         """Cut out a box of the catalogue, updating the catalogue to only contain sources within this box.
         Input a central RA and DEC and FOV or four vertices.
