@@ -19,10 +19,10 @@ import time
 import argparse
 import socket
 from apercal.libs import lib
-from dataqa.report import html_report as hp
-from dataqa.report import html_report_dir as hpd
-from dataqa.report.pipeline_run_time import get_pipeline_run_time
-from dataqa.scandata import get_default_imagepath
+from report import html_report as hp
+from report import html_report_dir as hpd
+from report.pipeline_run_time import get_pipeline_run_time
+from scandata import get_default_imagepath
 
 if __name__ == "__main__":
 

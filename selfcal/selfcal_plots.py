@@ -10,7 +10,7 @@ from apercal.subs import readmirlog
 from apercal.subs import misc
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
-from dataqa.scandata import ScanData
+from scandata import ScanData
 
 
 class PHSols(ScanData):
@@ -67,19 +67,22 @@ class PHSols(ScanData):
             for n, beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum + 1)
-                color = cm.rainbow(np.linspace(0, 1, self.phnbins[n]))
-                for f in range(self.phnbins[n]):
-                    plt.scatter(range(len(self.phtimes[n])), self.phases[n][a, f, :], label='F'+str(f), marker=',', s=1, c=color[f])
-                    if n >= 32:
-                        plt.xlabel('Time [solint]')
-                    if n%nx == 0:
-                        plt.ylabel('Phase [deg]')
+                if np.isnan(self.phnbins[n]):
+                    continue
+                else:
+                    color = cm.rainbow(np.linspace(0, 1, self.phnbins[n]))
+                    for f in range(self.phnbins[n]):
+                        plt.scatter(range(len(self.phtimes[n])), self.phases[n][a, f, :], label='F'+str(f), marker=',', s=1, c=color[f])
+                        if n >= 32:
+                            plt.xlabel('Time [solint]')
+                        if n%nx == 0:
+                            plt.ylabel('Phase [deg]')
 
                 plt.title('Beam {0}'.format(beam))
             plt.legend()
 
             plt.savefig(
-                '{2}/SCAL_phase_{0}_{1}.png'.format(ant, self.scan, imagepath))
+                '{2}SCAL_phase_{0}_{1}.png'.format(ant, self.scan, imagepath))
             plt.close("all")
 
 
@@ -135,16 +138,19 @@ class AMPSols(ScanData):
             for n, beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum + 1)
-                color = cm.rainbow(np.linspace(0, 1, self.phnbins[n]))
-                for f in range(self.phnbins[n]):
-                    plt.scatter(range(len(self.amptimes[n])), self.amps[n][a, f, :], label='F' + str(f), marker=',', s=1, c=color[f])
-                    if n >= 32:
-                        plt.xlabel('Time [solint]')
-                    if n % nx == 0:
-                        plt.ylabel('Amp')
+                if np.isnan(self.ampnbins[n]):
+                    continue
+                else:
+                    color = cm.rainbow(np.linspace(0, 1, self.ampnbins[n]))
+                    for f in range(self.ampnbins[n]):
+                        plt.scatter(range(len(self.amptimes[n])), self.amps[n][a, f, :], label='F' + str(f), marker=',', s=1, c=color[f])
+                        if n >= 32:
+                            plt.xlabel('Time [solint]')
+                        if n % nx == 0:
+                            plt.ylabel('Amp')
 
                 plt.title('Beam {0}'.format(beam))
             plt.legend()
 
-            plt.savefig('{2}/SCAL_amp_{0}_{1}.png'.format(ant, self.scan, imagepath))
+            plt.savefig('{2}SCAL_amp_{0}_{1}.png'.format(ant, self.scan, imagepath))
             plt.close("all")
