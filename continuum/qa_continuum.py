@@ -409,7 +409,8 @@ def print_summary(sdict):
 
 
     beams = ['{:02d}'.format(i) for i in range(40)]
-    df = pd.DataFrame(columns=beams)
+    df = pd.DataFrame(columns=['desc'] + beams)
+    df['desc']=['RMS', 'IDR', 'LDR']
     for beam in beams:
         if not beam in sdict.keys():
             df[beam] = ['F', 'F', 'F']
@@ -479,15 +480,11 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
                 # run validation tool and pybdsf combined
 
-                # img, cat, rep = validation.run(fits_image)
+                img, cat, rep = validation.run(fits_image)
 
-                img_rms = 30
-                idr = 500
-                ldr_min, _ = 8, 100
-                # img_rms = cat.img_rms
-                # idr = cat.dynamic_range
-                # sdr_min, sdr_max = cat.source_dynrange
-                # ldr_min, ldr_max = cat.local_dynrange
+                img_rms = cat.img_rms
+                idr = cat.dynamic_range
+                ldr_min, _ = cat.local_dynrange
 
                 summary.update({'{:02d}'.format(beam_index): [img_rms, idr, ldr_min]})
 
