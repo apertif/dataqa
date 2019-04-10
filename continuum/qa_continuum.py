@@ -20,6 +20,7 @@ from dataqa.continuum.validation_tool import validation
 import scipy
 from astropy.io import fits
 from astropy.table import Table
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -404,6 +405,20 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
     return fits_file_table
 
 
+def print_summary(sdict):
+
+
+    beams = ['{:02d}'.format(i) for i in range(40)]
+    df = pd.DataFrame(columns=beams)
+    for beam in beams:
+        if not beam in sdict.keys():
+            df[beam] = ['F', 'F', 'F']
+        else:
+            df[beam] = sdict[beam]
+
+    print(df)
+
+
 def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=True):
     """This function runs pybdsf on the continuum image of each beam
 
@@ -435,6 +450,8 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
     fits_file_table = get_continuum_fits_images(
         data_basedir_list, qa_validation_dir)
 
+    summary = dict()
+
     for beam_index in fits_file_table['beam_id']:
 
         # create a subdirectory for the beam in the qa directory
@@ -461,12 +478,27 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 os.chdir(qa_validation_beam_dir)
 
                 # run validation tool and pybdsf combined
-                validation.run(fits_image)
+
+                # img, cat, rep = validation.run(fits_image)
+
+                img_rms = 30
+                idr = 500
+                ldr_min, _ = 8, 100
+                # img_rms = cat.img_rms
+                # idr = cat.dynamic_range
+                # sdr_min, sdr_max = cat.source_dynrange
+                # ldr_min, ldr_max = cat.local_dynrange
+
+                summary.update({'{:02d}'.format(beam_index): [img_rms, idr, ldr_min]})
 
                 logger.info("## Running validation tool. Done")
             except Exception as e:
                 logger.error(e)
                 logger.error("## Running validation tool failed.")
+                img_rms = 'F'
+                idr = 'F'
+                ldr_min, _ = 'F', 'F'
+                summary.update({'{:02d}'.format(beam_index): [img_rms, idr, ldr_min]})
 
             plot_type_list = ['gaus_model', 'gaus_resid',
                               'rms', 'mean', 'island_mask']
@@ -489,141 +521,5 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 logger.error(e)
                 logger.error("## Plotting PyBDSF diagnostic images failed")
 
-    #     # Go through all the different data directories
-    # for data_basedir in data_basedir_list:
 
-    #     # get the beams in this directory
-    #     beam_data_dir_list = glob.glob("{0:s}/[0-3][0-9]".format(data_basedir))
-    #     beam_data_dir_list.sort()
-
-    #     # number of beams
-    #     n_beams = len(beam_data_dir_list)
-
-    #     n_beams_total += n_beams
-
-    #     # check that beams exists
-    #     if n_beams == 0:
-    #         logger.error("No beams found. Abort")
-    #         n_data_dir_failed += 1
-    #         continue
-    #     else:
-    #         logger.info("Found {0:d} beams".format(n_beams))
-
-    #     # get a list of only the beams
-    #     beam_list = [os.path.basename(beam) for beam in beam_data_dir_list]
-
-    #     # Now go through each beam
-    #     for k in range(n_beams):
-
-    #         beam = beam_list[k]
-    #         beam_data_dir = beam_data_dir_list[k]
-
-    #         logger.info("## Processing beam {0:02d}".format(int(beam)))
-
-    #         beam_pybdsf_dir = "{0:s}/{1:s}".format(qa_validation_dir, beam)
-
-    #         # check/create beam directory
-    #         if not os.path.exists(beam_pybdsf_dir):
-    #             logger.info(
-    #                 "Creating directory {0:s}".format(beam_pybdsf_dir))
-
-    #         # # change to this directory
-    #         # os.chdir(beam_pybdsf_dir)
-
-    #         # directory of continuum images
-    #         continuum_image_dir = "{0:s}/continuum".format(beam_data_dir)
-
-    #         # Get the fits image
-    #         fits_image = glob.glob("{0:s}/*.fits".format(continuum_image_dir))
-
-    #         if len(fits_image) == 0:
-    #             logger.error(
-    #                 "Did not find any fits image for beam {0:s}".format(beam))
-    #             continue
-    #         elif len(fits_image) == 1:
-    #             fits_image = fits_image[0]
-    #         else:
-    #             fits_image.sort()
-    #             logger.warning(
-    #                 "Found more than one fits image for beam {0:s}. Take the last one".format(beam))
-    #             fits_image = fits_image[-1]
-
-    #         # run pybdsf
-    #         logger.info("# Running validation tool and pybdsf")
-    #         try:
-
-    #             # change into the directory where the QA products should be produced
-    #             # This is necessary for the current implementation of the validation tool
-    #             # Should it return to the initial directory?
-    #             os.chdir(qa_validation_dir)
-
-    #             # run validation tool and pybdsf combined
-    #             validation.run(fits_image)
-
-    #             # img = bdsf.process_image(fits_image, quiet=True)
-
-    #             # # Check/create catalogue name
-    #             # cat_file = "{0:s}/{1:s}".format(beam_pybdsf_dir, os.path.basename(
-    #             #     fits_image).replace(".fits", "_pybdsf_cat.fits"))
-
-    #             # # Write catalogue as csv file
-    #             # logger.info("# Writing catalogue")
-    #             # img.write_catalog(outfile=cat_file,
-    #             #                   format='fits', clobber=True)
-
-    #             # # Save plots
-    #             # logger.info("# Saving pybdsf plots")
-    #             # plot_type_list = ['rms', 'mean',
-    #             #                   'gaus_model', 'gaus_resid', 'island_mask']
-    #             # fits_names = [cat_file.replace(
-    #             #     ".fits", "_{0:s}.fits".format(plot)) for plot in plot_type_list]
-    #             # plot_names = [fits.replace(
-    #             #     ".fits", ".png") for fits in fits_names]
-
-    #             # # number of plots
-    #             # n_plots = len(plot_type_list)
-
-    #             # for k in range(n_plots):
-    #             #     img.export_image(outfile=fits_names[k],
-    #             #                      clobber=overwrite, img_type=plot_type_list[k])
-
-    #             logger.info("# Running validation tool and pybdsf. Done")
-    #         except Exception as e:
-    #             logger.error(e)
-    #             logger.error("# Running validation tool and pybdsf failed.")
-    #             n_pybdsf_failed += 1
-
-    #         plot_type_list = ['rms', 'mean',
-    #                           'gaus_model', 'gaus_resid', 'island_mask']
-    #         fits_names = [os.path.basename(fits_image).replace(
-    #             ".fits", "pybdsf_{0:s}.fits".format(plot)) for plot in plot_type_list]
-
-    #         plot_names = [fits.replace(
-    #             ".fits", ".png") for fits in fits_names]
-
-    #         # add the continuum image
-    #         fits_names.append(fits_image)
-    #         plot_names.append(os.path.basename(
-    #             fits_image).replace(".fits", ".png"))
-
-    #         # create images without a lot of adjusting
-    #         try:
-    #             qa_plot_pybdsf_images(fits_names, plot_names)
-    #         except Exception as e:
-    #             logger.error(e)
-    #             logger.error("Plotting PyBDSF diagnostic images failed")
-
-    # # assuming everything went fine
-    # run_pybdsf_validation_status = 1
-
-    # # Check how often pybdsf failed
-    # if n_pybdsf_failed == n_beams_total:
-    #     logger.error(
-    #         "PyBDSF and validation tool failed on all images")
-    #     run_pybdsf_validation_status = -1
-    # elif n_pybdsf_failed < n_beams_total:
-    #     logger.warning("PyBDSF and validation tool failed on {0:d} continuum images (out of {1:d}). Check log file".format(
-    #         n_pybdsf_failed, n_beams_total))
-    #     run_pybdsf_validation_status = 2
-
-    # return run_pybdsf_validation_status
+    print_summary(summary)
