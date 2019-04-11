@@ -187,7 +187,53 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
                 logger.warning("No selfcal images in beam {0:s} found".format(
                     beam))
     else:
-        logger.warning("No beams found for selfcal found")
+        logger.warning("No beams for selfcal found")
+
+    # Get the phase plots and link them
+    images_phase = glob.glob(
+        "{0:s}selfcal/SCAL_phase*.png".format(qa_dir))
+
+    if len(images_phase) != 0:
+
+        images_phase.sort()
+
+        # go through all antennas
+        for image in images_phase:
+            link_name = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage, os.path.basename(image))
+
+            # check if link exists
+            if not os.path.exists(link_name):
+                os.symlink(image, link_name)
+            else:
+                os.unlink(link_name)
+                os.symlink(image, link_name)
+
+    else:
+        logger.warning("No selfcal phase plots found")
+
+    # Get the amplitude plots and link them
+    images_amp = glob.glob(
+        "{0:s}selfcal/SCAL_amp*.png".format(qa_dir))
+
+    if len(images_amp) != 0:
+
+        images_amp.sort()
+
+        # go through all antennas
+        for image in images_amp:
+            link_name = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage, os.path.basename(image))
+
+            # check if link exists
+            if not os.path.exists(link_name):
+                os.symlink(image, link_name)
+            else:
+                os.unlink(link_name)
+                os.symlink(image, link_name)
+
+    else:
+        logger.warning("No selfcal amplitude plots found")
 
     logger.info(
         "## Creating report directory for selfcal and linking files. Done")
@@ -238,9 +284,9 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
     #                 beam))
     # else:
     #     logger.warning("No beams found for selfcal found")
-
-    logger.info(
-        "## Creating report directory for selfcal and linking files. Done")
+#
+#    logger.info(
+#        "## Creating report directory for selfcal and linking files. Done")
 
 
 def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):

@@ -8,8 +8,8 @@ import os
 from selfcal import selfcal_plots as scplots
 import argparse
 from timeit import default_timer as timer
-from dataqa.scandata import get_default_imagepath
-from dataqa.selfcal.selfcal_maps import get_selfcal_maps
+from scandata import get_default_imagepath
+from selfcal.selfcal_maps import get_selfcal_maps
 import time
 from apercal.libs import lib
 import logging
@@ -24,9 +24,9 @@ parser.add_argument("target", help='Target name')
 
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
-parser.add_argument('-M', '--maps', default=True, action='store_false', help='Generate selfcal maps')
-parser.add_argument('-P', '--phase', default=True, action='store_false', help='Generate phase plots')
-parser.add_argument('-A', '--amplitude', default=True, action='store_false', help='Generate amplitude plots')
+parser.add_argument('-M', '--maps', default=True, action='store_false', help='Do not generate selfcal maps')
+parser.add_argument('-P', '--phase', default=True, action='store_false', help='Do not generate phase plots')
+parser.add_argument('-A', '--amplitude', default=True, action='store_false', help='Do not generate amplitude plots')
 
 args = parser.parse_args()
 

@@ -6,7 +6,7 @@ import glob
 import time
 import argparse
 import socket
-import html_report_content as hrc
+import report.html_report_content as hrc
 # from __future__ import with_statement
 
 logger = logging.getLogger(__name__)

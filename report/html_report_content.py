@@ -183,12 +183,55 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
     html_code += """
         <p class="info">
             This page shows the images and residuals from every major and minor phase self-cal iteration.
-            Maps from amplitude self-cal is not yet done by the selfcal QA script. Amplitude and phase 
-            gain plots are also not yet available from the selfcal QA script. <br>
+            In addition selfcal phase and amplitude gains are shown for each antenna. <br>
             This page will only have content after the selfcal QA step has been performed.
         </p>\n
         """
-    
+
+    # the plots for the selfcal gains
+
+    # get the phase plots
+    phase_list = glob.glob("{0:s}/{1:s}/SCAL_phase*png".format(qa_report_obs_path, page_type))
+
+    if len(phase_list) != 0:
+        html_code += """<button onclick="show_hide_plots('{0:s}')">{1:s}
+            </button>\n""".format("gallery_phase", "Gain factors Phase")
+
+        for image in phase_list:
+            html_code += """
+            <div class="gallery" name="{0:s}">
+            <a href="{1:s}/{2:s}">
+            <img src="{1:s}/{2:s}" alt="No image", width="100%">
+            </a>
+            </div>\n""".format("gallery_phase", page_type, os.path.basename(image))
+            html_code += """\n"""
+    else:
+        html_code += """
+            <button class="disabled" onclick="show_hide_plots('{0:s}')">
+            {1:s}
+            </button>\n""".format("gallery_phase", "Gain factors Phase")
+
+    # get the amplitude plots
+    amp_list = glob.glob("{0:s}/{1:s}/SCAL_amp*png".format(qa_report_obs_path, page_type))
+
+    if len(amp_list) != 0:
+        html_code += """<button onclick="show_hide_plots('{0:s}')">{1:s}
+                </button>\n""".format("gallery_amp", "Gain factors Amplitude")
+
+        for image in amp_list:
+            html_code += """
+                <div class="gallery" name="{0:s}">
+                <a href="{1:s}/{2:s}">
+                <img src="{1:s}/{2:s}" alt="No image", width="100%">
+                </a>
+                </div>\n""".format("gallery_amp", page_type, os.path.basename(image))
+            html_code += """\n"""
+    else:
+        html_code += """
+                <button class="disabled" onclick="show_hide_plots('{0:s}')">
+                {1:s}
+                </button>\n""".format("gallery_amp", "Gain factors Amplitude")
+
     # get beams
     beam_list = glob.glob(
         "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
@@ -268,12 +311,12 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 <button class="disabled" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
                     </button>\n""".format(button_html_name, os.path.basename(beam_list[k]))
-    
+
     else:
-        logger.warning("No beams for continuum QA found")
+        logger.warning("No beams for selfcal QA found")
         html_code += """
         <p class="warning">
-            No beams were found for continuum QA.
+            No beams were found for selfcal QA.
         </p>\n"""
 
     # html_code += """

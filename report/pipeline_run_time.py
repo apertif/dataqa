@@ -7,7 +7,7 @@ import logging
 import os
 from astropy.table import Table, hstack, vstack
 from apercal import parselog
-from dataqa.scandata import get_default_imagepath
+from scandata import get_default_imagepath
 import socket
 import numpy as np
 import glob
