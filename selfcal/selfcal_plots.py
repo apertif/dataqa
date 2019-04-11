@@ -79,7 +79,7 @@ class PHSols(ScanData):
                             plt.ylabel('Phase [deg]')
 
                 plt.title('Beam {0}'.format(beam))
-            plt.legend()
+            plt.legend(prop={'size': 5})
 
             plt.savefig(
                 '{2}SCAL_phase_{0}_{1}.png'.format(ant, self.scan, imagepath))
