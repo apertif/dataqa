@@ -5,8 +5,8 @@ Requires a scan number
 Optionally takes a directory for writing plots
 """
 
-from dataqa.crosscal import crosscal_plots
-from dataqa.scandata import get_default_imagepath
+from crosscal import crosscal_plots
+from scandata import get_default_imagepath
 import argparse
 from timeit import default_timer as timer
 import logging
