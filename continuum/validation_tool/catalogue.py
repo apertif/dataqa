@@ -948,7 +948,7 @@ class catalogue(object):
                 elif join_type == '1':
                     matched_df = pd.concat([self.df,cat.df,sepdf], axis=1, join_axes=[self.df.index])
                 matched_only_df = pd.concat([self.df, cat.df, sepdf], axis=1, join='inner')
-
+                self.matched_df = matched_only_df
                 #reset indices and overwrite data frame with matched one
                 matched_df = matched_df.reset_index(drop=True)
 
@@ -966,7 +966,7 @@ class catalogue(object):
             print 'Setting catalogue to this file.'
             matched_df = pd.read_csv(filename)
 
-        self.matched_df = matched_only_df
+
 
         #update basename to this cross-matched catalogue
         self.basename = filename[:-4]
