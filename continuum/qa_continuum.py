@@ -417,7 +417,7 @@ def print_summary(sdict):
         else:
             df[beam] = sdict[beam]
 
-    print(df)
+    print(df.to_csv(sys.stdout, index=False))
 
 
 def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=True):
@@ -482,9 +482,10 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
                 img, cat, rep = validation.run(fits_image)
 
-                img_rms = cat.img_rms
-                idr = cat.dynamic_range
+                img_rms = int(cat.img_rms)
+                idr = int(cat.dynamic_range)
                 ldr_min, _ = cat.local_dynrange
+                ldr_min = int(ldr_min)
 
                 summary.update({'{:02d}'.format(beam_index): [img_rms, idr, ldr_min]})
 
