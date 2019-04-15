@@ -20,6 +20,7 @@ parser = argparse.ArgumentParser(description='Generate crosscal QA plots')
 # 1st argument: File name
 parser.add_argument("scan", help='Scan of target field')
 parser.add_argument("fluxcal", help='Fluxcal name')
+parser.add_argument("polcal", help='Polcal name')
 
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
@@ -46,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 # Create crosscal plots
 crosscal_plots.make_all_ccal_plots(
-    args.scan, args.fluxcal, output_path=output_path)
+    args.scan, args.fluxcal, args.polcal, output_path=output_path)
 
 end = timer()
 logger.info('Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(
