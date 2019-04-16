@@ -15,17 +15,19 @@ import matplotlib
 import time
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from dataqa.scandata import ScanData
+from scandata import ScanData
+from apercal.subs import misc
 
 logger = logging.getLogger(__name__)
 
-def make_all_ccal_plots(scan, fluxcal, output_path=None):
+def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
     """
     Create crosscal QA plots
 
     Args:
         scan (int): Task id of target, e.g. 190311152
         fluxcal (str): Name of fluxcal, e.g. "3C147"
+        polcal(str): Name of the polcal, e.g. "3C286"
         output_path (str): Output path, None for default
     """
     # Get BP plots
@@ -42,8 +44,37 @@ def make_all_ccal_plots(scan, fluxcal, output_path=None):
     Gain.get_data()
     Gain.plot_amp(imagepath=output_path)
     Gain.plot_phase(imagepath=output_path)
-    logger.info('Done with gainplots ({0:.0f}s)'.format(
-        time.time() - start_time_gain))
+    logger.info('Done with gainplots ({0:.0f}s)'.format(time.time() - start_time_gain))
+
+    # Get Global Delay plots
+    start_time_gdelay = time.time()
+    GD = GDSols(scan, fluxcal)
+    GD.get_data()
+    GD.plot_delay(imagepath=output_path)
+    logger.info('Done with global delay plots ({0:.0f}s)'.format(time.time() - start_time_gdelay))
+
+    # Get polarisation leakage plots
+    start_time_leak = time.time()
+    Leak = LeakSols(scan, fluxcal)
+    Leak.get_data()
+    Leak.plot_amp(imagepath=output_path)
+    Leak.plot_phase(imagepath=output_path)
+    logger.info('Done with leakage plots ({0:.0f}s)'.format(time.time() - start_time_leak))
+
+    # Get cross hand delay solutions
+    start_time_kcross = time.time()
+    KCross = KCrossSols(scan, polcal)
+    KCross.get_data()
+    KCross.plot_delay(imagepath=output_path)
+    logger.info('Done with cross hand delay plots ({0:.0f}s)'.format(time.time() - start_time_kcross))
+
+    # Get polarisation angle plots
+    start_time_polangle = time.time()
+    Polangle = PolangleSols(scan, polcal)
+    Polangle.get_data()
+    Polangle.plot_amp(imagepath=output_path)
+    Polangle.plot_phase(imagepath=output_path)
+    logger.info('Done with polarisation angle correction plots ({0:.0f}s)'.format(time.time() - start_time_polangle))
 
     # Get Raw data
     start_time_raw = time.time()
@@ -194,8 +225,7 @@ class BPSols(ScanData):
             # to really close the plot, this will do
             plt.close('all')
             
-            
-        
+
 class GainSols(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
@@ -333,7 +363,317 @@ class GainSols(ScanData):
             # to really close the plot, this will do
             plt.close('all')
 
-        
+
+class GDSols(ScanData):
+    def __init__(self, scan, fluxcal):
+        ScanData.__init__(self, scan, fluxcal)
+        self.imagepathsuffix = "crosscal"
+        self.ants = np.empty(len(self.dirlist),dtype=np.object)
+        self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
+
+    def get_data(self):
+        # get the data
+        for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
+            gdtable = "{0}/raw/{1}.K".format(path, self.sourcename)
+            if os.path.isdir(gdtable):
+                taql_command = ("SELECT FPARAM FROM {0} ").format(gdtable)
+                t = pt.taql(taql_command)
+                delays = t.getcol('FPARAM')
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(gdtable)
+                t = pt.taql(taql_antnames)
+                ant_names = t.getcol("NAME")
+
+                self.ants[i] = ant_names
+                self.delays[i] = delays[:,0,:]
+
+            else:
+                logger.info('Filling with NaNs. Global delay table not present for B{}'.format(beam))
+                self.ants[i] = misc.create_antnames()
+                self.delays[i] = np.full((12, 2), np.nan)
+
+    def plot_delay(self, imagepath=None):
+        """Plot amplitude, one plot per antenna"""
+
+        logging.info("Creating plots for global delay")
+
+        imagepath = self.create_imagepath(imagepath)
+
+        # put plots in default place w/ default name
+        ant_names = self.ants[0]
+        # figlist = ['fig_'+str(i) for i in range(len(ant_names))]
+        # set up for 8x5 plots (40 beams)
+        nx = 8
+        ny = 5
+        xsize = nx * 4
+        ysize = ny * 4
+        plt.figure(figsize=(xsize, ysize))
+        plt.suptitle('Global delay', size=30)
+
+        for n, beam in enumerate(self.beamlist):
+            beamnum = int(beam)
+            plt.subplot(ny, nx, beamnum + 1)
+            plt.scatter(self.ants[n], self.delays[n][:,0], label='X', marker='o', s=5)
+            plt.scatter(self.ants[n], self.delays[n][:,1], label='Y', marker='o', s=5)
+            plt.title('Beam {0}'.format(beam))
+        plt.legend(markerscale=3, fontsize=14)
+        plt.savefig(plt.savefig('{imagepath}/K_{scan}.png'.format(scan=self.scan, imagepath=imagepath)))
+        # to really close the plot, this will do
+        plt.close('all')
+
+
+class LeakSols(ScanData):
+    def __init__(self, scan, fluxcal):
+        ScanData.__init__(self, scan, fluxcal)
+        self.imagepathsuffix = "crosscal"
+        self.ants = np.empty(len(self.dirlist),dtype=np.object)
+        self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
+        self.flags = np.empty(len(self.dirlist),dtype=np.ndarray)
+        self.leakage = np.empty((len(self.dirlist)),dtype=np.ndarray)
+
+    def get_data(self):
+        # get the data
+        for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
+            leaktable = "{0}/raw/{1}.Df".format(path, self.sourcename)
+            if os.path.isdir(leaktable):
+                taql_command = ("SELECT abs(CPARAM) AS amp, arg(CPARAM) AS phase, FLAG FROM {0}").format(leaktable)
+                t = pt.taql(taql_command)
+                ampleak_sols=t.getcol('amp')
+                phaseleak_sols = t.getcol('phase')
+                flags = t.getcol('FLAG')
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(leaktable)
+                t = pt.taql(taql_antnames)
+                ant_names = t.getcol("NAME")
+                taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(leaktable)
+                t = pt.taql(taql_freq)
+                freqs = t.getcol('CHAN_FREQ')
+
+                # check for flags and mask
+                ampleak_sols[flags] = np.nan
+                phaseleak_sols[flags] = np.nan
+
+                self.ants[i] = ant_names
+                self.phase[i] = phaseleak_sols *180./np.pi #put into degrees
+                self.amp[i] = ampleak_sols
+                self.flags[i] = flags
+                self.freq[i] = freqs
+
+            else:
+                logger.info('Filling with NaNs. Polarisation leakage table not present for B{}'.format(beam))
+                self.ants[i] = misc.create_antnames()
+                self.phase[i] = np.full((12, 2, 2),np.nan)
+                self.amp[i] = np.full((12, 2, 2), np.nan)
+                self.freq[i] = np.full((2, 2), np.nan)
+
+    def plot_amp(self, imagepath=None):
+        """Plot leakage, one plot per antenna"""
+
+        logging.info("Creating plots for amplitude leakage")
+        imagepath = self.create_imagepath(imagepath)
+        # put plots in default place w/ default name
+        ant_names = self.ants[0]
+        for a, ant in enumerate(ant_names):
+            # iterate through antennas
+            # set up for 8x5 plots (40 beams)
+            nx = 8
+            ny = 5
+            xsize = nx * 4
+            ysize = ny * 4
+            plt.figure(figsize=(xsize, ysize))
+            plt.suptitle('Amplitude polarisation leakage for Antenna {0}'.format(ant), size=30)
+
+            for n, beam in enumerate(self.beamlist):
+                beamnum = int(beam)
+                plt.subplot(ny, nx, beamnum + 1)
+                plt.scatter(self.freq[n][0, :], self.amp[n][a, :, 0], label='X', marker=',', s=1)
+                plt.scatter(self.freq[n][0, :], self.amp[n][a, :, 1], label='Y', marker=',', s=1)
+                plt.title('Beam {0}'.format(beam))
+            plt.legend(markerscale=3, fontsize=14)
+            plt.savefig('{imagepath}/Df_amp_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
+            # to really close the plot, this will do
+            plt.close('all')
+
+    def plot_phase(self, imagepath=None):
+        """Plot leakage, one plot per antenna"""
+
+        logging.info("Creating plots for phase leakage")
+        imagepath = self.create_imagepath(imagepath)
+        # put plots in default place w/ default name
+        ant_names = self.ants[0]
+        for a, ant in enumerate(ant_names):
+            # iterate through antennas
+            # set up for 8x5 plots (40 beams)
+            nx = 8
+            ny = 5
+            xsize = nx * 4
+            ysize = ny * 4
+            plt.figure(figsize=(xsize, ysize))
+            plt.suptitle('Phase polarisation leakage for Antenna {0}'.format(ant), size=30)
+
+            for n, beam in enumerate(self.beamlist):
+                beamnum = int(beam)
+                plt.subplot(ny, nx, beamnum + 1)
+                plt.scatter(self.freq[n][0, :], self.phase[n][a, :, 0], label='X', marker=',', s=1)
+                plt.scatter(self.freq[n][0, :], self.phase[n][a, :, 1], label='Y', marker=',', s=1)
+                plt.title('Beam {0}'.format(beam))
+            plt.legend(markerscale=3, fontsize=14)
+            plt.savefig('{imagepath}/Df_phase_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
+            # to really close the plot, this will do
+            plt.close('all')
+
+
+class KCrossSols(ScanData):
+    def __init__(self, scan, polcal):
+        ScanData.__init__(self, scan, polcal)
+        self.imagepathsuffix = "crosscal"
+        self.ants = np.empty(len(self.dirlist),dtype=np.object)
+        self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
+
+    def get_data(self):
+        # get the data
+        for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
+            gdtable = "{0}/raw/{1}.Kcross".format(path, self.sourcename)
+            if os.path.isdir(gdtable):
+                taql_command = ("SELECT FPARAM FROM {0} ").format(gdtable)
+                t = pt.taql(taql_command)
+                delays = t.getcol('FPARAM')
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(gdtable)
+                t = pt.taql(taql_antnames)
+                ant_names = t.getcol("NAME")
+
+                self.ants[i] = ant_names
+                self.delays[i] = delays[:,0,:]
+
+            else:
+                logger.info('Filling with NaNs. Cross hand delay table not present for B{}'.format(beam))
+                self.ants[i] = misc.create_antnames()
+                self.delays[i] = np.full((12, 2), np.nan)
+
+    def plot_delay(self, imagepath=None):
+        """Plot amplitude, one plot per antenna"""
+
+        logging.info("Creating plots for cross hand delay")
+
+        imagepath = self.create_imagepath(imagepath)
+
+        # put plots in default place w/ default name
+        ant_names = self.ants[0]
+        # figlist = ['fig_'+str(i) for i in range(len(ant_names))]
+        # set up for 8x5 plots (40 beams)
+        nx = 8
+        ny = 5
+        xsize = nx * 4
+        ysize = ny * 4
+        plt.figure(figsize=(xsize, ysize))
+        plt.suptitle('Cross hand delay', size=30)
+
+        for n, beam in enumerate(self.beamlist):
+            beamnum = int(beam)
+            plt.subplot(ny, nx, beamnum + 1)
+            plt.scatter(self.ants[n], self.delays[n][:,0], label='X', marker='o', s=5)
+            plt.scatter(self.ants[n], self.delays[n][:,1], label='Y', marker='o', s=5)
+            plt.title('Beam {0}'.format(beam))
+        plt.legend(markerscale=3, fontsize=14)
+        plt.savefig(plt.savefig('{imagepath}/Kcross_{scan}.png'.format(scan=self.scan, imagepath=imagepath)))
+        # to really close the plot, this will do
+        plt.close('all')
+
+
+class PolangleSols(ScanData):
+    def __init__(self, scan, polcal):
+        ScanData.__init__(self, scan, polcal)
+        self.imagepathsuffix = "crosscal"
+        self.ants = np.empty(len(self.dirlist),dtype=np.object)
+        self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
+        self.flags = np.empty(len(self.dirlist),dtype=np.ndarray)
+        self.polangle = np.empty((len(self.dirlist)),dtype=np.ndarray)
+
+    def get_data(self):
+        # get the data
+        for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
+            polangletable = "{0}/raw/{1}.Xf".format(path, self.sourcename)
+            if os.path.isdir(polangletable):
+                taql_command = ("SELECT abs(CPARAM) AS amp, arg(CPARAM) AS phase, FLAG FROM {0}").format(polangletable)
+                t = pt.taql(taql_command)
+                amppolangle_sols=t.getcol('amp')
+                phasepolangle_sols = t.getcol('phase')
+                flags = t.getcol('FLAG')
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(polangletable)
+                t = pt.taql(taql_antnames)
+                ant_names = t.getcol("NAME")
+                taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(polangletable)
+                t = pt.taql(taql_freq)
+                freqs = t.getcol('CHAN_FREQ')
+
+                # check for flags and mask
+                amppolangle_sols[flags] = np.nan
+                phasepolangle_sols[flags] = np.nan
+
+                self.ants[i] = ant_names
+                self.phase[i] = phasepolangle_sols *180./np.pi #put into degrees
+                self.amp[i] = amppolangle_sols
+                self.flags[i] = flags
+                self.freq[i] = freqs
+
+            else:
+                logger.info('Filling with NaNs. Polarisation angle table not present for B{}'.format(beam))
+                self.ants[i] = misc.create_antnames()
+                self.phase[i] = np.full((12, 2, 2),np.nan)
+                self.amp[i] = np.full((12, 2, 2), np.nan)
+                self.freq[i] = np.full((2, 2), np.nan)
+
+    def plot_amp(self, imagepath=None):
+        """Plot leakage, one plot per antenna"""
+
+        logging.info("Creating plots for amplitude polarisation angle corrections")
+        imagepath = self.create_imagepath(imagepath)
+        # put plots in default place w/ default name
+        ant_names = self.ants[0]
+        for a, ant in enumerate(ant_names):
+            # iterate through antennas
+            # set up for 8x5 plots (40 beams)
+            nx = 8
+            ny = 5
+            xsize = nx * 4
+            ysize = ny * 4
+            plt.figure(figsize=(xsize, ysize))
+            plt.suptitle('Amplitude polarisation angle for Antenna {0}'.format(ant), size=30)
+
+            for n, beam in enumerate(self.beamlist):
+                beamnum = int(beam)
+                plt.subplot(ny, nx, beamnum + 1)
+                plt.scatter(self.freq[n][0, :], self.amp[n][a, :, 0], marker=',', s=1)
+                plt.title('Beam {0}'.format(beam))
+            plt.savefig('{imagepath}/Xf_amp_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
+            # to really close the plot, this will do
+            plt.close('all')
+
+    def plot_phase(self, imagepath=None):
+        """Plot leakage, one plot per antenna"""
+
+        logging.info("Creating plots for phase polarisation angle corrections")
+        imagepath = self.create_imagepath(imagepath)
+        # put plots in default place w/ default name
+        ant_names = self.ants[0]
+        for a, ant in enumerate(ant_names):
+            # iterate through antennas
+            # set up for 8x5 plots (40 beams)
+            nx = 8
+            ny = 5
+            xsize = nx * 4
+            ysize = ny * 4
+            plt.figure(figsize=(xsize, ysize))
+            plt.suptitle('Phase polarisation angle for Antenna {0}'.format(ant), size=30)
+
+            for n, beam in enumerate(self.beamlist):
+                beamnum = int(beam)
+                plt.subplot(ny, nx, beamnum + 1)
+                plt.scatter(self.freq[n][0, :], self.phase[n][a, :, 0], marker=',', s=1)
+                plt.title('Beam {0}'.format(beam))
+            plt.savefig('{imagepath}/Xf_phase_{ant}_{scan}.png'.format(ant=ant, scan=self.scan, imagepath=imagepath))
+            # to really close the plot, this will do
+            plt.close('all')
+
+
 class ModelData(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
@@ -539,7 +879,8 @@ class CorrectedData(ScanData):
             #plt.clf()
             # to really close the plot, this will do
             plt.close('all')
-                         
+
+
 class RawData(ScanData):
     def __init__(self,scan,fluxcal):
         ScanData.__init__(self,scan,fluxcal)
