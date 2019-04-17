@@ -53,7 +53,7 @@ if __name__ == "__main__":
         if not os.path.exists(qa_dir):
             print(
                 "Directory {0:s} does not exist and will be created".format(qa_dir))
-            os.mkdir(qa_dir)
+            os.makedirs(qa_dir)
 
     # check the mode to run the validation
     qa_report_dir = "{0:s}report".format(
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     if not os.path.exists(qa_report_dir):
         print("Directory {0:s} does not exist and will be created".format(
             qa_report_dir))
-        os.mkdir(qa_report_dir)
+        os.makedirs(qa_report_dir)
 
     lib.setup_logger(
         'debug', logfile='{0:s}/create_report.log'.format(qa_report_dir))
