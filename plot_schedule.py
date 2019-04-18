@@ -90,7 +90,7 @@ ax.set_ylabel('Elevation')
 ax.set_xlabel('Date and time')
 ax.axhline(y=20, c='r', linestyle='--')
 ax.legend(bbox_to_anchor=(1.03, 1.05))
-plt.savefig('schedule_elevation.png', bbox_inches='tight', dpi=200)
+plt.savefig(schedule_file[:-4]+'_elevation.png', bbox_inches='tight', dpi=200)
 
 
 #--------------------------------------------------
@@ -110,6 +110,6 @@ ax.axhline(y=-6, c='r', linestyle='--')
 ax.axhline(y=3.3, c='grey', linestyle='--')
 ax.axhline(y=-3.3, c='grey', linestyle='--')
 ax.legend(bbox_to_anchor=(1.03, 1.05))
-plt.savefig('schedule_LHA.png', bbox_inches='tight', dpi=200)
+plt.savefig(schedule_file[:-4]+'_LHA.png', bbox_inches='tight', dpi=200)
 
 print('DONE')
