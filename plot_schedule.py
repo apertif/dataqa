@@ -47,7 +47,15 @@ schedule_file = args.sched_file
 WSRT = EarthLocation.of_address("Westerbork radio telescope")
 
 data = pd.read_csv(schedule_file) 
-
+#--------------------------------------------------
+def add_12(vals):
+    for i in range(len(vals)):
+        if vals[i] > 12:
+            vals[i] = vals[i] - 24
+            
+        if vals[i] < -12:
+            vals[i] = vals[i] + 24
+            
 #--------------------------------------------------
 # calculate relavant values for the plot
 #--------------------------------------------------
@@ -65,6 +73,7 @@ data['my_obj_fk5'] = data.apply (lambda row: row['my_obj'].transform_to(FK5(equi
 data['my_obj_HA'] = data.apply (lambda row: row['my_obj_fk5'].ra - row['timespan'].sidereal_time('apparent', longitude =WSRT.lon), axis=1)
 data['LST'] = data.apply (lambda row: row['timespan'].sidereal_time('apparent', longitude =WSRT.lon), axis=1)
 data['my_obj_LHA'] = data.apply (lambda row: row['timespan'].sidereal_time('apparent', longitude =WSRT.lon) - row['my_obj_fk5'].ra, axis=1)
+data['my_obj_LHA_2'] = data.apply (lambda row: add_12(row['my_obj_LHA'].value), axis=1)
 
 #--------------------------------------------------
 # make elevation plot
