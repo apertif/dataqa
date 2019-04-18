@@ -44,7 +44,8 @@ schedule_file = args.sched_file
 #--------------------------------------------------
 # Basic parameters
 #--------------------------------------------------
-WSRT = EarthLocation.of_address("Westerbork radio telescope")
+#WSRT = EarthLocation.of_address("Westerbork radio telescope")
+WSRT = EarthLocation.from_geocentric(3828653.54341874, 442651.40305733, 5064900.15903374, unit='m') 
 
 data = pd.read_csv(schedule_file) 
 #--------------------------------------------------
