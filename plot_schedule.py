@@ -2,7 +2,7 @@
 
 """
 This script visualises the observing schedule by producing elevation and HA plots as a function of time. 
-Using pandas, astropy and matplotlib.
+Written in python3 and using pandas, astropy and matplotlib.
 
 Parameter
     obs_id : str
