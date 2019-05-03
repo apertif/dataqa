@@ -201,7 +201,8 @@ class radio_image(object):
         centre = w.all_pix2world(pixcrd,1)
         self.ra = centre[0][0]
         self.dec = centre[0][1]
-        self.centre = SkyCoord(ra=self.ra, dec=self.dec, unit="deg,deg").to_string(style='hmsdms',sep=':')
+        self.center = SkyCoord(ra=self.ra, dec=self.dec, unit="deg,deg")
+        self.centre = self.center.to_string(style='hmsdms',sep=':')
         self.vertices = w.calc_footprint()
         self.ra_bounds = min(self.vertices[:,:1])[0],max(self.vertices[:,:1])[0]
         self.dec_bounds = min(self.vertices[:,1:])[0],max(self.vertices[:,1:])[0]

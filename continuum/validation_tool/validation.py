@@ -37,12 +37,12 @@ def run(fits_image, finder='pybdsf', snr=5.0, verbose=True, refind=False, redo=F
 
     #Run Aegean if user didn't pass in Selavy catalogue
     if finder == 'aegean':
-        main_cat = IMG.cat_comp
+        IMG.run_BANE(ncores=ncores,redo=refind)
         IMG.run_Aegean(ncores=ncores, redo=refind, params=aegean_params, write=write_all)
     elif finder == 'pybdsf':
-        main_cat = IMG.cat_comp
         IMG.run_PyBDSF(ncores=ncores, redo=refind, pybdsf_params=pybdsf_params, write=write_all)
 
+    main_cat = IMG.cat_comp
 
     #Create catalogue object
     CAT = catalogue(main_cat, 'APERTIF', finder=finder, image=IMG, SNR=snr,

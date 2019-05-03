@@ -10,11 +10,12 @@ from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from astropy.io.votable import parse_single_table
 from astropy.utils.exceptions import AstropyWarning
+from astropy.wcs import WCS
 
 import warnings
 from inspect import currentframe, getframeinfo
 
-from dynamic_range import source_dynamic_range, local_dynamic_range
+# from dynamic_range import source_dynamic_range, local_dynamic_range
 
 #ignore annoying astropy warnings and set my own obvious warning output
 warnings.simplefilter('ignore', category=AstropyWarning)
@@ -321,7 +322,7 @@ class catalogue(object):
             table = parse_single_table(filepath).to_table(use_names_over_ids=True)
             df = table.to_pandas()
         #otherwise, load straight into pandas as csv or 'sep' delimited file
-        elif extn == 'csv':
+        elif extn in ['csv', 'cat']:
             if self.finder == 'pybdsf':
                 df = pd.read_csv(filepath, skip_blank_lines=True, skiprows=5, skipinitialspace=True)
             else:
@@ -353,8 +354,8 @@ class catalogue(object):
 
             img_data = img.fits.data
 
-            # if self.finder == 'aegean' or self.finder == 'pybdsf':
-                # img_data = img_data[0][0]
+            if self.finder == 'aegean':# or self.finder == 'pybdsf':
+                img_data = img_data[0][0]
 
             self.img_peak = np.max(img_data[~np.isnan(img_data)])
             self.rms_bounds = rms_map.data > 0
@@ -365,12 +366,13 @@ class catalogue(object):
             self.dynamic_range = self.img_peak_bounds/self.img_peak_rms
             self.img_flux = np.sum(img_data[~np.isnan(img_data)]) / (1.133*((img.bmaj * img.bmin) / (img.raPS * img.decPS))) #divide by beam area
 
+
 # ...
+            self.img_center = img.center
+
             if os.path.exists(img.residual):
-                self.source_dynrange = source_dynamic_range('../{}'.format(self.filename),
-                                                             img.residual)
-                self.local_dynrange = local_dynamic_range('../{}'.format(self.filename),
-                                                          img.residual)
+                self.source_dynrange = self.source_dynamic_range()
+                self.local_dynrange = self.local_dynamic_range()
             else:
                 self.sources_dynrange = None
                 self.local_dynrange = None
@@ -390,6 +392,8 @@ class catalogue(object):
             self.img_rms = int(np.median(self.rms[self.name])*1e6) #uJy
             self.dynamic_range = self.img_peak/self.img_rms
             self.img_flux = np.nan
+            self.sources_dynrange = None
+            self.local_dynrange = None
 
         self.blends = len(np.where(self.df[self.island_col].value_counts() > 1)[0])
         self.cat_flux = np.sum(self.flux[self.name])
@@ -916,6 +920,14 @@ class catalogue(object):
             #from this instance, independent of the search radius
             c1 = self.coords[self.name]
             c2 = cat.coords[cat.name]
+
+            # n = len(c2) - len(c1)
+            # if n < 0:
+            #     warnings.warn_explicit("The second catalogue is shorter. Adding fake coords.",UserWarning,WARN,cf.f_lineno)
+            #     c2 = SkyCoord(ra=list(c2.ra.value) + (-n+10)*[0.0],
+            #                   dec=list(c2.dec.value) + (-n+10)*[0.0], unit='deg')
+
+
             indices,sep,sep3d = c1.match_to_catalog_sky(c2)
 
             #take the maximum radius from the two
@@ -965,6 +977,7 @@ class catalogue(object):
             print "'{0}' already exists. Skipping cross-matching step.".format(filename)
             print 'Setting catalogue to this file.'
             matched_df = pd.read_csv(filename)
+            self.matched_df = matched_df
 
 
 
@@ -1310,3 +1323,54 @@ class catalogue(object):
         self.cross_match(cat, redo=redo, write=write_all)
         if cat.name in self.cat_list and self.name in self.flux.keys():
             self.fit_spectra(cat_name=cat.name, redo=redo, write=write_all)
+
+
+
+    def sources_within_radius(self, radius=30):
+        """
+        The DataFarame of sources within the given radius (arcmin) from the image center
+        based on pybdsf catalog
+        """
+        a = self.df
+        seps = self.img_center.separation(self.coords[self.name]).to('arcmin').value
+        a['Center_sep'] = seps
+        res = a.query('Center_sep < @radius')
+        return res
+
+
+    def source_dynamic_range(self, radius=30):
+        """
+        Get the highest dynamic range for sources within 1/4 beam radius
+        based on pybdsf catalog (Peak_flux / Resid_Isl_rms)
+        """
+        d = self.sources_within_radius(radius=radius)
+
+    # take 5 brightest sources:
+
+        d = d.sort_values(self.peak_col, ascending=False)[:5]
+
+        dr = d[self.peak_col]/d[self.rms_val]
+        return dr.min(), dr.max()
+
+
+    def local_dynamic_range(self, radius=30, box=50):
+        """
+        Get the highest peak-to-artefact ratio in box of +-@box pixels
+        for sources within the @radius of the center
+        based on pybdsf catalog and residual image
+        """
+        d = self.sources_within_radius(radius=radius)
+
+    # take 5 brightest sources:
+        d = d.sort_values(self.peak_col, ascending=False)[:5]
+        fts = f.open(self.image.residual)[0]
+        data = fts.data
+        wcs = WCS(fts.header).celestial
+        # print data.shape
+        # data = data[0,0,:,:]
+        res = []
+        for ra, dec, peak in zip(d[self.ra_col], d[self.dec_col], d[self.peak_col]):
+            pxra, pxdec = wcs.wcs_world2pix([[ra, dec]], 1)[0]
+            boxdata = data[int(pxdec-box):int(pxdec+box), int(pxra-box):int(pxra+box)]
+            res.append(peak/np.max(abs(boxdata)))
+        return min(res), max(res)
