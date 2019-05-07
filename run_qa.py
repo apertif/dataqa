@@ -13,6 +13,8 @@ import time
 import numpy as np
 import logging
 import socket
+from apercal.libs import lib
+
 from dataqa.scandata import get_default_imagepath
 
 
@@ -35,6 +37,10 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     if steps is not provided then all steps will be performed:
         steps = ['preflag', 'crosscal', 'selfcal',
                  'continuum', 'line', 'mosaic', 'report']
+
+    test call can look like this: 
+    from dataqa.run_qa import run_triggered_qa
+    run_triggered_qa((190505048, 'LH_WSRT', [0]), [(190505048, '3C147_10', 10)], [(190505048, '3C286_10', 10)], steps=['report'])
     """
 
     # for time measurement
@@ -78,214 +84,218 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             print(e)
 
     # start log file
-    logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
-                        filename='{0:s}{1:s}_triggered_qa.log'.format(qa_dir, host_name), level=logging.DEBUG)
+    # logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+    #                     filename='{0:s}{1:s}_triggered_qa.log'.format(qa_dir, host_name), level=logging.DEBUG)
 
-    logging.info('#######################')
-    logging.info('#### Running all QA steps on {0:s}'.format(host_name))
-    logging.info('#######################')
+    lib.setup_logger(
+        'debug', logfile='{0:s}{1:s}_triggered_qa.log'.format(qa_dir, host_name))
+    logger = logging.getLogger(__name__)
+
+    logger.info('#######################')
+    logger.info('#### Running all QA steps on {0:s}'.format(host_name))
+    logger.info('#######################')
 
     # Preflag QA
     # ==========
 
     if 'preflag' in steps and name_fluxcal != '':
 
-        logging.info("#### Running preflag QA ...")
+        logger.info("#### Running preflag QA ...")
 
         start_time_preflag = time.time()
 
         try:
             preflag_msg = os.system(
                 'python /home/apercal/dataqa/run_rfinder.py {0:d} {1:s}'.format(taskid_target, name_fluxcal))
-            logging.info(
+            logger.info(
                 "Preflag QA finished with msg {0}".format(preflag_msg))
-            logging.info("#### Running preflag QA ... Done (time {0:.1f}s)".format(
+            logger.info("#### Running preflag QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_preflag))
         except Exception as e:
-            logging.error("Preflag QA failed. Continue with next QA")
-            logging.error(e)
+            logger.error("Preflag QA failed. Continue with next QA")
+            logger.error(e)
     else:
-        logging.warning("#### Did not perform preflag QA")
+        logger.warning("#### Did not perform preflag QA")
 
     # Crosscal QA
     # ===========
 
     if 'crosscal' in steps and name_fluxcal != '' and name_polcal != '':
 
-        logging.info('#### Running crosscal QA ...')
+        logger.info('#### Running crosscal QA ...')
 
         start_time_crosscal = time.time()
 
         try:
             crosscal_msg = os.system(
                 'python /home/apercal/dataqa/run_ccal_plots.py {0:d} {1:s} {2:s}'.format(taskid_target, name_fluxcal, name_polcal))
-            logging.info(
+            logger.info(
                 "Crosscal QA finished with msg {0}".format(crosscal_msg))
-            logging.info("#### Running crosscal QA ... Done (time {0:.1f}s)".format(
+            logger.info("#### Running crosscal QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_crosscal))
         except Exception as e:
-            logging.error("Crosscal QA failed. Continue with next QA")
-            logging.error(e)
+            logger.error("Crosscal QA failed. Continue with next QA")
+            logger.error(e)
     else:
-        logging.warning("#### Did not perform crosscal QA")
+        logger.warning("#### Did not perform crosscal QA")
 
     # Selfcal QA
     # ==========
 
     if 'selfcal' in steps:
 
-        logging.info('#### Running selfcal QA ...')
+        logger.info('#### Running selfcal QA ...')
 
         start_time_selfcal = time.time()
 
         try:
             selfcal_msg = os.system(
                 'python /home/apercal/dataqa/run_scal_plots.py {0:d} {1:s}'.format(taskid_target, name_target))
-            logging.info(
+            logger.info(
                 "Selfcal QA finished with msg {0}".format(selfcal_msg))
-            logging.info("#### Running selfcal QA ... Done (time {0:.1f}s)".format(
+            logger.info("#### Running selfcal QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_selfcal))
         except Exception as e:
-            logging.error("Selfcal QA failed. Continue with next QA")
-            logging.error(e)
+            logger.error("Selfcal QA failed. Continue with next QA")
+            logger.error(e)
     else:
-        logging.warning("#### Did not perform selfcal QA")
+        logger.warning("#### Did not perform selfcal QA")
 
     # Mosaic QA
     # ==========
 
     if 'mosaic' in steps:
 
-        logging.info('#### Running mosaic QA ...')
+        logger.info('#### Running mosaic QA ...')
 
         start_time_mosaic = time.time()
 
         try:
             # Create the mosaic
-            logging.info('## Making the mosaic ...')
+            logger.info('## Making the mosaic ...')
             start_time_make_mosaic = time.time()
             make_mosaic_msg = os.system(
                 'python /home/apercal/dataqa/make_mosaic_image.py {0:d}'.format(taskid_target))
-            logging.info(
+            logger.info(
                 "Making mosaic finished with msg {0}".format(make_mosaic_msg))
-            logging.info("## Making the mosaic ... Done (time {0:.1f}s)".format(
+            logger.info("## Making the mosaic ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_make_mosaic))
 
             # Run the validation tool
-            logging.info('## Run validation ...')
+            logger.info('## Run validation ...')
             start_time_mosaic_validation = time.time()
             mosaic_validation_msg = os.system(
                 'python /home/apercal/dataqa/run_continuum_validation.py {0:d} --for_mosaic'.format(taskid_target))
-            logging.info(
+            logger.info(
                 "Mosaic validation finished with msg {0}".format(mosaic_validation_msg))
-            logging.info("## Run validation ... Done (time {0:.1f}s)".format(
+            logger.info("## Run validation ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_mosaic_validation))
 
-            logging.info("#### Running mosaic QA ... Done (time {0:.1f}s)".format(
+            logger.info("#### Running mosaic QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_mosaic))
         except Exception as e:
-            logging.error("Mosaic QA failed. Continue with next QA")
-            logging.error(e)
+            logger.error("Mosaic QA failed. Continue with next QA")
+            logger.error(e)
     else:
-        logging.warning("#### Did not perform mosaic QA")
+        logger.warning("#### Did not perform mosaic QA")
 
     # Line QA
     # =======
 
     if 'line' in steps:
 
-        logging.info('#### Running line QA ...')
+        logger.info('#### Running line QA ...')
 
         start_time_line = time.time()
 
         try:
             # Get cube statistic without continuum subtraction
-            logging.info(
+            logger.info(
                 '## Get cube statistic prior to continuum subtraction ...')
             start_time_get_cube_stat = time.time()
             cube_stat_msg = os.system(
                 'python /home/apercal/dataqa/run_cube_stats.py {0:d}'.format(taskid_target))
-            logging.info(
+            logger.info(
                 "Cube stat finished with msg {0}".format(cube_stat_msg))
-            logging.info("## Get cube statistic prior to continuum subtraction ... Done (time {0:.1f}s)".format(
+            logger.info("## Get cube statistic prior to continuum subtraction ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_get_cube_stat))
 
             # Subtract continuum
-            logging.info('## Subtract continuum ...')
+            logger.info('## Subtract continuum ...')
             start_time_subtract_continuum = time.time()
             subtract_cont_msg = os.system(
                 'python /home/apercal/dataqa/subtract_continuum.py {0:d}'.format(taskid_target))
-            logging.info(
+            logger.info(
                 "Continuum subtraction finished with msg {0}".format(subtract_cont_msg))
-            logging.info("## Subtract continuum ... Done (time {0:.1f}s)".format(
+            logger.info("## Subtract continuum ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_subtract_continuum))
 
             # Get cube statistic after continuum subtraction
-            logging.info(
+            logger.info(
                 '## Get cube statistic after continuum subtraction ...')
             start_time_get_cube_stat_cont = time.time()
             get_cube_stat_cont_msg = os.system(
                 'python /home/apercal/dataqa/run_cube_stats_cont.py {0:d}'.format(taskid_target))
-            logging.info(
+            logger.info(
                 "Cube stat cont finished with msg {0}".format(get_cube_stat_cont_msg))
-            logging.info("## Get cube statistic after continuum subtraction ... Done (time {0:.1f}s)".format(
+            logger.info("## Get cube statistic after continuum subtraction ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_get_cube_stat_cont))
 
-            logging.info("#### Running line QA ... Done (time {0:.1f}s)".format(
+            logger.info("#### Running line QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_line))
         except Exception as e:
-            logging.error("Line QA failed. Continue with next QA")
-            logging.error(e)
+            logger.error("Line QA failed. Continue with next QA")
+            logger.error(e)
     else:
-        logging.warning("#### Did not perform line QA")
+        logger.warning("#### Did not perform line QA")
 
     # Continuum QA
     # ============
 
     if 'continuum' in steps:
 
-        logging.info('#### Running continuum QA ...')
+        logger.info('#### Running continuum QA ...')
 
         start_time_continuum = time.time()
 
         try:
             continuum_msg = os.system(
                 'python /home/apercal/dataqa/run_continuum_validation.py {0:d}'.format(taskid_target))
-            logging.info(
+            logger.info(
                 "Continuum QA finished with msg {0}".format(continuum_msg))
-            logging.info("#### Running continuum QA ... Done (time {0:.1f}s)".format(
+            logger.info("#### Running continuum QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_continuum))
         except Exception as e:
-            logging.error("Continuum QA failed. Continue with next QA")
-            logging.error(e)
+            logger.error("Continuum QA failed. Continue with next QA")
+            logger.error(e)
     else:
-        logging.warning("#### Did not perform continuum QA")
+        logger.warning("#### Did not perform continuum QA")
 
     # Create report
     # =============
 
     if 'report' in steps:
 
-        logging.info('#### Create report ...')
+        logger.info('#### Create report ...')
 
         start_time_report = time.time()
 
         try:
             report_msg = os.system(
                 'python /home/apercal/dataqa/create_report.py {0:d}'.format(taskid_target))
-            logging.info(
+            logger.info(
                 "Report finished with msg {0}".format(report_msg))
-            logging.info("#### Create report ... Done (time {0:.1f}s)".format(
+            logger.info("#### Create report ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_report))
         except Exception as e:
-            logging.error("Creating report failed.")
-            logging.error(e)
+            logger.error("Creating report failed.")
+            logger.error(e)
     else:
-        logging.warning("#### Did not create a report")
+        logger.warning("#### Did not create a report")
 
     # Finish
     # ======
-    logging.info('#######################')
-    logging.info(
+    logger.info('#######################')
+    logger.info(
         '#### Running all QA steps on {0:s} ... Done (time {1:.1f}s)'.format(host_name, time.time()-start_time))
-    logging.info('#######################')
+    logger.info('#######################')
