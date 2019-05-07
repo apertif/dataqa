@@ -88,7 +88,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     # Preflag QA
     # ==========
 
-    if 'preflag' in steps:
+    if 'preflag' in steps and name_fluxcal != '':
 
         logging.info("#### Running preflag QA ...")
 
@@ -110,7 +110,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     # Crosscal QA
     # ===========
 
-    if 'crosscal' in steps:
+    if 'crosscal' in steps and name_fluxcal != '' and name_polcal != '':
 
         logging.info('#### Running crosscal QA ...')
 
