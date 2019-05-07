@@ -39,8 +39,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
                  'continuum', 'line', 'mosaic', 'report']
 
     test call can look like this: 
-    from dataqa.run_qa import run_triggered_qa
-    run_triggered_qa((190505048, 'LH_WSRT', [0]), [(190505048, '3C147_10', 10)], [(190505048, '3C286_10', 10)], steps=['report'])
+        from dataqa.run_qa import run_triggered_qa
+        run_triggered_qa((190505048, 'LH_WSRT', [0]), [(190505048, '3C147_10', 10)], [(190505048, '3C286_10', 10)], steps=['report'])
     """
 
     # for time measurement
@@ -164,7 +164,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     # Mosaic QA
     # ==========
 
-    if 'mosaic' in steps:
+    if 'mosaic' in steps and host_name == 'happili-01':
 
         logger.info('#### Running mosaic QA ...')
 
