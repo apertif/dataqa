@@ -107,7 +107,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
 
         try:
             preflag_msg = os.system(
-                'python /home/apercal/dataqa/run_rfinder.py {0:d} {1:s}'.format(taskid_target, name_fluxcal))
+                'python /home/apercal/dataqa/run_rfinder.py {0:d} {1:s} --trigger_mode'.format(taskid_target, name_fluxcal))
             logger.info(
                 "Preflag QA finished with msg {0}".format(preflag_msg))
             logger.info("#### Running preflag QA ... Done (time {0:.1f}s)".format(
@@ -129,7 +129,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
 
         try:
             crosscal_msg = os.system(
-                'python /home/apercal/dataqa/run_ccal_plots.py {0:d} {1:s} {2:s}'.format(taskid_target, name_fluxcal, name_polcal))
+                'python /home/apercal/dataqa/run_ccal_plots.py {0:d} {1:s} {2:s} --trigger_mode'.format(taskid_target, name_fluxcal, name_polcal))
             logger.info(
                 "Crosscal QA finished with msg {0}".format(crosscal_msg))
             logger.info("#### Running crosscal QA ... Done (time {0:.1f}s)".format(
@@ -151,7 +151,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
 
         try:
             selfcal_msg = os.system(
-                'python /home/apercal/dataqa/run_scal_plots.py {0:d} {1:s}'.format(taskid_target, name_target))
+                'python /home/apercal/dataqa/run_scal_plots.py {0:d} {1:s} --trigger_mode'.format(taskid_target, name_target))
             logger.info(
                 "Selfcal QA finished with msg {0}".format(selfcal_msg))
             logger.info("#### Running selfcal QA ... Done (time {0:.1f}s)".format(
@@ -215,7 +215,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
                 '## Get cube statistic prior to continuum subtraction ...')
             start_time_get_cube_stat = time.time()
             cube_stat_msg = os.system(
-                'python /home/apercal/dataqa/run_cube_stats.py {0:d}'.format(taskid_target))
+                'python /home/apercal/dataqa/run_cube_stats.py {0:d} --trigger_mode'.format(taskid_target))
             logger.info(
                 "Cube stat finished with msg {0}".format(cube_stat_msg))
             logger.info("## Get cube statistic prior to continuum subtraction ... Done (time {0:.1f}s)".format(
@@ -225,7 +225,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info('## Subtract continuum ...')
             start_time_subtract_continuum = time.time()
             subtract_cont_msg = os.system(
-                'python /home/apercal/dataqa/subtract_continuum.py {0:d}'.format(taskid_target))
+                'python /home/apercal/dataqa/subtract_continuum.py {0:d} --trigger_mode'.format(taskid_target))
             logger.info(
                 "Continuum subtraction finished with msg {0}".format(subtract_cont_msg))
             logger.info("## Subtract continuum ... Done (time {0:.1f}s)".format(
@@ -236,7 +236,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
                 '## Get cube statistic after continuum subtraction ...')
             start_time_get_cube_stat_cont = time.time()
             get_cube_stat_cont_msg = os.system(
-                'python /home/apercal/dataqa/run_cube_stats_cont.py {0:d}'.format(taskid_target))
+                'python /home/apercal/dataqa/run_cube_stats_cont.py {0:d} --trigger_mode'.format(taskid_target))
             logger.info(
                 "Cube stat cont finished with msg {0}".format(get_cube_stat_cont_msg))
             logger.info("## Get cube statistic after continuum subtraction ... Done (time {0:.1f}s)".format(
@@ -261,7 +261,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
 
         try:
             continuum_msg = os.system(
-                'python /home/apercal/dataqa/run_continuum_validation.py {0:d}'.format(taskid_target))
+                'python /home/apercal/dataqa/run_continuum_validation.py {0:d} --trigger_mode'.format(taskid_target))
             logger.info(
                 "Continuum QA finished with msg {0}".format(continuum_msg))
             logger.info("#### Running continuum QA ... Done (time {0:.1f}s)".format(
