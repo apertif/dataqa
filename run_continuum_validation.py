@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
-                        help='Set to run for mosaic QA.')
+                        help='Set it to run Autocal triggering mode automatically after Apercal.')
 
     # parser.add_argument("--overwrite", action="store_true", default=True,
     #                     help='Overwrite existing files')
