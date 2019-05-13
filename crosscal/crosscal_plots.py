@@ -20,7 +20,7 @@ from apercal.subs import misc
 
 logger = logging.getLogger(__name__)
 
-def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
+def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=False):
     """
     Create crosscal QA plots
 
@@ -29,10 +29,11 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
         fluxcal (str): Name of fluxcal, e.g. "3C147"
         polcal(str): Name of the polcal, e.g. "3C286"
         output_path (str): Output path, None for default
+        trigger_mode (bool): To run automatically after Apercal
     """
     # Get BP plots
     start_time_bp = time.time()
-    BP = BPSols(scan, fluxcal)
+    BP = BPSols(scan, fluxcal, trigger_mode)
     BP.get_data()
     BP.plot_amp(imagepath=output_path)
     BP.plot_phase(imagepath=output_path)
@@ -40,7 +41,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
 
     # Get Gain plots
     start_time_gain = time.time()
-    Gain = GainSols(scan, fluxcal)
+    Gain = GainSols(scan, fluxcal, trigger_mode)
     Gain.get_data()
     Gain.plot_amp(imagepath=output_path)
     Gain.plot_phase(imagepath=output_path)
@@ -48,14 +49,14 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
 
     # Get Global Delay plots
     start_time_gdelay = time.time()
-    GD = GDSols(scan, fluxcal)
+    GD = GDSols(scan, fluxcal, trigger_mode)
     GD.get_data()
     GD.plot_delay(imagepath=output_path)
     logger.info('Done with global delay plots ({0:.0f}s)'.format(time.time() - start_time_gdelay))
 
     # Get polarisation leakage plots
     start_time_leak = time.time()
-    Leak = LeakSols(scan, fluxcal)
+    Leak = LeakSols(scan, fluxcal, trigger_mode)
     Leak.get_data()
     Leak.plot_amp(imagepath=output_path)
     Leak.plot_phase(imagepath=output_path)
@@ -78,7 +79,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
 
     # Get Raw data
     start_time_raw = time.time()
-    Raw = RawData(scan, fluxcal)
+    Raw = RawData(scan, fluxcal, trigger_mode)
     Raw.get_data()
     Raw.plot_amp(imagepath=output_path)
     Raw.plot_phase(imagepath=output_path)
@@ -87,7 +88,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
 
     # Get model data
     start_time_model = time.time()
-    Model = ModelData(scan, fluxcal)
+    Model = ModelData(scan, fluxcal, trigger_mode)
     Model.get_data()
     Model.plot_amp(imagepath=output_path)
     Model.plot_phase(imagepath=output_path)
@@ -96,7 +97,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
 
     # Get corrected data
     start_time_corrected = time.time()
-    Corrected = CorrectedData(scan, fluxcal)
+    Corrected = CorrectedData(scan, fluxcal, trigger_mode)
     Corrected.get_data()
     Corrected.plot_amp(imagepath=output_path)
     Corrected.plot_phase(imagepath=output_path)
@@ -105,8 +106,8 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None):
 
 
 class BPSols(ScanData):
-    def __init__(self,scan,fluxcal):
-        ScanData.__init__(self,scan,fluxcal)
+    def __init__(self,scan,fluxcal,trigger_mode=False):
+        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.time = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -227,8 +228,8 @@ class BPSols(ScanData):
             
 
 class GainSols(ScanData):
-    def __init__(self,scan,fluxcal):
-        ScanData.__init__(self,scan,fluxcal)
+    def __init__(self,scan,fluxcal,trigger_mode=False):
+        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.time = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -675,8 +676,8 @@ class PolangleSols(ScanData):
 
 
 class ModelData(ScanData):
-    def __init__(self,scan,fluxcal):
-        ScanData.__init__(self,scan,fluxcal)
+    def __init__(self,scan,fluxcal,trigger_mode=False):
+        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         
@@ -759,8 +760,8 @@ class ModelData(ScanData):
             
         
 class CorrectedData(ScanData):
-    def __init__(self,scan,fluxcal):
-        ScanData.__init__(self,scan,fluxcal)
+    def __init__(self,scan,fluxcal,trigger_mode=False):
+        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
@@ -882,8 +883,8 @@ class CorrectedData(ScanData):
 
 
 class RawData(ScanData):
-    def __init__(self,scan,fluxcal):
-        ScanData.__init__(self,scan,fluxcal)
+    def __init__(self,scan,fluxcal,trigger_mode=False):
+        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
