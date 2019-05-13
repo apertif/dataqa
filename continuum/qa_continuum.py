@@ -363,7 +363,7 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
             # check whether no fits file was found, one or more fits file
             # the latter case should not exists, but I do not want it to stop
             if len(fits_image) == 0:
-                fits_file_table['fits_image_path'][table_beam_index] = '-'
+                fits_file_table['fits_image_path'][table_beam_index] = ''
                 logger.error(
                     "Did not find any fits image for beam {0:s}".format(beam))
                 continue
@@ -388,7 +388,7 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
 
     # set all image paths to "-" for which no image exists
     fits_file_table['fits_image_path'][np.where(
-        fits_file_table['fits_image_exists'] == False)] = "-"
+        fits_file_table['fits_image_exists'] == False)] = ""
 
     # Check how many beams failed
     if n_beams_found_total < n_beams_total:
