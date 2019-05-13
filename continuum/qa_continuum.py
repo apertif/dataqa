@@ -459,13 +459,17 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
     # get the available fits images for the available beams
     fits_file_table = get_continuum_fits_images(
         data_basedir_list, qa_validation_dir)
-    
-    # Get only the rwos of the table for which beams exists
-    fits_file_table = fits_file_table[np.where(fits_file_table['beam_exists']==True)]
+
+    # # Get only the rwos of the table for which beams exists
+    # fits_file_table = fits_file_table[np.where(fits_file_table['beam_exists']==True)]
 
     summary = dict()
 
     for beam_index in fits_file_table['beam_id']:
+
+        # if a beam does not exists go directly to the next one
+        if not fits_file_table['beam_exists'][beam_index]:
+            break
 
         # create a subdirectory for the beam in the qa directory
         qa_validation_beam_dir = "{0:s}/{1:s}".format(
@@ -475,7 +479,18 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
             logger.info("Creating {0:s}".format(qa_validation_beam_dir))
             os.mkdir(qa_validation_beam_dir)
 
+        # get the path to the fits image
         fits_image = fits_file_table['fits_image_path'][beam_index]
+
+        # just for debugging
+        if fits_image == '':
+            print("No fits image for beam {0:s}".format(
+                fits_file_table['beam_name'][beam_index]))
+            break
+        else:
+            print("Found fits image for beam {0:s}".format(
+                fits_file_table['beam_name'][beam_index]))
+            break
 
         if fits_image == '':
             logger.warning("No fits image for beam {0:s}".format(
