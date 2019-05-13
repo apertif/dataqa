@@ -25,7 +25,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     return_msg = run_triggered_qa(
         tdict['target'], tdict['cal1'], tdict['cal2'])
 
-    with the first three variables defined as
+    With the first three variables defined (the same way as autocal) as
         targets = (190505048, 'LH_WSRT', array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))
 
         fluxcals = [(190505017, '3C147_9', 9), (190505016, '3C147_8', 8), (190505015, '3C147_7', 7), (190505014, '3C147_6', 6), (190505013, '3C147_5', 5),
@@ -34,7 +34,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
         polcals = [(190506001, '3C286_0', 0), (190506002, '3C286_1', 1), (190506003, '3C286_2', 2), (190506004, '3C286_3', 3), (190506005, '3C286_4', 4),
                     (190506006, '3C286_5', 5), (190506007, '3C286_6', 6), (190506008, '3C286_7', 7), (190506009, '3C286_8', 8), (190506010, '3C286_9', 9)]
 
-    if steps is not provided then all steps will be performed:
+    If steps is not provided then all steps will be performed:
         steps = ['preflag', 'crosscal', 'selfcal',
                  'continuum', 'line', 'mosaic', 'report']
 
@@ -62,8 +62,10 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
         name_polcal = ''
 
     if steps is None:
+        # steps = ['preflag', 'crosscal', 'selfcal',
+        #          'continuum', 'line', 'mosaic', 'report']
         steps = ['preflag', 'crosscal', 'selfcal',
-                 'continuum', 'line', 'mosaic', 'report']
+                 'continuum', 'line', 'report']
 
     # Set up
     # ======
