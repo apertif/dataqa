@@ -111,15 +111,15 @@ if os.path.exists('/data/apertif/'+str(data_dir)) or args.trigger_mode:
     beams_1 = os.listdir('/data/apertif/'+str(data_dir))
     subract_cont('data', beams_1)
 
-if os.path.exists('/data2/apertif/'+str(data_dir)):
+if os.path.exists('/data2/apertif/'+str(data_dir)) and not args.trigger_mode:
     beams_2 = os.listdir('/data2/apertif/'+str(data_dir))
     subract_cont('data2', beams_2)
 
-if os.path.exists('/data3/apertif/'+str(data_dir)):
+if os.path.exists('/data3/apertif/'+str(data_dir)) and not args.trigger_mode:
     beams_3 = os.listdir('/data3/apertif/'+str(data_dir))
     subract_cont('data3', beams_3)
 
-if os.path.exists('/data4/apertif/'+str(data_dir)):
+if os.path.exists('/data4/apertif/'+str(data_dir)) and not args.trigger_mode:
     beams_4 = os.listdir('/data4/apertif/'+str(data_dir))
     subract_cont('data4', beams_4)
 
