@@ -24,9 +24,16 @@ parser.add_argument("target", help='Target name')
 
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
-parser.add_argument('-M', '--maps', default=True, action='store_false', help='Do not generate selfcal maps')
-parser.add_argument('-P', '--phase', default=True, action='store_false', help='Do not generate phase plots')
-parser.add_argument('-A', '--amplitude', default=True, action='store_false', help='Do not generate amplitude plots')
+parser.add_argument('-M', '--maps', default=True,
+                    action='store_false', help='Do not generate selfcal maps')
+parser.add_argument('-P', '--phase', default=True,
+                    action='store_false', help='Do not generate phase plots')
+parser.add_argument('-A', '--amplitude', default=True,
+                    action='store_false', help='Do not generate amplitude plots')
+
+# this mode will make the script look only for the beams processed by Apercal on a given node
+parser.add_argument("--trigger_mode", action="store_true", default=False,
+                    help='Set it to run Autocal triggering mode automatically after Apercal.')
 
 args = parser.parse_args()
 
@@ -52,7 +59,8 @@ if args.maps:
     try:
         logger.info("#### Creating selfcal maps ...")
         start_time_maps = time.time()
-        get_selfcal_maps(args.scan, output_path)
+        get_selfcal_maps(args.scan, output_path,
+                         trigger_mode=args.trigger_mode)
         logger.info("#### Creating selfcal maps. Done ({0:.0f}s)".format(
             time.time()-start_time_maps))
     except Exception as e:
@@ -66,7 +74,8 @@ if args.phase:
     try:
         logger.info("#### Creating phase plots")
         start_time_plots = time.time()
-        PH = scplots.PHSols(args.scan, args.target)
+        PH = scplots.PHSols(args.scan, args.target,
+                            trigger_mode=args.trigger_mode)
         PH.get_data()
         PH.plot_phase(imagepath=output_path)
         logger.info('#### Done with phase plots ({0:.0f}s)'.format(
@@ -82,7 +91,8 @@ if args.amplitude:
     try:
         logger.info("#### Creating amplitude plots")
         start_time_plots = time.time()
-        AMP = scplots.AMPSols(args.scan, args.target)
+        AMP = scplots.AMPSols(args.scan, args.target,
+                              trigger_mode=args.trigger_mode)
         AMP.get_data()
         AMP.plot_amp(imagepath=output_path)
         logger.info('#### Done with amplitude plots ({0:.0f}s)'.format(
