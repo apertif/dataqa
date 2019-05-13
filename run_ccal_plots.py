@@ -25,6 +25,10 @@ parser.add_argument("polcal", help='Polcal name')
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
 
+# this mode will make the script look only for the beams processed by Apercal on a given node
+parser.add_argument("--trigger_mode", action="store_true", default=False,
+                    help='Set it to run Autocal triggering mode automatically after Apercal.')
+
 args = parser.parse_args()
 
 # If no path is given change to default QA path
@@ -47,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 # Create crosscal plots
 crosscal_plots.make_all_ccal_plots(
-    args.scan, args.fluxcal, args.polcal, output_path=output_path)
+    args.scan, args.fluxcal, args.polcal, output_path=output_path, trigger_mode=args.trigger_mode)
 
 end = timer()
 logger.info('Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(

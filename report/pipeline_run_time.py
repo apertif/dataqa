@@ -15,7 +15,7 @@ import glob
 logger = logging.getLogger(__name__)
 
 
-def get_pipeline_run_time(obs_id):
+def get_pipeline_run_time(obs_id, trigger_mode=False):
     """Function to get the run time of apercal parts
     """
     logger.info("## Reading apercal timing measurements")
@@ -25,7 +25,10 @@ def get_pipeline_run_time(obs_id):
 
     host_name = socket.gethostname()
 
-    if host_name == "happili-01":
+    if trigger_mode:
+        data_dir_list = [qa_dir.replace("qa/", "")]
+        host_name_list = [host_name]
+    elif host_name == "happili-01" and not trigger_mode:
         data_dir_list = [qa_dir.replace(
             "qa/", ""), qa_dir.replace("qa/", "").replace("/data", "/data2"), qa_dir.replace("qa/", "").replace("/data", "/data3"), qa_dir.replace("qa/", "").replace("/data", "/data4")]
         host_name_list = ["happili-01",
