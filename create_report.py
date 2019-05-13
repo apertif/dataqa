@@ -40,6 +40,10 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--path", type=str,
                         help='Path to QA output')
 
+    # this mode will make the script look only for the beams processed by Apercal on a given node
+    parser.add_argument("--trigger_mode", action="store_true", default=False,
+                        help='Set it to run Autocal triggering mode automatically after Apercal.')
+
     args = parser.parse_args()
 
     obs_id = args.obs_id
@@ -72,19 +76,23 @@ if __name__ == "__main__":
     # check first on which happili we are:
     host_name = socket.gethostname()
 
-    if host_name != "happili-01":
+    if args.trigger_mode:
+        logger.info(
+            "--> Running continuum QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
+    elif host_name != "happili-01" and not args.trigger_mode:
         logger.warning("You are not working on happili-01.")
         logger.warning("The script will not process all beams")
         logger.warning("Please switch to happili-01")
-        apercal_log_file = "/data/apertif/{0:s}/apercal.log".format(
-            obs_id)
+
+    apercal_log_file = "/data/apertif/{0:s}/apercal.log".format(
+        obs_id)
 
     # logging.basicConfig(filename='{0:s}/create_report.log'.format(qa_dir), level=logging.DEBUG,
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
     # getting timing measurment for apercal
     try:
-        get_pipeline_run_time(obs_id)
+        get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
     except Exception as e:
         logger.error(e)
 
