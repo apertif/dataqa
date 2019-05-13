@@ -35,7 +35,7 @@ parser.add_argument("obs_id", type=str,
 
 # this mode will make the script look only for the beams processed by Apercal on a given node
 parser.add_argument("--trigger_mode", action="store_true", default=False,
-                    help='Set to run for mosaic QA.')
+                    help='Set it to run Autocal triggering mode automatically after Apercal')
 
 args = parser.parse_args()
 
