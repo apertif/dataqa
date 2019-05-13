@@ -472,7 +472,9 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
             logger.info("Found beam {0:s}".format(
                 fits_file_table['beam_name'][beam_index]))
         else:
-            break
+            logger.info("No beam {0:s}".format(
+                fits_file_table['beam_name'][beam_index]))
+            continue
 
         # create a subdirectory for the beam in the qa directory
         qa_validation_beam_dir = "{0:s}/{1:s}".format(
@@ -484,16 +486,6 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
 
         # get the path to the fits image
         fits_image = fits_file_table['fits_image_path'][beam_index]
-
-        # just for debugging
-        if fits_image == '':
-            print("No fits image for beam {0:s}".format(
-                fits_file_table['beam_name'][beam_index]))
-            break
-        else:
-            print("Found fits image for beam {0:s}".format(
-                fits_file_table['beam_name'][beam_index]))
-            break
 
         if fits_image == '':
             logger.warning("No fits image for beam {0:s}".format(
