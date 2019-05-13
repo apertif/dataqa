@@ -278,7 +278,13 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
 
     Note:
         The function goes through the four data directories and collects all fits image
-        it finds for the beams. It accounts for missing fits images
+        it finds for the beams. It accounts for missing fits images.
+        It always looks for 40 beams no matter on which happili node. 
+        Therefore, the output table contains the two columns "beam_exists" 
+        and "fits_image_exists". The first one will be True if a beam is 
+        available on a particular node and the last one if a continuum image 
+        exists. "fits_image_exists" can be False if "beam_exists" is True if 
+        no continuum image was found for an existing beam.
 
     Parameter:
         data_basedir_list : list
@@ -357,7 +363,7 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
             # check whether no fits file was found, one or more fits file
             # the latter case should not exists, but I do not want it to stop
             if len(fits_image) == 0:
-                fits_file_table['fits_image_path'][table_beam_index] = ''
+                fits_file_table['fits_image_path'][table_beam_index] = '-'
                 logger.error(
                     "Did not find any fits image for beam {0:s}".format(beam))
                 continue
@@ -379,6 +385,10 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
                 logger.error(e)
                 logger.error(
                     "Could not match beam {0:s} to table of fits images".format(beam))
+
+    # set all image paths to "-" for which no image exists
+    fits_file_table['fits_image_path'][np.where(
+        fits_file_table['fits_image_exists'] == False)] = "-"
 
     # Check how many beams failed
     if n_beams_found_total < n_beams_total:
@@ -407,10 +417,9 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
 
 def print_summary(sdict):
 
-
     beams = ['{:02d}'.format(i) for i in range(40)]
     df = pd.DataFrame(columns=['desc'] + beams)
-    df['desc']=['RMS', 'IDR', 'LDR']
+    df['desc'] = ['RMS', 'IDR', 'LDR']
     for beam in beams:
         if not beam in sdict.keys():
             df[beam] = ['F', 'F', 'F']
@@ -450,6 +459,9 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
     # get the available fits images for the available beams
     fits_file_table = get_continuum_fits_images(
         data_basedir_list, qa_validation_dir)
+    
+    # Get only the rwos of the table for which beams exists
+    fits_file_table = fits_file_table[np.where(fits_file_table['beam_exists']==True)]
 
     summary = dict()
 
@@ -487,7 +499,8 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 ldr_min, _ = cat.local_dynrange
                 ldr_min = int(ldr_min)
 
-                summary.update({'{:02d}'.format(beam_index): [img_rms, idr, ldr_min]})
+                summary.update({'{:02d}'.format(beam_index)
+                               : [img_rms, idr, ldr_min]})
 
                 logger.info("## Running validation tool. Done")
             except Exception as e:
@@ -496,7 +509,8 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 img_rms = 'F'
                 idr = 'F'
                 ldr_min, _ = 'F', 'F'
-                summary.update({'{:02d}'.format(beam_index): [img_rms, idr, ldr_min]})
+                summary.update({'{:02d}'.format(beam_index)
+                               : [img_rms, idr, ldr_min]})
 
             plot_type_list = ['gaus_model', 'gaus_resid',
                               'rms', 'mean', 'island_mask']
@@ -518,6 +532,5 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
             except Exception as e:
                 logger.error(e)
                 logger.error("## Plotting PyBDSF diagnostic images failed")
-
 
     print_summary(summary)
