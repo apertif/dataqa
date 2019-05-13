@@ -468,7 +468,10 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
     for beam_index in fits_file_table['beam_id']:
 
         # if a beam does not exists go directly to the next one
-        if not fits_file_table['beam_exists'][beam_index]:
+        if fits_file_table['beam_exists'][beam_index]:
+            logger.info("Found beam {0:s}".format(
+                fits_file_table['beam_name'][beam_index]))
+        else:
             break
 
         # create a subdirectory for the beam in the qa directory
