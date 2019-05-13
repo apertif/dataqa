@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     host_name = socket.gethostname()
 
-    if host_name != "happili-01":
+    if host_name != "happili-01" and not args.trigger_mode:
         print("INFO: You are not working on happili-01.")
         print("INFO: The script will not process all beams")
         print("Please switch to happili-01")
