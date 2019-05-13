@@ -62,6 +62,8 @@ class ScanData(object):
         else:
             # On happili-01, so search all nodes
             # ignoring happili-05 - may have to fix this eventually
+            logging.info(
+                "Running on {0:s}. Search for data from all nodes".format(hostname))
             paths += ['/data/apertif/{}'.format(self.scan)]
             paths += ['/data2/apertif/{}'.format(self.scan)]
             paths += ['/data3/apertif/{}'.format(self.scan)]
