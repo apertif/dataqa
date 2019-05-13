@@ -1,11 +1,5 @@
 """
 This script contains functionality to run all QA automatically after being triggered at the end of apercal
-
-return_msg = start_apercal_pipeline(
-    tdict['target'], tdict['cal1'], tdict['cal2'])
-
-targets=(190505048, 'LH_WSRT', array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])); fluxcals=[(190505017, '3C147_9', 9), (190505016, '3C147_8', 8), (190505015, '3C147_7', 7), (190505014, '3C147_6', 6), (190505013, '3C147_5', 5), (190505012, '3C147_4', 4), (190505011, '3C147_3', 3), (190505010, '3C147_2', 2), (190505009, '3C147_1', 1), (190505008, '3C147_0', 0)]; polcals=[(190506001, '3C286_0', 0), (190506002, '3C286_1', 1), (190506003, '3C286_2', 2), (190506004, '3C286_3', 3), (190506005, '3C286_4', 4), (190506006, '3C286_5', 5), (190506007, '3C286_6', 6), (190506008, '3C286_7', 7), (190506009, '3C286_8', 8),
- (190506010, '3C286_9', 9)]
 """
 
 import os
@@ -34,9 +28,14 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
         polcals = [(190506001, '3C286_0', 0), (190506002, '3C286_1', 1), (190506003, '3C286_2', 2), (190506004, '3C286_3', 3), (190506005, '3C286_4', 4),
                     (190506006, '3C286_5', 5), (190506007, '3C286_6', 6), (190506008, '3C286_7', 7), (190506009, '3C286_8', 8), (190506010, '3C286_9', 9)]
 
-    If steps is not provided then all steps will be performed:
+    If steps is not provided then all steps except mosaic will be performed:
         steps = ['preflag', 'crosscal', 'selfcal',
                  'continuum', 'line', 'mosaic', 'report']
+    For all steps including mosaic:
+        steps = ['preflag', 'crosscal', 'selfcal',
+                 'continuum', 'line', 'mosaic', 'report']
+    It is possible to select a certain step:
+        steps = ['mosaic']
 
     test call can look like this: 
         from dataqa.run_qa import run_triggered_qa
