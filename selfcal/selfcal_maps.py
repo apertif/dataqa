@@ -124,7 +124,7 @@ def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
                 logger.error("Could not remove {0:s}".format(fits_name))
 
 
-def get_selfcal_maps(obs_id, qa_selfcal_dir):
+def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
     """
     This function goes through the images available and plots them.
 
@@ -148,14 +148,24 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir):
     # check host name
     host_name = socket.gethostname()
 
-    if host_name != "happili-01":
+    if trigger_mode:
+        logger.info(
+            "--> Running selfcal QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
+    if host_name != "happili-01" and not trigger_mode:
         logger.warning("You are not working on happili-01.")
         logger.warning("The script will not process all beams")
         logger.warning("Please switch to happili-01")
 
     # get a list of data beam directories
-    data_beam_dir_list = glob.glob(
-        "/data*/apertif/{}/[0-3][0-9]".format(obs_id))
+    if trigger_mode:
+        data_beam_dir_list = glob.glob(
+            "/data/apertif/{}/[0-3][0-9]".format(obs_id))
+    elif host_name != "happili-01" and not trigger_mode:
+        data_beam_dir_list = glob.glob(
+            "/data/apertif/{}/[0-3][0-9]".format(obs_id))
+    else:
+        data_beam_dir_list = glob.glob(
+            "/data*/apertif/{}/[0-3][0-9]".format(obs_id))
 
     if len(data_beam_dir_list) != 0:
 
