@@ -36,6 +36,7 @@ class ScanData(object):
         self.scan = scan
         self.sourcename = sourcename
         self.imagepathsuffix = ""
+        self.trigger_mode = trigger_mode
         # check if fluxcal is given as 3CXXX.MS or 3CXXX
         # Fix to not include .MS no matter what
         if self.sourcename[0:2] != '3C':
@@ -49,7 +50,7 @@ class ScanData(object):
         # if not happili-01, print a warning and only search locally
         hostname = os.uname()[1]
         paths = []
-        if trigger_mode:
+        if self.trigger_mode:
             logging.info(
                 "--> Running in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(hostname))
             path = '/data/apertif/{}'.format(self.scan)
