@@ -283,7 +283,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
 
         try:
             report_msg = os.system(
-                'python /home/apercal/dataqa/create_report.py {0:d}'.format(taskid_target))
+                'python /home/apercal/dataqa/create_report.py {0:d} --trigger_mode'.format(taskid_target))
             logger.info(
                 "Report finished with msg {0}".format(report_msg))
             logger.info("#### Create report ... Done (time {0:.1f}s)".format(
