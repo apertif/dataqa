@@ -57,6 +57,10 @@ if __name__ == '__main__':
     parser.add_argument("--for_mosaic", action="store_true", default=False,
                         help='Set to run for mosaic QA.')
 
+    # this mode will make the script look only for the beams processed by Apercal on a given node
+    parser.add_argument("--trigger_mode", action="store_true", default=False,
+                        help='Set to run for mosaic QA.')
+
     # parser.add_argument("--overwrite", action="store_true", default=True,
     #                     help='Overwrite existing files')
 
@@ -77,8 +81,8 @@ if __name__ == '__main__':
     host_name = socket.gethostname()
 
     if host_name != "happili-01":
-        print("WARNING: You are not working on happili-01.")
-        print("WARNING: The script will not process all beams")
+        print("INFO: You are not working on happili-01.")
+        print("INFO: The script will not process all beams")
         print("Please switch to happili-01")
 
     # Basic parameters
@@ -147,8 +151,13 @@ if __name__ == '__main__':
     if run_mode == 'continuum':
 
         # base directory for data
-        if host_name != "happili-01":
+        if args.trigger_mode:
+            logger.info(
+                "--> Running continuum QA in trigger mode. Looking only for data processed by Apercal on this node <--")
             data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id)]
+        elif host_name != "happili-01":
+            data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id)]
+
         else:
             data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id), '/data2/apertif/{0:s}'.format(obs_id),
                                  '/data3/apertif/{0:s}'.format(obs_id), '/data4/apertif/{0:s}'.format(obs_id)]
