@@ -153,7 +153,7 @@ if __name__ == '__main__':
         # base directory for data
         if args.trigger_mode:
             logger.info(
-                "--> Running continuum QA in trigger mode. Looking only for data processed by Apercal on this node <--")
+                "--> Running continuum QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
             data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id)]
         elif host_name != "happili-01":
             data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id)]
