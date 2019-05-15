@@ -58,7 +58,7 @@ if __name__ == '__main__':
     if args.trigger_mode:
         logger.info(
             "--> Running line QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
-        data_basedir_list = ['/data/apertif/{0:s}'.format(obs_id)]
+        data_base_dir_list = ['/data/apertif/{0:s}'.format(obs_id)]
     elif host_name != "happili-01" and not args.trigger_mode:
         logger.warning("You are not working on happili-01.")
         logger.warning("The script will not process all beams")
