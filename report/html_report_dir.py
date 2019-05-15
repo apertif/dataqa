@@ -578,8 +578,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
 
         # change to relative link when in trigger mode
         if trigger_mode:
-            apercal_log_file = qa_dir.replace(
-                "qa", "../../../../../apercal.log")
+            apercal_log_file = "../../../../../apercal.log"
         else:
             apercal_log_file = qa_dir.replace("qa/", "apercal.log")
 
