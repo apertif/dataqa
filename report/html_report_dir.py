@@ -577,15 +577,16 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
             "Cannot account for parallalized log files unless running from happili-01 !!!")
 
         # change to relative link when in trigger mode
-        if trigger_mode:
-            apercal_log_file = "../../../../../apercal.log"
-        else:
-            apercal_log_file = qa_dir.replace("qa/", "apercal.log")
+        
+        apercal_log_file = qa_dir.replace("qa/", "apercal.log")
 
         link_name = "{0:s}/{1:s}".format(
             qa_dir_report_obs_subpage, os.path.basename(apercal_log_file))
 
         if os.path.exists(apercal_log_file):
+
+            if trigger_mode:
+                apercal_log_file = apercal_log_file.replace(qa_dir.repalce("qa/",""),"../../../../../")
 
             # rename the link to the log file according to host
             if host_name == "happili-02":
