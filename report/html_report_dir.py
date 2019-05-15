@@ -76,7 +76,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                         # change to relative link when in trigger mode
                         if trigger_mode:
                             image = image.replace(
-                                qa_preflag_dir, "../../../../")
+                                qa_dir, "../../../../")
 
                         # check if link exists
                         if not os.path.exists(link_name):
