@@ -586,7 +586,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         if os.path.exists(apercal_log_file):
 
             if trigger_mode:
-                apercal_log_file = apercal_log_file.replace(qa_dir.repalce("qa/",""),"../../../../../")
+                apercal_log_file = apercal_log_file.replace(qa_dir.replace("qa/",""),"../../../../../")
 
             # rename the link to the log file according to host
             if host_name == "happili-02":
