@@ -1,7 +1,8 @@
 #!/usr/bin/python2.7
 
 """
-This file contains functionality to create the directory structure for the report
+This file contains functionality to create the directory structure for the report.
+Instead of copying files, they are linked.
 """
 
 import os
@@ -16,7 +17,7 @@ from shutil import copy
 logger = logging.getLogger(__name__)
 
 
-def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage):
+def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the preflag directory for the report
 
     Note:
@@ -26,7 +27,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage):
 
     logger.info("## Creating report directory for preflag and linking files...")
 
-    if socket.gethostname() != 'happili-01':
+    if socket.gethostname() != 'happili-01' or trigger_mode:
         qa_preflag_dir_list = ["{0:s}preflag".format(qa_dir)]
     else:
         qa_preflag_dir_list = ["{0:s}preflag".format(qa_dir), "{0:s}preflag".format(qa_dir).replace(
@@ -72,6 +73,11 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage):
                         link_name = "{0:s}/{1:s}".format(
                             qa_dir_report_obs_subpage_preflag_beam, os.path.basename(image))
 
+                        # change to relative link when in trigger mode
+                        if trigger_mode:
+                            image = image.replace(
+                                qa_preflag_dir, "../../../../")
+
                         # check if link exists
                         if not os.path.exists(link_name):
                             os.symlink(image, link_name)
@@ -91,7 +97,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage):
         "## Creating report directory for preflag and linking files. Done")
 
 
-def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage):
+def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the create directory for the report
 
     Note:
@@ -116,6 +122,11 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage):
             link_name = "{0:s}/{1:s}".format(
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                image = image.replace(
+                    qa_dir, "../../../")
+
             # check if link exists
             if not os.path.exists(link_name):
                 os.symlink(image, link_name)
@@ -130,7 +141,7 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage):
         "## Creating report directory for crosscal and linking files. Done")
 
 
-def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
+def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the selfcal directory for the report
 
     Note:
@@ -177,6 +188,11 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
                     link_name = "{0:s}/{1:s}".format(
                         qa_dir_report_obs_subpage_selfcal_beam, os.path.basename(image))
 
+                    # change to relative link when in trigger mode
+                    if trigger_mode:
+                        image = image.replace(
+                            qa_dir, "../../../../")
+
                     # check if link exists
                     if not os.path.exists(link_name):
                         os.symlink(image, link_name)
@@ -202,6 +218,11 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
             link_name = "{0:s}/{1:s}".format(
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                image = image.replace(
+                    qa_dir, "../../../")
+
             # check if link exists
             if not os.path.exists(link_name):
                 os.symlink(image, link_name)
@@ -224,6 +245,11 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
         for image in images_amp:
             link_name = "{0:s}/{1:s}".format(
                 qa_dir_report_obs_subpage, os.path.basename(image))
+
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                image = image.replace(
+                    qa_dir, "../../../")
 
             # check if link exists
             if not os.path.exists(link_name):
@@ -289,7 +315,7 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage):
 #        "## Creating report directory for selfcal and linking files. Done")
 
 
-def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
+def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the continuum directory for the report
 
     Note:
@@ -336,6 +362,11 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
                     link_name = "{0:s}/{1:s}".format(
                         qa_dir_report_obs_subpage_continuum_beam, os.path.basename(image))
 
+                    # change to relative link when in trigger mode
+                    if trigger_mode:
+                        image = image.replace(
+                            qa_dir, "../../../../")
+
                     # check if link exists
                     if not os.path.exists(link_name):
                         os.symlink(image, link_name)
@@ -359,6 +390,11 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
                     link_name = "{0:s}/{1:s}".format(
                         qa_dir_report_obs_subpage_continuum_beam, os.path.basename(validation_tool_dir))
 
+                    # change to relative link when in trigger mode
+                    if trigger_mode:
+                        validation_tool_dir = validation_tool_dir.replace(
+                            qa_dir, "../../../../")
+
                     # check if link exists
                     if not os.path.exists(link_name):
                         os.symlink(validation_tool_dir, link_name)
@@ -378,7 +414,7 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage):
         "## Creating report directory for continuum and linking files. Done")
 
 
-def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage):
+def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the line directory for the report
 
     Note:
@@ -425,6 +461,11 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage):
                     link_name = "{0:s}/{1:s}".format(
                         qa_dir_report_obs_subpage_line_beam, os.path.basename(image))
 
+                    # change to relative link when in trigger mode
+                    if trigger_mode:
+                        image = image.replace(
+                            qa_dir, "../../../../")
+
                     # check if link exists
                     if not os.path.exists(link_name):
                         os.symlink(image, link_name)
@@ -441,7 +482,7 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage):
         "## Creating report directory for line and linking files. Done")
 
 
-def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage):
+def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the mosaic directory for the report
 
     Note:
@@ -467,6 +508,11 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage):
             link_name = "{0:s}/{1:s}".format(
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                image = image.replace(
+                    qa_dir, "../../../moasic/")
+
             # check if link exists
             if not os.path.exists(link_name):
                 os.symlink(image, link_name)
@@ -489,6 +535,11 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage):
             link_name = "{0:s}/{1:s}".format(
                 qa_dir_report_obs_subpage, os.path.basename(validation_tool_dir))
 
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                validation_tool_dir = validation_tool_dir.replace(
+                    qa_dir, "../../../")
+
             # check if link exists
             if not os.path.exists(link_name):
                 os.symlink(validation_tool_dir, link_name)
@@ -504,7 +555,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage):
         "## Creating report directory for mosaic and linking files. Done")
 
 
-def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
+def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the apercal log directory for the report
 
     Note:
@@ -520,12 +571,17 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
 
     # this one does not take parallelisation into account
     # only the code for running it on happili-01 does
-    if host_name != "happili-01":
+    if host_name != "happili-01" or trigger_mode:
 
         logger.warning(
             "Cannot account for parallalized log files unless running from happili-01 !!!")
 
-        apercal_log_file = qa_dir.replace("qa/", "apercal.log")
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            apercal_log_file = qa_dir.replace(
+                "qa", "../../../../../apercal.log")
+        else:
+            apercal_log_file = qa_dir.replace("qa/", "apercal.log")
 
         link_name = "{0:s}/{1:s}".format(
             qa_dir_report_obs_subpage, os.path.basename(apercal_log_file))
@@ -609,6 +665,11 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
             link_name = "{0:s}/{1:s}".format(
                 qa_dir_report_obs_subpage, os.path.basename(time_file))
 
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                time_file = time_file.replace(
+                    qa_dir, "../../../")
+
             # check if link exists
             if not os.path.exists(link_name):
                 os.symlink(time_file, link_name)
@@ -623,7 +684,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage):
         "## Creating report directory for apercal log and linking files. Done")
 
 
-def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False):
     """Function to create the directory structure of the report document
 
     Files that are required will be linked to there.
@@ -677,7 +738,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
 
             try:
                 create_report_dir_preflag(
-                    obs_id, qa_dir, qa_dir_report_obs_subpage)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
 
@@ -686,7 +747,8 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         elif page == "crosscal":
 
             try:
-                create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_crosscal(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
 
@@ -695,7 +757,8 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         elif page == "selfcal":
 
             try:
-                create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_selfcal(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
 
@@ -704,7 +767,8 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         elif page == "continuum":
 
             try:
-                create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_continuum(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
 
@@ -713,7 +777,8 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         elif page == "line":
 
             try:
-                create_report_dir_line(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_line(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
 
@@ -722,7 +787,8 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
         elif page == "mosaic":
 
             try:
-                create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage)
+                create_report_dir_mosaic(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
 
@@ -732,6 +798,6 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file=''):
 
             try:
                 create_report_dir_apercal_log(
-                    qa_dir, qa_dir_report_obs_subpage)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
