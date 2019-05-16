@@ -96,6 +96,9 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     logger.info('#### Running all QA steps on {0:s}'.format(host_name))
     logger.info('#######################')
 
+    logger.info("## Observation of target: {0:s}, flux calibrator: {1:s}, polarisation calibratior: {2:s}".format(
+        name_target, name_fluxcal, name_polcal))
+
     # Preflag QA
     # ==========
 
