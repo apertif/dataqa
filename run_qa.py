@@ -8,6 +8,7 @@ import numpy as np
 import logging
 import socket
 from apercal.libs import lib
+from apercal.subs import calmodels as subs_calmodels
 
 from dataqa.scandata import get_default_imagepath
 
@@ -92,9 +93,44 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
         'debug', logfile='{0:s}{1:s}_triggered_qa.log'.format(qa_dir, host_name))
     logger = logging.getLogger(__name__)
 
+    logger.info("#######################")
+    logger.info("Input parameters:")
+    logger.info("target={0:s}".format(str(targets)))
+    logger.info("fluxcals={0:s}".format(str(fluxcals)))
+    logger.info("polcals={0:s}".format(str(polcals)))
+    logger.info("#######################")
+
     logger.info('#######################')
     logger.info('#### Running all QA steps on {0:s}'.format(host_name))
     logger.info('#######################')
+
+    # If both fluxcal and polcal polarized, remove polcal
+    # (taken from start_pipeline)
+    if subs_calmodels.is_polarised(name_polcal) and subs_calmodels.is_polarised(name_fluxcal):
+        name_polcal = ""
+
+    if (fluxcals and fluxcals != '') and (polcals and polcals != ''):
+        assert(len(fluxcals) == len(polcals))
+
+    # Exchange polcal and fluxcal if specified in the wrong order
+    # (taken from start_pipeline)
+    # (except for how the names are switched)
+    if not subs_calmodels.is_polarised(name_polcal) and name_polcal != '':
+        if subs_calmodels.is_polarised(name_fluxcal):
+            logger.debug("Switching polcal and fluxcal because " + name_polcal +
+                         " is not polarised")
+            fluxcals, polcals = polcals, fluxcals
+            name_fluxcal, name_polcal = name_polcal, name_fluxcal
+            #name_polcal = str(polcals[0][1]).strip()
+        else:
+            logger.debug("Setting polcal to '' since " +
+                         name_polcal + " is not polarised")
+            name_polcal = ""
+    elif name_polcal != '':
+        logger.debug("Polcal " + name_polcal + " is polarised, all good")
+
+    logger.info("## Observation of target: {0:s}, flux calibrator: {1:s}, polarisation calibrator: {2:s}".format(
+        name_target, name_fluxcal, name_polcal))
 
     # Preflag QA
     # ==========

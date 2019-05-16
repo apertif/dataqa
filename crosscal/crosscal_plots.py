@@ -64,14 +64,14 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
 
     # Get cross hand delay solutions
     start_time_kcross = time.time()
-    KCross = KCrossSols(scan, polcal)
+    KCross = KCrossSols(scan, polcal, trigger_mode)
     KCross.get_data()
     KCross.plot_delay(imagepath=output_path)
     logger.info('Done with cross hand delay plots ({0:.0f}s)'.format(time.time() - start_time_kcross))
 
     # Get polarisation angle plots
     start_time_polangle = time.time()
-    Polangle = PolangleSols(scan, polcal)
+    Polangle = PolangleSols(scan, polcal, trigger_mode)
     Polangle.get_data()
     Polangle.plot_amp(imagepath=output_path)
     Polangle.plot_phase(imagepath=output_path)
@@ -106,7 +106,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
 
 
 class BPSols(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode=False):
+    def __init__(self,scan,fluxcal,trigger_mode):
         ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
@@ -228,7 +228,7 @@ class BPSols(ScanData):
             
 
 class GainSols(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode=False):
+    def __init__(self,scan,fluxcal,trigger_mode):
         ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
@@ -366,8 +366,8 @@ class GainSols(ScanData):
 
 
 class GDSols(ScanData):
-    def __init__(self, scan, fluxcal):
-        ScanData.__init__(self, scan, fluxcal)
+    def __init__(self, scan, fluxcal, trigger_mode):
+        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -423,8 +423,8 @@ class GDSols(ScanData):
 
 
 class LeakSols(ScanData):
-    def __init__(self, scan, fluxcal):
-        ScanData.__init__(self, scan, fluxcal)
+    def __init__(self, scan, fluxcal, trigger_mode):
+        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -523,8 +523,8 @@ class LeakSols(ScanData):
 
 
 class KCrossSols(ScanData):
-    def __init__(self, scan, polcal):
-        ScanData.__init__(self, scan, polcal)
+    def __init__(self, scan, polcal, trigger_mode):
+        ScanData.__init__(self, scan, polcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -580,8 +580,8 @@ class KCrossSols(ScanData):
 
 
 class PolangleSols(ScanData):
-    def __init__(self, scan, polcal):
-        ScanData.__init__(self, scan, polcal)
+    def __init__(self, scan, polcal, trigger_mode):
+        ScanData.__init__(self, scan, polcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -676,7 +676,7 @@ class PolangleSols(ScanData):
 
 
 class ModelData(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode=False):
+    def __init__(self,scan,fluxcal,trigger_mode):
         ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -760,7 +760,7 @@ class ModelData(ScanData):
             
         
 class CorrectedData(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode=False):
+    def __init__(self,scan,fluxcal,trigger_mode):
         ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -883,7 +883,7 @@ class CorrectedData(ScanData):
 
 
 class RawData(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode=False):
+    def __init__(self,scan,fluxcal,trigger_mode):
         ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
