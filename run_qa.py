@@ -104,6 +104,14 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     logger.info('#### Running all QA steps on {0:s}'.format(host_name))
     logger.info('#######################')
 
+    # If both fluxcal and polcal polarized, remove polcal
+    # (taken from start_pipeline)
+    if subs_calmodels.is_polarised(name_polcal) and subs_calmodels.is_polarised(name_fluxcal):
+        name_polcal = ""
+
+    if (fluxcals and fluxcals != '') and (polcals and polcals != ''):
+        assert(len(fluxcals) == len(polcals))
+
     # Exchange polcal and fluxcal if specified in the wrong order
     # (taken from start_pipeline)
     if not subs_calmodels.is_polarised(name_polcal) and name_polcal != '':
@@ -119,7 +127,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     elif name_polcal != '':
         logger.debug("Polcal " + name_polcal + " is polarised, all good")
 
-    logger.info("## Observation of target: {0:s}, flux calibrator: {1:s}, polarisation calibratior: {2:s}".format(
+    logger.info("## Observation of target: {0:s}, flux calibrator: {1:s}, polarisation calibrator: {2:s}".format(
         name_target, name_fluxcal, name_polcal))
 
     # Preflag QA
