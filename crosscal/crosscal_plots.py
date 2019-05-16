@@ -32,20 +32,20 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
         trigger_mode (bool): To run automatically after Apercal
     """
     # Get BP plots
-    # start_time_bp = time.time()
-    # BP = BPSols(scan, fluxcal, trigger_mode)
-    # BP.get_data()
-    # BP.plot_amp(imagepath=output_path)
-    # BP.plot_phase(imagepath=output_path)
-    # logger.info('Done with bandpass plots ({0:.0f}s)'.format(time.time() - start_time_bp))
+    start_time_bp = time.time()
+    BP = BPSols(scan, fluxcal, trigger_mode)
+    BP.get_data()
+    BP.plot_amp(imagepath=output_path)
+    BP.plot_phase(imagepath=output_path)
+    logger.info('Done with bandpass plots ({0:.0f}s)'.format(time.time() - start_time_bp))
 
-    # # Get Gain plots
-    # start_time_gain = time.time()
-    # Gain = GainSols(scan, fluxcal, trigger_mode)
-    # Gain.get_data()
-    # Gain.plot_amp(imagepath=output_path)
-    # Gain.plot_phase(imagepath=output_path)
-    # logger.info('Done with gainplots ({0:.0f}s)'.format(time.time() - start_time_gain))
+    # Get Gain plots
+    start_time_gain = time.time()
+    Gain = GainSols(scan, fluxcal, trigger_mode)
+    Gain.get_data()
+    Gain.plot_amp(imagepath=output_path)
+    Gain.plot_phase(imagepath=output_path)
+    logger.info('Done with gainplots ({0:.0f}s)'.format(time.time() - start_time_gain))
 
     # Get Global Delay plots
     start_time_gdelay = time.time()
