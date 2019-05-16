@@ -114,12 +114,14 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
 
     # Exchange polcal and fluxcal if specified in the wrong order
     # (taken from start_pipeline)
+    # (except for how the names are switched)
     if not subs_calmodels.is_polarised(name_polcal) and name_polcal != '':
         if subs_calmodels.is_polarised(name_fluxcal):
             logger.debug("Switching polcal and fluxcal because " + name_polcal +
                          " is not polarised")
             fluxcals, polcals = polcals, fluxcals
-            name_polcal = str(polcals[0][1]).strip()
+            name_fluxcal, name_polcal = name_polcal, name_fluxcal
+            #name_polcal = str(polcals[0][1]).strip()
         else:
             logger.debug("Setting polcal to '' since " +
                          name_polcal + " is not polarised")
