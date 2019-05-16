@@ -366,8 +366,8 @@ class GainSols(ScanData):
 
 
 class GDSols(ScanData):
-    def __init__(self, scan, fluxcal):
-        ScanData.__init__(self, scan, fluxcal)
+    def __init__(self, scan, fluxcal, trigger_mode=False):
+        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -423,8 +423,8 @@ class GDSols(ScanData):
 
 
 class LeakSols(ScanData):
-    def __init__(self, scan, fluxcal):
-        ScanData.__init__(self, scan, fluxcal)
+    def __init__(self, scan, fluxcal, trigger_mode=False):
+        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -523,8 +523,8 @@ class LeakSols(ScanData):
 
 
 class KCrossSols(ScanData):
-    def __init__(self, scan, polcal):
-        ScanData.__init__(self, scan, polcal)
+    def __init__(self, scan, polcal, trigger_mode=False):
+        ScanData.__init__(self, scan, polcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -580,8 +580,8 @@ class KCrossSols(ScanData):
 
 
 class PolangleSols(ScanData):
-    def __init__(self, scan, polcal):
-        ScanData.__init__(self, scan, polcal)
+    def __init__(self, scan, polcal, trigger_mode=False):
+        ScanData.__init__(self, scan, polcal, trigger_mode=trigger_mode)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
