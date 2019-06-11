@@ -1373,6 +1373,5 @@ class catalogue(object):
         for ra, dec, peak in zip(d[self.ra_col], d[self.dec_col], d[self.peak_col]):
             pxra, pxdec = wcs.wcs_world2pix([[ra, dec]], 1)[0]
             boxdata = data[int(pxdec-box):int(pxdec+box), int(pxra-box):int(pxra+box)]
-            print boxdata.shape
             res.append(peak/np.max(abs(boxdata)))
         return min(res), max(res)
