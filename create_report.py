@@ -40,6 +40,9 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--path", type=str,
                         help='Path to QA output')
 
+    parser.add_argument("-b", "--basedir", type=str,
+                        help='Base directory where the obs id is')
+
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
                         help='Set it to run Autocal triggering mode automatically after Apercal.')
@@ -48,10 +51,14 @@ if __name__ == "__main__":
 
     obs_id = args.obs_id
     qa_dir = args.path
+    base_dir = args.basedir
 
     # directory where the output will be of pybdsf will be stored
     if qa_dir is None:
-        qa_dir = get_default_imagepath(obs_id)
+        if base_dir is not None:
+            qa_dir = get_default_imagepath(obs_id, basedir=base_dir)
+        else:
+            qa_dir = get_default_imagepath(obs_id)
 
         # check that path exists
         if not os.path.exists(qa_dir):
