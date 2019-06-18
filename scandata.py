@@ -11,21 +11,25 @@ This specifies the location of all data, assuming setup of automatic pipeline
 """
 
 
-def get_default_imagepath(scan):
+def get_default_imagepath(scan, basedir=None):
     """
     Get the default path for saving images
 
     Args:
         scan (int): scan (or task id), e.g. 190303084
+        basedir (str): based directory of the scan, default /data/apertif/
 
     Returns:
         str: Path for storing images
     """
-    return '/data/apertif/{scan}/qa/'.format(scan=scan)
+    if basedir is not None:
+        return os.path.join(basedir, '{scan}/qa/'.format(scan=scan))
+    else:
+        return '/data/apertif/{scan}/qa/'.format(scan=scan)
 
 
 class ScanData(object):
-    def __init__(self, scan, sourcename, trigger_mode=False):
+    def __init__(self, scan, sourcename, basedir=None, trigger_mode=False):
         """
         Initialize with scan (taskid) and source name
         and place holders for phase and amplitude
@@ -50,15 +54,23 @@ class ScanData(object):
         # if not happili-01, print a warning and only search locally
         hostname = os.uname()[1]
         paths = []
+        # in case it runs on triggered mode, it should only look into
+        # the apertif dir of this node
         if self.trigger_mode:
             logging.info(
                 "--> Running in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(hostname))
             path = '/data/apertif/{}'.format(self.scan)
             paths = [path]
         elif hostname != 'happili-01' and not trigger_mode:
-            logging.warning(
+            logging.info(
                 'Not on happili-01, only search local {} for data'.format(hostname))
-            path = '/data/apertif/{}'.format(self.scan)
+            if basedir is not None:
+                path = os.path.join(basedir, "{}".format(self.scan))
+            else:
+                path = '/data/apertif/{}'.format(self.scan)
+            paths = [path]
+        elif hostname == 'happili-01' and basedir is not None:
+            path = os.path.join(basedir, "{}".format(self.scan))
             paths = [path]
         else:
             # On happili-01, so search all nodes
