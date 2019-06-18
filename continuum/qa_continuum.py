@@ -279,11 +279,11 @@ def get_continuum_fits_images(data_basedir_list, qa_validation_dir, save_table=T
     Note:
         The function goes through the four data directories and collects all fits image
         it finds for the beams. It accounts for missing fits images.
-        It always looks for 40 beams no matter on which happili node. 
-        Therefore, the output table contains the two columns "beam_exists" 
-        and "fits_image_exists". The first one will be True if a beam is 
-        available on a particular node and the last one if a continuum image 
-        exists. "fits_image_exists" can be False if "beam_exists" is True if 
+        It always looks for 40 beams no matter on which happili node.
+        Therefore, the output table contains the two columns "beam_exists"
+        and "fits_image_exists". The first one will be True if a beam is
+        available on a particular node and the last one if a continuum image
+        exists. "fits_image_exists" can be False if "beam_exists" is True if
         no continuum image was found for an existing beam.
 
     Parameter:
@@ -427,6 +427,7 @@ def print_summary(sdict):
             df[beam] = sdict[beam]
 
     print(df.to_csv(sys.stdout, index=False))
+    df.to_csv('continuum_summary.csv', index=False)
 
 
 def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=True):
