@@ -427,7 +427,12 @@ def print_summary(sdict):
             df[beam] = sdict[beam]
 
     print(df.to_csv(sys.stdout, index=False))
-    df.to_csv('continuum_summary.csv', index=False)
+    df = df.T
+    df.reset_index(level=0, inplace=True)
+    df.columns=df.iloc[0]
+    df = df.drop(index=0)
+    df.columns = ['beam', u'RMS', u'IDR', u'LDR']
+    df.to_csv('../../continuum_summary.csv', index=False)
 
 
 def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=True):
