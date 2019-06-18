@@ -11,17 +11,21 @@ This specifies the location of all data, assuming setup of automatic pipeline
 """
 
 
-def get_default_imagepath(scan):
+def get_default_imagepath(scan, basedir=None):
     """
     Get the default path for saving images
 
     Args:
         scan (int): scan (or task id), e.g. 190303084
+        basedir (str): based directory of the scan, default /data/apertif/
 
     Returns:
         str: Path for storing images
     """
-    return '/data/apertif/{scan}/qa/'.format(scan=scan)
+    if basedir is not None:
+        return os.path.join(basedir, '{scan}/qa/'.format(scan=scan))
+    else:
+        return '/data/apertif/{scan}/qa/'.format(scan=scan)
 
 
 class ScanData(object):
