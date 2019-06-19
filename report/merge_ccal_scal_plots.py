@@ -8,7 +8,7 @@ import socket
 import numpy as np
 from PIL import Image
 from apercal.libs import lib
-
+from time import time
 
 def merge_plots(image_list, new_image_name=None):
     """This function does the actual merging
@@ -49,12 +49,12 @@ def merge_plots(image_list, new_image_name=None):
                     if overlay_data[x_pix, y_pix] == (255, 255, 255, 255):
                         overlay_data[x_pix, y_pix] = (255, 255, 255, 0)
 
-            # create a new image and merge it with background
-            if k == 1:
-                new_image = Image.new("RGBA", background.size)
-                new_image = Image.alpha_composite(new_image, background)
-            else:
-                new_image = Image.alpha_composite(new_image, overlay)
+        # create a new image and merge it with background
+        if k == 0:
+            new_image = Image.new("RGBA", background.size)
+            new_image = Image.alpha_composite(new_image, background)
+        else:
+            new_image = Image.alpha_composite(new_image, overlay)
 
     # save the merged image
     new_image.save(new_image_name, "PNG")
@@ -111,7 +111,15 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
                     "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data*"), png_name))
 
                 # now merge the images
-                merge_plots(ccal_plot_list)
+                try:
+                    merge_plots(ccal_plot_list)
+                except Exception as e:
+                    logger.warning(
+                        "Merging plots for {0} failed".format(png_name))
+                    logger.exception(e)
+                else:
+                    logger.info(
+                        "Merged plots for {0} successfully".format(png_name))
 
 
 if __name__ == "__main__":
