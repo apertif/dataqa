@@ -73,7 +73,7 @@ def get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type):
         logger.info("Successully retrieved {}".format(alta_plot_file))
 
 
-def get_inspection_plots(qa_plot_dir, obs_id):
+def get_inspection_plots(obs_id, qa_plot_dir):
     """
     Function to get all inspection plots from ALTA useful for the QA
 
