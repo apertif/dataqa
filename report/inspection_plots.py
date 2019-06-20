@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 FNULL = open(os.devnull, 'w')
 
 
-def get_inspection_plot_list(polarisation='XX'):
+def get_inspection_plot_list():
     """
     Function to return a list of inspection plot 
 
@@ -39,11 +39,12 @@ def get_inspection_plot_list(polarisation='XX'):
     return plot_type_list
 
 
-def get_inspection_plots(qa_plot_dir, obs_id, plot_type):
+def get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type):
     """
-    Function to get the inspection plot from ALTA
+    Function to get a specific inspection plot from ALTA
 
     Args:
+        qa_plot_dir (str): Directory where plots should be stored
         obs_id (int): ID of the observation (scan number or task_id)
         plot_type (str): Type of inspection plot
 
@@ -70,3 +71,32 @@ def get_inspection_plots(qa_plot_dir, obs_id, plot_type):
         logger.exception(e)
     else:
         logger.info("Successully retrieved {}".format(alta_plot_file))
+
+
+def get_inspection_plots(qa_plot_dir, obs_id):
+    """
+    Function to get all inspection plots from ALTA useful for the QA
+
+    Args:
+        qa_plot_dir (str) Directory where plots should be stored
+        obs_id (int) ID of observation (scan number or task id)
+    """
+
+    # list of polarizations, currently one, but just in case
+    polarization_list = ['XX']
+
+    # list of types of inspection plots
+    plot_type_list = get_inspection_plot_list()
+
+    # go through the polarzation
+    for polarization in polarization_list:
+
+        # go through each plot type to retrieve the plot from ALTA
+        for plot_type in plot_type_list:
+
+            # exclude two plots from adding polarization
+            if plot_type != "_beam_xx" or plot_type != "_beam_yy":
+                plot_type += "_{}".format(polarization)
+
+            # get inspection plot
+            get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type)
