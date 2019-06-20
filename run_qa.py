@@ -64,7 +64,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     if steps is None:
         # steps = ['preflag', 'crosscal', 'selfcal',
         #          'continuum', 'line', 'mosaic', 'report']
-        steps = ['preflag', 'crosscal', 'selfcal',
+        steps = ['inspection_plots', 'preflag', 'crosscal', 'selfcal',
                  'continuum', 'line', 'report']
 
     # Set up
@@ -132,6 +132,28 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     logger.info("## Observation of target: {0:s}, flux calibrator: {1:s}, polarisation calibrator: {2:s}".format(
         name_target, name_fluxcal, name_polcal))
 
+    # Inspection Plots
+    # ================
+
+    if 'inspection_plots' in steps and host_name == 'happili-01':
+
+        logger.info("#### Inspection plot QA ...")
+
+        start_time_preflag = time.time()
+
+        try:
+            preflag_msg = os.system(
+                'python /home/apercal/dataqa/run_inspection_plot.py {0:d}'.format(taskid_target))
+            logger.info(
+                "Getting inspection plots finished with msg {0}".format(preflag_msg))
+            logger.info("#### Inspection plot QA ... Done (time {0:.1f}s)".format(
+                time.time()-start_time_preflag))
+        except Exception as e:
+            logger.warning("Inspection plot QA failed. Continue with next QA")
+            logger.exception(e)
+    else:
+        logger.warning("#### Did not perform inspection plot QA")
+
     # Preflag QA
     # ==========
 
@@ -149,8 +171,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info("#### Running preflag QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_preflag))
         except Exception as e:
-            logger.error("Preflag QA failed. Continue with next QA")
-            logger.error(e)
+            logger.warning("Preflag QA failed. Continue with next QA")
+            logger.exception(e)
     else:
         logger.warning("#### Did not perform preflag QA")
 
@@ -171,8 +193,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info("#### Running crosscal QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_crosscal))
         except Exception as e:
-            logger.error("Crosscal QA failed. Continue with next QA")
-            logger.error(e)
+            logger.warning("Crosscal QA failed. Continue with next QA")
+            logger.exception(e)
     else:
         logger.warning("#### Did not perform crosscal QA")
 
@@ -193,8 +215,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info("#### Running selfcal QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_selfcal))
         except Exception as e:
-            logger.error("Selfcal QA failed. Continue with next QA")
-            logger.error(e)
+            logger.warning("Selfcal QA failed. Continue with next QA")
+            logger.exception(e)
     else:
         logger.warning("#### Did not perform selfcal QA")
 
@@ -231,8 +253,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info("#### Running mosaic QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_mosaic))
         except Exception as e:
-            logger.error("Mosaic QA failed. Continue with next QA")
-            logger.error(e)
+            logger.warning("Mosaic QA failed. Continue with next QA")
+            logger.exception(e)
     else:
         logger.warning("#### Did not perform mosaic QA")
 
@@ -281,8 +303,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info("#### Running line QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_line))
         except Exception as e:
-            logger.error("Line QA failed. Continue with next QA")
-            logger.error(e)
+            logger.warning("Line QA failed. Continue with next QA")
+            logger.exception(e)
     else:
         logger.warning("#### Did not perform line QA")
 
@@ -303,8 +325,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info("#### Running continuum QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_continuum))
         except Exception as e:
-            logger.error("Continuum QA failed. Continue with next QA")
-            logger.error(e)
+            logger.warning("Continuum QA failed. Continue with next QA")
+            logger.exception(e)
     else:
         logger.warning("#### Did not perform continuum QA")
 
@@ -325,8 +347,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
             logger.info("#### Create report ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_report))
         except Exception as e:
-            logger.error("Creating report failed.")
-            logger.error(e)
+            logger.warning("Creating report failed.")
+            logger.exception(e)
     else:
         logger.warning("#### Did not create a report")
 
