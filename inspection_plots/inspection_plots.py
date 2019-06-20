@@ -62,7 +62,7 @@ def get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type):
 
     # iget command to get the plot
     try:
-        cmd = "iget -fPIT -X --retries 5 {0} {1}".format(
+        cmd = "iget -fPIT {0} {1}".format(
             alta_plot_file, qa_plot_dir)
         logger.debug(cmd)
         subprocess.check_call(cmd, shell=True, stdout=FNULL, stderr=FNULL)
