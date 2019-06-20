@@ -95,7 +95,7 @@ def get_inspection_plots(obs_id, qa_plot_dir):
         for plot_type in plot_type_list:
 
             # exclude two plots from adding polarization
-            if plot_type != "_beams_xx" or plot_type != "_beams_yy":
+            if plot_type != "_beams_xx" and plot_type != "_beams_yy":
                 plot_type += "_{}".format(polarization)
 
             # get inspection plot
