@@ -25,7 +25,7 @@ parser.add_argument("obs_id", help='ID of observation of target field')
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
 parser.add_argument('-b', '--basedir', default=None,
-                    help='Directory of scan')
+                    help='Directory of obs id')
 
 # this mode will make the script look only for the beams processed by Apercal on a given node
 # parser.add_argument("--trigger_mode", action="store_true", default=False,
@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 try:
     logger.info("#### Getting inspection plots ...")
     start_time_plots = time.time()
-    get_inspection_plots(args.scan, qa_plot_dir)
+    get_inspection_plots(args.obs_id, qa_plot_dir)
 except Exception as e:
     logger.error(e)
     logger.error("#### Getting inspection plots failed")
