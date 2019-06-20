@@ -29,10 +29,10 @@ def get_inspection_plot_list():
                       '_beams_ampvschan',
                       '_beams_phavstime',
                       '_beams_phavschan',
-                      '_beams_waterfall_amplitude_autoscal',
-                      '_beams_waterfall_amplitude_noscal',
-                      '_beams_waterfall_phase_autoscal',
-                      '_beams_waterfall_amplitude_noscal',
+                      '_beams_waterfall_amplitude_autoscale',
+                      '_beams_waterfall_amplitude_noscale',
+                      '_beams_waterfall_phase_autoscale',
+                      '_beams_waterfall_amplitude_noscale',
                       '_beams_xx',
                       '_beams_yy']
 
