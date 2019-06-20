@@ -12,7 +12,7 @@ from selfcal import selfcal_plots as scplots
 import argparse
 from timeit import default_timer as timer
 from scandata import get_default_imagepath
-from preflag import preflag_plots
+from preflag.preflag_plots import combine_preflag_plots
 import time
 from apercal.libs import lib
 import logging
@@ -61,8 +61,7 @@ logger.info("Running preflag QA")
 # now combine the functions
 try:
     start_time = time.time()
-    preflag_plots.combine_preflag_plots(
-        qa_preflag_dir, trigger_mode=args.trigger_mode)
+    combine_preflag_plots(qa_preflag_dir, trigger_mode=args.trigger_mode)
 except Exception as e:
     logger.warning("Running preflag QA failed")
     logger.exception(e)
