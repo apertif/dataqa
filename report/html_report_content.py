@@ -98,7 +98,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
                     </div>--!>
                 </div>\n""".format(page_type, os.path.basename(image))
             
-            if img_counter % 3 == 0:
+            if img_counter % 3 == 2:
                 html_code += """</div>\n"""
                 
             img_counter += 1
@@ -148,7 +148,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No combined preflag plots found")
         html_code += """
-                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-2')">
                     Preflag summary table
                 </button>\n"""
 
@@ -270,6 +270,32 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
             </p>
         </div>\n
         """
+
+    # Create html code for summary table
+    # ==================================
+
+    table_found = True
+
+    if table_found:
+        html_code += """
+            <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-1')">
+                        Crosscal summary table
+                    </button>
+                </div>
+            <div class="w3-container w3-margin-top w3-show" name="gallery-1">\n"""
+
+        html_code += """
+            <p> No table here yet.
+            </p>\n"""
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No combined crosscal plots found")
+        html_code += """
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
+                    Crosscal summary table
+                </button>\n"""
+
     # the different plots
     categories = ["BP_amp", "BP_phase", "Gain_amp", "Gain_phase", "K_", "Df_amp", "Df_phase", "Kcross", "Xf_amp", "Xf_phase", "Raw_amp", "Raw_phase", "Model_amp", "Model_phase", "Corrected_amp", "Corrected_phase"]
 
