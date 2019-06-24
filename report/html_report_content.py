@@ -692,6 +692,57 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 </button>
             </div>\n"""
 
+    # Create html code for continuum images gallery
+    # =============================================
+
+    # get the phase plots
+    image_list = glob.glob(
+        "{0:s}/{1:s}/[0-3][0-9]/image_mf_[0-9][0-9].png".format(qa_report_obs_path, page_type))
+
+    if len(image_list) != 0:
+        html_code += """
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">{1:s}
+                </button>
+            </div>
+            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format("gallery_cont", "Continuum images")
+
+        img_counter = 0
+
+        for image in image_list:
+
+            if img_counter % 3 == 0:
+                html_code += """<div class="w3-row">\n"""
+
+            html_code += """
+            <div class="w3-third">
+                <a href="{0:s}/{1:s}">
+                <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                </a>
+                <div class="w3-container">
+                    <h5>Beam {2:s}</h5>
+                </div>
+            </div>\n""".format(page_type, os.path.basename(image), os.path.basename(os.path.dirname(image)))
+
+            if img_counter % 3 == 2:
+                html_code += """</div>\n"""
+
+            img_counter += 1
+
+        html_code += """</div>\n"""
+    else:
+        html_code += """
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+            {1:s}
+                </button>
+            </div>\n""".format("gallery_cont", "Gain factors Phase")
+
+
+    # Create html code for beam plots
+    # ===============================
+
+
     # get beams
     beam_list = glob.glob(
         "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
