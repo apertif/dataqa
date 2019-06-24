@@ -143,7 +143,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
             <p>
                 Here you can go through the different plots created by crosscal.
             </p>
-        <\div>\n
+        </div>\n
         """
     # the different plots
     categories = ["BP_amp", "BP_phase", "Gain_amp", "Gain_phase", "K_", "Df_amp", "Df_phase", "Kcross", "Xf_amp", "Xf_phase", "Raw_amp", "Raw_phase", "Model_amp", "Model_phase", "Corrected_amp", "Corrected_phase"]
