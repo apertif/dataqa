@@ -166,8 +166,13 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                         </button>
                     </div>
                 <div class="w3-container w3-margin-top w3-hide" name="gallery-1">\n"""
+        
+        img_counter = 0
 
         for image in image_list:
+            if img_counter % 3 == 0:
+                html_code += """<div class="w3-row">\n"""
+
             html_code += """
                 <div class="w3-third">
                     <a href="{0:s}/{1:s}">
@@ -177,6 +182,12 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                         <h5>{1:s}</h5>
                     </div> --!>
                 </div>\n""".format(page_type, os.path.basename(image))
+            
+            if img_counter % 3 == 2:
+                html_code += """</div>\n"""
+
+            img_counter += 1
+
         html_code += """</div>\n"""
     else:
         logger.warning("No combined preflag plots found")
@@ -219,7 +230,12 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                     </div>
                     <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
 
+                img_counter = 0
+
                 for image in images_in_beam:
+                    if img_counter % 3 == 0:
+                        html_code += """<div class="w3-row">\n"""
+
                     html_code += """
                         <div class="w3-third">
                             <a href="{0:s}/{1:s}/{2:s}">
@@ -229,6 +245,12 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                                 <h5>{2:s}</h5>
                             </div>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image))
+                    
+                    if img_counter % 3 == 2:
+                        html_code += """</div>\n"""
+                    
+                    img_counter += 1
+
                 html_code += """</div>\n"""
             else:
                 logger.warning("No images in beam {0:s} found".format(
@@ -339,13 +361,24 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                     </div>
                     <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, categories_titles[k])
 
+                img_counter = 0
+
                 for image in cat_plots:
+                    if img_counter % 3 == 0:
+                        html_code += """<div class="w3-row">\n"""
+
                     html_code += """
                         <div class="w3-third">
                             <a href="{0:s}/{1:s}">
                                 <img src="{0:s}/{1:s}" alt="No image", width="100%">
                             </a>
                         </div>\n""".format(page_type, os.path.basename(image))
+                    
+                    if img_counter % 3 == 2:
+                        html_code += """</div>\n"""
+
+                    img_counter += 1
+
                 html_code += """</div>\n"""
             else:
 
@@ -393,6 +426,31 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
         </div>\n
         """
 
+    # Create html code for summary table
+    # ==================================
+
+    table_found = True
+
+    if table_found:
+        html_code += """
+            <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-1')">
+                        Selfcal summary table
+                    </button>
+                </div>
+            <div class="w3-container w3-margin-top w3-show" name="gallery-1">\n"""
+
+        html_code += """
+            <p> No table here yet.
+            </p>\n"""
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No selfcal table found")
+        html_code += """
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
+                    Selfcal summary table
+                </button>\n"""
+
     # the plots for the selfcal gains
     # ===============================
 
@@ -407,13 +465,21 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
             </div>
             <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format("gallery_phase", "Gain factors Phase")
 
+        img_counter = 0
+
         for image in phase_list:
+
+            if img_counter % 3 == 0:
+                html_code += """<div class="w3-row">\n"""
+
             html_code += """
-            <div class="third">
+            <div class="w3-third">
                 <a href="{0:s}/{1:s}">
                 <img src="{0:s}/{1:s}" alt="No image", width="100%">
                 </a>
             </div>\n""".format(page_type, os.path.basename(image))
+
+            
         html_code += """</div>\n"""
     else:
         html_code += """
@@ -434,13 +500,25 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
             </div>
             <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format("gallery_amp", "Gain factors Amplitude")
 
+        img_counter = 0
+
         for image in amp_list:
+
+            if img_counter % 3 == 0:
+                html_code += """<div class="w3-row">\n"""
+
             html_code += """
                 <div class="third">
                     <a href="{0:s}/{1:s}">
                     <img src="{0:s}/{1:s}" alt="No image", width="100%">
                     </a>
                 </div>\n""".format(page_type, os.path.basename(image))
+
+            if img_counter % 3 == 2:
+                html_code += """</div>\n"""
+
+            img_counter += 1
+
         html_code += """</div>\n"""
     else:
         html_code += """
@@ -485,6 +563,8 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                     </div>
                     <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
 
+                img_counter = 0
+
                 for image in image_list:
 
                     major_cycle = os.path.basename(image).split("_")[0]
@@ -502,13 +582,22 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                     else:
                         caption = ""
 
+                    if img_counter % 4 == 0:
+                        html_code += """<div class="w3-row">\n"""
+
                     html_code += """
-                        <div class="third">
+                        <div class="w3-quarter">
                             <a href="{0:s}/{1:s}/{2:s}">
                                 <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
                             </a>
                             <div class="w3-container"><h5>{3:s}</h5></div>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image), caption)
+
+                    if img_counter % 4 == 3:
+                        html_code += """</div>\n"""
+
+                    img_counter += 1
+
                 html_code += """</div>\n"""
 
                 # # go throught the different types of plots
