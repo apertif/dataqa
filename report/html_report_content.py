@@ -80,7 +80,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
 
     if len(image_list) != 0:
         html_code += """
-                <div class="w3-container w3-margin-top w3-hide">\n"""
+                <div class="w3-container w3-margin-top">\n"""
 
         for image in image_list:
             html_code += """
