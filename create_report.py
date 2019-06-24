@@ -107,7 +107,7 @@ if __name__ == "__main__":
         logger.error(e)
 
     # the subpages to be created
-    subpages = ['preflag', 'crosscal',
+    subpages = ['inspection_plots', 'preflag', 'crosscal',
                 'continuum', 'selfcal', 'line', 'mosaic', 'apercal_log']
 
     logger.info("#### Create report directory structure")
