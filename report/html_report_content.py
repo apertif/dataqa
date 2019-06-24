@@ -23,10 +23,48 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="w3-container w3-large">
-            Here you can go through the different plots created by preflag.
-        </p>\n
+        <div class="w3-container w3-large">
+            <p>Here you can go through the different plots created by preflag.</p>
+        </div>\n
         """
+
+    
+    # Create html code for combined preflag plots
+    # ===========================================
+    # get images
+    image_list = glob.glob(
+        "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
+    
+    if len(image_list) != 0:
+        html_code += """
+                <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-1')">
+                            Combined plots
+                        </button>
+                    </div>
+                <div class="w3-container w3-margin-top w3-hide" name="gallery-1">\n"""
+
+        for image in image_list:
+            html_code += """
+                <div class="w3-third">
+                    <a href="{0:s}/{1:s}">
+                        <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+                    </a>
+                    <div class="w3-container w3-center">
+                        <h5>{1:s}</h5>
+                    </div>
+                </div>\n""".format(page_type, os.path.basename(image))
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No combined preflag plots found")
+        html_code += """
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
+                    Combined plots
+                </button>\n"""
+
+
+    # Create html code for individual beam plots
+    # ==========================================
 
     # get beams
     beam_list = glob.glob(
@@ -34,6 +72,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
 
     n_beams = len(beam_list)
 
+    # if there are beams go through them
     if n_beams != 0:
 
         beam_list.sort()
@@ -50,9 +89,11 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                 images_in_beam.sort()
 
                 html_code += """
-                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
-                        Beam {1:s}
-                    </button>
+                    <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                            Beam {1:s}
+                        </button>
+                    </div>
                     <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
 
                 for image in images_in_beam:
