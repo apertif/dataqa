@@ -719,7 +719,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 <a href="{0:s}/{1:s}/{2:s}">
                 <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
                 </a>
-                <div class="w3-container">
+                <div class="w3-container w3-center">
                     <h5>Beam {1:s}</h5>
                 </div>
             </div>\n""".format(page_type, os.path.basename(os.path.dirname(image)), os.path.basename(image))
