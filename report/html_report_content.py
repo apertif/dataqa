@@ -98,7 +98,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
                     </div>--!>
                 </div>\n""".format(page_type, os.path.basename(image))
             
-            if img_counter % 3 == 2:
+            if img_counter % 3 == 2 or img_counter == len(img_list)-1:
                 html_code += """</div>\n"""
                 
             img_counter += 1
@@ -183,7 +183,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                     </div> --!>
                 </div>\n""".format(page_type, os.path.basename(image))
             
-            if img_counter % 3 == 2:
+            if img_counter % 3 == 2 or img_counter == len(img_list)-1:
                 html_code += """</div>\n"""
 
             img_counter += 1
@@ -246,7 +246,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                             </div>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image))
                     
-                    if img_counter % 3 == 2:
+                    if img_counter % 3 == 2 or img_counter == len(images_in_beam)-1:
                         html_code += """</div>\n"""
                     
                     img_counter += 1
@@ -374,7 +374,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                             </a>
                         </div>\n""".format(page_type, os.path.basename(image))
                     
-                    if img_counter % 3 == 2:
+                    if img_counter % 3 == 2 or img_counter == n_cats-1:
                         html_code += """</div>\n"""
 
                     img_counter += 1
@@ -429,7 +429,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
     # Create html code for summary table
     # ==================================
 
-    table_found = True
+    table_found = False
 
     if table_found:
         html_code += """
@@ -483,7 +483,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 html_code += """</div>\n"""
 
             img_counter += 1
-            
+
         html_code += """</div>\n"""
     else:
         html_code += """
@@ -597,7 +597,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                             <div class="w3-container"><h5>{3:s}</h5></div>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image), caption)
 
-                    if img_counter % 4 == 3:
+                    if img_counter % 4 == 3 or img_counter == n_images-1:
                         html_code += """</div>\n"""
 
                     img_counter += 1
@@ -650,7 +650,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
 
 
 def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
-    """Function to create the html page for crosscal
+    """Function to create the html page for continuum
     """
 
     logger.info("Writing html code for page {0:s}".format(page_type))
@@ -662,6 +662,31 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
             This page will only have content after the continuum QA step has been performed.
         </p>\n
         """
+
+    # Create html code for summary table
+    # ==================================
+
+    table_found = False
+
+    if table_found:
+        html_code += """
+            <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-1')">
+                        Continuum summary table
+                    </button>
+                </div>
+            <div class="w3-container w3-margin-top w3-show" name="gallery-1">\n"""
+
+        html_code += """
+            <p> No table here yet.
+            </p>\n"""
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No continuum table found")
+        html_code += """
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
+                    Continuum summary table
+                </button>\n"""
 
     # get beams
     beam_list = glob.glob(
@@ -702,16 +727,17 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 # go throught the different types of plots
                 # they require a different layout because the plot sizes vary
                 for m in range(n_images):
-                    if m % 2 == 0:
-                        html_code += """<div class="gallery_column">"""
 
-                    html_code += """<div class="mosaic_img">
+                    if m % 3 == 0:
+                        html_code += """<div class="w3-row">\n"""
+                    
+                    html_code += """<div class="w3-third">
                             <a href="{0:s}/{1:s}/{2:s}">
                                 <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
                             </a>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image_list[m]))
 
-                    if m % 2 != 0 or m == n_images-1:
+                    if m % 3 == 2:
                         html_code += """</div>\n"""
 
                 html_code += """</div>\n"""
