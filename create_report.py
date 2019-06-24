@@ -43,6 +43,9 @@ if __name__ == "__main__":
     parser.add_argument("-b", "--basedir", type=str,
                         help='Base directory where the obs id is')
 
+    parser.add_argument("-c", "--combine", action="store_true", default=False,
+                        help='Set to create a combined report from all happilis on happili-01')
+
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
                         help='Set it to run Autocal triggering mode automatically after Apercal.')
