@@ -98,7 +98,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
                     </div>--!>
                 </div>\n""".format(page_type, os.path.basename(image))
             
-            if img_counter % 3 == 2 or img_counter == len(img_list)-1:
+            if img_counter % 3 == 2 or img_counter == len(image_list)-1:
                 html_code += """</div>\n"""
                 
             img_counter += 1
@@ -183,7 +183,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                     </div> --!>
                 </div>\n""".format(page_type, os.path.basename(image))
             
-            if img_counter % 3 == 2 or img_counter == len(img_list)-1:
+            if img_counter % 3 == 2 or img_counter == len(image_list)-1:
                 html_code += """</div>\n"""
 
             img_counter += 1
@@ -684,9 +684,11 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No continuum table found")
         html_code += """
+            <div class="w3-container">
                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
                     Continuum summary table
-                </button>\n"""
+                </button>
+            </div>\n"""
 
     # get beams
     beam_list = glob.glob(
@@ -712,9 +714,12 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
                 image_list.sort()
 
-                html_code += """<button onclick="show_hide_plots('{0:s}')">
+                html_code += """
+                        <div class="w3-container">
+                            <button onclick="show_hide_plots('{0:s}')">
                             Beam {1:s}
-                        </button>
+                            </button>
+                        </div>
                         <div class="beam_continuum" name="{0:s}">
                             <button class="button_continuum" onclick="show_hide_plots('{2:s}')">
                                 PyBDSF Diagnostic plots
