@@ -16,6 +16,94 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
+def write_obs_content_summary(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for summary
+    """
+
+    logger.info("Writing html code for page {0:s}".format(page_type))
+
+    html_code += """
+        <div class="w3-container w3-large">
+            <p>Here you will find a summary plot with compound beams.</p>
+        </div>\n
+        """
+
+    # # Create html code for inspection plots
+    # # =====================================
+    # # get images
+    # image_list = glob.glob(
+    #     "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
+
+    # if len(image_list) != 0:
+    #     html_code += """
+    #             <div class="w3-container w3-margin-top w3-hide">\n"""
+
+    #     for image in image_list:
+    #         html_code += """
+    #             <div class="w3-third">
+    #                 <a href="{0:s}/{1:s}">
+    #                     <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+    #                 </a>
+    #                 <div class="w3-container w3-center">
+    #                     <h5>{1:s}</h5>
+    #                 </div>
+    #             </div>\n""".format(page_type, os.path.basename(image))
+    #     html_code += """</div>\n"""
+    # else:
+    #     logger.warning("No inspection plots found")
+    #     html_code += """
+    #     <div class="w3-container w3-large w3-text-red">
+    #         <p>
+    #             No plots were found for preflag
+    #         </p>
+    #     </div>\n"""
+
+    return html_code
+
+def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type):
+    """Function to create the html page for inspection plots
+    """
+
+    logger.info("Writing html code for page {0:s}".format(page_type))
+
+    html_code += """
+        <div class="w3-container w3-large">
+            <p>Here you can go through the different plots created by preflag.</p>
+        </div>\n
+        """
+
+    # Create html code for inspection plots
+    # =====================================
+    # get images
+    image_list = glob.glob(
+        "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
+
+    if len(image_list) != 0:
+        html_code += """
+                <div class="w3-container w3-margin-top w3-hide">\n"""
+
+        for image in image_list:
+            html_code += """
+                <div class="w3-third">
+                    <a href="{0:s}/{1:s}">
+                        <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+                    </a>
+                    <div class="w3-container w3-center">
+                        <h5>{1:s}</h5>
+                    </div>
+                </div>\n""".format(page_type, os.path.basename(image))
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No inspection plots found")
+        html_code += """
+        <div class="w3-container w3-large w3-text-red">
+            <p>
+                No plots were found for preflag
+            </p>
+        </div>\n"""
+
+    return html_code
+
 def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     """Function to create the html page for preflag
     """
@@ -125,9 +213,11 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No beams found for preflag found")
         html_code += """
-        <p class="warning">
-            No plots were found for preflag
-        </p>\n"""
+        <div class="w3-container w3-large w3-text-red">
+            <p>
+                No plots were found for preflag
+            </p>
+        </div>\n"""
 
     return html_code
 
@@ -217,9 +307,11 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No crosscal plots found")
         html_code += """
-        <p class="warning">
-            No plots were found for crosscal
-        </p>\n"""
+        <div class="w3-container w3-large w3-text-red">
+            <p>
+                No plots were found for crosscal
+            </p>
+        </div>\n"""
 
     return html_code
 
@@ -241,6 +333,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
         """
 
     # the plots for the selfcal gains
+    # ===============================
 
     # get the phase plots
     phase_list = glob.glob("{0:s}/{1:s}/SCAL_phase*png".format(qa_report_obs_path, page_type))
@@ -295,6 +388,9 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                         {1:s}
                     </button>
                 </div>\n""".format("gallery_amp", "Gain factors Amplitude")
+
+    # Selfcal iteration maps sorted by beam
+    # =====================================
 
     # get beams
     beam_list = glob.glob(
@@ -384,9 +480,11 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No beams for selfcal QA found")
         html_code += """
-        <p class="warning">
-            No beams were found for selfcal QA.
-        </p>\n"""
+        <div class="w3-container w3-large w3-text-red">
+            <p>
+                No beams were found for selfcal QA.
+            </p>
+        </div>\n"""
 
     # html_code += """
     #     <p class="info">
