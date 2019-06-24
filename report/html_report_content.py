@@ -1073,6 +1073,27 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
 
     qa_report_obs_path = "{0:s}/{1:s}".format(qa_report_path, obs_id)
 
+    # create html content for subpage summary
+    # +++++++++++++++++++++++++++++++++++++++
+    if page_type == 'summary':
+
+        try:
+            html_code = write_obs_content_summary(
+                html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
+
+    # create html content for subpage inspection plots
+    # ++++++++++++++++++++++++++++++++++++++++++++++++
+    if page_type == 'inspection_plots':
+
+        try:
+            html_code = write_obs_content_inspection_plots(
+                html_code, qa_report_obs_path, page_type)
+        except Exception as e:
+            logger.error(e)
+
+
     # create html content for subpage preflag
     # +++++++++++++++++++++++++++++++++++++++
     if page_type == 'preflag':
