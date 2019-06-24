@@ -85,16 +85,16 @@ def write_html_obs_index(html_file_name, obs_id):
                 <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">inspection
                     plots</a>
                 <a class="w3-bar-item w3-button w3-hover-orange"
-                    href="{0:s}/{0:s}_inspection_plots.html">preflag</a>
+                    href="{0:s}/{0:s}_preflag.html">preflag</a>
                 <a class="w3-bar-item w3-button w3-hover-orange"
-                    href="{0:s}/{0:s}_inspection_plots.html">crosscal</a>
+                    href="{0:s}/{0:s}_crosscal.html">crosscal</a>
                 <a class="w3-bar-item w3-button w3-hover-orange"
-                    href="{0:s}/{0:s}_inspection_plots.html">selfcal</a>
+                    href="{0:s}/{0:s}_selfcal.html">selfcal</a>
                 <a class="w3-bar-item w3-button w3-hover-orange"
-                    href="{0:s}/{0:s}_inspection_plots.html">continuum</a>
-                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">line</a>
-                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">mosaic</a>
-                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">apercal
+                    href="{0:s}/{0:s}_continuum.html">continuum</a>
+                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_line.html">line</a>
+                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_mosaic.html">mosaic</a>
+                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_apercal_log.html">apercal
                     log</a>
             </div>
         </div>\n""".format(obs_id)
