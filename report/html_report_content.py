@@ -447,9 +447,11 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No selfcal table found")
         html_code += """
+            <div class="w3-container">
                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
                     Selfcal summary table
-                </button>\n"""
+                </button>
+            </div>\n"""
 
     # the plots for the selfcal gains
     # ===============================
@@ -716,18 +718,17 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
                 html_code += """
                         <div class="w3-container">
-                            <button onclick="show_hide_plots('{0:s}')">
+                            <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
                             Beam {1:s}
                             </button>
                         </div>
-                        <div class="beam_continuum" name="{0:s}">
-                            <button class="button_continuum" onclick="show_hide_plots('{2:s}')">
-                                PyBDSF Diagnostic plots
-                            </button>
-                        \n""".format(button_html_name, os.path.basename(beam_list[k]), div_name)
-
-                html_code += """<div class="gallery_row" name="{0:s}">\n""".format(
-                    div_name)
+                        <div class="w3-container" name="{0:s}">
+                            <div class="w3-container">
+                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{2:s}')">
+                                    PyBDSF Diagnostic plots
+                                </button>
+                            </div>
+                            <div class="w3-container w3-margin-top w3-hide" name="{2:s}">\n""".format(button_html_name, os.path.basename(beam_list[k]), div_name)
 
                 # go throught the different types of plots
                 # they require a different layout because the plot sizes vary
@@ -742,7 +743,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                             </a>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image_list[m]))
 
-                    if m % 3 == 2:
+                    if m % 3 == 2 or m == n_images-1:
                         html_code += """</div>\n"""
 
                 html_code += """</div>\n"""
@@ -759,20 +760,24 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                         button_name = "validation_tool{0:d}".format(k)
 
                         html_code += """
+                            <div class="w3-container">
                                 <button class="button_continuum" onclick="show_hide_plots('{0:s}')">
                                     Validation Tool
-                                </button>\n""".format(button_name)
+                                </button>
+                            </div>
+                            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(button_name)
 
                         html_code += """
-                            <p>
-                                <iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
-                            </p>
+                                <div class="w3-container">
+                                    <!--<iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>--!>
+                                    <iframe src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
+                                </div>
                             </div>\n""".format(button_name, page_type, os.path.basename(beam_list[k]), os.path.basename(frame_name))
                     else:
                         logger.warning("No continuum validation tool found for beam {0:s}".format(
                             os.path.basename(beam_list[k])))
                         html_code += """
-                            <div class="gallery" name="{0:s}">
+                            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">
                                 <p class="warning">
                                     No plots and validation tool were found for {1:s}
                                 </p>
@@ -781,8 +786,8 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                     logger.warning("No continuum validation tool found for beam {0:s}".format(
                         os.path.basename(beam_list[k])))
                     html_code += """
-                        <div class="gallery" name="{0:s}">
-                            <p class="warning">
+                        <div class="w3-container w3-large w3-text-red" name="{0:s}">
+                            <p>
                                 No plots and validation tool were found for {1:s}
                             </p>
                         </div>\n""".format(button_html_name, page_type)
@@ -791,9 +796,13 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 logger.warning("No continuum plots and validation found for beam {0:s}".format(
                     os.path.basename(beam_list[k])))
                 html_code += """
-                <button class="disabled" onclick="show_hide_plots('{0:s}')">
+                <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
-                    </button>\n""".format(button_html_name, os.path.basename(beam_list[k]))
+                    </button>
+                </div>\n""".format(button_html_name, os.path.basename(beam_list[k]))
+
+            html_code += """</div>\n"""
 
                 # html_code += """
                 #     <div class="gallery" name="{0:s}">
@@ -805,9 +814,11 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No beams for continuum QA found")
         html_code += """
-        <p class="warning">
-            No beams were found for continuum QA.
-        </p>\n"""
+        <div class="w3-container w3-large w3-text-red">
+            <p>
+                No beams were found for continuum QA.
+            </p>
+        </div\n"""
 
     return html_code
 
