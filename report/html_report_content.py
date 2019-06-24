@@ -479,6 +479,10 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 </a>
             </div>\n""".format(page_type, os.path.basename(image))
 
+            if img_counter % 3 == 2:
+                html_code += """</div>\n"""
+
+            img_counter += 1
             
         html_code += """</div>\n"""
     else:
