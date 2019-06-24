@@ -79,26 +79,24 @@ def write_html_obs_index(html_file_name, obs_id):
     obs_index += """
         <div class="w3-container w3-center w3-xlarge">
             <b>{0:s}</b>
-        </div>
-        <div class="w3-top">
-            <div class="w3-container w3-center">
-                <div class="w3-bar w3-large w3-dark-gray">
-                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_summary.html">Summary</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_inspection_plots.html">inspection
-                        plots</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow"
-                        href="{0:s}/{0:s}_preflag.html">preflag</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow"
-                        href="{0:s}/{0:s}_crosscal.html">crosscal</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow"
-                        href="{0:s}/{0:s}_selfcal.html">selfcal</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow"
-                        href="{0:s}/{0:s}_continuum.html">continuum</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_line.html">line</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_mosaic.html">mosaic</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_apercal_log.html">apercal
-                        log</a>
-                </div>
+        </div>       
+        <div class="w3-container w3-center">
+            <div class="w3-bar w3-large w3-dark-gray">
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_summary.html">Summary</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_inspection_plots.html">inspection
+                    plots</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_preflag.html">preflag</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_crosscal.html">crosscal</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_selfcal.html">selfcal</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_continuum.html">continuum</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_line.html">line</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_mosaic.html">mosaic</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_apercal_log.html">apercal
+                    log</a>
             </div>
         </div>\n""".format(obs_id)
 
@@ -116,20 +114,24 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
     """
 
     html_code = """
-        <div class="w3-container w3-dark-gray w3-large">
-            <div class="w3-bar">
+        <div class="w3-top">
+            <div class="w3-container w3-dark-gray w3-large">
+                <div class="w3-bar">
         """
     for page in links:
         if page == page_type:
-            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow w3-amber" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
+            html_code += """
+                    <a class="w3-bar-item w3-button w3-hover-yellow w3-amber" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
                 obs_id, page, page.replace("_", " "))
         else:
-            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
+            html_code += """
+                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
                 obs_id, page, page.replace("_", " "))
 
     html_code += """
-                <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="../index.html">Overview of Observation</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guide</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="../index.html">Overview of Observation</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guide</a>
+                </div>
             </div>
         </div>\n"""
 
