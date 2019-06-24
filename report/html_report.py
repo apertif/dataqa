@@ -82,6 +82,7 @@ def write_html_obs_index(html_file_name, obs_id):
         </div>
         <div class="w3-container w3-center">
             <div class="w3-bar w3-large w3-dark-gray">
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_summary.html">Summary</a>
                 <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_inspection_plots.html">inspection
                     plots</a>
                 <a class="w3-bar-item w3-button w3-hover-yellow"
