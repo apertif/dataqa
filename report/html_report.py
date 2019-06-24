@@ -154,7 +154,7 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
 
             # create the header
             write_html_header(
-                page_name, css_file, js_file, page_type=page, obs_id=obs_id)
+                page_name, js_file, css_file=css_file, page_type=page, obs_id=obs_id)
 
             write_html_navbar(page_name, subpages,
                               page_type=page, obs_id=obs_id)
