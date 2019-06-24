@@ -771,7 +771,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                         html_code += """
                                 <div class="w3-container">
                                     <!--<iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>--!>
-                                    <iframe class="validation_tool" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
+                                    <iframe class="w3-container" style="width:100%; height:1000px" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
                                 </div>
                             </div>\n""".format(button_name, page_type, os.path.basename(beam_list[k]), os.path.basename(frame_name))
                     else:
