@@ -722,7 +722,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                             Beam {1:s}
                             </button>
                         </div>
-                        <div class="w3-container" name="{0:s}">
+                        <div class="w3-container w3-margin-top w3-hide" name="{0:s}">
                             <div class="w3-container">
                                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{2:s}')">
                                     PyBDSF Diagnostic plots
@@ -737,7 +737,8 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                     if m % 3 == 0:
                         html_code += """<div class="w3-row">\n"""
                     
-                    html_code += """<div class="w3-third">
+                    html_code += """
+                        <div class="w3-third">
                             <a href="{0:s}/{1:s}/{2:s}">
                                 <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
                             </a>
@@ -761,7 +762,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
                         html_code += """
                             <div class="w3-container">
-                                <button class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
                                     Validation Tool
                                 </button>
                             </div>
