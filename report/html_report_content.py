@@ -374,7 +374,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                             </a>
                         </div>\n""".format(page_type, os.path.basename(image))
                     
-                    if img_counter % 3 == 2 or img_counter == n_cats-1:
+                    if img_counter % 3 == 2 or img_counter == len(cat_plots)-1:
                         html_code += """</div>\n"""
 
                     img_counter += 1
