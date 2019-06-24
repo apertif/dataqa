@@ -80,23 +80,25 @@ def write_html_obs_index(html_file_name, obs_id):
         <div class="w3-container w3-center w3-xlarge">
             <b>{0:s}</b>
         </div>
-        <div class="w3-container w3-center">
-            <div class="w3-bar w3-large w3-dark-gray">
-                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_summary.html">Summary</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_inspection_plots.html">inspection
-                    plots</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow"
-                    href="{0:s}/{0:s}_preflag.html">preflag</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow"
-                    href="{0:s}/{0:s}_crosscal.html">crosscal</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow"
-                    href="{0:s}/{0:s}_selfcal.html">selfcal</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow"
-                    href="{0:s}/{0:s}_continuum.html">continuum</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_line.html">line</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_mosaic.html">mosaic</a>
-                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_apercal_log.html">apercal
-                    log</a>
+        <div class="w3-top">
+            <div class="w3-container w3-center">
+                <div class="w3-bar w3-large w3-dark-gray">
+                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_summary.html">Summary</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_inspection_plots.html">inspection
+                        plots</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow"
+                        href="{0:s}/{0:s}_preflag.html">preflag</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow"
+                        href="{0:s}/{0:s}_crosscal.html">crosscal</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow"
+                        href="{0:s}/{0:s}_selfcal.html">selfcal</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow"
+                        href="{0:s}/{0:s}_continuum.html">continuum</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_line.html">line</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_mosaic.html">mosaic</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_apercal_log.html">apercal
+                        log</a>
+                </div>
             </div>
         </div>\n""".format(obs_id)
 

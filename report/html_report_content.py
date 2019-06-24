@@ -724,7 +724,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                         </div>
                         <div class="w3-container w3-margin-top w3-hide" name="{0:s}">
                             <div class="w3-container">
-                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{2:s}')">
+                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{2:s}')">
                                     PyBDSF Diagnostic plots
                                 </button>
                             </div>
@@ -762,7 +762,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
                         html_code += """
                             <div class="w3-container">
-                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
                                     Validation Tool
                                 </button>
                             </div>
@@ -771,7 +771,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                         html_code += """
                                 <div class="w3-container">
                                     <!--<iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>--!>
-                                    <iframe src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
+                                    <iframe class="validation_tool" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
                                 </div>
                             </div>\n""".format(button_name, page_type, os.path.basename(beam_list[k]), os.path.basename(frame_name))
                     else:
