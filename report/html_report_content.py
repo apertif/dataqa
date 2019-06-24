@@ -195,7 +195,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                                 <img src="{0:s}/{1:s}" alt="No image", width="100%">
                             </a>
                         </div>\n""".format(page_type, os.path.basename(image))
-                html_code += """\n"""
+                html_code += """</div>\n"""
             else:
 
                 div_name = "gallery{0:d}".format(k)
