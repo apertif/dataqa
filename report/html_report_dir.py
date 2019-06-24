@@ -29,7 +29,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
         "## Creating report directory for inspection plots and linking files...")
 
     # get the images in the subdirectory
-    images_inspection_plots = glob.glob(os.path.join(qa_dir, "crosscal/*.png"))
+    images_inspection_plots = glob.glob(os.path.join(qa_dir, "inspection_plots/*.png"))
 
     if len(images_inspection_plots) != 0:
 
@@ -733,7 +733,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     """
 
     # first check that the subdirectory report exists
-    qa_dir_report = "{0:s}report".format(qa_dir)
+    qa_dir_report = os.path.join(qa_dir,"report")
 
     # copy the js and css files
     try:
@@ -773,6 +773,15 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
             logger.info(
                 "Directory '{0:s} does not exists and will be created".format(qa_dir_report_obs_subpage))
             os.mkdir(qa_dir_report_obs_subpage)
+
+        # Create links for files from inspection plot QA
+        # +++++++++++++++++++++++++++++++++++++++++++++++
+        if page == "inspection_plots":
+
+            try:
+                create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+            except Exception as e:
+                logger.error(e)
 
         # Create links for files from preflag QA
         # ++++++++++++++++++++++++++++++++++++++
