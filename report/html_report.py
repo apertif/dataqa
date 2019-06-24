@@ -118,11 +118,11 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         """
     for page in links:
         if page == page_type:
-            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow w3-amber" href="{0:s}_{1:s}.html">{1:s}</a>\n""".format(
-                obs_id, page)
+            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow w3-amber" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
+                obs_id, page, page.replace("_", " "))
         else:
-            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}_{1:s}.html">{1:s}</a>\n""".format(
-                obs_id, page)
+            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
+                obs_id, page, page.replace("_", " "))
 
     html_code += """
                 <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="../index.html">Overview of Observation</a>
