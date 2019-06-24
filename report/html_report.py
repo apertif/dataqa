@@ -29,22 +29,43 @@ def write_html_header(html_file_name, js_file, css_file=None, page_type='index',
         js_file = "../{0:s}".format(js_file)
 
     html_file = open(html_file_name, 'w')
-    html_file.write("""<!DOCTYPE HTML>
-    <html lang="en">
-    <head>
-        <title>{0}</title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <meta name="description" content="" />
-        <meta name="keywords" content="" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        <script src="{1}"></script>
-        <link rel="stylesheet" type="text/css" href="{2}" />
-    </head>
-    <body>
-        <div class="w3-container w3-center w3-margin-bottom w3-amber">
-            <h1>{0}</h1>
-        </div>\n""".format(page_title, js_file, css_file))
+    # this is a quick fix to have the title of the qa pages below the nav bar
+    # need to find a better solution for this
+    if page_type != "index":
+        html_file.write("""<!DOCTYPE HTML>
+        <html lang="en">
+        <head>
+            <title>{0}</title>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+            <meta name="description" content="" />
+            <meta name="keywords" content="" />
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+            <script src="{1}"></script>
+            <link rel="stylesheet" type="text/css" href="{2}" />
+        </head>
+        <body>
+            <br><br>
+            <div class="w3-container w3-center w3-margin-bottom w3-amber">
+                <h1>{0}</h1>
+            </div>\n""".format(page_title, js_file, css_file))
+    else:
+        html_file.write("""<!DOCTYPE HTML>
+        <html lang="en">
+        <head>
+            <title>{0}</title>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+            <meta name="description" content="" />
+            <meta name="keywords" content="" />
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+            <script src="{1}"></script>
+            <link rel="stylesheet" type="text/css" href="{2}" />
+        </head>
+        <body>
+            <div class="w3-container w3-center w3-margin-bottom w3-amber">
+                <h1>{0}</h1>
+            </div>\n""".format(page_title, js_file, css_file))
 
     html_file.close()
 
@@ -133,7 +154,8 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
                     <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guide</a>
                 </div>
             </div>
-        </div>\n"""
+        </div>
+        \n"""
 
     try:
         html_file = open(html_file_name, 'a')
