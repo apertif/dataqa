@@ -201,9 +201,11 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                 div_name = "gallery{0:d}".format(k)
 
                 html_code += """
-                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
-                        {1:s}
-                    </button>\n""".format(div_name, categories_titles[k])
+                    <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+                            {1:s}
+                        </button>
+                    </div>\n""".format(div_name, categories_titles[k])
 
                 # html_code += """
                 #     <div class="gallery" name="{0:s}">
@@ -229,11 +231,13 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="info">
-            This page shows the images and residuals from every major and minor phase self-cal iteration.
-            In addition selfcal phase and amplitude gains are shown for each antenna. <br>
-            This page will only have content after the selfcal QA step has been performed.
-        </p>\n
+        <div class="w3-container w3-large">
+            <p>
+                This page shows the images and residuals from every major and minor phase self-cal iteration.
+                In addition selfcal phase and amplitude gains are shown for each antenna. <br>
+                This page will only have content after the selfcal QA step has been performed.
+            </p>
+        </div>\n
         """
 
     # the plots for the selfcal gains
@@ -242,43 +246,55 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
     phase_list = glob.glob("{0:s}/{1:s}/SCAL_phase*png".format(qa_report_obs_path, page_type))
 
     if len(phase_list) != 0:
-        html_code += """<button onclick="show_hide_plots('{0:s}')">{1:s}
-            </button>\n""".format("gallery_phase", "Gain factors Phase")
+        html_code += """
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">{1:s}
+                </button>
+            </div>
+            <div class="w3-container w3-margin-top w3-hide" name="{0:s}"\n""".format("gallery_phase", "Gain factors Phase")
 
         for image in phase_list:
             html_code += """
-            <div class="gallery" name="{0:s}">
-            <a href="{1:s}/{2:s}">
-            <img src="{1:s}/{2:s}" alt="No image", width="100%">
-            </a>
-            </div>\n""".format("gallery_phase", page_type, os.path.basename(image))
-            html_code += """\n"""
+            <div class="third">
+                <a href="{0:s}/{1:s}">
+                <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                </a>
+            </div>\n""".format(page_type, os.path.basename(image))
+        html_code += """</div>\n"""
     else:
         html_code += """
-            <button class="disabled" onclick="show_hide_plots('{0:s}')">
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
             {1:s}
-            </button>\n""".format("gallery_phase", "Gain factors Phase")
+                </button>
+            </div>\n""".format("gallery_phase", "Gain factors Phase")
 
     # get the amplitude plots
     amp_list = glob.glob("{0:s}/{1:s}/SCAL_amp*png".format(qa_report_obs_path, page_type))
 
     if len(amp_list) != 0:
-        html_code += """<button onclick="show_hide_plots('{0:s}')">{1:s}
-                </button>\n""".format("gallery_amp", "Gain factors Amplitude")
+        html_code += """
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">{1:s}
+                </button>
+            </div>
+            <div class="w3-container w3-margin-top w3-hide" name="{0:s}"\n""".format("gallery_amp", "Gain factors Amplitude")
 
         for image in amp_list:
             html_code += """
-                <div class="gallery" name="{0:s}">
-                <a href="{1:s}/{2:s}">
-                <img src="{1:s}/{2:s}" alt="No image", width="100%">
-                </a>
-                </div>\n""".format("gallery_amp", page_type, os.path.basename(image))
-            html_code += """\n"""
+                <div class="third">
+                    <a href="{0:s}/{1:s}">
+                    <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                    </a>
+                </div>\n""".format(page_type, os.path.basename(image))
+        html_code += """</div>\n"""
     else:
         html_code += """
-                <button class="disabled" onclick="show_hide_plots('{0:s}')">
-                {1:s}
-                </button>\n""".format("gallery_amp", "Gain factors Amplitude")
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+                        {1:s}
+                    </button>
+                </div>\n""".format("gallery_amp", "Gain factors Amplitude")
 
     # get beams
     beam_list = glob.glob(
@@ -305,9 +321,12 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 image_list.sort()
 
                 html_code += """
-                    <button onclick="show_hide_plots('{0:s}')">
+                    <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
-                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+                        </button>
+                    </div>
+                    <div class="w3-container w3-margin-top w3-hide" name="{0:s}"\n""".format(div_name, os.path.basename(beam_list[k]))
 
                 for image in image_list:
 
@@ -327,13 +346,13 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                         caption = ""
 
                     html_code += """
-                        <div class="gallery_selfcal" name="{0:s}">
-                            <a href="{1:s}/{2:s}/{3:s}">
-                                <img src="{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
+                        <div class="third">
+                            <a href="{0:s}/{1:s}/{2:s}">
+                                <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
                             </a>
-                            <div class="caption">{4:s}</div>
-                        </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image), caption)
-                html_code += """\n"""
+                            <div class="w3-container"><h5>{3:s}</h5></div>
+                        </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image), caption)
+                html_code += """</div>\n"""
 
                 # # go throught the different types of plots
                 # # they require a different layout because the plot sizes vary
@@ -356,9 +375,11 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 logger.warning("No selfcal maps found in {0:s}".format(
                     os.path.basename(beam_list[k])))
                 html_code += """
-                <button class="disabled" onclick="show_hide_plots('{0:s}')">
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
-                    </button>\n""".format(button_html_name, os.path.basename(beam_list[k]))
+                    </button>
+                </div>\n""".format(button_html_name, os.path.basename(beam_list[k]))
 
     else:
         logger.warning("No beams for selfcal QA found")
