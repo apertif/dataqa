@@ -69,11 +69,50 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
 
     logger.info("## Creating report directory for preflag and linking files...")
 
+    default_qa_preflag_dir = os.path.join(qa_dir,"preflag")
+
     if socket.gethostname() != 'happili-01' or trigger_mode:
-        qa_preflag_dir_list = ["{0:s}preflag".format(qa_dir)]
+        qa_preflag_dir_list = [default_qa_preflag_dir]
     else:
-        qa_preflag_dir_list = ["{0:s}preflag".format(qa_dir), "{0:s}preflag".format(qa_dir).replace(
-            "data", "data2"), "{0:s}preflag".format(qa_dir).replace("data", "data3"), "{0:s}preflag".format(qa_dir).replace("data", "data4")]
+        qa_preflag_dir_list = [default_qa_preflag_dir, default_qa_preflag_dir.replace(
+            "data", "data2"), default_qa_preflag_dir.replace("data", "data3"), default_qa_preflag_dir.replace("data", "data4")]
+
+    # Get the combined preflag plots when on happili-01
+    # =================================================
+    if socket.gethostname() == 'happili-01':
+        logger.info("Linking combined preflag plots")
+        # get the images in the subdirectory
+        images_preflag_combined = glob.glob(
+            os.path.join(default_qa_preflag_dir, "*.png"))
+
+        if len(images_preflag_combined) != 0:
+
+            images_preflag_combined.sort()
+
+            # go through all beams
+            for image in images_preflag_combined:
+
+                link_name = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(image))
+
+                # change to relative link when in trigger mode
+                if trigger_mode:
+                    image = image.replace(
+                        qa_dir, "../../../")
+
+                # check if link exists
+                if not os.path.exists(link_name):
+                    os.symlink(image, link_name)
+                else:
+                    os.unlink(link_name)
+                    os.symlink(image, link_name)
+
+        else:
+            logger.warning("No images found for combined preflag plots.")
+
+    # Get every single preflag plot
+    # =============================
+    logger.info("Linking individual preflag plots")
 
     for qa_preflag_dir in qa_preflag_dir_list:
 
