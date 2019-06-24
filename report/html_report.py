@@ -12,7 +12,7 @@ import report.html_report_content as hrc
 logger = logging.getLogger(__name__)
 
 
-def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_id=0):
+def write_html_header(html_file_name, js_file, css_file=None, page_type='index', obs_id=0):
     """
     This function creates the header for an html document
     """
@@ -36,6 +36,8 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <meta name="description" content="" />
         <meta name="keywords" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <script src="{0}"></script>
         <link rel="stylesheet" type="text/css" href="{1}" />
     </head>
@@ -65,49 +67,33 @@ def write_html_obs_index(html_file_name, obs_id):
 
     # write the html content for the index of observations
     obs_index = """
-        <div id="obs_index">
+        <div class="w3-container w3-center w3-margin-bottom w3-amber">
             <h2> List of Observations </h2>
-            <p class="info">Note: This website will allow you to go through the different qualitiy assessment products
+            <p class="w3-center w3-container w3-large">Note: This website will allow you to go through the different qualitiy assessment products
             in addition to the apercal logfile from each node. It will not give you access to fits
             images and the source catalogue</p>
-            <table class="obs_index">\n"""
-
-    # <table class = "reportTable" >
-    #         <tr >
-    #             <th > SBID < /th >
-    #             <th > Project < /th >
-    #             <th > Date < /th >
-    #             <th > Duration < br > (hours) < /th >
-    #             <th > Field Centre < /th >
-    #             <th > Central Frequency < br > (MHz) < /th >
-    #         </tr >
-    #         <tr >
-    #                 <td > {0} < /td >
-    #                 <td > {1} < /td >
-    #                 <td > {2} < /td >
-    #                 <td > {3} < /td >
-    #                 <td > {4} < /td >
-    #                 <td > {5: .2f} < /td >
-    #                 </tr >
-    #     </table
-
-    obs_index += """
-                <tr>
-                    <th colspan="7">{0:s}</th>
-                </tr>
-                <tr>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_preflag.html">preflag</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_line.html">line</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_mosaic.html">mosaic</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_apercal_log.html">apercal.log</a> </td>
-                </tr>\n""".format(obs_id)
-
-    obs_index += """
-            </table>
         </div>\n"""
+
+    obs_index += """
+        <div class="w3-container w3-center w3-xlarge"><b>{0:s}</b></div>
+        <div class="w3-container w3-center">
+            <div class="w3-bar w3-large w3-dark-gray">
+                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">inspection
+                    plots</a>
+                <a class="w3-bar-item w3-button w3-hover-orange"
+                    href="{0:s}/{0:s}_inspection_plots.html">preflag</a>
+                <a class="w3-bar-item w3-button w3-hover-orange"
+                    href="{0:s}/{0:s}_inspection_plots.html">crosscal</a>
+                <a class="w3-bar-item w3-button w3-hover-orange"
+                    href="{0:s}/{0:s}_inspection_plots.html">selfcal</a>
+                <a class="w3-bar-item w3-button w3-hover-orange"
+                    href="{0:s}/{0:s}_inspection_plots.html">continuum</a>
+                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">line</a>
+                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">mosaic</a>
+                <a class="w3-bar-item w3-button w3-hover-orange" href="{0:s}/{0:s}_inspection_plots.html">apercal
+                    log</a>
+            </div>
+        </div>\n""".format(obs_id)
 
     try:
         html_file = open(html_file_name, 'a')
