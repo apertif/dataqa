@@ -88,9 +88,9 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
                     <a href="{0:s}/{1:s}">
                         <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                     </a>
-                    <div class="w3-container w3-center">
+                    <!--<div class="w3-container w3-center">
                         <h5>{1:s}</h5>
-                    </div>
+                    </div>--!>
                 </div>\n""".format(page_type, os.path.basename(image))
         html_code += """</div>\n"""
     else:
@@ -116,7 +116,31 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
         </div>\n
         """
 
+    # Create html code for summary table
+    # ==================================
     
+    table_found = True
+
+    if table_found:
+        html_code += """
+            <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-2')">
+                        Preflag summary table
+                    </button>
+                </div>
+            <div class="w3-container w3-margin-top w3-show" name="gallery-2">\n"""
+
+        html_code += """
+            <p> No table here yet.
+            </p>\n"""
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No combined preflag plots found")
+        html_code += """
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
+                    Preflag summary table
+                </button>\n"""
+
     # Create html code for combined preflag plots
     # ===========================================
     # get images
