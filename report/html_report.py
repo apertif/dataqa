@@ -113,19 +113,22 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
     """
 
     html_code = """
-        <ul>
-            <li style="float:right"><a href="../index.html">List of Observations</a></li>
-            <li style="float:right"><a href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank" style="text-decoration:underline">For help check OSA Guide</a></li>
+        <div class="w3-container w3-dark-gray w3-large">
+            <div class="w3-bar">
         """
     for page in links:
         if page == page_type:
-            html_code += """<li><a class="active" href="{0:s}_{1:s}.html">{1:s}</a></li>\n""".format(
+            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow w3-amber" href="{0:s}_{1:s}.html">{1:s}</a>\n""".format(
                 obs_id, page)
         else:
-            html_code += """<li><a href="{0:s}_{1:s}.html">{1:s}</a></li>\n""".format(
+            html_code += """<a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}_{1:s}.html">{1:s}</a>\n""".format(
                 obs_id, page)
 
-    html_code += """</ul>\n"""
+    html_code += """
+                <a class="w3-bar-item w3-button w3-hover-yellow w3-amber w3-right" href="../index.html">Overview of Observation</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow w3-amber w3-right" href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guide</a>
+            </div>
+        <\div>\n"""
 
     try:
         html_file = open(html_file_name, 'a')
