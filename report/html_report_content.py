@@ -50,9 +50,9 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                     <a href="{0:s}/{1:s}">
                         <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                     </a>
-                    <div class="w3-container w3-center">
+                    <!-- <div class="w3-container w3-center">
                         <h5>{1:s}</h5>
-                    </div>
+                    </div> --!>
                 </div>\n""".format(page_type, os.path.basename(image))
         html_code += """</div>\n"""
     else:
@@ -139,9 +139,11 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="info">
-            Here you can go through the different plots created by crosscal.
-        </p>\n
+        <div class="w3-container w3-large">
+            <p>
+                Here you can go through the different plots created by crosscal.
+            </p>
+        <\div>\n
         """
     # the different plots
     categories = ["BP_amp", "BP_phase", "Gain_amp", "Gain_phase", "K_", "Df_amp", "Df_phase", "Kcross", "Xf_amp", "Xf_phase", "Raw_amp", "Raw_phase", "Model_amp", "Model_phase", "Corrected_amp", "Corrected_phase"]
@@ -178,24 +180,28 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type):
                 #         </div>\n""".format(image)
                 # html_code += """</div>\n"""
 
-                html_code += """<button onclick="show_hide_plots('{0:s}')">
-                        {1:s}
-                    </button>\n""".format(div_name, categories_titles[k])
+                html_code += """
+                    <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                            {1:s}
+                        </button>
+                    </div>
+                    <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, categories_titles[k])
 
                 for image in cat_plots:
                     html_code += """
-                        <div class="gallery" name="{0:s}">
-                            <a href="{1:s}/{2:s}">
-                                <img src="{1:s}/{2:s}" alt="No image", width="100%">
+                        <div class="w3-third">
+                            <a href="{0:s}/{1:s}">
+                                <img src="{0:s}/{1:s}" alt="No image", width="100%">
                             </a>
-                        </div>\n""".format(div_name, page_type, os.path.basename(image))
+                        </div>\n""".format(page_type, os.path.basename(image))
                 html_code += """\n"""
             else:
 
                 div_name = "gallery{0:d}".format(k)
 
                 html_code += """
-                    <button class="disabled" onclick="show_hide_plots('{0:s}')">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
                         {1:s}
                     </button>\n""".format(div_name, categories_titles[k])
 
