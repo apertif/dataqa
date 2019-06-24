@@ -17,6 +17,48 @@ from shutil import copy
 logger = logging.getLogger(__name__)
 
 
+def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+    """Function to create the inspection plot directory for the report
+
+    Note:
+        All necessary files will be linked to this directory
+        from the inspection plot QA directory
+    """
+
+    logger.info(
+        "## Creating report directory for inspection plots and linking files...")
+
+    # get the images in the subdirectory
+    images_inspection_plots = glob.glob(os.path.join(qa_dir, "crosscal/*.png"))
+
+    if len(images_inspection_plots) != 0:
+
+        images_inspection_plots.sort()
+
+        # go through all beams
+        for image in images_inspection_plots:
+
+            link_name = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage, os.path.basename(image))
+
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                image = image.replace(
+                    qa_dir, "../../../")
+
+            # check if link exists
+            if not os.path.exists(link_name):
+                os.symlink(image, link_name)
+            else:
+                os.unlink(link_name)
+                os.symlink(image, link_name)
+
+    else:
+        logger.warning("No images found for inspection plots.")
+
+    logger.info(
+        "## Creating report directory for inspection plots and linking files. Done")
+
 def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the preflag directory for the report
 
