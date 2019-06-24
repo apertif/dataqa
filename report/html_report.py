@@ -18,7 +18,7 @@ def write_html_header(html_file_name, js_file, css_file=None, page_type='index',
     """
 
     if page_type == 'index':
-        page_title = 'APERTIF Qualitiy Assessment Overview'
+        page_title = 'APERTIF Quality Assessment Overview'
     elif page_type == 'obs_page':
         page_title = 'Observation {0:s}'.format(obs_id)
         css_file = "../{0:s}".format(css_file)
@@ -32,17 +32,19 @@ def write_html_header(html_file_name, js_file, css_file=None, page_type='index',
     html_file.write("""<!DOCTYPE HTML>
     <html lang="en">
     <head>
-        <title>APERTIF Science Evaluation Period 2019</title>
+        <title>{0}</title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <meta name="description" content="" />
         <meta name="keywords" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        <script src="{0}"></script>
-        <link rel="stylesheet" type="text/css" href="{1}" />
+        <script src="{1}"></script>
+        <link rel="stylesheet" type="text/css" href="{2}" />
     </head>
     <body>
-        <h1>{2:s}</h1>\n""".format(js_file, css_file, page_title))
+        <div class="w3-container w3-center w3-margin-bottom w3-amber">
+            <h1>{0}</h1>
+        </div>\n""".format(page_title, js_file, css_file))
 
     html_file.close()
 
@@ -67,7 +69,7 @@ def write_html_obs_index(html_file_name, obs_id):
 
     # write the html content for the index of observations
     obs_index = """
-        <div class="w3-container w3-center w3-margin-bottom w3-amber">
+        <div class="w3-container w3-center">
             <h2> List of Observations </h2>
             <p class="w3-center w3-container w3-large">Note: This website will allow you to go through the different qualitiy assessment products
             in addition to the apercal logfile from each node. It will not give you access to fits
