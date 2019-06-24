@@ -23,7 +23,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="info">
+        <p class="w3-container w3-large">
             Here you can go through the different plots created by preflag.
         </p>\n
         """
@@ -50,25 +50,28 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
                 images_in_beam.sort()
 
                 html_code += """
-                    <button onclick="show_hide_plots('{0:s}')">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
-                    </button>\n""".format(div_name, os.path.basename(beam_list[k]))
+                    </button>
+                    <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
 
                 for image in images_in_beam:
                     html_code += """
-                        <div class="gallery" name="{0:s}">
-                            <a href="{1:s}/{2:s}/{3:s}">
-                                <img src="{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
+                        <div class="w3-third">
+                            <a href="{0:s}/{1:s}/{2:s}">
+                                <img src="{0:s}/{1:s}/{2:s}" alt="No image" style="width:100%">
                             </a>
-                            <div class="caption">{3:s}</div>
-                        </div>\n""".format(div_name, page_type, os.path.basename(beam_list[k]), os.path.basename(image))
-                html_code += """\n"""
+                            <div class="w3-container w3-center">
+                                <h5>{2:s}</h5>
+                            </div>
+                        </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image))
+                html_code += """</div>\n"""
             else:
                 logger.warning("No images in beam {0:s} found".format(
                     beam_list[k]))
 
                 html_code += """
-                <button class="disabled" onclick="show_hide_plots('{0:s}')">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
                     </button>\n""".format(div_name, os.path.basename(beam_list[k]))
 
