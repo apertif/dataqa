@@ -81,8 +81,13 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
     if len(image_list) != 0:
         html_code += """
                 <div class="w3-container w3-margin-top">\n"""
+        
+        img_counter = 0
 
         for image in image_list:
+            if img_counter % 3 == 0:
+                html_code += """<div class="w3-row">\n"""
+
             html_code += """
                 <div class="w3-third">
                     <a href="{0:s}/{1:s}">
@@ -92,6 +97,12 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
                         <h5>{1:s}</h5>
                     </div>--!>
                 </div>\n""".format(page_type, os.path.basename(image))
+            
+            if img_counter % 3 == 0:
+                html_code += """</div>\n"""
+                
+            img_counter += 1
+
         html_code += """</div>\n"""
     else:
         logger.warning("No inspection plots found")
