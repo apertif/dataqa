@@ -251,7 +251,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">{1:s}
                 </button>
             </div>
-            <div class="w3-container w3-margin-top w3-hide" name="{0:s}"\n""".format("gallery_phase", "Gain factors Phase")
+            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format("gallery_phase", "Gain factors Phase")
 
         for image in phase_list:
             html_code += """
@@ -278,7 +278,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">{1:s}
                 </button>
             </div>
-            <div class="w3-container w3-margin-top w3-hide" name="{0:s}"\n""".format("gallery_amp", "Gain factors Amplitude")
+            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format("gallery_amp", "Gain factors Amplitude")
 
         for image in amp_list:
             html_code += """
@@ -326,7 +326,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                         Beam {1:s}
                         </button>
                     </div>
-                    <div class="w3-container w3-margin-top w3-hide" name="{0:s}"\n""".format(div_name, os.path.basename(beam_list[k]))
+                    <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
 
                 for image in image_list:
 
