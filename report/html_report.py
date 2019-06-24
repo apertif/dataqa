@@ -128,7 +128,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
                 <a class="w3-bar-item w3-button w3-hover-yellow w3-amber w3-right" href="../index.html">Overview of Observation</a>
                 <a class="w3-bar-item w3-button w3-hover-yellow w3-amber w3-right" href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guide</a>
             </div>
-        <\div>\n"""
+        </div>\n"""
 
     try:
         html_file = open(html_file_name, 'a')
