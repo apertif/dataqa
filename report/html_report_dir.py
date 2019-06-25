@@ -321,13 +321,16 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         do_combine (bool): Set to combine the QA information from different happilis
     """
 
+    default_qa_selfcal_dir = os.path.join(qa_dir, "selfcal")
+
     # if crosscal from different happilis should be combined
+    # ======================================================
     if do_combine:
         pass
         # combine images
         # try:
         #     logging.info("Combining crosscal plots")
-        #     run_merge_plots(qa_dir, do_ccal=False, do_scal=True):
+        #     run_merge_plots(default_qa_selfcal_dir, do_ccal=False, do_scal=True):
         # except Exception as e:
         #     logger.warning("Combining crosscal plots failed")
         #     logger.exception(e)
@@ -337,68 +340,72 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
     logger.info(
         "## Creating report directory for selfcal and linking files...")
 
-    default_qa_selfcal_dir = os.path.join(qa_dir, "selfcal")
 
+    # Getting selfcal images
+    # ======================
     if socket.gethostname() != 'happili-01' or trigger_mode:
         qa_selfcal_dir_list = [default_qa_selfcal_dir]
     else:
         qa_selfcal_dir_list = [default_qa_selfcal_dir, default_qa_selfcal_dir.replace(
             "data", "data2"), default_qa_selfcal_dir.replace("data", "data3"), default_qa_selfcal_dir.replace("data", "data4")]
 
-    # get beams
-    beam_list = glob.glob(
-        "{0:s}selfcal/[0-3][0-9]".format(qa_dir))
+    for qa_selfcal_dir in qa_selfcal_dir_list:
 
-    # number of beams
-    n_beams = len(beam_list)
+        # get beams
+        beam_list = glob.glob(
+            "{0:s}/[0-3][0-9]".format(qa_selfcal_dir))
 
-    if n_beams != 0:
+        # number of beams
+        n_beams = len(beam_list)
 
-        beam_list.sort()
+        if n_beams != 0:
 
-        # go through all beams
-        for beam in beam_list:
+            beam_list.sort()
 
-            qa_dir_report_obs_subpage_selfcal_beam = "{0:s}/{1:s}".format(
-                qa_dir_report_obs_subpage, os.path.basename(beam))
+            # go through all beams
+            for beam in beam_list:
 
-            # create a subdirectory in the report dir
-            if not os.path.exists(qa_dir_report_obs_subpage_selfcal_beam):
-                try:
-                    os.mkdir(qa_dir_report_obs_subpage_selfcal_beam)
-                except Exception as e:
-                    logger.error(e)
+                qa_dir_report_obs_subpage_selfcal_beam = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(beam))
 
-            # get the images in the beam directory and link them
-            images_in_beam = glob.glob(
-                "{0:s}/*png".format(beam))
+                # create a subdirectory in the report dir
+                if not os.path.exists(qa_dir_report_obs_subpage_selfcal_beam):
+                    try:
+                        os.mkdir(qa_dir_report_obs_subpage_selfcal_beam)
+                    except Exception as e:
+                        logger.error(e)
 
-            if len(images_in_beam) != 0:
+                # get the images in the beam directory and link them
+                images_in_beam = glob.glob(
+                    "{0:s}/*png".format(beam))
 
-                images_in_beam.sort()
+                if len(images_in_beam) != 0:
 
-                for image in images_in_beam:
-                    link_name = "{0:s}/{1:s}".format(
-                        qa_dir_report_obs_subpage_selfcal_beam, os.path.basename(image))
+                    images_in_beam.sort()
 
-                    # change to relative link when in trigger mode
-                    if trigger_mode:
-                        image = image.replace(
-                            qa_dir, "../../../../")
+                    for image in images_in_beam:
+                        link_name = "{0:s}/{1:s}".format(
+                            qa_dir_report_obs_subpage_selfcal_beam, os.path.basename(image))
 
-                    # check if link exists
-                    if not os.path.exists(link_name):
-                        os.symlink(image, link_name)
-                    else:
-                        os.unlink(link_name)
-                        os.symlink(image, link_name)
-            else:
-                logger.warning("No selfcal images in beam {0:s} found".format(
-                    beam))
-    else:
-        logger.warning("No beams for selfcal found")
+                        # change to relative link when in trigger mode
+                        if trigger_mode:
+                            image = image.replace(
+                                qa_dir, "../../../../")
+
+                        # check if link exists
+                        if not os.path.exists(link_name):
+                            os.symlink(image, link_name)
+                        else:
+                            os.unlink(link_name)
+                            os.symlink(image, link_name)
+                else:
+                    logger.warning("No selfcal images in beam {0:s} found".format(
+                        beam))
+        else:
+            logger.warning("No beams for selfcal found")
 
     # Get the phase plots and link them
+    # =================================
     images_phase = glob.glob(
         "{0:s}selfcal/SCAL_phase*.png".format(qa_dir))
 
@@ -427,6 +434,7 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         logger.warning("No selfcal phase plots found")
 
     # Get the amplitude plots and link them
+    # =====================================
     images_amp = glob.glob(
         "{0:s}selfcal/SCAL_amp*.png".format(qa_dir))
 
@@ -514,6 +522,8 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=
     Note:
         All necessary files will be linked to this directory
         from the continuum QA directory.
+        No need to addd combine parameter as it will try to look
+        into all happili nodes.
     
     Args:
         qa_dir (str): Directory of the QA
@@ -525,89 +535,102 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=
     logger.info(
         "## Creating report directory for continuum and linking files...")
 
-    # get beams
-    beam_list = glob.glob(
-        "{0:s}continuum/[0-3][0-9]".format(qa_dir))
+    # Getting continuum images
+    # ======================
 
-    # number of beams
-    n_beams = len(beam_list)
+    default_qa_continuum_dir = os.path.join(qa_dir, "continuum")
 
-    if n_beams != 0:
+    if socket.gethostname() != 'happili-01' or trigger_mode:
+        qa_continuum_dir_list = [default_qa_continuum_dir]
+    else:
+        qa_continuum_dir_list = [default_qa_continuum_dir, default_qa_continuum_dir.replace(
+            "data", "data2"), default_qa_continuum_dir.replace("data", "data3"), default_qa_continuum_dir.replace("data", "data4")]
 
-        beam_list.sort()
+    for qa_continuum_dir in qa_continuum_dir_list:
 
-        # go through all beams
-        for beam in beam_list:
+        # get beams
+        beam_list = glob.glob(
+            "{0:s}/[0-3][0-9]".format(qa_continuum_dir))
 
-            qa_dir_report_obs_subpage_continuum_beam = "{0:s}/{1:s}".format(
-                qa_dir_report_obs_subpage, os.path.basename(beam))
+        # number of beams
+        n_beams = len(beam_list)
 
-            # create a subdirectory in the report dir
-            if not os.path.exists(qa_dir_report_obs_subpage_continuum_beam):
-                try:
-                    os.mkdir(qa_dir_report_obs_subpage_continuum_beam)
-                except Exception as e:
-                    logger.error(e)
+        if n_beams != 0:
 
-            # get the images in the beam directory and link them
-            images_in_beam = glob.glob(
-                "{0:s}/*png".format(beam))
+            beam_list.sort()
 
-            if len(images_in_beam) != 0:
+            # go through all beams
+            for beam in beam_list:
 
-                images_in_beam.sort()
+                qa_dir_report_obs_subpage_continuum_beam = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(beam))
 
-                for image in images_in_beam:
-                    link_name = "{0:s}/{1:s}".format(
-                        qa_dir_report_obs_subpage_continuum_beam, os.path.basename(image))
+                # create a subdirectory in the report dir
+                if not os.path.exists(qa_dir_report_obs_subpage_continuum_beam):
+                    try:
+                        os.mkdir(qa_dir_report_obs_subpage_continuum_beam)
+                    except Exception as e:
+                        logger.error(e)
 
-                    # change to relative link when in trigger mode
-                    if trigger_mode:
-                        image = image.replace(
-                            qa_dir, "../../../../")
+                # get the images in the beam directory and link them
+                images_in_beam = glob.glob(
+                    "{0:s}/*png".format(beam))
 
-                    # check if link exists
-                    if not os.path.exists(link_name):
-                        os.symlink(image, link_name)
-                    else:
-                        os.unlink(link_name)
-                        os.symlink(image, link_name)
-            else:
-                logger.warning("No images in beam {0:s} found".format(
+                if len(images_in_beam) != 0:
+
+                    images_in_beam.sort()
+
+                    for image in images_in_beam:
+                        link_name = "{0:s}/{1:s}".format(
+                            qa_dir_report_obs_subpage_continuum_beam, os.path.basename(image))
+
+                        # change to relative link when in trigger mode
+                        if trigger_mode:
+                            image = image.replace(
+                                qa_dir, "../../../../")
+
+                        # check if link exists
+                        if not os.path.exists(link_name):
+                            os.symlink(image, link_name)
+                        else:
+                            os.unlink(link_name)
+                            os.symlink(image, link_name)
+                else:
+                    logger.warning("No images in beam {0:s} found".format(
+                        beam))
+
+                # link the validation tool
+                validation_tool_dir = glob.glob("{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(
                     beam))
 
-            # link the validation tool
-            validation_tool_dir = glob.glob("{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(
-                beam))
+                # check that the directory for the validation tool exists
+                if len(validation_tool_dir) == 1:
+                    validation_tool_dir = validation_tool_dir[0]
 
-            # check that the directory for the validation tool exists
-            if len(validation_tool_dir) == 1:
-                validation_tool_dir = validation_tool_dir[0]
+                    if os.path.isdir(validation_tool_dir):
 
-                if os.path.isdir(validation_tool_dir):
+                        link_name = "{0:s}/{1:s}".format(
+                            qa_dir_report_obs_subpage_continuum_beam, os.path.basename(validation_tool_dir))
 
-                    link_name = "{0:s}/{1:s}".format(
-                        qa_dir_report_obs_subpage_continuum_beam, os.path.basename(validation_tool_dir))
+                        # change to relative link when in trigger mode
+                        if trigger_mode:
+                            validation_tool_dir = validation_tool_dir.replace(
+                                qa_dir, "../../../../")
 
-                    # change to relative link when in trigger mode
-                    if trigger_mode:
-                        validation_tool_dir = validation_tool_dir.replace(
-                            qa_dir, "../../../../")
-
-                    # check if link exists
-                    if not os.path.exists(link_name):
-                        os.symlink(validation_tool_dir, link_name)
+                        # check if link exists
+                        if not os.path.exists(link_name):
+                            os.symlink(validation_tool_dir, link_name)
+                        else:
+                            os.unlink(link_name)
+                            os.symlink(validation_tool_dir, link_name)
                     else:
-                        os.unlink(link_name)
-                        os.symlink(validation_tool_dir, link_name)
+                        logger.warning(
+                            "No validation tool output found for continuum QA of beam {0:s}".format(beam))
                 else:
                     logger.warning(
                         "No validation tool output found for continuum QA of beam {0:s}".format(beam))
-            else:
-                logger.warning(
-                    "No validation tool output found for continuum QA of beam {0:s}".format(beam))
-    else:
-        logger.warning("No beams found for continuum found")
+        else:
+            logger.warning("No beams found for continuum found")
 
     logger.info(
         "## Creating report directory for continuum and linking files. Done")
@@ -630,58 +653,71 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False
     logger.info(
         "## Creating report directory for line and linking files...")
 
-    # get beams
-    beam_list = glob.glob(
-        "{0:s}line/[0-3][0-9]".format(qa_dir))
+    # Getting line images
+    # ===================
 
-    # number of beams
-    n_beams = len(beam_list)
+    default_qa_line_dir = os.path.join(qa_dir, "line")
 
-    if n_beams != 0:
-
-        beam_list.sort()
-
-        # go through all beams
-        for beam in beam_list:
-
-            qa_dir_report_obs_subpage_line_beam = "{0:s}/{1:s}".format(
-                qa_dir_report_obs_subpage, os.path.basename(beam))
-
-            # create a subdirectory in the report dir
-            if not os.path.exists(qa_dir_report_obs_subpage_line_beam):
-                try:
-                    os.mkdir(qa_dir_report_obs_subpage_line_beam)
-                except Exception as e:
-                    logger.error(e)
-
-            # get the images in the beam directory and link them
-            images_in_beam = glob.glob(
-                "{0:s}/*png".format(beam))
-
-            if len(images_in_beam) != 0:
-
-                images_in_beam.sort()
-
-                for image in images_in_beam:
-                    link_name = "{0:s}/{1:s}".format(
-                        qa_dir_report_obs_subpage_line_beam, os.path.basename(image))
-
-                    # change to relative link when in trigger mode
-                    if trigger_mode:
-                        image = image.replace(
-                            qa_dir, "../../../../")
-
-                    # check if link exists
-                    if not os.path.exists(link_name):
-                        os.symlink(image, link_name)
-                    else:
-                        os.unlink(link_name)
-                        os.symlink(image, link_name)
-            else:
-                logger.warning("No images in beam {0:s} found".format(
-                    beam))
+    if socket.gethostname() != 'happili-01' or trigger_mode:
+        qa_line_dir_list = [default_qa_line_dir]
     else:
-        logger.warning("No beams found for line found")
+        qa_line_dir_list = [default_qa_line_dir, default_qa_line_dir.replace(
+            "data", "data2"), default_qa_line_dir.replace("data", "data3"), default_qa_line_dir.replace("data", "data4")]
+
+    for qa_line_dir in qa_line_dir_list:
+
+        # get beams
+        beam_list = glob.glob(
+            "{0:s}/[0-3][0-9]".format(qa_line_dir))
+
+        # number of beams
+        n_beams = len(beam_list)
+
+        if n_beams != 0:
+
+            beam_list.sort()
+
+            # go through all beams
+            for beam in beam_list:
+
+                qa_dir_report_obs_subpage_line_beam = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(beam))
+
+                # create a subdirectory in the report dir
+                if not os.path.exists(qa_dir_report_obs_subpage_line_beam):
+                    try:
+                        os.mkdir(qa_dir_report_obs_subpage_line_beam)
+                    except Exception as e:
+                        logger.error(e)
+
+                # get the images in the beam directory and link them
+                images_in_beam = glob.glob(
+                    "{0:s}/*png".format(beam))
+
+                if len(images_in_beam) != 0:
+
+                    images_in_beam.sort()
+
+                    for image in images_in_beam:
+                        link_name = "{0:s}/{1:s}".format(
+                            qa_dir_report_obs_subpage_line_beam, os.path.basename(image))
+
+                        # change to relative link when in trigger mode
+                        if trigger_mode:
+                            image = image.replace(
+                                qa_dir, "../../../../")
+
+                        # check if link exists
+                        if not os.path.exists(link_name):
+                            os.symlink(image, link_name)
+                        else:
+                            os.unlink(link_name)
+                            os.symlink(image, link_name)
+                else:
+                    logger.warning("No images in beam {0:s} found".format(
+                        beam))
+        else:
+            logger.warning("No beams found for line found")
 
     logger.info(
         "## Creating report directory for line and linking files. Done")
@@ -772,6 +808,8 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
     Note:
         All four apercal.log file will be linked to this directory, but
         for better processing they will be renamed to .txt files.
+        This function already collects information from different 
+        happilis.
     
     Args:
         qa_dir (str): Directory of the QA
