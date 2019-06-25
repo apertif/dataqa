@@ -1240,7 +1240,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                                 Apercal timing information
                             </button>
                         </div>
-                        <div class="w3-container w3-margin-top w3-hide" name = "{0:s}" >
+                        <div class="w3-container w3-margin-top w3-margin-bottom w3-hide" name = "{0:s}" >
                         """.format(frame_name)
 
                 # read in data
