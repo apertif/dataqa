@@ -115,7 +115,7 @@ if __name__ == "__main__":
         logger.error(e)
 
     # the subpages to be created
-    subpages = ['summary', 'inspection_plots', 'preflag', 'crosscal',
+    subpages = ['observing_log', 'summary', 'inspection_plots', 'preflag', 'crosscal',
                 'selfcal', 'continuum', 'line', 'mosaic', 'apercal_log']
 
     logger.info("#### Create report directory structure")
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         # Create directory structure for the report
         try:
             hpd.create_report_dirs(
-                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, combine=do_combine)
+                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine)
         except Exception as e:
             logger.error(e)
 
