@@ -55,6 +55,7 @@ if __name__ == "__main__":
     obs_id = args.obs_id
     qa_dir = args.path
     base_dir = args.basedir
+    do_combine = args.combine
 
     # directory where the output will be of pybdsf will be stored
     if qa_dir is None:
@@ -88,7 +89,13 @@ if __name__ == "__main__":
 
     if args.trigger_mode:
         logger.info(
-            "--> Running continuum QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
+            "--> Running report QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
+    elif do_combine:
+        logger.info("Combining QAs from different happilis")
+        if host_name != "happili-01":
+            logger.warning("You are not working on happili-01.")
+            logger.warning("Cannot combine QA from different happilis")
+            do_combine = False
     elif host_name != "happili-01" and not args.trigger_mode:
         logger.warning("You are not working on happili-01.")
         logger.warning("The script will not process all beams")
@@ -127,7 +134,7 @@ if __name__ == "__main__":
         # Create directory structure for the report
         try:
             hpd.create_report_dirs(
-                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode)
+                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, combine=do_combine)
         except Exception as e:
             logger.error(e)
 
