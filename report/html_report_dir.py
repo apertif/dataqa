@@ -23,6 +23,11 @@ def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_m
     Note:
         All necessary files will be linked to this directory
         from the observing log QA directory
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
     """
 
     logger.info(
@@ -66,7 +71,14 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
 
     Note:
         All necessary files will be linked to this directory
-        from the inspection plot QA directory
+        from the inspection plot QA directory.
+        It is not necessary to add the combine-parameter, because
+        the inspection plots are only created on happili-01 unless ran manually.
+
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
     """
 
     logger.info(
@@ -108,7 +120,15 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
 
     Note:
         All necessary files will be linked to this directory
-        from the preflag QA directory
+        from the preflag QA directory.
+        It is not necessary to add the combine-parameter, because
+        the preflag files are already distributed among the nodes.
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+    
     """
 
     logger.info("## Creating report directory for preflag and linking files...")
@@ -227,7 +247,13 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
 
     Note:
         All necessary files will be linked to this directory
-        from the crosscal QA directory
+        from the crosscal QA directory.
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+        do_combine (bool): Set to combine the QA information from different happilis
     """
 
     logger.info(
@@ -284,7 +310,13 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
 
     Note:
         All necessary files will be linked to this directory
-        from the selfcal QA directory
+        from the selfcal QA directory.
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+        do_combine (bool): Set to combine the QA information from different happilis
     """
 
     # if crosscal from different happilis should be combined
@@ -479,7 +511,13 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=
 
     Note:
         All necessary files will be linked to this directory
-        from the continuum QA directory
+        from the continuum QA directory.
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+    
     """
 
     logger.info(
@@ -578,7 +616,13 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False
 
     Note:
         All necessary files will be linked to this directory
-        from the line QA directory
+        from the line QA directory.
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+    
     """
 
     logger.info(
@@ -646,7 +690,13 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
 
     Note:
         All necessary files will be linked to this directory
-        from the mosaic QA directory
+        from the mosaic QA directory.
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+    
     """
 
     logger.info(
@@ -719,7 +769,13 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
 
     Note:
         All four apercal.log file will be linked to this directory, but
-        for better processing they will be renamed to .txt files
+        for better processing they will be renamed to .txt files.
+    
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+    
     """
 
     logger.info(
