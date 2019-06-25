@@ -36,35 +36,35 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type):
         </div>\n
         """
 
-    # # Create html code for inspection plots
-    # # =====================================
-    # # get images
-    # image_list = glob.glob(
-    #     "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
+    # Create html code for inspection plots
+    # =====================================
+    # get images
+    image_list = glob.glob(
+        "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
 
-    # if len(image_list) != 0:
-    #     html_code += """
-    #             <div class="w3-container w3-margin-top w3-hide">\n"""
+    if len(image_list) != 0:
+        html_code += """
+                <div class="w3-container w3-margin-top w3-hide">\n"""
 
-    #     for image in image_list:
-    #         html_code += """
-    #             <div class="w3-third">
-    #                 <a href="{0:s}/{1:s}">
-    #                     <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
-    #                 </a>
-    #                 <div class="w3-container w3-center">
-    #                     <h5>{1:s}</h5>
-    #                 </div>
-    #             </div>\n""".format(page_type, os.path.basename(image))
-    #     html_code += """</div>\n"""
-    # else:
-    #     logger.warning("No inspection plots found")
-    #     html_code += """
-    #     <div class="w3-container w3-large w3-text-red">
-    #         <p>
-    #             No plots were found for preflag
-    #         </p>
-    #     </div>\n"""
+        for image in image_list:
+            html_code += """
+                <div class="w3-third">
+                    <a href="{0:s}/{1:s}">
+                        <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+                    </a>
+                    <div class="w3-container w3-center">
+                        <h5>{1:s}</h5>
+                    </div>
+                </div>\n""".format(page_type, os.path.basename(image))
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No summary plot found found")
+        html_code += """
+        <div class="w3-container w3-large w3-text-red">
+            <p>
+                No plots were found for summary
+            </p>
+        </div>\n"""
 
     return html_code
 
