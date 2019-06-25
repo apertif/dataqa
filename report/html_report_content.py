@@ -698,11 +698,13 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="info">
-            Here you can inspect for each beam the continuum image, PyBDSF diagnostic plots and the validation tool. The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.
-            Of course, all of this only exists for beams with a continuum image created by the pipeline.<br>
-            This page will only have content after the continuum QA step has been performed.
-        </p>\n
+        <div class="w3-container w3-large>
+            <p>
+                Here you can inspect for each beam the continuum image, PyBDSF diagnostic plots and the validation tool. The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.
+                Of course, all of this only exists for beams with a continuum image created by the pipeline.<br>
+                This page will only have content after the continuum QA step has been performed.
+            </p>
+        </div>\n
         """
 
     # Create html code for summary table
@@ -932,14 +934,16 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="info">
-            Here you can find a plot of the noise versus channel/frequency for all available cubes. 
-            Please note that at this stage, the cube is cleaned and continuum subtracted. The rms is determined over the entire
-            image without taking into account the existenc of continuum sources. The fit is a simple Gaussian fit to the noise of 
-            each channel
-            The noise data is not accessible from this page, but can be found in the QA directory as a csv table.<br>
-            This page will only have content after the line QA step has been performed.
-        </p>\n
+        <div class="w3-container w3-large">
+            <p>
+                Here you can find a plot of the noise versus channel/frequency for all available cubes. 
+                Please note that at this stage, the cube is cleaned and continuum subtracted. The rms is determined over the entire
+                image without taking into account the existenc of continuum sources. The fit is a simple Gaussian fit to the noise of 
+                each channel
+                The noise data is not accessible from this page, but can be found in the QA directory as a csv table.<br>
+                This page will only have content after the line QA step has been performed.
+            </p>
+        </div>\n
         """
 
     # Create html code for summary table
@@ -1064,11 +1068,13 @@ def write_obs_content_mosaic(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="info">
-            Here you can inspect the continuum image, PyBDSF diagnostic plots and the validation tool for the mosaic of all available beam images. 
-            The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.<br>
-            This page will only have content after the mosaic was created and the mosaic QA step has been performed.
-        </p>\n
+        <div class="w3-container w3-large">
+            <p>
+                Here you can inspect the continuum image, PyBDSF diagnostic plots and the validation tool for the mosaic of all available beam images. 
+                The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.<br>
+                This page will only have content after the mosaic was created and the mosaic QA step has been performed.
+            </p>
+        </div>\n
         """
 
     # get the diagnostic plots
@@ -1180,11 +1186,13 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <p class="info">
-            Here you can go through the four log files created by apercal. 
-            Click on one of the buttons and then on the link to open the log file. 
-            You can use the search function of your browser to search the log files.
-        </p>\n
+        <div class="w3-container w3-large">
+            <p>
+                Here you can go through the four log files created by apercal. 
+                Click on one of the buttons and then on the link to open the log file. 
+                You can use the search function of your browser to search the log files.
+            </p>
+        </div>\n
         """
 
     node_list = np.array(
