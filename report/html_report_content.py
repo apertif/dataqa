@@ -698,7 +698,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <div class="w3-container w3-large>
+        <div class="w3-container w3-large">
             <p>
                 Here you can inspect for each beam the continuum image, PyBDSF diagnostic plots and the validation tool. The PyBDSF catalog is not accessible from this page, but can be found in the QA directory as a csv table.
                 Of course, all of this only exists for beams with a continuum image created by the pipeline.<br>
