@@ -863,7 +863,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
                         html_code += """
                                 <div class="w3-container w3-large">
-                                    <a href="{0:s}/{1:s}/{2:s}/index.html" target="_blank">Click here to open the validation tool</a> if it is not shown below
+                                    <a href="{0:s}/{1:s}/{2:s}/index.html">Click here to open the validation tool</a> if it is not shown below
                                 </div>
                                 <div class="w3-container">
                                     <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}/{2:s}/index.html"></iframe>
@@ -1137,7 +1137,7 @@ def write_obs_content_mosaic(html_code, qa_report_obs_path, page_type):
 
                 html_code += """
                     <div class="w3-container w3-large">
-                        <a href="{0:s}/{1:s}/index.html" target="_blank">Click here to open the validation tool</a> if it is not shown below
+                        <a href="{0:s}/{1:s}/index.html">Click here to open the validation tool</a> if it is not shown below
                     </div>
                     <div class="w3-container">
                         <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}/index.html"></iframe>
@@ -1341,7 +1341,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
                     html_code += """
                         <div class="w3-container w3-large">
-                            <a href="{0:s}" target="_blank">Click here to open the log file</a> if it is not shown below
+                            <a href="{0:s}/{1:s}">Click here to open the log file</a> if it is not shown below
                         </div>
                         <div class="w3-container>
                             <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
