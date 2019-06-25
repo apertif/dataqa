@@ -860,11 +860,13 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                             <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(button_name)
 
                         html_code += """
-                                <div class="w3-container">
-                                    <!--<iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>--!>
-                                    <iframe class="w3-container" style="width:100%; height:1000px" src="{1:s}/{2:s}/{3:s}/index.html"></iframe>
+                                <div class="w3-container w3-large">
+                                    <a href="{0:s}/{1:s}/{2:s}/index.html" target="_blank">Click here to open the validation tool</a> if it is not shown below
                                 </div>
-                            </div>\n""".format(button_name, page_type, os.path.basename(beam_list[k]), os.path.basename(frame_name))
+                                <div class="w3-container">
+                                    <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}/{2:s}/index.html"></iframe>
+                                </div>
+                            </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(frame_name))
                     else:
                         logger.warning("No continuum validation tool found for beam {0:s}".format(
                             os.path.basename(beam_list[k])))
@@ -889,7 +891,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                     os.path.basename(beam_list[k])))
                 html_code += """
                 <div class="w3-container">
-                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
                         Beam {1:s}
                     </button>
                 </div>\n""".format(button_html_name, os.path.basename(beam_list[k]))
@@ -999,7 +1001,13 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
                     </div>
                     <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
 
+                img_counter = 0
+
                 for image in images_in_beam:
+                    
+                    if img_counter % 3 == 0:
+                        html_code += """<div class="w3-row">\n"""
+
                     html_code += """
                         <div class="w3-thrid">
                             <a href="{0:s}/{1:s}/{2:s}">
@@ -1007,6 +1015,12 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
                             </a>
                             <div class="w3-container w3-center"><h5>{2:s}</h5></div>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image))
+                    
+                    if img_counter % 3 == 2 or img_counter == len(images_in_beam) - 1:
+                        html_code += """</div>\n"""
+
+                    img_counter += 1
+
                 html_code += """</div>\n"""
             else:
                 logger.warning("No plot for cube in beam {0:s} found".format(
@@ -1014,7 +1028,7 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
 
                 html_code += """
                     <div class="w3-container">
-                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
                             Beam {1:s}
                         </button>
                     </div>\n""".format(div_name, os.path.basename(beam_list[k]))
@@ -1065,29 +1079,31 @@ def write_obs_content_mosaic(html_code, qa_report_obs_path, page_type):
 
     if n_images != 0:
 
-        div_name = "mosaic_gallery"
+        div_name = "gallery"
 
         html_code += """
-                <button onclick="show_hide_plots('{0:s}')">
-                    PyBDSF Diagnostic plots
-                </button>
-                <div class="gallery_row" , name="mosaic_gallery">\n""".format(div_name)
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                        PyBDSF Diagnostic plots
+                    </button>
+                </div>
+                <div class="w3-container w3-margin-top w3-hide" name="gallery">\n""".format(div_name)
 
         # go throught the different types of plots
         # they require a different layout because the plot sizes vary
         for k in range(n_images):
             if k % 2 == 0:
                 html_code += """
-                <div class="gallery_column">\n"""
+                <div class="w3-row">\n"""
 
             html_code += """
-                <div class="mosaic_img">
+                <div class="w3-half">
                     <a href="{0:s}/{1:s}">
                         <img src="{0:s}/{1:s}" alt="No image", width="100%">
                     </a>
                 </div>\n""".format(page_type, os.path.basename(image_list[k]))
 
-            if k % 2 != 0 or k == n_images-1:
+            if k % 2 == 1 or k == n_images-1:
                 html_code += """
                             </div>\n"""
 
@@ -1106,33 +1122,45 @@ def write_obs_content_mosaic(html_code, qa_report_obs_path, page_type):
                 button_name = "validation_tool"
 
                 html_code += """
-                    <button onclick="show_hide_plots('{0:s}')">
-                        Validation Tool
-                    </button>\n""".format(button_name)
+                    <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom"  onclick="show_hide_plots('{0:s}')">
+                            Validation Tool
+                        </button>
+                    </div>
+                    <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(button_name)
 
                 html_code += """
-                    <p>
-                        <iframe class="validation_tool" name="{0:s}" src="{1:s}/{2:s}/index.html"></iframe>
-                    </p>\n""".format(button_name, page_type, os.path.basename(frame_name))
+                    <div class="w3-container w3-large">
+                        <a href="{0:s}/{1:s}/index.html" target="_blank">Click here to open the validation tool</a> if it is not shown below
+                    </div>
+                    <div class="w3-container">
+                        <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}/index.html"></iframe>
+                    </div>\n""".format(page_type, os.path.basename(frame_name))
             else:
                 logger.warning("No mosaic plots found")
                 html_code += """
-                <p class="warning">
-                    No validation tool found for mosaic QA.
-                </p>\n"""
+                <div class="w3-container w3-large w3-text-red">
+                    <p>
+                        No validation tool found for mosaic QA.
+                    </p>
+                </div>\n"""
         else:
             logger.warning("No mosaic plots found")
             html_code += """
-            <p class="warning">
-                No validation tool found for mosaic QA.
-            </p>\n"""
+            <div class="w3-container w3-large w3-text-red">
+                <p>
+                    No validation tool found for mosaic QA.
+                </p>
+            </div>\n"""
 
     else:
         logger.warning("No mosaic plots found")
         html_code += """
-        <p class="warning">
-            No plot and validation tool found for mosaic QA.
-        </p>\n"""
+        <div class="w3-container w3-large w3-text-red">
+            <p>
+                No plot and validation tool found for mosaic QA.
+            </p>
+        </div>\n"""
 
     return html_code
 
@@ -1180,10 +1208,13 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
         if n_log_files != 0 or os.path.exists(csv_file):
 
             # create button
-            html_code += """<button onclick="show_hide_plots('{0:s}')">
-                    {1:s}
-                </button>
-                <div class = "beam_continuum" name = "{0:s}" >\n""".format(node, button_name)
+            html_code += """
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                        {1:s}
+                    </button>
+                </div>
+                <div class="w3-container w3-margin-top w3-hide" name = "{0:s}" >\n""".format(node, button_name)
 
             # create a table with the time info
             # +++++++++++++++++++++++++++++++++
@@ -1195,10 +1226,12 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 frame_name = "apercal_gallery_table_{0:s}".format(node)
 
                 html_code += """
-                        <button class="button_continuum" onclick="show_hide_plots('{0:s}')">
-                            Apercal timing information
-                        </button>
-                        <p></p>
+                        <div class="w3-container">
+                            <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                                Apercal timing information
+                            </button>
+                        </div>
+                        <div class="w3-container w3-margin-top w3-hide" name = "{0:s}" >
                         """.format(frame_name)
 
                 # read in data
@@ -1216,11 +1249,10 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 # create the table
                 # start with the header
                 html_code += """
-                        <div class="beam_continuum" name="{0:s}">
-                            <table class="apercal_timing">
-                                <tr>
-                                    <th>beam</th>
-                        """.format(frame_name)
+                        <div class="w3-responsive">
+                            <table class="w3-table-all">
+                                <tr class="w3-amber">
+                                    <th>beam</th>"""
                 
                 for pipeline_step in pipeline_step_list:
                     html_code += """
@@ -1264,8 +1296,8 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                             """
 
                 html_code += """</table>
-                        </div>\n
-                        """
+                        </div>
+                    </div>\n"""
             else:
                 logging.warning(
                     "Could not find timing information file {0:s} ".format(csv_file))
@@ -1279,7 +1311,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
                     log_file_list.sort()
 
-                    frame_name = "apercal_gallery{0:d}".format(log_counter)
+                    frame_name = "gallery_apercal{0:d}".format(log_counter)
 
                     beam = os.path.basename(log_file_list[log_counter]).split(
                         "_")[0].split("apercal")[-1]
@@ -1290,42 +1322,51 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         log_button_name = "Apercal log for beam {0:s}".format(
                             beam)
 
-                    html_code += """<button class="button_continuum" onclick="show_hide_plots('{0:s}')">
-                            {1:s}
-                        </button>
+                    html_code += """
+                        <div class="w3-container">
+                            <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                                {1:s}
+                            </button>
+                        </div>
+                         <div class="w3-container w3-margin-top w3-hide" name = "{0:s}" >
                         """.format(frame_name, log_button_name)
 
-                    html_code += """<p>
-                            <iframe id="log" name="{0:s}" src="{1:s}/{2:s}"></iframe>
-                        </p>\n""".format(frame_name, page_type, os.path.basename(log_file_list[log_counter]).replace(".txt", ".html"))
+                    html_code += """
+                        <div class="w3-container w3-large">
+                            <a href="{0:s}" target="_blank">Click here to open the log file</a> if it is not shown below
+                        </div>
+                        <div class="w3-container>
+                            <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
+                        </div>
+                    </div>\n""".format(page_type, os.path.basename(log_file_list[log_counter]))
 
-                    # create iframe supbage
-                    html_code_iframe_page = """<!DOCTYPE HTML>
-                        <html lang="en">
+                    # # create iframe supbage
+                    # html_code_iframe_page = """<!DOCTYPE HTML>
+                    #     <html lang="en">
 
-                        <head>
-                        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-                        <meta name="description" content="" />
-                        <meta name="keywords" content="" />
-                        </head>
+                    #     <head>
+                    #     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+                    #     <meta name="description" content="" />
+                    #     <meta name="keywords" content="" />
+                    #     </head>
 
-                        <body>
-                        <a href="{0:s}" target="_self">Click here to open log file</a>
-                        </body>
+                    #     <body>
+                    #     <a href="{0:s}" target="_self">Click here to open log file</a>
+                    #     </body>
 
-                        </html>\n""".format(os.path.basename(log_file_list[log_counter]))
+                    #     </html>\n""".format(os.path.basename(log_file_list[log_counter]))
 
-                    iframe_page_name = "{0:s}/{1:s}/{2:s}".format(qa_report_obs_path, page_type, os.path.basename(
-                        log_file_list[log_counter]).replace(".txt", ".html"))
-                    try:
-                        logger.info(
-                            "Writing apercal log iframe page {0:s}".format(iframe_page_name))
-                        html_file = open(iframe_page_name, 'w')
-                        html_file.write(html_code_iframe_page)
-                        html_file.close()
-                    except Exception as e:
-                        logger.error(e)
-                        logger.error("writing iframe page content failed")
+                    # iframe_page_name = "{0:s}/{1:s}/{2:s}".format(qa_report_obs_path, page_type, os.path.basename(
+                    #     log_file_list[log_counter]).replace(".txt", ".html"))
+                    # try:
+                    #     logger.info(
+                    #         "Writing apercal log iframe page {0:s}".format(iframe_page_name))
+                    #     html_file = open(iframe_page_name, 'w')
+                    #     html_file.write(html_code_iframe_page)
+                    #     html_file.close()
+                    # except Exception as e:
+                    #     logger.error(e)
+                    #     logger.error("writing iframe page content failed")
             else:
                 logging.warning(
                     "No log files found for {0:s}".format(node))
@@ -1336,9 +1377,12 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
             logging.warning(
                 "No timing information and log files found for {0:s}".format(node))
             # create button
-            html_code += """<button class="disabled" onclick="show_hide_plots('{0:s}')">
-                    {1:s}
-                </button>\n""".format(node, button_name)
+            html_code += """
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
+                        {1:s}
+                    </button>
+                </div>\n""".format(node, button_name)
 
         # get the csv files
 
