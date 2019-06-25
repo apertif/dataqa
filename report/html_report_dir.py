@@ -259,13 +259,15 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
     logger.info(
         "## Creating report directory for crosscal and linking files...")
     
+    qa_crosscal_dir = os.path.join(qa_dir,"crosscal")
+
     # if crosscal from different happilis should be combined
     if do_combine:
         pass
         # combine images
         # try:
         #     logging.info("Combining crosscal plots")
-        #     run_merge_plots(qa_dir, do_ccal=True, do_scal=False):
+        #     run_merge_plots(qa_crosscal_dir, do_ccal=True, do_scal=False):
         # except Exception as e:
         #     logger.warning("Combining crosscal plots failed")
         #     logger.exception(e)
@@ -274,7 +276,7 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
     
     # get the images for crosscal
     images_crosscal = glob.glob(
-        "{0:s}crosscal/*.png".format(qa_dir))
+        "{0:s}/*.png".format(qa_crosscal_dir))
 
     # if there are any link them.
     if len(images_crosscal) != 0:
