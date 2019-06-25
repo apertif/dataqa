@@ -178,7 +178,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
         "## Creating report directory for preflag and linking files. Done")
 
 
-def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the create directory for the report
 
     Note:
@@ -188,35 +188,38 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
 
     logger.info(
         "## Creating report directory for crosscal and linking files...")
-
-    # get the images in the subdirectory
-    images_crosscal = glob.glob(
-        "{0:s}crosscal/*.png".format(qa_dir))
-
-    if len(images_crosscal) != 0:
-
-        images_crosscal.sort()
-
-        # go through all beams
-        for image in images_crosscal:
-
-            link_name = "{0:s}/{1:s}".format(
-                qa_dir_report_obs_subpage, os.path.basename(image))
-
-            # change to relative link when in trigger mode
-            if trigger_mode:
-                image = image.replace(
-                    qa_dir, "../../../")
-
-            # check if link exists
-            if not os.path.exists(link_name):
-                os.symlink(image, link_name)
-            else:
-                os.unlink(link_name)
-                os.symlink(image, link_name)
-
+    
+    # if crosscal from different happilis should be combined
+    if do_combine:
+        pass
     else:
-        logger.warning("No images found for crosscal.")
+        # get the images in the subdirectory
+        images_crosscal = glob.glob(
+            "{0:s}crosscal/*.png".format(qa_dir))
+
+        if len(images_crosscal) != 0:
+
+            images_crosscal.sort()
+
+            # go through all beams
+            for image in images_crosscal:
+
+                link_name = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(image))
+
+                # change to relative link when in trigger mode
+                if trigger_mode:
+                    image = image.replace(
+                        qa_dir, "../../../")
+
+                # check if link exists
+                if not os.path.exists(link_name):
+                    os.symlink(image, link_name)
+                else:
+                    os.unlink(link_name)
+                    os.symlink(image, link_name)
+        else:
+            logger.warning("No images found for crosscal.")
 
     logger.info(
         "## Creating report directory for crosscal and linking files. Done")
@@ -765,10 +768,27 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         "## Creating report directory for apercal log and linking files. Done")
 
 
-def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False):
     """Function to create the directory structure of the report document
 
     Files that are required will be linked to there.
+
+    The function can create the directory for the pages:
+    summary, inspection plots, preflag, crosscal, selfcal, continuum,
+    line, mosaic and apercal log.
+
+    The option to combine QA information from different happilis does not
+    do anything with inspection plots and preflag. The former is only available
+    from happili-01 in triggered mode and the latter is already distributed.
+
+    Args:
+        obs_id (str): ID of observation (scan/task_id)
+        qa_dir (str): Directory of QA
+        subpages (list(str)): List of pages to be created
+        css_file (str): Path to local css file (deprecated as w3css is now used)
+        js_file (str): Path to javascript file
+        trigger_mode (bool): In trigger mode the report is created only for the data on the given happili
+        do_combine (bool): Combine the information from different happilis.
     """
 
     # first check that the subdirectory report exists
@@ -838,7 +858,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_crosscal(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
                 logger.error(e)
 
