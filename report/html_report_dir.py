@@ -17,6 +17,50 @@ from shutil import copy
 logger = logging.getLogger(__name__)
 
 
+def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+    """Function to create the observing log  for the report
+
+    Note:
+        All necessary files will be linked to this directory
+        from the observing log QA directory
+    """
+
+    logger.info(
+        "## Creating report directory for observing logs. No files to link yet")
+
+    # # get the images in the subdirectory
+    # images_inspection_plots = glob.glob(
+    #     os.path.join(qa_dir, "inspection_plots/*.png"))
+
+    # if len(images_inspection_plots) != 0:
+
+    #     images_inspection_plots.sort()
+
+    #     # go through all beams
+    #     for image in images_inspection_plots:
+
+    #         link_name = "{0:s}/{1:s}".format(
+    #             qa_dir_report_obs_subpage, os.path.basename(image))
+
+    #         # change to relative link when in trigger mode
+    #         if trigger_mode:
+    #             image = image.replace(
+    #                 qa_dir, "../../../")
+
+    #         # check if link exists
+    #         if not os.path.exists(link_name):
+    #             os.symlink(image, link_name)
+    #         else:
+    #             os.unlink(link_name)
+    #             os.symlink(image, link_name)
+
+    # else:
+    #     logger.warning("No images found for inspection plots.")
+
+    # logger.info(
+    #     "## Creating report directory for inspection plots and linking files. Done")
+
+
 def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the inspection plot directory for the report
 
@@ -192,40 +236,50 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
     # if crosscal from different happilis should be combined
     if do_combine:
         pass
+        # combine images
+        # try:
+        #     logging.info("Combining crosscal plots")
+        #     run_merge_plots(qa_dir, do_ccal=True, do_scal=False):
+        # except Exception as e:
+        #     logger.warning("Combining crosscal plots failed")
+        #     logger.exception(e)
+        # else:
+        #     logger.info("Combining crosscal plots ... Done")
+    
+    # get the images for crosscal
+    images_crosscal = glob.glob(
+        "{0:s}crosscal/*.png".format(qa_dir))
+
+    # if there are any link them.
+    if len(images_crosscal) != 0:
+
+        images_crosscal.sort()
+
+        # go through all beams
+        for image in images_crosscal:
+
+            link_name = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage, os.path.basename(image))
+
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                image = image.replace(
+                    qa_dir, "../../../")
+
+            # check if link exists
+            if not os.path.exists(link_name):
+                os.symlink(image, link_name)
+            else:
+                os.unlink(link_name)
+                os.symlink(image, link_name)
     else:
-        # get the images in the subdirectory
-        images_crosscal = glob.glob(
-            "{0:s}crosscal/*.png".format(qa_dir))
-
-        if len(images_crosscal) != 0:
-
-            images_crosscal.sort()
-
-            # go through all beams
-            for image in images_crosscal:
-
-                link_name = "{0:s}/{1:s}".format(
-                    qa_dir_report_obs_subpage, os.path.basename(image))
-
-                # change to relative link when in trigger mode
-                if trigger_mode:
-                    image = image.replace(
-                        qa_dir, "../../../")
-
-                # check if link exists
-                if not os.path.exists(link_name):
-                    os.symlink(image, link_name)
-                else:
-                    os.unlink(link_name)
-                    os.symlink(image, link_name)
-        else:
-            logger.warning("No images found for crosscal.")
+        logger.warning("No images found for crosscal.")
 
     logger.info(
         "## Creating report directory for crosscal and linking files. Done")
 
 
-def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the selfcal directory for the report
 
     Note:
@@ -233,8 +287,29 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         from the selfcal QA directory
     """
 
+    # if crosscal from different happilis should be combined
+    if do_combine:
+        pass
+        # combine images
+        # try:
+        #     logging.info("Combining crosscal plots")
+        #     run_merge_plots(qa_dir, do_ccal=False, do_scal=True):
+        # except Exception as e:
+        #     logger.warning("Combining crosscal plots failed")
+        #     logger.exception(e)
+        # else:
+        #     logger.info("Combining crosscal plots ... Done")
+
     logger.info(
         "## Creating report directory for selfcal and linking files...")
+
+    default_qa_selfcal_dir = os.path.join(qa_dir, "selfcal")
+
+    if socket.gethostname() != 'happili-01' or trigger_mode:
+        qa_selfcal_dir_list = [default_qa_selfcal_dir]
+    else:
+        qa_selfcal_dir_list = [default_qa_selfcal_dir, default_qa_selfcal_dir.replace(
+            "data", "data2"), default_qa_selfcal_dir.replace("data", "data3"), default_qa_selfcal_dir.replace("data", "data4")]
 
     # get beams
     beam_list = glob.glob(
@@ -827,11 +902,21 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
             qa_dir_report_obs, page)
 
         if os.path.exists(qa_dir_report_obs_subpage):
-            logger.info("Directory 'report' already exists")
+            logger.info("Directory {0:s} already exists".format(qa_dir_report_obs_subpage))
         else:
             logger.info(
                 "Directory '{0:s} does not exists and will be created".format(qa_dir_report_obs_subpage))
             os.mkdir(qa_dir_report_obs_subpage)
+
+        # Create links for files from Observation log
+        # +++++++++++++++++++++++++++++++++++++++++++++++
+        if page == "observing_log":
+
+            try:
+                create_report_dir_observing_log(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+            except Exception as e:
+                logger.error(e)
 
         # Create links for files from inspection plot QA
         # +++++++++++++++++++++++++++++++++++++++++++++++
@@ -862,13 +947,13 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
             except Exception as e:
                 logger.error(e)
 
-        # Create links for files from crosscal QA
+        # Create links for files from selfcal QA
         # +++++++++++++++++++++++++++++++++++++++
         elif page == "selfcal":
 
             try:
                 create_report_dir_selfcal(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
                 logger.error(e)
 
