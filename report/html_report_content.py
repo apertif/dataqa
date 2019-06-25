@@ -1141,6 +1141,7 @@ def write_obs_content_mosaic(html_code, qa_report_obs_path, page_type):
                     </div>
                     <div class="w3-container">
                         <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}/index.html"></iframe>
+                    </div>
                     </div>\n""".format(page_type, os.path.basename(frame_name))
             else:
                 logger.warning("No mosaic plots found")
@@ -1343,7 +1344,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         <div class="w3-container w3-large">
                             <a href="{0:s}/{1:s}">Click here to open the log file</a> if it is not shown below
                         </div>
-                        <div class="w3-container>
+                        <div class="w3-container">
                             <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
                         </div>
                     </div>\n""".format(page_type, os.path.basename(log_file_list[log_counter]))
