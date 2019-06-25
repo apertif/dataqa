@@ -44,16 +44,16 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type):
 
     if len(image_list) != 0:
         html_code += """
-                <div class="w3-container w3-margin-top w3-hide">\n"""
+                <div class="w3-container w3-margin-top w3-show">\n"""
 
         for image in image_list:
             html_code += """
-                <div class="w3-third">
+                <div class="w3-half">
                     <a href="{0:s}/{1:s}">
                         <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                     </a>
                     <div class="w3-container w3-center">
-                        <h5>{1:s}</h5>
+                        <h5>Summary plot</h5>
                     </div>
                 </div>\n""".format(page_type, os.path.basename(image))
         html_code += """</div>\n"""
