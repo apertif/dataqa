@@ -10,6 +10,7 @@ from PIL import Image
 from apercal.libs import lib
 from time import time
 
+
 def merge_plots(image_list, new_image_name=None):
     """This function does the actual merging
     """
@@ -63,6 +64,11 @@ def merge_plots(image_list, new_image_name=None):
 def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
     """ This function merges the crosscal and/or selfcal plots
     that are split by beam from the different data directories.
+
+    Args:
+        qa_dir (str): Directory of QA
+        do_ccal (bool): Set to merge crosscal plots (default: True)
+        do_scal (bool): Set to merge selfcal plots (default: True)
     """
 
     # Basic settings
@@ -113,6 +119,45 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
                 # now merge the images
                 try:
                     merge_plots(ccal_plot_list)
+                except Exception as e:
+                    logger.warning(
+                        "Merging plots for {0} failed".format(png_name))
+                    logger.exception(e)
+                else:
+                    logger.info(
+                        "Merged plots for {0} successfully".format(png_name))
+
+    # Merge the selfcal plots
+    # ========================
+    if do_scal:
+        logger.info("## Merging selfcal plots")
+
+        qa_dir_selfcal = "{0:s}selfcal".format(qa_dir)
+
+        # get a list all selfcal plots
+        scal_plot_list = glob.glob(
+            "{0:s}/*.png".format(qa_dir_selfcal.replace("/data", "/data*")))
+
+        if len(scal_plot_list) == 0:
+            logger.warning("No selfcal plots were found.")
+        else:
+            # get a unique list of plot names
+            scal_png_name_list = np.array(
+                os.path.basename(plot) for plot in scal_plot_list)
+            scal_png_name_list = np.unique(scal_png_name_list)
+
+            # go through all the images and merge them
+            for png_name in scal_png_name_list:
+
+                logging.info("Merging {0:s}".format(png_name))
+
+                # get a list of plots with this name
+                scal_plot_list = glob.glob(
+                    "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data*"), png_name))
+
+                # now merge the images
+                try:
+                    merge_plots(scal_plot_list)
                 except Exception as e:
                     logger.warning(
                         "Merging plots for {0} failed".format(png_name))
