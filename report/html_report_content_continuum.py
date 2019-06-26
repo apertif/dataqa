@@ -104,18 +104,17 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                     html_code += """
                     <div class="w3-quarter">
                         <a href="{0:s}/{1:s}/{2:s}">
-                        <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
+                            <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
                         </a>
                         <div class="w3-container w3-center">
                             <h5>Beam {1:s}</h5>
                         </div>
                     </div>\n""".format(page_type, os.path.basename(beam), os.path.basename(image))
-
                 else:
                     html_code += """
                         <div class="w3-quarter">
-                            
-                        </div>\n"""
+                            <img src="" alt="No image for beam {0:s}", width="100%">
+                        </div>\n""".format(os.path.basename(beam))
 
                 if img_counter % 4 == 3:
                     html_code += """</div>\n"""
