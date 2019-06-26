@@ -126,3 +126,5 @@ def get_inspection_plots(obs_id, qa_plot_dir):
             else:
                 logger.info("Inspection plot saved as {0:s}".format(
                     os.path.basename(plot_file_name_new)))
+
+            plot_counter += 1
