@@ -43,11 +43,11 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
         img_counter = 0
 
         for image in image_list:
-            if img_counter % 3 == 0:
+            if img_counter % 4 == 0:
                 html_code += """<div class="w3-row">\n"""
 
             html_code += """
-                <div class="w3-third">
+                <div class="w3-quarter">
                     <a href="{0:s}/{1:s}">
                         <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                     </a>
@@ -56,7 +56,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
                     </div>--!>
                 </div>\n""".format(page_type, os.path.basename(image))
 
-            if img_counter % 3 == 2 or img_counter == len(image_list)-1:
+            if img_counter % 4 == 3 or img_counter == len(image_list)-1:
                 html_code += """</div>\n"""
 
             img_counter += 1
