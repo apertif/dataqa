@@ -94,23 +94,28 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                 image_list = glob.glob(os.path.join(
                     beam, "image_mf_[0-9][0-9].png"))
 
-                if len(image_list) != 0:
-                    image = image_list[0]
-                else:
-                    image = ""
-
+                # to properly make the gallery
                 if img_counter % 4 == 0:
                     html_code += """<div class="w3-row">\n"""
 
-                html_code += """
-                <div class="w3-quarter">
-                    <a href="{0:s}/{1:s}/{2:s}">
-                    <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
-                    </a>
-                    <div class="w3-container w3-center">
-                        <h5>Beam {1:s}</h5>
-                    </div>
-                </div>\n""".format(page_type, os.path.basename(os.path.dirname(image)), os.path.basename(image))
+                # if no image exists leave it empty
+                if len(image_list) != 0:
+                    image = image_list[0]
+                    html_code += """
+                    <div class="w3-quarter">
+                        <a href="{0:s}/{1:s}/{2:s}">
+                        <img src="{0:s}/{1:s}/{2:s}" alt="No image", width="100%">
+                        </a>
+                        <div class="w3-container w3-center">
+                            <h5>Beam {1:s}</h5>
+                        </div>
+                    </div>\n""".format(page_type, os.path.basename(beam), os.path.basename(image))
+
+                else:
+                    html_code += """
+                        <div class="w3-quarter">
+                            
+                        </div>\n"""
 
                 if img_counter % 4 == 3:
                     html_code += """</div>\n"""
