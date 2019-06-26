@@ -13,7 +13,7 @@ FNULL = open(os.devnull, 'w')
 
 def get_inspection_plot_list():
     """
-    Function to return a list of inspection plot 
+    Function to return a list of inspection plot
 
     This list only contains the type of inspection plot
     to be copied from ALTA.
@@ -48,6 +48,8 @@ def get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type):
         obs_id (int): ID of the observation (scan number or task_id)
         plot_type (str): Type of inspection plot
 
+    Return:
+        plot_file_name (str): Name of the plot (without alta path)
     """
 
     # Main ALTA path
@@ -73,9 +75,9 @@ def get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type):
         logger.info("Successully retrieved {}".format(alta_plot_file))
 
     # return full path
-    plot_file_name_with_path = os.path.join(qa_plot_dir, plot_file_name)
+    # plot_file_name_with_path = os.path.join(qa_plot_dir, plot_file_name)
 
-    return plot_file_name_with_path
+    return plot_file_name
 
 
 def get_inspection_plots(obs_id, qa_plot_dir):
@@ -110,10 +112,14 @@ def get_inspection_plots(obs_id, qa_plot_dir):
                 qa_plot_dir, obs_id, plot_type)
 
             # rename it to keep the order
-            plot_file_name_new = "{0:02d}_{1:s}".format(
-                plot_counter, plot_file_name)
+            plot_file_name_new = os.path.join(qa_plot_dir, "{0:02d}_{1:s}".format(
+                plot_counter, plot_file_name))
 
-            os.rename(plot_file_name, plot_file_name_new)
-
-            logging.info("Inspection plot saved as {0:s}".format(
-                os.path.basename(plot_file_name_new)))
+            try:
+                os.rename(plot_file_name, plot_file_name_new)
+            except Exception as e:
+                logger.warning("Renaming {} failed".format(plot_file_name))
+                logger.exception(e)
+            else:
+                logger.info("Inspection plot saved as {0:s}".format(
+                    os.path.basename(plot_file_name_new)))
