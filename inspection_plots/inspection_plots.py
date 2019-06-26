@@ -115,6 +115,9 @@ def get_inspection_plots(obs_id, qa_plot_dir):
             plot_file_name_new = os.path.join(qa_plot_dir, "{0:02d}_{1:s}".format(
                 plot_counter, plot_file_name))
 
+            # have to add the path to the original plot name now
+            plot_file_name = os.path.join(qa_plot_dir, plot_file_name)
+
             try:
                 os.rename(plot_file_name, plot_file_name_new)
             except Exception as e:
