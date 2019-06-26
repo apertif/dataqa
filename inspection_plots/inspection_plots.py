@@ -72,6 +72,11 @@ def get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type):
     else:
         logger.info("Successully retrieved {}".format(alta_plot_file))
 
+    # return full path
+    plot_file_name_with_path = os.path.join(qa_plot_dir, plot_file_name)
+
+    return plot_file_name_with_path
+
 
 def get_inspection_plots(obs_id, qa_plot_dir):
     """
@@ -88,6 +93,8 @@ def get_inspection_plots(obs_id, qa_plot_dir):
     # list of types of inspection plots
     plot_type_list = get_inspection_plot_list()
 
+    plot_counter = 1
+
     # go through the polarzation
     for polarization in polarization_list:
 
@@ -99,4 +106,14 @@ def get_inspection_plots(obs_id, qa_plot_dir):
                 plot_type += "_{}".format(polarization)
 
             # get inspection plot
-            get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type)
+            plot_file_name = get_inspection_plot_from_alta(
+                qa_plot_dir, obs_id, plot_type)
+
+            # rename it to keep the order
+            plot_file_name_new = "{0:02d}_{1:s}".format(
+                plot_counter, plot_file_name)
+
+            os.rename(plot_file_name, plot_file_name_new)
+
+            logging.info("Inspection plot saved as {0:s}".format(
+                os.path.basename(plot_file_name_new)))
