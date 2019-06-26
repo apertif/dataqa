@@ -37,6 +37,10 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type)
         "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
 
     if len(image_list) != 0:
+
+        # sort the list
+        image_list.sort()
+
         html_code += """
                 <div class="w3-container w3-margin-top">\n"""
 
