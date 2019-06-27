@@ -71,6 +71,8 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
         beam_list.sort()
 
+        beam_list = np.array(beam_list)
+
         # get a list of beam numbers
         beam_nr_list = np.array([os.path.basename(beam) for beam in beam_list])
 
