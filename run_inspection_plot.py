@@ -81,7 +81,8 @@ def main():
         else:
             is_calibrator = True
 
-            qa_plot_dir = os.path.join(qa_plot_dir, args.beam)
+            qa_plot_dir = os.path.join(
+                qa_plot_dir, "{0:02d}".format(args.beam))
 
             if not os.path.exists(qa_plot_dir):
                 os.mkdir(qa_plot_dir)
