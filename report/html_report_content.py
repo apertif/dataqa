@@ -47,7 +47,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_observing_log(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for observing log failed.")
+            logger.exception(e)
 
     # create html content for subpage summary
     # +++++++++++++++++++++++++++++++++++++++
@@ -57,7 +58,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_summary(
                 html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for summary failed.")
+            logger.exception(e)
 
     # create html content for subpage inspection plots
     # ++++++++++++++++++++++++++++++++++++++++++++++++
@@ -67,7 +69,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_inspection_plots(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for inspection plots failed.")
+            logger.exception(e)
 
     # create html content for subpage preflag
     # +++++++++++++++++++++++++++++++++++++++
@@ -77,7 +80,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_preflag(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for preflag failed.")
+            logger.exception(e)
 
     # create html content for subpage crosscal
     # ++++++++++++++++++++++++++++++++++++++++
@@ -87,7 +91,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_crosscal(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for crosscal failed.")
+            logger.exception(e)
 
     # create html content for subpage selfcal
     # ++++++++++++++++++++++++++++++++++++
@@ -97,7 +102,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_selfcal(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for selfcal failed.")
+            logger.exception(e)
 
     # create html content for subpage continuum
     # +++++++++++++++++++++++++++++++++++++++++
@@ -107,7 +113,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_continuum(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for continuum failed.")
+            logger.exception(e)
 
     # create html content for subpage line
     # ++++++++++++++++++++++++++++++++++++
@@ -117,7 +124,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_line(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for line failed.")
+            logger.exception(e)
 
     # create html content for subpage mosaic
     # ++++++++++++++++++++++++++++++++++++++
@@ -127,7 +135,8 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_mosaic(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for mosaic failed.")
+            logger.exception(e)
 
     # create html content for subpage apercal
     # as this is a text file, it is a bit more
@@ -141,15 +150,16 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
             html_code = write_obs_content_apercal_log(
                 html_code, qa_report_obs_path, page_type)
         except Exception as e:
-            logger.error(e)
+            logger.warning("Creating content for apercal log failed.")
+            logger.exception(e)
 
     try:
         html_file = open(page_name, 'a')
         html_file.write(html_code)
         html_file.close()
     except Exception as e:
-        logger.error(e)
-        logger.error("writing obs content")
+        logger.exception(e)
+        logger.error("Writing obs content failed")
         return -1
 
     return 1
