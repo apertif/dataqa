@@ -74,8 +74,10 @@ def main():
     if args.calibrator:
         if args.beam is None:
             print("ERROR: Please specify beam of calibrator")
+            return -1
         elif args.cal_id is None:
             print("ERROR: Please specify id of calibrator")
+            return -1
         else:
             is_calibrator = True
 
