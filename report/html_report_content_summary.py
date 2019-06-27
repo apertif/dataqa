@@ -10,13 +10,14 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def write_obs_content_summary(html_code, qa_report_obs_path, page_type):
+def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info=None):
     """Function to create the html page for summary
 
     Args:
         html_code (str): HTML code with header and title
         qa_report_obs_path (str): Path to the report directory
         page_type (str): The type of report page
+        obs_info (dict): Information about the observation
 
     Return:
         html_code (str): Body of HTML code for this page
@@ -26,19 +27,42 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type):
 
     html_code += """
         <div class="w3-container w3-large">
-            <p>Here you will find a summary plot with compound beams.</p>
+            <p>Here you will find a summary of the observation.</p>
         </div>\n
         """
 
-    # Create html code for inspection plots
-    # =====================================
+    # Create html code for the summary table
+    # ======================================
+    html_code += """
+        <div class="w3-responsive">
+            <table class="w3-table-all">
+                <tr class="w3-amber">
+                    <th>Obs ID</th>
+                    <th>Target</th>
+                    <th>Flux calibrator</th>
+                    <th>Pol calibrator</th>
+                    <th>OSA</th>
+                </tr>
+                    <td>{0:s}</td>
+                    <td>{1:s}</td>
+                    <td>{2:s}</td>
+                    <td>{3:s}</td>
+                    <td>{4:s}</td>
+            </table>
+        </div>\n\n""".format(obs_info['Obs_ID'][0], obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0], obs_info['OSA'][0])
+
+    # Create html code for summary plot
+    # =================================
     # get images
     image_list = glob.glob(
         "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
 
     if len(image_list) != 0:
         html_code += """
-                <div class="w3-container w3-margin-top w3-show">\n"""
+                <div class="w3-container w3-margin-top w3-show">
+                    <div class="w3-container w3-large">
+                        <p> This plot summarizes the observation and pipeline processing for each of the compound beams</p>
+                    </div>\n"""
 
         for image in image_list:
             html_code += """
