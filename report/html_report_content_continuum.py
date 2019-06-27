@@ -206,7 +206,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
                 # add the validation tool
                 frame_name = glob.glob(
-                    "{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(beam_nr))
+                    "{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(beam_list[np.where(beam_nr_list == beam_nr)[0]][0]))
 
                 if len(frame_name) != 0 and len(frame_name) == 1:
                     frame_name = frame_name[0]
@@ -235,20 +235,20 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                         logger.warning("No continuum validation tool found for beam {0:s}".format(
                             beam_nr))
                         html_code += """
-                            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">
-                                <p class="warning">
-                                    No plots and validation tool were found for {1:s}
-                                </p>
-                            </div>\n""".format(button_html_name, page_type)
+                            <div class="w3-container">
+                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                    Validation Tool
+                                </button>
+                            </div>\n""".format(button_html_name)
                 else:
                     logger.warning("No continuum validation tool found for beam {0:s}".format(
                         beam_nr))
                     html_code += """
-                        <div class="w3-container w3-large w3-text-red" name="{0:s}">
-                            <p>
-                                No plots and validation tool were found for {1:s}
-                            </p>
-                        </div>\n""".format(button_html_name, page_type)
+                        <div class="w3-container">
+                            <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                Validation Tool
+                            </button>
+                        </div>\n""".format(button_html_name)
 
             else:
                 logger.warning("No continuum plots and validation found for beam {0:s}".format(
