@@ -28,6 +28,9 @@ parser.add_argument(
 parser.add_argument("--beam", type=int, default=None,
                     help='If src_name is a calibrator set the beam number')
 
+parser.add_argument("--cal_id", default=None,
+                    help='Obs ID of the calibrator')
+
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
 parser.add_argument('-b', '--basedir', default=None,
@@ -62,11 +65,15 @@ if args.src_name is not None:
         os.mkdir(qa_plot_dir)
 
 # if it is a calibrator then put the plots into a beam directory
-if args.beam is not None:
+if args.beam is not None and args.cal_id is not None:
     qa_plot_dir = os.path.join(qa_plot_dir, args.beam)
 
     if not os.path.exists(qa_plot_dir):
         os.mkdir(qa_plot_dir)
+
+    is_calibrator = True
+else:
+    is_calibrator = False
 
 # Create log file
 lib.setup_logger(
@@ -77,7 +84,8 @@ logger = logging.getLogger(__name__)
 try:
     logger.info("#### Getting inspection plots ...")
     start_time_plots = time.time()
-    get_inspection_plots(args.obs_id, qa_plot_dir)
+    get_inspection_plots(args.obs_id, qa_plot_dir,
+                         is_calibrator=is_calibrator, cal_id=args.cal_id)
 except Exception as e:
     logger.error(e)
     logger.error("#### Getting inspection plots failed")

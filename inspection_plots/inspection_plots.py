@@ -80,7 +80,7 @@ def get_inspection_plot_from_alta(qa_plot_dir, obs_id, plot_type):
     return plot_file_name
 
 
-def get_inspection_plots(obs_id, qa_plot_dir, is_calibrator=False):
+def get_inspection_plots(obs_id, qa_plot_dir, is_calibrator=False, cal_id=None):
     """
     Function to get all inspection plots from ALTA useful for the QA
 
@@ -105,7 +105,7 @@ def get_inspection_plots(obs_id, qa_plot_dir, is_calibrator=False):
 
             # if it is a calibrator get only beam_xx and beam_yy
             if is_calibrator:
-                if plot_type != "_beams_xx" and plot_type != "_beams_yy":
+                if plot_type != "_beams_xx" and plot_type != "_beams_yy" and cal_id is None:
                     continue
             else:
                 # exclude two plots from adding polarization
@@ -113,8 +113,12 @@ def get_inspection_plots(obs_id, qa_plot_dir, is_calibrator=False):
                     plot_type += "_{}".format(polarization)
 
             # get inspection plot
-            plot_file_name = get_inspection_plot_from_alta(
-                qa_plot_dir, obs_id, plot_type)
+            if cal_id is None:
+                plot_file_name = get_inspection_plot_from_alta(
+                    qa_plot_dir, obs_id, plot_type)
+            else:
+                plot_file_name = get_inspection_plot_from_alta(
+                    qa_plot_dir, cal_id, plot_type)
 
             # rename it to keep the order
             plot_file_name_new = os.path.join(qa_plot_dir, "{0:02d}_{1:s}".format(
