@@ -129,6 +129,8 @@ if __name__ == "__main__":
             logger.info(
                 ("Saving observation information in {0} ... Done.".format(table_name_with_path)))
     else:
+        logger.info(
+            ("Observation information already exists. Reading {0}.".format(table_name_with_path)))
         obs_info = Table.read(table_name_with_path, format="ascii.ecsv")
 
     # check on which happili we are:
