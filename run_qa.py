@@ -137,6 +137,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
         name_target, name_fluxcal, name_polcal))
 
     # Write information about the observation into a txt file for later
+    # This information is important for the OSA report
     # =================================================================
 
     summary_table = Table([
