@@ -33,7 +33,7 @@ def main():
     parser.add_argument("--beam", type=int, default=None,
                         help='If src_name is a calibrator set the beam number')
 
-    parser.add_argument("--cal_id", default=None,
+    parser.add_argument("--cal_id", type=str, default=None,
                         help='Obs ID of the calibrator')
 
     parser.add_argument('-p', '--path', default=None,
