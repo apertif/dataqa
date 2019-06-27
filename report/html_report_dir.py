@@ -134,8 +134,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                 os.mkdir(qa_dir_plot_src)
 
             # now get the images
-            images_inspection_plots = glob.glob()
-                os.path.join(qa_dir_plot_src, "*.png"))
+            images_inspection_plots = glob.glob(os.path.join(qa_dir_plot_src, "*.png"))
 
             if len(images_inspection_plots) != 0:
 
