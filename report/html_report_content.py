@@ -27,7 +27,7 @@ from html_report_content_apercal_logs import write_obs_content_apercal_log
 logger = logging.getLogger(__name__)
 
 
-def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
+def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_info=None):
     """
     Function to write Observation content
     """
@@ -55,7 +55,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id=''):
 
         try:
             html_code = write_obs_content_summary(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.error(e)
 

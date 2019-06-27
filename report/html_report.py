@@ -193,7 +193,7 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
             write_html_end(page_name)
 
 
-def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None):
+def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None, obs_info=None):
     """
     Function to create the main HTML file
     """
@@ -270,6 +270,6 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
 
     try:
         write_obs_page(qa_report_dir, obs_id, os.path.basename(css_file),
-                       os.path.basename(js_file), subpages=subpages)
+                       os.path.basename(js_file), subpages=subpages, obs_info=obs_info)
     except Exception as e:
         logger.error(e)

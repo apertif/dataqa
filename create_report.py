@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
     if not os.path.exists(table_name_with_path):
 
-        summary_table = Table([
+        obs_info = Table([
             [obs_id],
             [args.target],
             [args.fluxcal],
@@ -119,7 +119,7 @@ if __name__ == "__main__":
             'Obs_ID', 'Target', 'Flux_Calibrator', 'Pol_Calibrator', 'OSA'))
 
         try:
-            summary_table.write(
+            obs_info.write(
                 table_name_with_path, format='ascii.ecsv', overwrite=True)
         except Exception as e:
             logger.warning("Saving observation information in {0} failed.".format(
@@ -128,6 +128,8 @@ if __name__ == "__main__":
         else:
             logger.info(
                 ("Saving observation information in {0} ... Done.".format(table_name_with_path)))
+    else:
+        obs_info = Table.read(table_name_with_path, format="ascii.ecsv")
 
     # check on which happili we are:
     host_name = socket.gethostname()
@@ -187,7 +189,7 @@ if __name__ == "__main__":
 
     try:
         hp.create_main_html(qa_report_dir, obs_id, subpages,
-                            css_file=css_file_name, js_file=js_file_name)
+                            css_file=css_file_name, js_file=js_file_name, obs_info=obs_info)
     except Exception as e:
         logger.error(e)
 
