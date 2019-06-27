@@ -71,6 +71,12 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
         beam_list.sort()
 
+        # get a list of beam numbers
+        beam_nr_list = np.array([os.path.basename(beam) for beam in beam_list])
+
+        # get a list of reference beams
+        beam_nr_list_ref = np.arange(40)
+
         # Create html code for continuum images gallery
         # =============================================
 
@@ -88,19 +94,30 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
             img_counter = 0
 
-            for beam in beam_list:
-
-                # get the phase plots
-                image_list = glob.glob(os.path.join(
-                    beam, "image_mf_[0-9][0-9].png"))
+            for beam_nr in beam_nr_list_ref:
 
                 # to properly make the gallery
                 if img_counter % 4 == 0:
                     html_code += """<div class="w3-row">\n"""
 
+                if beam_nr in beam_nr_list:
+                    beam = beam_list[np.where(beam_nr_list == beam_nr)]
+
+                    # get the phase plots
+                    image_list = glob.glob(os.path.join(
+                        beam, "image_mf_[0-9][0-9].png"))
+
+                    if len(image_list) != 0:
+                        image = image_list[0]
+                        image_exists = True
+                    else:
+                        image_exists = False
+
+                else:
+                    image_exists = False
+
                 # if no image exists leave it empty
-                if len(image_list) != 0:
-                    image = image_list[0]
+                if image_exists:
                     html_code += """
                     <div class="w3-quarter">
                         <a href="{0:s}/{1:s}/{2:s}">
@@ -114,7 +131,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                     html_code += """
                         <div class="w3-quarter">
                             <img src="" alt="No image for beam {0:s}", width="100%">
-                        </div>\n""".format(os.path.basename(beam))
+                        </div>\n""".format(beam_nr)
 
                 if img_counter % 4 == 3:
                     html_code += """</div>\n"""
@@ -133,13 +150,17 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
         # Create html code for beam plots
         # ===============================
 
-        for k in range(n_beams):
+        for beam_nr in beam_nr_list_ref:
 
-            button_html_name = "beam{0:d}".format(k)
-            div_name = "continuum_gallery{0:d}".format(k)
+            button_html_name = "beam{0:d}".format(beam_nr)
+            div_name = "continuum_gallery{0:d}".format(beam_nr)
 
             # get the diagnostic plots
-            image_list = glob.glob("{0:s}/*png".format(beam_list[k]))
+            if beam_nr in beam_nr_list:
+                image_list = glob.glob(
+                    "{0:s}/*png".format(beam_list[np.where(beam_nr_list == beam_nr)]))
+            else:
+                image_list = []
 
             n_images = len(image_list)
 
