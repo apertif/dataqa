@@ -165,7 +165,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         logger.error(e)
 
 
-def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
+def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None, obs_info=None):
     """
     Function to create the subpages
     """
@@ -187,7 +187,7 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
                               page_type=page, obs_id=obs_id)
 
             hrc.write_obs_content(page_name, qa_report_path,
-                                  page_type=page, obs_id=obs_id)
+                                  page_type=page, obs_id=obs_id, obs_info=obs_info)
 
             # Close the index file
             write_html_end(page_name)
