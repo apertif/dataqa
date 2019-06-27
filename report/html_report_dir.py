@@ -118,6 +118,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
             logger.warning("No images found for inspection plots.")
     # otherwise go through the sources to get the info
     else:
+        default_qa_plot_dir = os.path.join(qa_dir, "inspection_plots")
 
         if obs_info['Pol_Calibrator'][0] != '':
             src_list = [obs_info['Target'][0], obs_info['Flux_Calibrator']
@@ -125,42 +126,107 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
         else:
             src_list = [obs_info['Target'][0], obs_info['Flux_Calibrator'][0]]
 
+        # go through each of the sources
         for src in src_list:
 
-            # check whether the directory exists
-            qa_dir_plot_src = os.path.join(
-                qa_dir, "inspection_plots/{}".format(src))
-            if not os.path.exists(qa_dir_plot_src):
-                os.mkdir(qa_dir_plot_src)
-
-            # now get the images
-            images_inspection_plots = glob.glob(os.path.join(qa_dir_plot_src, "*.png"))
-
-            if len(images_inspection_plots) != 0:
-
-                images_inspection_plots.sort()
-
-                # go through all beams
-                for image in images_inspection_plots:
-
-                    link_name="{0:s}/{1:s}".format(
-                        qa_dir_report_obs_subpage, os.path.basename(image))
-
-                    # change to relative link when in trigger mode
-                    if trigger_mode:
-                        image=image.replace(
-                            qa_dir, "../../../../")
-
-                    # check if link exists
-                    if not os.path.exists(link_name):
-                        os.symlink(image, link_name)
-                    else:
-                        os.unlink(link_name)
-                        os.symlink(image, link_name)
-
+            # this is necessary as plots for the calibrator are per beam
+            # and will be distributed among the different nodes
+            if socket.gethostname() != 'happili-01' or trigger_mode :
+                qa_plot_dir_list = [default_qa_plot_dir]
+            # only check in one dir for the target plots
+            elif src == obs_info['Target'][0]:
+                qa_plot_dir_list = [default_qa_plot_dir]
             else:
-                logger.warning("No images found for inspection plots.")
+                qa_plot_dir_list = [default_qa_plot_dir, default_qa_plot_dir.replace(
+                    "data", "data2"), default_qa_plot_dir.replace("data", "data3"), default_qa_plot_dir.replace("data", "data4")]
 
+            # now go through each of the plot directories from the differen nodes
+            for qa_plot_dir in qa_plot_dir_list:
+
+                # set the source directory in the inspection plot dir
+                qa_plot_dir_src = os.path.join(
+                    qa_plot_dir, "{}".format(src))
+
+                # set the source directory where the link should be
+                qa_dir_report_obs_subpage_src = os.path.join(
+                    qa_dir_report_obs_subpage, src)
+                # create it if it does not exists
+                if not os.path.exists(qa_dir_report_obs_subpage_src):
+                    os.mkdir(qa_dir_report_obs_subpage_src)
+
+                # if it is the target the situation is simple
+                # as all plots will be in one place
+                if src == obs_info['Target'][0]:
+
+                    # now get the images
+                    images_inspection_plots = glob.glob(
+                        os.path.join(qa_plot_dir_src, "*.png"))
+
+                    if len(images_inspection_plots) != 0:
+
+                        images_inspection_plots.sort()
+
+                        # go through all beams
+                        for image in images_inspection_plots:
+
+                            link_name = "{0:s}/{1:s}".format(
+                                qa_dir_report_obs_subpage_src, os.path.basename(image))
+
+                            # change to relative link when in trigger mode
+                            if trigger_mode:
+                                image = image.replace(
+                                    qa_dir, "../../../../")
+
+                            # check if link exists
+                            if not os.path.exists(link_name):
+                                os.symlink(image, link_name)
+                            else:
+                                os.unlink(link_name)
+                                os.symlink(image, link_name)
+                    else:
+                            logger.warning(
+                                "No images found for inspection plots for target {}.".format(src))
+                # for the calibrators
+                # they are separated by beam    
+                else:
+                    # get the beams
+                    qa_plot_dir_src_beam_list = glob.glob(os.path.join(qa_plot_dir_src, "[0-3][0-9]"))
+
+                    # check that there are actually beams
+                    if len(qa_plot_dir_src_beam_list) != 0:
+
+                        # go through the beams:
+                        for qa_plot_dir_src_beam in qa_plot_dir_src_beam_list:
+
+                            # now get the images
+                            images_inspection_plots = glob.glob(
+                                os.path.join(qa_plot_dir_src_beam, "*.png"))
+
+                            # continue only if there are images in the beam dir
+                            if len(images_inspection_plots) != 0:
+
+                                # go through all images and link them
+                                for image in images_inspection_plots:
+
+                                    link_name="{0:s}/{1:s}".format(
+                                        qa_dir_report_obs_subpage_src, os.path.basename(image))
+
+                                    # change to relative link when in trigger mode
+                                    if trigger_mode:
+                                        image=image.replace(
+                                            qa_dir, "../../../../")
+
+                                    # check if link exists
+                                    if not os.path.exists(link_name):
+                                        os.symlink(image, link_name)
+                                    else:
+                                        os.unlink(link_name)
+                                        os.symlink(image, link_name)
+
+                            else:
+                                logger.warning("No images found for inspection plots for calibrator {}.".format(src))
+                    else:
+                        logger.warning("No beam directories found for calibrator {}".format(src))
 
     logger.info(
         "## Creating report directory for inspection plots and linking files. Done")
