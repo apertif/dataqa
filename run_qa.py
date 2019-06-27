@@ -166,24 +166,31 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
     # Inspection Plots
     # ================
 
-    if 'inspection_plots' in steps and host_name == 'happili-01':
+    if 'inspection_plots' in steps:
 
         start_time_inspection_plot = time.time()
 
-        # get inspection plots for target
-        logger.info("#### Inspection plot QA for {}...".format(name_target))
+        # for the target it is enough to do it only for happili-01
+        # as they do not depend on the beam
+        # for the flux and pol calibrator, they have to be run on every node
 
-        try:
-            inspection_plot_msg = os.system(
-                'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s}'.format(taskid_target, name_target))
+        # get inspection plots for target
+        if host_name == "happili-01":
+
             logger.info(
-                "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
-            logger.info(
-                "#### Inspection plot QA {0}... Done ".format(name_target))
-        except Exception as e:
-            logger.warning(
-                "Inspection plot QA for {} failed. Continue with next QA".format(name_target))
-            logger.exception(e)
+                "#### Inspection plot QA for {}...".format(name_target))
+
+            try:
+                inspection_plot_msg = os.system(
+                    'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s}'.format(taskid_target, name_target))
+                logger.info(
+                    "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
+                logger.info(
+                    "#### Inspection plot QA {0}... Done ".format(name_target))
+            except Exception as e:
+                logger.warning(
+                    "Inspection plot QA for {} failed. Continue with next QA".format(name_target))
+                logger.exception(e)
 
         # get inspection plot for flux calibrator
         logger.info("#### Inspection plot QA for {}...".format(name_fluxcal))
