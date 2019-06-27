@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 FNULL = open(os.devnull, 'w')
 
 
-def get_inspection_plot_list():
+def get_inspection_plot_list(is_calibrator=False):
     """
     Function to return a list of inspection plot
 
@@ -25,16 +25,20 @@ def get_inspection_plot_list():
         (List(str)): List of inspection plots
 
     """
-    plot_type_list = ['_beams_ampvstime',
-                      '_beams_ampvschan',
-                      '_beams_phavstime',
-                      '_beams_phavschan',
-                      '_beams_waterfall_amplitude_autoscale',
-                      '_beams_waterfall_amplitude_noscale',
-                      '_beams_waterfall_phase_autoscale',
-                      '_beams_waterfall_amplitude_noscale',
-                      '_beams_xx',
-                      '_beams_yy']
+    if is_calibrator:
+        plot_type_list = ['_beams_xx',
+                          '_beams_yy']
+    else:
+        plot_type_list = ['_beams_ampvstime',
+                          '_beams_ampvschan',
+                          '_beams_phavstime',
+                          '_beams_phavschan',
+                          '_beams_waterfall_amplitude_autoscale',
+                          '_beams_waterfall_amplitude_noscale',
+                          '_beams_waterfall_phase_autoscale',
+                          '_beams_waterfall_amplitude_noscale',
+                          '_beams_xx',
+                          '_beams_yy']
 
     return plot_type_list
 
@@ -93,7 +97,7 @@ def get_inspection_plots(obs_id, qa_plot_dir, is_calibrator=False, cal_id=None):
     polarization_list = ['XX']
 
     # list of types of inspection plots
-    plot_type_list = get_inspection_plot_list()
+    plot_type_list = get_inspection_plot_list(is_calibrator=is_calibrator)
 
     plot_counter = 1
 
@@ -103,14 +107,8 @@ def get_inspection_plots(obs_id, qa_plot_dir, is_calibrator=False, cal_id=None):
         # go through each plot type to retrieve the plot from ALTA
         for plot_type in plot_type_list:
 
-            # if it is a calibrator get only beam_xx and beam_yy
-            if is_calibrator:
-                if plot_type != "_beams_xx" and plot_type != "_beams_yy" and cal_id is None:
-                    continue
-            else:
-                # exclude two plots from adding polarization
-                if plot_type != "_beams_xx" and plot_type != "_beams_yy":
-                    plot_type += "_{}".format(polarization)
+            if plot_type != "_beams_xx" and plot_type != "_beams_yy":
+                plot_type += "_{}".format(polarization)
 
             # get inspection plot
             if cal_id is None:
@@ -121,19 +119,20 @@ def get_inspection_plots(obs_id, qa_plot_dir, is_calibrator=False, cal_id=None):
                     qa_plot_dir, cal_id, plot_type)
 
             # rename it to keep the order
-            plot_file_name_new = os.path.join(qa_plot_dir, "{0:02d}_{1:s}".format(
-                plot_counter, plot_file_name))
+            if not is_calibrator:
+                plot_file_name_new = os.path.join(qa_plot_dir, "{0:02d}_{1:s}".format(
+                    plot_counter, plot_file_name))
 
-            # have to add the path to the original plot name now
-            plot_file_name = os.path.join(qa_plot_dir, plot_file_name)
+                # have to add the path to the original plot name now
+                plot_file_name = os.path.join(qa_plot_dir, plot_file_name)
 
-            try:
-                os.rename(plot_file_name, plot_file_name_new)
-            except Exception as e:
-                logger.warning("Renaming {} failed".format(plot_file_name))
-                logger.exception(e)
-            else:
-                logger.info("Inspection plot saved as {0:s}".format(
-                    os.path.basename(plot_file_name_new)))
+                try:
+                    os.rename(plot_file_name, plot_file_name_new)
+                except Exception as e:
+                    logger.warning("Renaming {} failed".format(plot_file_name))
+                    logger.exception(e)
+                else:
+                    logger.info("Inspection plot saved as {0:s}".format(
+                        os.path.basename(plot_file_name_new)))
 
             plot_counter += 1
