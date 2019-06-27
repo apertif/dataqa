@@ -104,7 +104,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                     html_code += """<div class="w3-row">\n"""
 
                 if beam_nr in beam_nr_list:
-                    beam = beam_list[np.where(beam_nr_list == beam_nr)[0]]
+                    beam = beam_list[np.where(beam_nr_list == beam_nr)[0]][0]
 
                     # get the phase plots
                     image_list = glob.glob(os.path.join(
@@ -161,7 +161,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
             # get the diagnostic plots
             if beam_nr in beam_nr_list:
                 image_list = glob.glob(
-                    "{0:s}/*png".format(beam_list[np.where(beam_nr_list == beam_nr)[0]]))
+                    "{0:s}/*png".format(beam_list[np.where(beam_nr_list == beam_nr)[0]][0]))
             else:
                 image_list = []
 
