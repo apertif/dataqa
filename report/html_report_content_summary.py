@@ -33,6 +33,20 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
 
     # Create html code for the summary table
     # ======================================
+
+    if obs_info is None:
+        obs_id = ""
+        target = ""
+        fluxcal = ""
+        polcal = ""
+        osa = ""
+    else:
+        obs_id = obs_info['Obs_ID'][0]
+        target = obs_info['Target'][0]
+        fluxcal = obs_info['Flux_Calibrator'][0]
+        polcal = obs_info['Pol_Calibrator'][0]
+        osa = obs_info['OSA'][0]
+
     html_code += """
         <div class="w3-responsive">
             <table class="w3-table-all">
@@ -49,7 +63,7 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                     <td>{3:s}</td>
                     <td>{4:s}</td>
             </table>
-        </div>\n\n""".format(obs_info['Obs_ID'][0], obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0], obs_info['OSA'][0])
+        </div>\n\n""".format(obs_id, target, fluxcal, polcal, osa)
 
     # Create html code for summary plot
     # =================================
