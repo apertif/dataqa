@@ -22,6 +22,12 @@ parser = argparse.ArgumentParser(description='Generate selfcal QA plots')
 # 1st argument: File name
 parser.add_argument("obs_id", help='ID of observation of target field')
 
+parser.add_argument(
+    "src_name", help='Name of the calibrator or target of the plots')
+
+parser.add_argument("--beam", type=int, default=None,
+                    help='If src_name is a calibrator set the beam number')
+
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
 parser.add_argument('-b', '--basedir', default=None,
@@ -47,6 +53,20 @@ if args.path is None:
         os.mkdir(qa_plot_dir)
 else:
     qa_plot_dir = args.path
+
+# create a directory with the src_name to put
+if args.src_name is not None:
+    qa_plot_dir = os.path.join(qa_plot_dir, args.src_name)
+
+    if not os.path.exists(qa_plot_dir):
+        os.mkdir(qa_plot_dir)
+
+# if it is a calibrator then put the plots into a beam directory
+if args.beam is not None:
+    qa_plot_dir = os.path.join(qa_plot_dir, args.beam)
+
+    if not os.path.exists(qa_plot_dir):
+        os.mkdir(qa_plot_dir)
 
 # Create log file
 lib.setup_logger(
