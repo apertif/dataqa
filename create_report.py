@@ -9,6 +9,10 @@ Script to create an html overview
 
 An option exists to combine the QA from different happilis if run on happili-01
 
+You can specify the name of the target, fluxcal, polcal and OSA which will be saved
+in a text file. If this information is available some pages will use it to display
+further information.
+
 """
 
 import os
@@ -37,6 +41,18 @@ if __name__ == "__main__":
     # 1st argument: Observation number
     parser.add_argument("obs_id", type=str,
                         help='Observation Number')
+
+    parser.add_argument("--target", type=str, default='',
+                        help='Name of the target')
+
+    parser.add_argument("--fluxcal", type=str, default='',
+                        help='Name of the flux calibrator')
+
+    parser.add_argument("--polcal", type=str, default='',
+                        help='Name of the polarisation calibrator')
+
+    parser.add_argument("--osa", type=str, default='',
+                        help='Name of the OSA')
 
     parser.add_argument("-p", "--path", type=str,
                         help='Path to QA output')
@@ -85,7 +101,35 @@ if __name__ == "__main__":
         'debug', logfile='{0:s}/create_report.log'.format(qa_report_dir))
     logger = logging.getLogger(__name__)
 
-    # check first on which happili we are:
+    # Saving observation information if they do not exist yet
+    # =======================================================
+
+    table_name = "{0}_obs.ecsv".format(obs_id)
+
+    table_name_with_path = os.path.join(qa_dir, table_name)
+
+    if not os.path.exists(table_name_with_path):
+
+        summary_table = Table([
+            [obs_id],
+            [args.target],
+            [args.fluxcal],
+            [args.polcal],
+            [args.osa]], names=(
+            'Obs_ID', 'Target', 'Flux_Calibrator', 'Pol_Calibrator', 'OSA'))
+
+        try:
+            summary_table.write(
+                table_name_with_path, format='ascii.ecsv', overwrite=True)
+        except Exception as e:
+            logger.warning("Saving observation information in {0} failed.".format(
+                table_name_with_path))
+            logger.exception(e)
+        else:
+            logger.info(
+                ("Saving observation information in {0} ... Done.".format(table_name_with_path)))
+
+    # check on which happili we are:
     host_name = socket.gethostname()
 
     if args.trigger_mode:
