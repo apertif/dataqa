@@ -23,7 +23,7 @@ def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_m
     Note:
         All necessary files will be linked to this directory
         from the observing log QA directory
-    
+
     Args:
         qa_dir (str): Directory of the QA
         qa_dir_report_obs_subpage (str): Directory of the subpage
@@ -66,7 +66,7 @@ def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_m
     #     "## Creating report directory for inspection plots and linking files. Done")
 
 
-def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, obs_info=None):
     """Function to create the inspection plot directory for the report
 
     Note:
@@ -79,43 +79,94 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
         qa_dir (str): Directory of the QA
         qa_dir_report_obs_subpage (str): Directory of the subpage
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
+        obs_info (dict): Information about the observation such as the source names
     """
 
     logger.info(
         "## Creating report directory for inspection plots and linking files...")
 
     # get the images in the subdirectory
-    images_inspection_plots = glob.glob(os.path.join(qa_dir, "inspection_plots/*.png"))
+    # without the additional obs information assume that the files are in the main dir
+    if obs_info is None:
 
-    if len(images_inspection_plots) != 0:
+        images_inspection_plots = glob.glob(
+            os.path.join(qa_dir, "inspection_plots/*.png"))
 
-        images_inspection_plots.sort()
+        if len(images_inspection_plots) != 0:
 
-        # go through all beams
-        for image in images_inspection_plots:
+            images_inspection_plots.sort()
 
-            link_name = "{0:s}/{1:s}".format(
-                qa_dir_report_obs_subpage, os.path.basename(image))
+            # go through all beams
+            for image in images_inspection_plots:
 
-            # change to relative link when in trigger mode
-            if trigger_mode:
-                image = image.replace(
-                    qa_dir, "../../../")
+                link_name = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(image))
 
-            # check if link exists
-            if not os.path.exists(link_name):
-                os.symlink(image, link_name)
-            else:
-                os.unlink(link_name)
-                os.symlink(image, link_name)
+                # change to relative link when in trigger mode
+                if trigger_mode:
+                    image = image.replace(
+                        qa_dir, "../../../")
 
+                # check if link exists
+                if not os.path.exists(link_name):
+                    os.symlink(image, link_name)
+                else:
+                    os.unlink(link_name)
+                    os.symlink(image, link_name)
+
+        else:
+            logger.warning("No images found for inspection plots.")
+    # otherwise go through the sources to get the info
     else:
-        logger.warning("No images found for inspection plots.")
+
+        if obs_info['Pol_Calibrator'][0] != '':
+            src_list = [obs_info['Target'][0], obs_info['Flux_Calibrator']
+                [0], obs_info['Pol_Calibrator'][0]]
+        else:
+            src_list = [obs_info['Target'][0], obs_info['Flux_Calibrator'][0]]
+
+        for src in src_list:
+
+            # check whether the directory exists
+            qa_dir_plot_src = os.path.join(
+                qa_dir, "inspection_plots/{}".format(src))
+            if not os.path.exists(qa_dir_plot_src):
+                os.mkdir(qa_dir_plot_src)
+
+            # now get the images
+            images_inspection_plots = glob.glob()
+                os.path.join(qa_dir_plot_src, "*.png"))
+
+            if len(images_inspection_plots) != 0:
+
+                images_inspection_plots.sort()
+
+                # go through all beams
+                for image in images_inspection_plots:
+
+                    link_name="{0:s}/{1:s}".format(
+                        qa_dir_report_obs_subpage, os.path.basename(image))
+
+                    # change to relative link when in trigger mode
+                    if trigger_mode:
+                        image=image.replace(
+                            qa_dir, "../../../../")
+
+                    # check if link exists
+                    if not os.path.exists(link_name):
+                        os.symlink(image, link_name)
+                    else:
+                        os.unlink(link_name)
+                        os.symlink(image, link_name)
+
+            else:
+                logger.warning("No images found for inspection plots.")
+
 
     logger.info(
         "## Creating report directory for inspection plots and linking files. Done")
 
-def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode = False):
     """Function to create the preflag directory for the report
 
     Note:
@@ -123,22 +174,22 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
         from the preflag QA directory.
         It is not necessary to add the combine-parameter, because
         the preflag files are already distributed among the nodes.
-    
+
     Args:
         qa_dir (str): Directory of the QA
         qa_dir_report_obs_subpage (str): Directory of the subpage
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
-    
+
     """
 
     logger.info("## Creating report directory for preflag and linking files...")
 
-    default_qa_preflag_dir = os.path.join(qa_dir,"preflag")
+    default_qa_preflag_dir=os.path.join(qa_dir, "preflag")
 
     if socket.gethostname() != 'happili-01' or trigger_mode:
-        qa_preflag_dir_list = [default_qa_preflag_dir]
+        qa_preflag_dir_list=[default_qa_preflag_dir]
     else:
-        qa_preflag_dir_list = [default_qa_preflag_dir, default_qa_preflag_dir.replace(
+        qa_preflag_dir_list=[default_qa_preflag_dir, default_qa_preflag_dir.replace(
             "data", "data2"), default_qa_preflag_dir.replace("data", "data3"), default_qa_preflag_dir.replace("data", "data4")]
 
     # Get the combined preflag plots when on happili-01
@@ -146,7 +197,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
     if socket.gethostname() == 'happili-01':
         logger.info("Linking combined preflag plots")
         # get the images in the subdirectory
-        images_preflag_combined = glob.glob(
+        images_preflag_combined=glob.glob(
             os.path.join(default_qa_preflag_dir, "*.png"))
 
         if len(images_preflag_combined) != 0:
@@ -156,12 +207,12 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
             # go through all beams
             for image in images_preflag_combined:
 
-                link_name = "{0:s}/{1:s}".format(
+                link_name="{0:s}/{1:s}".format(
                     qa_dir_report_obs_subpage, os.path.basename(image))
 
                 # change to relative link when in trigger mode
                 if trigger_mode:
-                    image = image.replace(
+                    image=image.replace(
                         qa_dir, "../../../")
 
                 # check if link exists
@@ -181,11 +232,11 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
     for qa_preflag_dir in qa_preflag_dir_list:
 
         # get beams
-        qa_preflag_dir_beam_list = glob.glob(
+        qa_preflag_dir_beam_list=glob.glob(
             "{0:s}/[0-3][0-9]".format(qa_preflag_dir))
 
         # number of beams
-        n_beams = len(qa_preflag_dir_beam_list)
+        n_beams=len(qa_preflag_dir_beam_list)
 
         if n_beams != 0:
 
@@ -194,7 +245,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
             # go through all beams
             for qa_preflag_dir_beam in qa_preflag_dir_beam_list:
 
-                qa_dir_report_obs_subpage_preflag_beam = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage_preflag_beam="{0:s}/{1:s}".format(
                     qa_dir_report_obs_subpage, os.path.basename(qa_preflag_dir_beam))
 
                 # create a subdirectory in the report dir
@@ -205,7 +256,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                         logger.error(e)
 
                 # get the images in the beam directory and link them
-                images_in_beam = glob.glob(
+                images_in_beam=glob.glob(
                     "{0:s}/*png".format(qa_preflag_dir_beam))
 
                 # check that there are images in there
@@ -215,12 +266,12 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
 
                     # go through the images and link them
                     for image in images_in_beam:
-                        link_name = "{0:s}/{1:s}".format(
+                        link_name="{0:s}/{1:s}".format(
                             qa_dir_report_obs_subpage_preflag_beam, os.path.basename(image))
 
                         # change to relative link when in trigger mode
                         if trigger_mode:
-                            image = image.replace(
+                            image=image.replace(
                                 qa_dir, "../../../../")
 
                         # check if link exists
@@ -939,7 +990,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         "## Creating report directory for apercal log and linking files. Done")
 
 
-def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False, obs_info=None):
     """Function to create the directory structure of the report document
 
     Files that are required will be linked to there.
@@ -960,6 +1011,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
         js_file (str): Path to javascript file
         trigger_mode (bool): In trigger mode the report is created only for the data on the given happili
         do_combine (bool): Combine the information from different happilis.
+        obs_info (dict): Additional information about the observation (target name, fluxcal, and polcal)
     """
 
     # first check that the subdirectory report exists
@@ -1019,7 +1071,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
         if page == "inspection_plots":
 
             try:
-                create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, obs_info=obs_info)
             except Exception as e:
                 logger.error(e)
 
