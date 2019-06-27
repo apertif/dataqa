@@ -178,8 +178,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                 'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s}'.format(taskid_target, name_target))
             logger.info(
                 "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
-            logger.info("#### Inspection plot QA {0}... Done (time {1:.1f}s)".format(name_target,
-                                                                                     time.time()-start_time_inspection_plot))
+            logger.info(
+                "#### Inspection plot QA {0}... Done ".format(name_target))
         except Exception as e:
             logger.warning(
                 "Inspection plot QA for {} failed. Continue with next QA".format(name_target))
@@ -195,7 +195,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                     'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
                 logger.info(
                     "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
-                logger.info("#### Inspection plot QA {0} beam {1} ... Done".format(
+                logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
                     name_fluxcal, beamnr_cal))
             except Exception as e:
                 logger.warning(
@@ -214,7 +214,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                         'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
                     logger.info(
                         "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
-                    logger.info("#### Inspection plot QA {0} beam {1} ... Done".format(
+                    logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
                         name_polcal, beamnr_cal))
                 except Exception as e:
                     logger.warning(
