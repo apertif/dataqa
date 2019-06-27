@@ -192,7 +192,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
             try:
                 inspection_plot_msg = os.system(
-                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} --beam {2:d}'.format(taskid_cal, name_fluxcal, beamnr_cal))
+                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} --beam={2:d}'.format(taskid_cal, name_fluxcal, beamnr_cal))
                 logger.info(
                     "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                 logger.info("#### Inspection plot QA {0} beam {1} ... Done (time {2:.1f}s)".format(name_fluxcal, beamnr_cal,
@@ -211,7 +211,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
                 try:
                     inspection_plot_msg = os.system(
-                        'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} --beam {2:d}'.format(taskid_cal, name_fluxcal, beamnr_cal))
+                        'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} --beam={2:d}'.format(taskid_cal, name_fluxcal, beamnr_cal))
                     logger.info(
                         "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                     logger.info("#### Inspection plot QA {0} beam {1} ... Done (time {2:.1f}s)".format(name_polcal, beamnr_cal,
@@ -410,7 +410,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             report_msg = os.system(
-                'python /home/apercal/dataqa/create_report.py {0:d} --trigger_mode'.format(taskid_target))
+                'python /home/apercal/dataqa/create_report.py {0:d} {1:s} {2:s} --polcal={3:s} --osa={4:s} --trigger_mode'.format(taskid_target, name_target, name_fluxcal, name_polcal, osa))
             logger.info(
                 "Report finished with msg {0}".format(report_msg))
             logger.info("#### Create report ... Done (time {0:.1f}s)".format(
