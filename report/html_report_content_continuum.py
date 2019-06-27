@@ -213,7 +213,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
 
                     if os.path.isdir(frame_name):
 
-                        button_name = "validation_tool{0:d}".format(beam_nr)
+                        button_name = "validation_tool{0:s}".format(beam_nr)
 
                         html_code += """
                             <div class="w3-container">
