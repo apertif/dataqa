@@ -195,8 +195,8 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                     'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
                 logger.info(
                     "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
-                logger.info("#### Inspection plot QA {0} beam {1} ... Done (time {2:.1f}s)".format(name_fluxcal, beamnr_cal,
-                                                                                                   time.time()-start_time_inspection_plot))
+                logger.info("#### Inspection plot QA {0} beam {1} ... Done".format(
+                    name_fluxcal, beamnr_cal))
             except Exception as e:
                 logger.warning(
                     "Inspection plot QA for {} beam {1} failed. Continue with next QA".format(name_fluxcal, beamnr_cal))
@@ -214,12 +214,15 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                         'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
                     logger.info(
                         "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
-                    logger.info("#### Inspection plot QA {0} beam {1} ... Done (time {2:.1f}s)".format(name_polcal, beamnr_cal,
-                                                                                                       time.time()-start_time_inspection_plot))
+                    logger.info("#### Inspection plot QA {0} beam {1} ... Done".format(
+                        name_polcal, beamnr_cal))
                 except Exception as e:
                     logger.warning(
                         "Inspection plot QA for {} beam {1} failed. Continue with next QA".format(name_polcal, beamnr_cal))
                     logger.exception(e)
+
+        logger.info("#### Inspection plot QA ... Done (time {0:.1f}s)".format(
+            time.time()-start_time_inspection_plot))
     else:
         logger.warning("#### Did not perform inspection plot QA")
 
