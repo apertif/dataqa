@@ -227,7 +227,6 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                                 logger.warning("No images found for inspection plots for calibrator {}.".format(src))
                     else:
                         logger.warning("No beam directories found for calibrator {}".format(src))
-
     logger.info(
         "## Creating report directory for inspection plots and linking files. Done")
 
