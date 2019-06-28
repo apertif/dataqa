@@ -233,7 +233,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                                 # if not put an empty one there
                                 else:
                                     html_code += """
-                                        <div class="w3-quarter">
+                                        <div class="w3-col" style="width:20%">
                                             <img src="" alt="No image for beam {0:s}", width="100%">
                                         </div>\n""".format(beam_nr)
 
