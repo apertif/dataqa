@@ -82,9 +82,6 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
         obs_info (dict): Information about the observation such as the source names
     """
 
-    logger.info(
-        "## Creating report directory for inspection plots and linking files...")
-
     # get the images in the subdirectory
     # without the additional obs information assume that the files are in the main dir
     if obs_info is None:
@@ -131,6 +128,8 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
         # go through each of the sources
         for src in src_list:
 
+            logger.info("Linking files for {}".format(src))
+
             # this is necessary as plots for the calibrator are per beam
             # and will be distributed among the different nodes
             if socket.gethostname() != 'happili-01' or trigger_mode :
@@ -144,6 +143,8 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
 
             # now go through each of the plot directories from the differen nodes
             for qa_plot_dir in qa_plot_dir_list:
+
+                logging.info("Looking for plots in {}".format(qa_plot_dir))
 
                 # set the source directory in the inspection plot dir
                 qa_plot_dir_src = os.path.join(
@@ -236,8 +237,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                                 logger.warning("No images found for inspection plots for calibrator {}.".format(src))
                     else:
                         logger.warning("No beam directories found for calibrator {}".format(src))
-    logger.info(
-        "## Creating report directory for inspection plots and linking files. Done")
+
 
 def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode = False):
     """Function to create the preflag directory for the report
@@ -254,8 +254,6 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
 
     """
-
-    logger.info("## Creating report directory for preflag and linking files...")
 
     default_qa_preflag_dir=os.path.join(qa_dir, "preflag")
 
@@ -362,9 +360,6 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
             logger.warning(
                 "No beams found for preflag QA in {0:s}".format(qa_preflag_dir))
 
-    logger.info(
-        "## Creating report directory for preflag and linking files. Done")
-
 
 def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the create directory for the report
@@ -379,9 +374,6 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
         do_combine (bool): Set to combine the QA information from different happilis
     """
-
-    logger.info(
-        "## Creating report directory for crosscal and linking files...")
     
     qa_crosscal_dir = os.path.join(qa_dir,"crosscal")
 
@@ -427,10 +419,6 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
     else:
         logger.warning("No images found for crosscal.")
 
-    logger.info(
-        "## Creating report directory for crosscal and linking files. Done")
-
-
 def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the selfcal directory for the report
 
@@ -460,10 +448,6 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         #     logger.exception(e)
         # else:
         #     logger.info("Combining crosscal plots ... Done")
-
-    logger.info(
-        "## Creating report directory for selfcal and linking files...")
-
 
     # Getting selfcal images
     # ======================
@@ -586,9 +570,6 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
     else:
         logger.warning("No selfcal amplitude plots found")
 
-    logger.info(
-        "## Creating report directory for selfcal and linking files. Done")
-
     # # get beams
     # beam_list = glob.glob(
     #     "{0:s}selfcal/[0-3][0-9]".format(qa_dir))
@@ -655,9 +636,6 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
     
     """
-
-    logger.info(
-        "## Creating report directory for continuum and linking files...")
 
     # Getting continuum images
     # ======================
@@ -756,9 +734,6 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=
         else:
             logger.warning("No beams found for continuum found")
 
-    logger.info(
-        "## Creating report directory for continuum and linking files. Done")
-
 
 def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the line directory for the report
@@ -773,9 +748,6 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
     
     """
-
-    logger.info(
-        "## Creating report directory for line and linking files...")
 
     # Getting line images
     # ===================
@@ -843,9 +815,6 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False
         else:
             logger.warning("No beams found for line found")
 
-    logger.info(
-        "## Creating report directory for line and linking files. Done")
-
 
 def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the mosaic directory for the report
@@ -860,9 +829,6 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
     
     """
-
-    logger.info(
-        "## Creating report directory for mosaic and linking files...")
 
     qa_mosaic_dir = "{0:s}mosaic".format(qa_dir)
 
@@ -922,9 +888,6 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
     else:
         logger.warning("No validation tool output found for mosaic")
 
-    logger.info(
-        "## Creating report directory for mosaic and linking files. Done")
-
 
 def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the apercal log directory for the report
@@ -941,9 +904,6 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
     
     """
-
-    logger.info(
-        "## Creating report directory for apercal log and linking files...")
 
     # check first on which happili we are:
     host_name = socket.gethostname()
@@ -1059,9 +1019,6 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         logger.warning(
             "Did not fine time measurement files in {0:s}apercal_performance/".format(qa_dir))
 
-    logger.info(
-        "## Creating report directory for apercal log and linking files. Done")
-
 
 def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False, obs_info=None):
     """Function to create the directory structure of the report document
@@ -1118,6 +1075,9 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     # also check for content and link the files
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for page in subpages:
+
+        logger.info(
+            "## Creating report directory for {0} and linking files...".format(page))
 
         qa_dir_report_obs_subpage = "{0:s}/{1:s}".format(
             qa_dir_report_obs, page)
@@ -1217,3 +1177,6 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.error(e)
+        
+        logger.info(
+            "## Creating report directory for {0} and linking files... Done".format(page))
