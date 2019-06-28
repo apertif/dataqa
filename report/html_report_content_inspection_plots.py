@@ -267,8 +267,8 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                     html_code += """
                     <div class = "w3-container" >
                         <button class = "w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class = "disabled" onclick = "show_hide_plots('{0:s}')" >
-                            {1: s}
-                        </button >
-                    </div >\n""".format(button_src_name, src)
+                            {1:s}
+                        </button>
+                    </div>\n""".format(button_src_name, src)
 
     return html_code
