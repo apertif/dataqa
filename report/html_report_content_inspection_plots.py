@@ -169,7 +169,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                         [os.path.basename(beam) for beam in beam_list])
 
                     # a reference list of beams
-                    beam_ref_list = np.array(
+                    beam_nr_list_ref = np.array(
                         ['{0:02d}'.format(beam) for beam in range(40)])
 
                     # the list of polarisation of the plots
@@ -205,7 +205,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                             img_counter = 0
 
                             # go through all reference beams
-                            for beam_nr in beam_ref_list:
+                            for beam_nr in beam_nr_list_ref:
 
                                 # to properly make the gallery with 5 images in a row
                                 if img_counter % 5 == 0:
@@ -238,7 +238,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                                         </div>\n""".format(beam_nr)
 
                                 # closing the row
-                                if img_counter % 5 == 4 or img_counter == len(beam_ref_list):
+                                if img_counter % 5 == 4 or img_counter == len(beam_nr_list_ref):
                                     html_code += """</div>\n"""
 
                                 img_counter += 1
