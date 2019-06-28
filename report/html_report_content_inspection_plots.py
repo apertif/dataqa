@@ -113,7 +113,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                                 {1:s}
                                 </button>
                             </div>
-                            <div class="w3-container w3-margin-top" w3-hide name="{0:s}">\n""".format(button_src_name, src)
+                            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(button_src_name, src)
 
                     # to count the plots for the gallery
                     img_counter = 0
