@@ -205,16 +205,23 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                             # continue only if there are images in the beam dir
                             if len(images_inspection_plots) != 0:
 
+                                # set the beam directory where the link should be
+                                qa_dir_report_obs_subpage_src_beam = os.path.join(
+                                    qa_dir_report_obs_subpage_src, os.path.basename(qa_plot_dir_src_beam))
+                                # create it if it does not exists
+                                if not os.path.exists(qa_dir_report_obs_subpage_src):
+                                    os.mkdir(qa_dir_report_obs_subpage_src)
+
                                 # go through all images and link them
                                 for image in images_inspection_plots:
 
                                     link_name="{0:s}/{1:s}".format(
-                                        qa_dir_report_obs_subpage_src, os.path.basename(image))
+                                        qa_dir_report_obs_subpage_src_beam, os.path.basename(image))
 
                                     # change to relative link when in trigger mode
                                     if trigger_mode:
                                         image=image.replace(
-                                            qa_dir, "../../../../")
+                                            qa_dir, "../../../../../")
 
                                     # check if link exists
                                     if not os.path.exists(link_name):
