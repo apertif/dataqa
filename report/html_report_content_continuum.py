@@ -136,7 +136,8 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
                             <img src="" alt="No image for beam {0:s}", width="100%">
                         </div>\n""".format(beam_nr)
 
-                if img_counter % 4 == 3:
+                if img_counter % 4 == 3 or img_counter == len(beam_ref_list):
+                    :
                     html_code += """</div>\n"""
 
                 img_counter += 1

@@ -188,14 +188,74 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                         div_name_pol = "insplot_gallery_{0:s}".format(pol)
 
                         # get a list of images
+                        image_list = np.array(glob.glob(os.path.join(
+                            qa_report_obs_path_page_src, "[0-3][0-9]/*{}.png".format(pol))))
 
-                        html_code += """
+                        # check that there are images
+                        if len(image_list) != 0:
+
+                            html_code += """
                                     <div class="w3-container">
                                         <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
                                             {1:s}
                                         </button>
                                     </div>
                                     <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name_pol, pol)
+
+                            img_counter = 0
+
+                            # go through all reference beams
+                            for beam_nr in beam_ref_list:
+
+                                # to properly make the gallery with 5 images in a row
+                                if img_counter % 5 == 0:
+                                    html_code += """<div class="w3-row">\n"""
+
+                                # get the image from the list if one exists for this beam
+                                if beam_nr in beam_nr_list:
+                                    image = image_list[np.where(
+                                        beam_nr_list == beam_nr)[0]][0]
+                                    image_exists = True
+                                else:
+                                    image_exists = False
+
+                                # if there is an image plot it
+                                if image_exists:
+                                    html_code += """
+                                        <div class="w3-quarter">
+                                            <a href="{0:s}/{1:s}/{2:s}/{3:s}">
+                                                <img src="{0:s}/{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
+                                            </a>
+                                            <div class="w3-container w3-center">
+                                                <h5>Beam {1:s}</h5>
+                                            </div>
+                                        </div>\n""".format(page_type, src, beam_nr, os.path.basename(image))
+                                # if not put an empty one there
+                                else:
+                                    html_code += """
+                                        <div class="w3-quarter">
+                                            <img src="" alt="No image for beam {0:s}", width="100%">
+                                        </div>\n""".format(beam_nr)
+
+                                # closing the row
+                                if img_counter % 5 == 4 or img_counter == len(beam_ref_list):
+                                    html_code += """</div>\n"""
+
+                                img_counter += 1
+
+                            # close div for this plot
+                            html_code += """</div>\n"""
+
+                        # add a disabled button
+                        else:
+                            logging.warning(
+                                "No plots found for polarisation {}".format(pol))
+                            html_code += """
+                            <div class="w3-container">
+                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                    {1:s}
+                                </button>
+                            </div>\n""".format(div_name_pol, pol)
 
                     html_code += """
                             </div>\n"""
