@@ -89,6 +89,8 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
     # without the additional obs information assume that the files are in the main dir
     if obs_info is None:
 
+        logger.warning("No observing information provided. Will assume plots are in main directory")
+
         images_inspection_plots = glob.glob(
             os.path.join(qa_dir, "inspection_plots/*.png"))
 
