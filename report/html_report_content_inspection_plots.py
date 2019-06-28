@@ -222,7 +222,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                                 # if there is an image plot it
                                 if image_exists:
                                     html_code += """
-                                        <div class="w3-quarter">
+                                        <div class="w3-col l5">
                                             <a href="{0:s}/{1:s}/{2:s}/{3:s}">
                                                 <img src="{0:s}/{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
                                             </a>
