@@ -185,7 +185,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
 
                     # now go through each of the polarisations
                     for pol in pol_list:
-                        div_name_pol = "insplot_gallery_{0:s}".format(pol)
+                        div_name_pol = "insplot_gallery_{0:s}_{1:s0".format(pol)
 
                         # get a list of images
                         image_list = np.array(glob.glob(os.path.join(
