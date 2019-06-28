@@ -148,7 +148,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                 qa_plot_dir_src = os.path.join(
                     qa_plot_dir, "{}".format(src))
 
-                logging.info("Looking for plots in {}".format(qa_plot_dir_src))
+                logger.info("Looking for plots in {}".format(qa_plot_dir_src))
                 
                 # set the source directory where the link should be
                 qa_dir_report_obs_subpage_src = os.path.join(
@@ -220,6 +220,8 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
 
                                     link_name="{0:s}/{1:s}".format(
                                         qa_dir_report_obs_subpage_src_beam, os.path.basename(image))
+
+                                    logger.info("Linking {0} to {1}".format(image, link_name))
 
                                     # change to relative link when in trigger mode
                                     if trigger_mode:
