@@ -212,8 +212,8 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                                 qa_dir_report_obs_subpage_src_beam = os.path.join(
                                     qa_dir_report_obs_subpage_src, os.path.basename(qa_plot_dir_src_beam))
                                 # create it if it does not exists
-                                if not os.path.exists(qa_dir_report_obs_subpage_src):
-                                    os.mkdir(qa_dir_report_obs_subpage_src)
+                                if not os.path.exists(qa_dir_report_obs_subpage_src_beam):
+                                    os.mkdir(qa_dir_report_obs_subpage_src_beam)
 
                                 # go through all images and link them
                                 for image in images_inspection_plots:
