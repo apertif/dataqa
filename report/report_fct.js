@@ -12,6 +12,14 @@ function show_hide_plots(gallery_name) {
     // console.log(gallery[0].style.display)
 
     for (i = 0; i < gallery.length; i++) {
+        // switched to w3-show and w3-hide
+        if (gallery[i].className.indexOf("w3-show") == -1) {
+            gallery[i].className = gallery[i].className.replace("w3-hide", " w3-show");;
+        } else {
+            gallery[i].className = gallery[i].className.replace(" w3-show", "w3-hide");
+        }
+
+        // the following is probably not neccessary any more
         // get the current style settings 
         // (otherwise two clicks are necessary the first time)
         style = window.getComputedStyle(gallery[i]);

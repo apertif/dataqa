@@ -12,13 +12,13 @@ import report.html_report_content as hrc
 logger = logging.getLogger(__name__)
 
 
-def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_id=0):
+def write_html_header(html_file_name, js_file, css_file=None, page_type='index', obs_id=0):
     """
     This function creates the header for an html document
     """
 
     if page_type == 'index':
-        page_title = 'APERTIF Qualitiy Assessment Overview'
+        page_title = 'APERTIF Quality Assessment Overview'
     elif page_type == 'obs_page':
         page_title = 'Observation {0:s}'.format(obs_id)
         css_file = "../{0:s}".format(css_file)
@@ -29,18 +29,43 @@ def write_html_header(html_file_name, css_file, js_file, page_type='index', obs_
         js_file = "../{0:s}".format(js_file)
 
     html_file = open(html_file_name, 'w')
-    html_file.write("""<!DOCTYPE HTML>
-    <html lang="en">
-    <head>
-        <title>APERTIF Science Evaluation Period 2019</title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <meta name="description" content="" />
-        <meta name="keywords" content="" />
-        <script src="{0}"></script>
-        <link rel="stylesheet" type="text/css" href="{1}" />
-    </head>
-    <body>
-        <h1>{2:s}</h1>\n""".format(js_file, css_file, page_title))
+    # this is a quick fix to have the title of the qa pages below the nav bar
+    # need to find a better solution for this
+    if page_type != "index":
+        html_file.write("""<!DOCTYPE HTML>
+        <html lang="en">
+        <head>
+            <title>{0}</title>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+            <meta name="description" content="" />
+            <meta name="keywords" content="" />
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+            <script src="{1}"></script>
+            <link rel="stylesheet" type="text/css" href="{2}" />
+        </head>
+        <body>
+            <br><br>
+            <div class="w3-container w3-center w3-margin-bottom w3-amber">
+                <h1>{0}</h1>
+            </div>\n""".format(page_title, js_file, css_file))
+    else:
+        html_file.write("""<!DOCTYPE HTML>
+        <html lang="en">
+        <head>
+            <title>{0}</title>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+            <meta name="description" content="" />
+            <meta name="keywords" content="" />
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+            <script src="{1}"></script>
+            <link rel="stylesheet" type="text/css" href="{2}" />
+        </head>
+        <body>
+            <div class="w3-container w3-center w3-margin-bottom w3-amber">
+                <h1>{0}</h1>
+            </div>\n""".format(page_title, js_file, css_file))
 
     html_file.close()
 
@@ -65,49 +90,36 @@ def write_html_obs_index(html_file_name, obs_id):
 
     # write the html content for the index of observations
     obs_index = """
-        <div id="obs_index">
+        <div class="w3-container w3-center">
             <h2> List of Observations </h2>
-            <p class="info">Note: This website will allow you to go through the different qualitiy assessment products
+            <p class="w3-center w3-container w3-large">Note: This website will allow you to go through the different qualitiy assessment products
             in addition to the apercal logfile from each node. It will not give you access to fits
             images and the source catalogue</p>
-            <table class="obs_index">\n"""
-
-    # <table class = "reportTable" >
-    #         <tr >
-    #             <th > SBID < /th >
-    #             <th > Project < /th >
-    #             <th > Date < /th >
-    #             <th > Duration < br > (hours) < /th >
-    #             <th > Field Centre < /th >
-    #             <th > Central Frequency < br > (MHz) < /th >
-    #         </tr >
-    #         <tr >
-    #                 <td > {0} < /td >
-    #                 <td > {1} < /td >
-    #                 <td > {2} < /td >
-    #                 <td > {3} < /td >
-    #                 <td > {4} < /td >
-    #                 <td > {5: .2f} < /td >
-    #                 </tr >
-    #     </table
-
-    obs_index += """
-                <tr>
-                    <th colspan="7">{0:s}</th>
-                </tr>
-                <tr>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_preflag.html">preflag</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_crosscal.html">crosscal</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_selfcal.html">selfcal</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_continuum.html">continuum</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_line.html">line</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_mosaic.html">mosaic</a> </td>
-                    <td> <a class="obs_links" href="{0:s}/{0:s}_apercal_log.html">apercal.log</a> </td>
-                </tr>\n""".format(obs_id)
-
-    obs_index += """
-            </table>
         </div>\n"""
+
+    obs_index += """
+        <div class="w3-container w3-center w3-xlarge">
+            <b>{0:s}</b>
+        </div>       
+        <div class="w3-container w3-center">
+            <div class="w3-bar w3-large w3-dark-gray">
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_summary.html">summary</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_inspection_plots.html">inspection
+                    plots</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_preflag.html">preflag</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_crosscal.html">crosscal</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_selfcal.html">selfcal</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_continuum.html">continuum</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_line.html">line</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_mosaic.html">mosaic</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_apercal_log.html">apercal
+                    log</a>
+            </div>
+        </div>\n""".format(obs_id)
 
     try:
         html_file = open(html_file_name, 'a')
@@ -123,19 +135,27 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
     """
 
     html_code = """
-        <ul>
-            <li style="float:right"><a href="../index.html">List of Observations</a></li>
-            <li style="float:right"><a href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank" style="text-decoration:underline">For help check OSA Guide</a></li>
+        <div class="w3-top">
+            <div class="w3-container w3-dark-gray w3-large">
+                <div class="w3-bar">
         """
     for page in links:
         if page == page_type:
-            html_code += """<li><a class="active" href="{0:s}_{1:s}.html">{1:s}</a></li>\n""".format(
-                obs_id, page)
+            html_code += """
+                    <a class="w3-bar-item w3-button w3-hover-yellow w3-amber" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
+                obs_id, page, page.replace("_", " "))
         else:
-            html_code += """<li><a href="{0:s}_{1:s}.html">{1:s}</a></li>\n""".format(
-                obs_id, page)
+            html_code += """
+                    <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}_{1:s}.html">{2:s}</a>\n""".format(
+                obs_id, page, page.replace("_", " "))
 
-    html_code += """</ul>\n"""
+    html_code += """
+                    <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="../index.html">Overview of Observation</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guide</a>
+                </div>
+            </div>
+        </div>
+        \n"""
 
     try:
         html_file = open(html_file_name, 'a')
@@ -145,7 +165,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         logger.error(e)
 
 
-def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
+def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None, obs_info=None):
     """
     Function to create the subpages
     """
@@ -161,19 +181,19 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None):
 
             # create the header
             write_html_header(
-                page_name, css_file, js_file, page_type=page, obs_id=obs_id)
+                page_name, js_file, css_file=css_file, page_type=page, obs_id=obs_id)
 
             write_html_navbar(page_name, subpages,
                               page_type=page, obs_id=obs_id)
 
             hrc.write_obs_content(page_name, qa_report_path,
-                                  page_type=page, obs_id=obs_id)
+                                  page_type=page, obs_id=obs_id, obs_info=obs_info)
 
             # Close the index file
             write_html_end(page_name)
 
 
-def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None):
+def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None, obs_info=None):
     """
     Function to create the main HTML file
     """
@@ -250,6 +270,6 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
 
     try:
         write_obs_page(qa_report_dir, obs_id, os.path.basename(css_file),
-                       os.path.basename(js_file), subpages=subpages)
+                       os.path.basename(js_file), subpages=subpages, obs_info=obs_info)
     except Exception as e:
         logger.error(e)

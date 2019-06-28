@@ -9,11 +9,12 @@ import logging
 import socket
 from apercal.libs import lib
 from apercal.subs import calmodels as subs_calmodels
+from astropy.table import Table
 
 from dataqa.scandata import get_default_imagepath
 
 
-def run_triggered_qa(targets, fluxcals, polcals, steps=None):
+def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa=''):
     """Function to run all QA steps.
 
     Function is called as
@@ -74,7 +75,10 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     host_name = socket.gethostname()
 
     # QA directory
-    qa_dir = get_default_imagepath(taskid_target)
+    if basedir is not None:
+        qa_dir = get_default_imagepath(taskid_target, basedir=basedir)
+    else:
+        qa_dir = get_default_imagepath(taskid_target)
 
     # check that path exists
     if not os.path.exists(qa_dir):
@@ -132,25 +136,100 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None):
     logger.info("## Observation of target: {0:s}, flux calibrator: {1:s}, polarisation calibrator: {2:s}".format(
         name_target, name_fluxcal, name_polcal))
 
+    # Write information about the observation into a txt file for later
+    # This information is important for the OSA report
+    # =================================================================
+
+    summary_table = Table([
+        [taskid_target],
+        [name_target],
+        [name_fluxcal],
+        [name_polcal],
+        [osa]], names=(
+        'Obs_ID', 'Target', 'Flux_Calibrator', 'Pol_Calibrator', 'OSA'))
+
+    table_name = "{0}_obs.ecsv".format(taskid_target)
+
+    table_name_with_path = os.path.join(qa_dir, table_name)
+
+    try:
+        summary_table.write(
+            table_name_with_path, format='ascii.ecsv', overwrite=True)
+    except Exception as e:
+        logger.warning("Saving observation information in {0} failed.".format(
+            table_name_with_path))
+        logger.exception(e)
+    else:
+        logger.info(
+            ("Saving observation information in {0} ... Done.".format(table_name_with_path)))
+
     # Inspection Plots
     # ================
 
-    if 'inspection_plots' in steps and host_name == 'happili-01':
+    if 'inspection_plots' in steps:
 
-        logger.info("#### Inspection plot QA ...")
+        start_time_inspection_plot = time.time()
 
-        start_time_preflag = time.time()
+        # for the target it is enough to do it only for happili-01
+        # as they do not depend on the beam
+        # for the flux and pol calibrator, they have to be run on every node
 
-        try:
-            preflag_msg = os.system(
-                'python /home/apercal/dataqa/run_inspection_plot.py {0:d}'.format(taskid_target))
+        # get inspection plots for target
+        if host_name == "happili-01":
+
             logger.info(
-                "Getting inspection plots finished with msg {0}".format(preflag_msg))
-            logger.info("#### Inspection plot QA ... Done (time {0:.1f}s)".format(
-                time.time()-start_time_preflag))
-        except Exception as e:
-            logger.warning("Inspection plot QA failed. Continue with next QA")
-            logger.exception(e)
+                "#### Inspection plot QA for {}...".format(name_target))
+
+            try:
+                inspection_plot_msg = os.system(
+                    'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s}'.format(taskid_target, name_target))
+                logger.info(
+                    "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
+                logger.info(
+                    "#### Inspection plot QA {0}... Done ".format(name_target))
+            except Exception as e:
+                logger.warning(
+                    "Inspection plot QA for {} failed. Continue with next QA".format(name_target))
+                logger.exception(e)
+
+        # get inspection plot for flux calibrator
+        logger.info("#### Inspection plot QA for {}...".format(name_fluxcal))
+
+        for (taskid_cal, name_cal, beamnr_cal) in fluxcals:
+
+            try:
+                inspection_plot_msg = os.system(
+                    'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
+                logger.info(
+                    "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
+                logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
+                    name_fluxcal, beamnr_cal))
+            except Exception as e:
+                logger.warning(
+                    "Inspection plot QA for {} beam {1} failed. Continue with next QA".format(name_fluxcal, beamnr_cal))
+                logger.exception(e)
+
+        # get inspection plot for pol calibrator if it exists
+        if name_polcal != '':
+            logger.info(
+                "#### Inspection plot QA for {}...".format(name_polcal))
+
+            for (taskid_cal, name_cal, beamnr_cal) in polcals:
+
+                try:
+                    inspection_plot_msg = os.system(
+                        'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_polcal, beamnr_cal, taskid_cal))
+                    logger.info(
+                        "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
+                    logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
+                        name_polcal, beamnr_cal))
+                except Exception as e:
+                    logger.warning(
+                        "Inspection plot QA for {} beam {1} failed. Continue with next QA".format(name_polcal, beamnr_cal))
+                    logger.exception(e)
+
+        logger.info("#### Inspection plot QA ... Done (time {0:.1f}s)".format(
+            time.time()-start_time_inspection_plot))
     else:
         logger.warning("#### Did not perform inspection plot QA")
 

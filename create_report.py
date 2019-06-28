@@ -4,9 +4,14 @@
 Script to create an html overview
 
 # NOTE:
- Crosscal plots are now distributed over notes.
+ In triggered QA crosscal and selfcal plots are distributed over notes.
+ Preflag plots are also distributed over the notes.
 
- Preflag plots are also distributed over the notes
+An option exists to combine the QA from different happilis if run on happili-01
+
+You can specify the name of the target, fluxcal, polcal and OSA which will be saved
+in a text file. If this information is available some pages will use it to display
+further information.
 
 """
 
@@ -37,11 +42,26 @@ if __name__ == "__main__":
     parser.add_argument("obs_id", type=str,
                         help='Observation Number')
 
+    parser.add_argument("--target", type=str, default='',
+                        help='Name of the target')
+
+    parser.add_argument("--fluxcal", type=str, default='',
+                        help='Name of the flux calibrator')
+
+    parser.add_argument("--polcal", type=str, default='',
+                        help='Name of the polarisation calibrator')
+
+    parser.add_argument("--osa", type=str, default='',
+                        help='Name of the OSA')
+
     parser.add_argument("-p", "--path", type=str,
                         help='Path to QA output')
 
     parser.add_argument("-b", "--basedir", type=str,
                         help='Base directory where the obs id is')
+
+    parser.add_argument("-c", "--combine", action="store_true", default=False,
+                        help='Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
 
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
@@ -52,6 +72,7 @@ if __name__ == "__main__":
     obs_id = args.obs_id
     qa_dir = args.path
     base_dir = args.basedir
+    do_combine = args.combine
 
     # directory where the output will be of pybdsf will be stored
     if qa_dir is None:
@@ -80,12 +101,50 @@ if __name__ == "__main__":
         'debug', logfile='{0:s}/create_report.log'.format(qa_report_dir))
     logger = logging.getLogger(__name__)
 
-    # check first on which happili we are:
+    # Saving observation information if they do not exist yet
+    # =======================================================
+
+    table_name = "{0}_obs.ecsv".format(obs_id)
+
+    table_name_with_path = os.path.join(qa_dir, table_name)
+
+    if not os.path.exists(table_name_with_path):
+
+        obs_info = Table([
+            [obs_id],
+            [args.target],
+            [args.fluxcal],
+            [args.polcal],
+            [args.osa]], names=(
+            'Obs_ID', 'Target', 'Flux_Calibrator', 'Pol_Calibrator', 'OSA'))
+
+        try:
+            obs_info.write(
+                table_name_with_path, format='ascii.ecsv', overwrite=True)
+        except Exception as e:
+            logger.warning("Saving observation information in {0} failed.".format(
+                table_name_with_path))
+            logger.exception(e)
+        else:
+            logger.info(
+                ("Saving observation information in {0} ... Done.".format(table_name_with_path)))
+    else:
+        logger.info(
+            ("Observation information already exists. Reading {0}.".format(table_name_with_path)))
+        obs_info = Table.read(table_name_with_path, format="ascii.ecsv")
+
+    # check on which happili we are:
     host_name = socket.gethostname()
 
     if args.trigger_mode:
         logger.info(
-            "--> Running continuum QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
+            "--> Running report QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
+    elif do_combine:
+        logger.info("Combining QAs from different happilis")
+        if host_name != "happili-01":
+            logger.warning("You are not working on happili-01.")
+            logger.warning("Cannot combine QA from different happilis")
+            do_combine = False
     elif host_name != "happili-01" and not args.trigger_mode:
         logger.warning("You are not working on happili-01.")
         logger.warning("The script will not process all beams")
@@ -104,8 +163,8 @@ if __name__ == "__main__":
         logger.error(e)
 
     # the subpages to be created
-    subpages = ['preflag', 'crosscal',
-                'continuum', 'selfcal', 'line', 'mosaic', 'apercal_log']
+    subpages = ['observing_log', 'summary', 'inspection_plots', 'preflag', 'crosscal',
+                'selfcal', 'continuum', 'line', 'mosaic', 'apercal_log']
 
     logger.info("#### Create report directory structure")
 
@@ -124,7 +183,7 @@ if __name__ == "__main__":
         # Create directory structure for the report
         try:
             hpd.create_report_dirs(
-                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode)
+                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info)
         except Exception as e:
             logger.error(e)
 
@@ -132,7 +191,7 @@ if __name__ == "__main__":
 
     try:
         hp.create_main_html(qa_report_dir, obs_id, subpages,
-                            css_file=css_file_name, js_file=js_file_name)
+                            css_file=css_file_name, js_file=js_file_name, obs_info=obs_info)
     except Exception as e:
         logger.error(e)
 
