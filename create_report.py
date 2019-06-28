@@ -183,7 +183,7 @@ if __name__ == "__main__":
         # Create directory structure for the report
         try:
             hpd.create_report_dirs(
-                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine)
+                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info)
         except Exception as e:
             logger.error(e)
 
