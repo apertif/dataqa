@@ -144,12 +144,12 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
             # now go through each of the plot directories from the differen nodes
             for qa_plot_dir in qa_plot_dir_list:
 
-                logging.info("Looking for plots in {}".format(qa_plot_dir))
-
                 # set the source directory in the inspection plot dir
                 qa_plot_dir_src = os.path.join(
                     qa_plot_dir, "{}".format(src))
 
+                logging.info("Looking for plots in {}".format(qa_plot_dir_src))
+                
                 # set the source directory where the link should be
                 qa_dir_report_obs_subpage_src = os.path.join(
                     qa_dir_report_obs_subpage, src)
@@ -187,8 +187,8 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                                 os.unlink(link_name)
                                 os.symlink(image, link_name)
                     else:
-                            logger.warning(
-                                "No images found for inspection plots for target {}.".format(src))
+                        logger.warning(
+                            "No images found for inspection plots for target {}.".format(src))
                 # for the calibrators
                 # they are separated by beam    
                 else:
@@ -1097,7 +1097,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_observing_log(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from inspection plot QA
         # +++++++++++++++++++++++++++++++++++++++++++++++
@@ -1106,7 +1106,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
             try:
                 create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, obs_info=obs_info)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from preflag QA
         # ++++++++++++++++++++++++++++++++++++++
@@ -1116,7 +1116,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_preflag(
                     obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from crosscal QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -1126,7 +1126,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_crosscal(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from selfcal QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -1136,7 +1136,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_selfcal(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from continuum QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -1146,7 +1146,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_continuum(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from line QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -1156,7 +1156,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_line(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from mosaic QA
         # +++++++++++++++++++++++++++++++++++++++
@@ -1166,7 +1166,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_mosaic(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
 
         # Create links for files from aperca log
         # ++++++++++++++++++++++++++++++++++++++
@@ -1176,7 +1176,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                 create_report_dir_apercal_log(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
-                logger.error(e)
+                logger.exception(e)
         
         logger.info(
             "## Creating report directory for {0} and linking files... Done".format(page))
