@@ -48,8 +48,8 @@ if __name__ == "__main__":
         qa_dir, do_ccal=args.do_ccal, do_scal=args.do_scal, run_parallel=args.run_parallel)
 
     if return_msg != 0:
-        logger.warning("#### Merging plots ... Failed ({0:s}s)".format(
+        logger.warning("#### Merging plots ... Failed ({0:.0f}s)".format(
             time()-start_time))
     else:
-        logger.info("#### Merging plots ... Done ({0:s}s)".format(
+        logger.info("#### Merging plots ... Done ({0:.0f}s)".format(
             time()-start_time))
