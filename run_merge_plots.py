@@ -44,12 +44,13 @@ if __name__ == "__main__":
 
     logger.info("#### Merging plots ...")
 
-    return_msg = run_merge_plots(
-        qa_dir, do_ccal=args.do_ccal, do_scal=args.do_scal, run_parallel=args.run_parallel)
-
-    if return_msg != 0:
+    try:
+        run_merge_plots(
+            qa_dir, do_ccal=args.do_ccal, do_scal=args.do_scal, run_parallel=args.run_parallel)
+    except Exception as e:
         logger.warning("#### Merging plots ... Failed ({0:.0f}s)".format(
             time()-start_time))
+        logger.exception(e)
     else:
         logger.info("#### Merging plots ... Done ({0:.0f}s)".format(
             time()-start_time))
