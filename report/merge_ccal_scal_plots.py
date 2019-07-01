@@ -117,7 +117,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
 
                 # get a list of plots with this name
                 ccal_plot_list = glob.glob(
-                    "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data*"), png_name))
+                    "{0:s}/{1:s}".format(qa_dir_crosscal.replace("/data", "/data*"), png_name))
 
                 # now merge the images
                 try:
@@ -156,7 +156,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
 
                 # get a list of plots with this name
                 scal_plot_list = glob.glob(
-                    "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data*"), png_name))
+                    "{0:s}/{1:s}".format(qa_dir_selfcal.replace("/data", "/data*"), png_name))
 
                 # now merge the images
                 try:
