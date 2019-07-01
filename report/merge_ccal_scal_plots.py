@@ -1,4 +1,4 @@
-from scandata import get_default_imagepath
+from dataqa.scandata import get_default_imagepath
 import argparse
 import time
 import logging
