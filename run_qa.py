@@ -414,6 +414,24 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
     if 'report' in steps:
 
+        # merge the crosscal and selfcal plots for the report
+        if host_name == 'happili-01':
+            logger.info('#### Merge crosscal and selfcal plots...')
+
+            start_time_merge = time.time()
+
+            try:
+                report_msg = os.system(
+                    'python /home/apercal/dataqa/run_merge_plots.py {0:d} --do_ccal --do_scal --run_parallel'.format(taskid_target))
+                logger.info(
+                    "Merging finished with msg {0}".format(report_msg))
+                logger.info("#### Merge crosscal and selfcal plots ... Done (time {0:.1f}s)".format(
+                    time.time()-start_time_merge))
+            except Exception as e:
+                logger.warning("Merge crosscal and selfcal plots failed.")
+                logger.exception(e)
+
+        # now create the report
         logger.info('#### Create report ...')
 
         start_time_report = time.time()
