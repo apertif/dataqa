@@ -146,7 +146,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
         else:
             # get a unique list of plot names
             scal_png_name_list = np.array(
-                os.path.basename(plot) for plot in scal_plot_list)
+                [os.path.basename(plot) for plot in scal_plot_list])
             scal_png_name_list = np.unique(scal_png_name_list)
 
             # go through all the images and merge them
