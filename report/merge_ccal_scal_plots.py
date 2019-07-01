@@ -9,12 +9,17 @@ import numpy as np
 from PIL import Image
 from apercal.libs import lib
 from time import time
+import pymp
 
 logger = logging.getLogger(__name__)
 
 
 def merge_plots(image_list, new_image_name=None):
     """This function does the actual merging
+
+    Args:
+        image_list (list(str)): List of images to merge with full path
+        new_image_name (str): Optional name of new image
     """
 
     # name of the new image
@@ -63,7 +68,7 @@ def merge_plots(image_list, new_image_name=None):
     new_image.save(new_image_name, "PNG")
 
 
-def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
+def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, run_parallel=False):
     """ This function merges the crosscal and/or selfcal plots
     that are split by beam from the different data directories.
 
@@ -79,6 +84,9 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
     # get the host name
     host_name = socket.gethostname()
 
+    # start time
+    start_time = time()
+
     # it does not make sense to run this script from another happili node
     if host_name != "happili-01":
         logger.error(
@@ -89,6 +97,11 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
     if not do_ccal and not do_scal:
         do_ccal = True
         do_scal = True
+        logger.info("Merging crosscal and selfcal plots")
+    elif do_ccal and not do_scal:
+        logger.info("Merging only crosscal plots")
+    elif not do_ccal and do_scal:
+        logger.info("Merging only selfcal plots")
 
     # Merge the crosscal plots
     # ========================
@@ -110,25 +123,56 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
                 [os.path.basename(plot) for plot in ccal_plot_list])
             ccal_png_name_list = np.unique(ccal_png_name_list)
 
-            # go through all the images and merge them
-            for png_name in ccal_png_name_list:
+            if run_parallel:
+                with pymp.Parallel(20) as p:
 
-                logging.info("Merging {0:s}".format(png_name))
+                    # go through all the images and merge them
+                    for png_index in p.range(len(ccal_png_name_list)):
 
-                # get a list of plots with this name
-                ccal_plot_list = glob.glob(
-                    "{0:s}/{1:s}".format(qa_dir_crosscal.replace("/data", "/data*"), png_name))
+                        png_name = ccal_plot_list[png_index]
 
-                # now merge the images
-                try:
-                    merge_plots(ccal_plot_list)
-                except Exception as e:
-                    logger.warning(
-                        "Merging plots for {0} failed".format(png_name))
-                    logger.exception(e)
-                else:
-                    logger.info(
-                        "Merged plots for {0} successfully".format(png_name))
+                        # time for merging a single plot
+                        start_time_plot = time()
+
+                        logger.info("Merging {0:s}".format(png_name))
+
+                        # get a list of plots with this name
+                        ccal_plot_list = glob.glob(
+                            "{0:s}/{1:s}".format(qa_dir_crosscal.replace("/data", "/data*"), png_name))
+
+                        # now merge the images
+                        try:
+                            merge_plots(ccal_plot_list)
+                        except Exception as e:
+                            logger.warning(
+                                "Merging plots for {0} failed".format(png_name))
+                            logger.exception(e)
+                        else:
+                            logger.info(
+                                "Merged plots for {0} successfully ({1:.0f}s)".format(png_name, time() - start_time_plot))
+            else:
+                # go through all the images and merge them
+                for png_name in ccal_png_name_list:
+
+                    # time for merging a single plot
+                    start_time_plot = time()
+
+                    logger.info("Merging {0:s}".format(png_name))
+
+                    # get a list of plots with this name
+                    ccal_plot_list = glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir_crosscal.replace("/data", "/data*"), png_name))
+
+                    # now merge the images
+                    try:
+                        merge_plots(ccal_plot_list)
+                    except Exception as e:
+                        logger.warning(
+                            "Merging plots for {0} failed".format(png_name))
+                        logger.exception(e)
+                    else:
+                        logger.info(
+                            "Merged plots for {0} successfully ({1:.0f}s)".format(png_name, time() - start_time_plot))
 
     # Merge the selfcal plots
     # ========================
@@ -152,7 +196,10 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
             # go through all the images and merge them
             for png_name in scal_png_name_list:
 
-                logging.info("Merging {0:s}".format(png_name))
+                # time for merging a single plot
+                start_time_plot = time()
+
+                logger.info("Merging {0:s}".format(png_name))
 
                 # get a list of plots with this name
                 scal_plot_list = glob.glob(
@@ -167,43 +214,6 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
                     logger.exception(e)
                 else:
                     logger.info(
-                        "Merged plots for {0} successfully".format(png_name))
+                        "Merged plots for {0} successfully ({1:.0f}s)".format(png_name, time() - start_time_plot))
 
-
-# if __name__ == "__main__":
-
-#     parser = argparse.ArgumentParser(description='Generate crosscal QA plots')
-
-#     # 1st argument: File name
-#     parser.add_argument("scan", help='Scan of target field')
-
-#     parser.add_argument("--do_ccal", action="store_true", default=False,
-#                         help='Set to enable merging of only the crooscal plots')
-
-#     parser.add_argument("--do_scal", action="store_true", default=False,
-#                         help='Set to enable merging of only the crooscal plots')
-
-#     args = parser.parse_args()
-
-#     # get the QA directory
-#     qa_dir = get_default_imagepath(args.scan)
-
-#     # start logging
-#     # Create logging file
-
-#     lib.setup_logger(
-#         'debug', logfile='{0:s}merge_plots.log'.format(qa_dir))
-#     logger = logging.getLogger(__name__)
-
-#     start_time = time.time()
-
-#     logger.info("#### Merging plots ...")
-
-#     return_msg = run_merge_plots(qa_dir, args.do_ccal, args.do_scal)
-
-#     if return_msg != 0:
-#         logger.warning("#### Merging plots ... Failed ({0:s}s)".format(
-#             time.time()-start_time))
-#     else:
-#         logger.info("#### Merging plots ... Done ({0:s}s)".format(
-#             time.time()-start_time))
+    logger.info("## Merging ... Done ({0:.0f}s)".format(time() - start_time))
