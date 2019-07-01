@@ -153,7 +153,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
                     # go through all the images and merge them
                     for png_index in p.range(len(ccal_png_name_list)):
 
-                        png_name = ccal_plot_list[png_index]
+                        png_name = ccal_png_name_list[png_index]
 
                         # time for merging a single plot
                         start_time_plot = time()
