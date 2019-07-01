@@ -115,7 +115,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
         # create a backup of the original files
         if do_backup:
             qa_dir_crosscal_backup = os.path.join(
-                qa_dir_crosscal, qa_dir_crosscal + "_backup")
+                qa_dir_crosscal, "crosscal_backup")
 
             if os.path.exists(qa_dir_crosscal_backup):
                 logger.info("Backup of crosscal plots already exists")

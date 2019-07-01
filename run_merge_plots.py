@@ -44,7 +44,8 @@ if __name__ == "__main__":
 
     logger.info("#### Merging plots ...")
 
-    return_msg = run_merge_plots(qa_dir, args.do_ccal, args.do_scal)
+    return_msg = run_merge_plots(
+        qa_dir, do_ccal=args.do_ccal, do_scal=args.do_scal, run_parallel=args.run_parallel)
 
     if return_msg != 0:
         logger.warning("#### Merging plots ... Failed ({0:s}s)".format(
