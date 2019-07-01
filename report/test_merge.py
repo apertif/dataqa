@@ -1,6 +1,11 @@
 from merge_ccal_scal_plots import run_merge_plots
 import numpy as np
 import os
+from apercal.libs import lib
+import logging
+
+lib.setup_logger('debug', logfile='test_merge_plots.log')
+logger = logging.getLogger(__name__)
 
 basedir = '/data/apertif/190602049_flag-strategy-test/qa'
 
