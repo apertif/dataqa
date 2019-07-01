@@ -10,6 +10,8 @@ from PIL import Image
 from apercal.libs import lib
 from time import time
 
+logger = logging.getLogger(__name__)
+
 
 def merge_plots(image_list, new_image_name=None):
     """This function does the actual merging
@@ -167,40 +169,40 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
                         "Merged plots for {0} successfully".format(png_name))
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Generate crosscal QA plots')
+#     parser = argparse.ArgumentParser(description='Generate crosscal QA plots')
 
-    # 1st argument: File name
-    parser.add_argument("scan", help='Scan of target field')
+#     # 1st argument: File name
+#     parser.add_argument("scan", help='Scan of target field')
 
-    parser.add_argument("--do_ccal", action="store_true", default=False,
-                        help='Set to enable merging of only the crooscal plots')
+#     parser.add_argument("--do_ccal", action="store_true", default=False,
+#                         help='Set to enable merging of only the crooscal plots')
 
-    parser.add_argument("--do_scal", action="store_true", default=False,
-                        help='Set to enable merging of only the crooscal plots')
+#     parser.add_argument("--do_scal", action="store_true", default=False,
+#                         help='Set to enable merging of only the crooscal plots')
 
-    args = parser.parse_args()
+#     args = parser.parse_args()
 
-    # get the QA directory
-    qa_dir = get_default_imagepath(args.scan)
+#     # get the QA directory
+#     qa_dir = get_default_imagepath(args.scan)
 
-    # start logging
-    # Create logging file
+#     # start logging
+#     # Create logging file
 
-    lib.setup_logger(
-        'debug', logfile='{0:s}merge_plots.log'.format(qa_dir))
-    logger = logging.getLogger(__name__)
+#     lib.setup_logger(
+#         'debug', logfile='{0:s}merge_plots.log'.format(qa_dir))
+#     logger = logging.getLogger(__name__)
 
-    start_time = time.time()
+#     start_time = time.time()
 
-    logger.info("#### Merging plots ...")
+#     logger.info("#### Merging plots ...")
 
-    return_msg = run_merge_plots(qa_dir, args.do_ccal, args.do_scal)
+#     return_msg = run_merge_plots(qa_dir, args.do_ccal, args.do_scal)
 
-    if return_msg != 0:
-        logger.warning("#### Merging plots ... Failed ({0:s}s)".format(
-            time.time()-start_time))
-    else:
-        logger.info("#### Merging plots ... Done ({0:s}s)".format(
-            time.time()-start_time))
+#     if return_msg != 0:
+#         logger.warning("#### Merging plots ... Failed ({0:s}s)".format(
+#             time.time()-start_time))
+#     else:
+#         logger.info("#### Merging plots ... Done ({0:s}s)".format(
+#             time.time()-start_time))
