@@ -217,7 +217,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
                 os.mkdir(qa_dir_selfcal_backup)
 
                 # copy the original directory
-                lib.basher("mv " + os.path.join(qa_dir_selfcal, "*.png") +
+                lib.basher("cp " + os.path.join(qa_dir_selfcal, "*.png") +
                            " " + qa_dir_selfcal_backup + "/")
 
                 logger.info("Backup of selfcal plots created in {}".format(
