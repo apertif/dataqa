@@ -8,6 +8,7 @@ import socket
 import numpy as np
 from PIL import Image
 from apercal.libs import lib
+from apercal.subs.managefiles import director
 from time import time
 import pymp
 
@@ -68,7 +69,7 @@ def merge_plots(image_list, new_image_name=None):
     new_image.save(new_image_name, "PNG")
 
 
-def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, run_parallel=False):
+def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_parallel=False):
     """ This function merges the crosscal and/or selfcal plots
     that are split by beam from the different data directories.
 
@@ -110,6 +111,21 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, run_parallel=False):
         qa_dir_crosscal = os.path.join(qa_dir, "crosscal")
 
         logger.info("## Merging crosscal plots in {}".format(qa_dir_crosscal))
+
+        # create a backup of the original files
+        if do_backup:
+            qa_dir_crosscal_backup = os.path.join(
+                qa_dir_crosscal, qa_dir_crosscal + "_backup")
+
+            if os.path.exists(qa_dir_crosscal_backup):
+                logger.info("Backup of crosscal plots already exists")
+            else:
+                # copy the original directory
+                lib.basher("cp -r " + qa_dir_crosscal +
+                           " " + qa_dir_crosscal_backup)
+
+                logger.info("Backup of crosscal plots created in {}".format(
+                    qa_dir_crosscal_backup))
 
         # get a list all crosscal plots
         ccal_plot_list = glob.glob(
