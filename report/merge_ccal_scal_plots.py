@@ -241,8 +241,11 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
 
                     # go through all the images and merge them
                     for png_index in p.range(len(scal_png_name_list)):
+
                         # time for merging a single plot
                         start_time_plot = time()
+
+                        png_name = scal_png_name_list[png_index]
 
                         logger.info("Merging {0:s}".format(png_name))
 
