@@ -93,9 +93,10 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
     # Merge the crosscal plots
     # ========================
     if do_ccal:
-        logger.info("## Merging crosscal plots")
 
-        qa_dir_crosscal = "{0:s}crosscal".format(qa_dir)
+        qa_dir_crosscal = os.path.join(qa_dir, "crosscal")
+
+        logger.info("## Merging crosscal plots in {}".format(qa_dir_crosscal))
 
         # get a list all crosscal plots
         ccal_plot_list = glob.glob(
@@ -132,9 +133,9 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True):
     # Merge the selfcal plots
     # ========================
     if do_scal:
-        logger.info("## Merging selfcal plots")
+        qa_dir_selfcal = os.path.join(qa_dir, "selfcal")
 
-        qa_dir_selfcal = "{0:s}selfcal".format(qa_dir)
+        logger.info("## Merging selfcal plots in {}".format(qa_dir_selfcal))
 
         # get a list all selfcal plots
         scal_plot_list = glob.glob(
