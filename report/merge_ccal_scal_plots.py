@@ -114,15 +114,23 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
 
         # create a backup of the original files
         if do_backup:
+            # final path of backup
             qa_dir_crosscal_backup = os.path.join(
                 qa_dir_crosscal, "crosscal_backup")
+
+            # temporary path of backup for copying
+            qa_dir_crosscal_backup_tmp = "{}_backup".format(qa_dir_crosscal)
 
             if os.path.exists(qa_dir_crosscal_backup):
                 logger.info("Backup of crosscal plots already exists")
             else:
                 # copy the original directory
                 lib.basher("cp -r " + qa_dir_crosscal +
-                           " " + qa_dir_crosscal_backup)
+                           " " + qa_dir_crosscal_backup_tmp)
+
+                # move the directory
+                lib.basher("mv " + qa_dir_crosscal_backup_tmp +
+                           " " + qa_dir_crosscal + "/")
 
                 logger.info("Backup of crosscal plots created in {}".format(
                     qa_dir_crosscal_backup))
