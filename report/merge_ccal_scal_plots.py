@@ -148,7 +148,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
             ccal_png_name_list = np.unique(ccal_png_name_list)
 
             if run_parallel:
-                with pymp.Parallel(20) as p:
+                with pymp.Parallel(40) as p:
 
                     # go through all the images and merge them
                     for png_index in p.range(len(ccal_png_name_list)):
@@ -205,6 +205,24 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
 
         logger.info("## Merging selfcal plots in {}".format(qa_dir_selfcal))
 
+        # create a backup of the original files
+        if do_backup:
+            # final path of backup
+            qa_dir_selfcal_backup = os.path.join(
+                qa_dir_selfcal, "selfcal_gain_plots_backup")
+
+            if os.path.exists(qa_dir_selfcal_backup):
+                logger.info("Backup of selfcal gain plots already exists")
+            else:
+                os.mkdir(qa_dir_selfcal_backup)
+
+                # copy the original directory
+                lib.basher("mv " + os.path.join(qa_dir_selfcal, "*.png") +
+                           " " + qa_dir_selfcal_backup + "/")
+
+                logger.info("Backup of selfcal plots created in {}".format(
+                    qa_dir_selfcal_backup))
+
         # get a list all selfcal plots
         scal_plot_list = glob.glob(
             "{0:s}/*.png".format(qa_dir_selfcal.replace("/data", "/data*")))
@@ -217,27 +235,53 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
                 [os.path.basename(plot) for plot in scal_plot_list])
             scal_png_name_list = np.unique(scal_png_name_list)
 
-            # go through all the images and merge them
-            for png_name in scal_png_name_list:
+            if run_parallel:
 
-                # time for merging a single plot
-                start_time_plot = time()
+                with pymp.Parallel(40) as p:
 
-                logger.info("Merging {0:s}".format(png_name))
+                    # go through all the images and merge them
+                    for png_index in p.range(len(scal_png_name_list)):
+                        # time for merging a single plot
+                        start_time_plot = time()
 
-                # get a list of plots with this name
-                scal_plot_list = glob.glob(
-                    "{0:s}/{1:s}".format(qa_dir_selfcal.replace("/data", "/data*"), png_name))
+                        logger.info("Merging {0:s}".format(png_name))
 
-                # now merge the images
-                try:
-                    merge_plots(scal_plot_list)
-                except Exception as e:
-                    logger.warning(
-                        "Merging plots for {0} failed".format(png_name))
-                    logger.exception(e)
-                else:
-                    logger.info(
-                        "Merged plots for {0} successfully ({1:.0f}s)".format(png_name, time() - start_time_plot))
+                        # get a list of plots with this name
+                        scal_plot_list = glob.glob(
+                            "{0:s}/{1:s}".format(qa_dir_selfcal.replace("/data", "/data*"), png_name))
+
+                        # now merge the images
+                        try:
+                            merge_plots(scal_plot_list)
+                        except Exception as e:
+                            logger.warning(
+                                "Merging plots for {0} failed".format(png_name))
+                            logger.exception(e)
+                        else:
+                            logger.info(
+                                "Merged plots for {0} successfully ({1:.0f}s)".format(png_name, time() - start_time_plot))
+            else:
+                # go through all the images and merge them
+                for png_name in scal_png_name_list:
+
+                    # time for merging a single plot
+                    start_time_plot = time()
+
+                    logger.info("Merging {0:s}".format(png_name))
+
+                    # get a list of plots with this name
+                    scal_plot_list = glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir_selfcal.replace("/data", "/data*"), png_name))
+
+                    # now merge the images
+                    try:
+                        merge_plots(scal_plot_list)
+                    except Exception as e:
+                        logger.warning(
+                            "Merging plots for {0} failed".format(png_name))
+                        logger.exception(e)
+                    else:
+                        logger.info(
+                            "Merged plots for {0} successfully ({1:.0f}s)".format(png_name, time() - start_time_plot))
 
     logger.info("## Merging ... Done ({0:.0f}s)".format(time() - start_time))
