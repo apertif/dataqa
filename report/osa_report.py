@@ -1,5 +1,7 @@
 # test script for jupyter notebook OSA report
 import numpy as np
+import os
+import shutil
 from astropy.table import Table, join
 from ipywidgets import widgets
 from IPython.display import display
@@ -129,7 +131,8 @@ def run():
 
     def save_info(b):
 
-        # Check the
+        # Check that a name has been entered for the OSA (depracted)
+        # and that each of the pipeline steps have been checked
         if osa_text.value == '':
             print('\x1b[31m{0:s}\x1b[0m'.format(
                 "Cannot save report. Please enter your name"))
@@ -150,6 +153,10 @@ def run():
             print('\x1b[31m{0:s}\x1b[0m'.format(
                 "Cannot save report. Please choose a statement for continuum"))
             return -1
+        elif polarisation_menu.value == 'unchecked':
+            print('\x1b[31m{0:s}\x1b[0m'.format(
+                "Cannot save report. Please choose a statement for polarisation"))
+            return -1
         elif line_menu.value == 'unchecked':
             print('\x1b[31m{0:s}\x1b[0m'.format(
                 "Cannot save report. Please choose a statement for line"))
@@ -159,6 +166,7 @@ def run():
                 "Cannot save report. Please choose a statement for summary"))
             return -1
         else:
+            # create the table
             summary_table = Table([
                 [test_table['Obs_ID'][0]],
                 [osa_text.value],
@@ -181,7 +189,12 @@ def run():
             table_name = "{0}_OSA_report.ecsv".format(test_table['Obs_ID'][0])
             summary_table.write(
                 table_name, format='ascii.ecsv', overwrite=True)
-
+            
             print("Saved OSA report {0:s}. Thank you.".format(table_name))
+
+            # copy the file to the collection directory
+            table_copy = "/data/apertif/qa/OSA_reports/{0}".format(table_name)
+            shutil.copy2(table_name, table_copy)
+
 
     btn.on_click(save_info)
