@@ -4,11 +4,25 @@ import glob
 import os
 import numpy as np
 import logging
+import csv
 
 #----------------------------------------------
 # read data from np file
 
 logger = logging.getLogger(__name__)
+
+def find_sources(obs_id):
+	"""
+	Identify preflag sources e.g. target name and calibrators
+	"""
+	
+	sources = []
+	logs = glob.glob('/data/apertif/'+str(obs_id)+'/param_01_preflag_*.npy')
+	
+	for i in range(len(logs)):
+		sources.append(logs[i][41:-4])
+	
+	return sources
 
 def simplify_data(d, beamnum):
 	"""
@@ -25,7 +39,7 @@ def simplify_data(d, beamnum):
 	return dict
 
 
-def extract_data(path, beamnum, module, source):
+def extract_beam(path, beamnum, module, source):
 	"""
     Function to return numpy files contents as a dictionary filtered for certain keys
     Args:
@@ -39,6 +53,7 @@ def extract_data(path, beamnum, module, source):
     """
 	
 	#logger.info('Checking NPY files for beam {}'.format(beamnum))
+	
 
 	f = glob.glob(os.path.join(path, 'param_{:02d}*{}*{}.npy'.format(beamnum, module, source)))
 	res = {}
@@ -68,7 +83,101 @@ def extract_data(path, beamnum, module, source):
 		logging.info("No file for beam: {}".format(beamnum))
 		
 	logging.info("Extracting data ... Done")
+	
+	dict_cut.update({'beam':beamnum})
 
 	return dict_cut
+
+	
+def extract_all_beams(obs_id, module):	
+
+	"""
+    Combine data from all beams into a directory.
+    
+    Args:
+        obs_id (str): Directory of the data 
+        module (str): name of the apercal module e.g. 'preflag', 'convert', 'croscal'
+
+    Returns
+        a dictionary with information extracted from a numpy log file
+    """
+	beams_1 = '/data/apertif/'+str(obs_id)+'/'
+	beams_2 = '/data2/apertif/'+str(obs_id)+'/'
+	beams_3 = '/data3/apertif/'+str(obs_id)+'/'
+	beams_4 = '/data4/apertif/'+str(obs_id)+'/'
+	
+	beamnum = np.arange(40)
+	
+	dict_beams = []
 	
 	
+	if module =='preflag':
+		source_list = find_sources(obs_id)
+		for j in range(len(source_list)):
+			for i in beamnum:
+				if i < 11:
+					dict_beams_v1 = (extract_beam(beams_1, i, module, source_list[j]))
+					dict_beams_v1.update({'source':source_list[j]})
+					dict_beams.append(dict_beams_v1)
+		
+				if i > 10 and i < 21:
+					dict_beams_v1 = (extract_beam(beams_2, i, module, source_list[j]))
+					dict_beams_v1.update({'source':source_list[j]})
+					dict_beams.append(dict_beams_v1)		
+						
+				if i > 20 and i < 31:
+					dict_beams_v1 = (extract_beam(beams_3, i, module, source_list[j]))
+					dict_beams_v1.update({'source':source_list[j]})
+					dict_beams.append(dict_beams_v1)
+								
+				if i > 30 and i < 40:
+					dict_beams_v1 = (extract_beam(beams_4, i, module, source_list[j]))
+					dict_beams_v1.update({'source':source_list[j]})
+					dict_beams.append(dict_beams_v1)			
+	
+	else:
+		source = ''
+	
+		for i in beamnum:
+			if i < 11:
+				dict_beams.append(extract_beam(beams_1, i, module, source))
+		
+			if i > 10 and i < 21:
+				dict_beams.append(extract_beam(beams_2, i, module, source))
+			
+			if i > 20 and i < 31:
+				dict_beams.append(extract_beam(beams_3, i, module, source))
+			
+			if i > 30 and i < 40:
+				dict_beams.append(extract_beam(beams_4, i, module, source))
+	
+	return dict_beams
+
+def make_csv(obs_id, module):
+	
+	summary_data = extract_all_beams(obs_id, module) 
+	
+	
+	i = 0
+	while len(summary_data[i]) <= 1:
+		i += 1
+		if len(summary_data[i]) > 1:
+			break
+		
+	csv_columns = summary_data[i].keys()
+	print csv_columns
+	
+	csv_columns.sort()
+	dict_data = summary_data
+	csv_file = str(obs_id)+"_"+str(module)+"_summary.csv"
+	try:
+		with open(csv_file, 'w') as csvfile:
+			writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+			writer.writeheader()
+			for data in dict_data:
+				writer.writerow(data)
+	except IOError:
+		print("I/O error") 
+		
+	print("Done")
+		
