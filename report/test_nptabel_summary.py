@@ -12,7 +12,9 @@ beams_1 = '/data/apertif/190602049/'
 obs_id = '190602049'
 module = 'preflag' 
 #source = 'LH_GRG'
- 
+
+#----------------------- 
+# to extract a dictionary
 
 beam_info = extract_all_beams(obs_id, module)  
 print(beam_info[1]['beam'])
@@ -20,5 +22,7 @@ print(len(beam_info))
 
 #print(beam_info)
 
-#print(find_sources(obs_id))
+#------------------------
+# to extract a csv file
+
 make_csv(obs_id, module)
