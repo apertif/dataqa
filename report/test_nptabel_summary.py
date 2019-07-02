@@ -10,7 +10,7 @@ import csv
 #------------------------------------------------- 
 beams_1 = '/data/apertif/190602049/'
 obs_id = '190602049'
-module = 'crosscal' 
+module = 'preflag' 
 #source = 'LH_GRG'
  
 

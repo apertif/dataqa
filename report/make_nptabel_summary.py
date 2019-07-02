@@ -154,14 +154,16 @@ def extract_all_beams(obs_id, module):
 	return dict_beams
 
 def make_csv(obs_id, module):
+	"""
+    Converts the dictionary with the summary into a csv file.
+    """
 	
 	summary_data = extract_all_beams(obs_id, module) 
 	
-	
 	i = 0
-	while len(summary_data[i]) <= 1:
+	while len(summary_data[i]) <= 2:
 		i += 1
-		if len(summary_data[i]) > 1:
+		if len(summary_data[i]) > 2:
 			break
 		
 	csv_columns = summary_data[i].keys()
