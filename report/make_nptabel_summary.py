@@ -181,5 +181,6 @@ def make_csv(obs_id, module):
 	except IOError:
 		print("I/O error") 
 		
-	print("Done")
+	print("Created file: "+str(obs_id)+"_"+str(module)+"_summary.csv")
+	logging.info("Created file: "+str(obs_id)+"_"+str(module)+"_summary.csv")
 		
