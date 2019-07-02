@@ -64,21 +64,28 @@ def make_cb_plot(filename,column,goodrange=None,
     cbpos = ascii.read(cboffsets)
     #open figure
     fig,ax = plt.subplots(figsize=(8,8))
-    ax.axis([2,-2,-2,2]) #RA axis runs backwards
+    ax.axis([1.75,-1.75,-1.75,1.75]) #RA axis runs backwards
     #set up beams
     beams = []
-    r = 0.25 #beam size
+    r = 0.2 #beam size
     for i,(x1,y1) in enumerate(zip(cbpos['ra'],cbpos['dec'])):
         if i == 0:
             #offset beam 0
-            x1 = 1.75
-            y1 = -1.75
+            x1 = 1.5
+            y1 = -1.5
         #set circle
         circle = Circle((x1,y1),r,color=colors[i],alpha=0.4)
         fig.gca().add_artist(circle)
         #beams.append(circle)
         #write text with value
-        ax.text(x1,y1,str(table[column][i]))
+        ax.text(x1,y1,('CB{0:02}\n'
+                       '{2}').format(table['beam'][i],column,
+                                           str(table[column][i])),
+                horizontalalignment='center',
+                verticalalignment='center')
     #p=PatchCollection(beams, alpha=0.4)
     #ax.add_collection(p)
+    ax.set_xlabel('RA offset, deg')
+    ax.set_ylabel('Dec offset, deg')
+    ax.set_title('{}'.format(column))
     plt.savefig('cb_overview_{}.png'.format(column))
