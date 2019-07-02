@@ -8,7 +8,7 @@ from IPython.display import display
 def run():
 
     # open the table
-    test_table = Table.read("190602049_obs.ecsv", format="ascii.ecsv")
+    test_table = Table.read("obs.ecsv", format="ascii.ecsv")
 
     obsid_label = widgets.Label("Obs ID: {}".format(test_table['Obs_ID'][0]))
     display(obsid_label)
@@ -24,7 +24,7 @@ def run():
     display(osa_text)
 
     dropdown_options = ['unchecked', 'unknown',
-                        'failed', 'critical', 'acceptable',  'good']
+                        'failed', 'bad', 'acceptable',  'good']
 
     # Preflag
     # =======
