@@ -1050,17 +1050,19 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     qa_dir_report = os.path.join(qa_dir,"report")
 
     # copy the js and css files
-    try:
-        copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
-                                           os.path.basename(js_file)))
-    except Exception as e:
-        logger.error(e)
+    if js_file != '':
+        try:
+            copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
+                                            os.path.basename(js_file)))
+        except Exception as e:
+            logger.error(e)
 
-    try:
-        copy(css_file,
-             "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
-    except Exception as e:
-        logger.error(e)
+    if css_file = '':
+        try:
+            copy(css_file,
+                "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
+        except Exception as e:
+            logger.error(e)
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined

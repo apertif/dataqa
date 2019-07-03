@@ -10,7 +10,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info=None):
+def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info=None, osa_report=''):
     """Function to create the html page for summary
 
     Args:
@@ -18,6 +18,7 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
         qa_report_obs_path (str): Path to the report directory
         page_type (str): The type of report page
         obs_info (dict): Information about the observation
+        add_osa_report (bool): To add the osa report
 
     Return:
         html_code (str): Body of HTML code for this page
@@ -35,6 +36,45 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
     # ======================================
 
     if obs_info is None:
+        obs_id = ""
+        target = ""
+        fluxcal = ""
+        polcal = ""
+        osa = ""
+    else:
+        obs_id = obs_info['Obs_ID'][0]
+        target = obs_info['Target'][0]
+        fluxcal = obs_info['Flux_Calibrator'][0]
+        polcal = obs_info['Pol_Calibrator'][0]
+        osa = obs_info['OSA'][0]
+
+    html_code += """
+        <div class="w3-container w3-center">
+            <div class="w3-responsive">
+                <table class="w3-table-all">
+                    <tr class="w3-amber">
+                        <th>Obs ID</th>
+                        <th>Target</th>
+                        <th>Flux calibrator</th>
+                        <th>Pol calibrator</th>
+                        <th>OSA</th>
+                    </tr>
+                        <td>{0:s}</td>
+                        <td>{1:s}</td>
+                        <td>{2:s}</td>
+                        <td>{3:s}</td>
+                        <td>{4:s}</td>
+                </table>
+            </div>
+        </div>\n\n""".format(obs_id, target, fluxcal, polcal, osa)
+
+    # Create html code for the osa repor table
+    # ========================================
+
+    if add_osa_report:
+        # check that osa report really exists:
+
+        if os.path.exist
         obs_id = ""
         target = ""
         fluxcal = ""
