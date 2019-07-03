@@ -71,41 +71,42 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
     # Create html code for the osa repor table
     # ========================================
 
-    if add_osa_report:
+    if osa_report != '':
+        pass
         # check that osa report really exists:
 
-        if os.path.exist
-        obs_id = ""
-        target = ""
-        fluxcal = ""
-        polcal = ""
-        osa = ""
-    else:
-        obs_id = obs_info['Obs_ID'][0]
-        target = obs_info['Target'][0]
-        fluxcal = obs_info['Flux_Calibrator'][0]
-        polcal = obs_info['Pol_Calibrator'][0]
-        osa = obs_info['OSA'][0]
+        # if os.path.exist:
+        #     obs_id = ""
+        #     target = ""
+        #     fluxcal = ""
+        #     polcal = ""
+        #     osa = ""
+        # else:
+        #     obs_id = obs_info['Obs_ID'][0]
+        #     target = obs_info['Target'][0]
+        #     fluxcal = obs_info['Flux_Calibrator'][0]
+        #     polcal = obs_info['Pol_Calibrator'][0]
+        #     osa = obs_info['OSA'][0]
 
-    html_code += """
-        <div class="w3-container w3-center">
-            <div class="w3-responsive">
-                <table class="w3-table-all">
-                    <tr class="w3-amber">
-                        <th>Obs ID</th>
-                        <th>Target</th>
-                        <th>Flux calibrator</th>
-                        <th>Pol calibrator</th>
-                        <th>OSA</th>
-                    </tr>
-                        <td>{0:s}</td>
-                        <td>{1:s}</td>
-                        <td>{2:s}</td>
-                        <td>{3:s}</td>
-                        <td>{4:s}</td>
-                </table>
-            </div>
-        </div>\n\n""".format(obs_id, target, fluxcal, polcal, osa)
+        # html_code += """
+        #     <div class="w3-container w3-center">
+        #         <div class="w3-responsive">
+        #             <table class="w3-table-all">
+        #                 <tr class="w3-amber">
+        #                     <th>Obs ID</th>
+        #                     <th>Target</th>
+        #                     <th>Flux calibrator</th>
+        #                     <th>Pol calibrator</th>
+        #                     <th>OSA</th>
+        #                 </tr>
+        #                     <td>{0:s}</td>
+        #                     <td>{1:s}</td>
+        #                     <td>{2:s}</td>
+        #                     <td>{3:s}</td>
+        #                     <td>{4:s}</td>
+        #             </table>
+        #         </div>
+        #     </div>\n\n""".format(obs_id, target, fluxcal, polcal, osa)
 
     # Create html code for summary plot
     # =================================
