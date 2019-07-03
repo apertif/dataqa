@@ -5,12 +5,23 @@ import shutil
 from astropy.table import Table, join
 from ipywidgets import widgets
 from IPython.display import display
+import glob
 
 
 def run():
 
-    # open the table
-    test_table = Table.read("obs.ecsv", format="ascii.ecsv")
+    # get the table file (there should only be one)
+    # get the current director
+    cwd = os.getcwd()
+    # get the obs id
+    obs_id = cwd.split("/")[-2]
+    obs_file = "../{}_obs.ecsv".format(obs_id)
+    if not os.path.exists(obs_file):
+        # technically it is not necssary to have this file here
+        print("ERROR: Could not find observation information. Abort")
+        return -1
+
+    test_table = Table.read(obs_file, format="ascii.ecsv")
 
     obsid_label = widgets.Label("Obs ID: {}".format(test_table['Obs_ID'][0]))
     display(obsid_label)
@@ -189,12 +200,11 @@ def run():
             table_name = "{0}_OSA_report.ecsv".format(test_table['Obs_ID'][0])
             summary_table.write(
                 table_name, format='ascii.ecsv', overwrite=True)
-            
+
             print("Saved OSA report {0:s}. Thank you.".format(table_name))
 
             # copy the file to the collection directory
             table_copy = "/data/apertif/qa/OSA_reports/{0}".format(table_name)
             shutil.copy2(table_name, table_copy)
-
 
     btn.on_click(save_info)
