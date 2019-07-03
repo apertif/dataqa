@@ -1022,7 +1022,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
             "Did not fine time measurement files in {0:s}apercal_performance/".format(qa_dir))
 
 
-def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False, obs_info=None, osa_files):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False, obs_info=None, osa_files=None):
     """Function to create the directory structure of the report document
 
     Files that are required will be linked to there.
