@@ -192,6 +192,14 @@ def main():
     css_file_name = "{0:s}/report_style.css".format(
         hp.__file__.split("/html_report.py")[0])
 
+    # for copying osa_files:
+    osa_nb_file = "{0:s}/OSA_report.ipynb".format(
+        hp.__file__.split("/html_report.py")[0])
+    osa_py_file = "{0:s}/osa_functions.py".format(
+        hp.__file__.split("/html_report.py")[0])
+
+    osa_files = [osa_nb_file, osa_py_file]
+
     # Check that qa_dir and the other directories exists
     if not os.path.exists(qa_dir):
         logger.error(
@@ -202,7 +210,7 @@ def main():
         if not add_osa_report:
             try:
                 hpd.create_report_dirs(
-                    obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info)
+                    obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info, osa_files=osa_files)
             except Exception as e:
                 logger.error(e)
 
