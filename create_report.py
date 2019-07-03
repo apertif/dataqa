@@ -66,6 +66,9 @@ def main():
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
 
+    parser.add_argument("--do_not_read_timing", action="store_true", default=False,
+                        help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
+
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
                         help='Set it to run Autocal triggering mode automatically after Apercal.')
@@ -174,7 +177,7 @@ def main():
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
     # getting timing measurment for apercal
-    if not add_osa_report:
+    if not add_osa_report or not args.do_not_read_timing:
         try:
             get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
         except Exception as e:
