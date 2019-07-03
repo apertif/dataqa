@@ -177,7 +177,7 @@ def main():
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
     # getting timing measurment for apercal
-    if not add_osa_report or not args.do_not_read_timing:
+    if not add_osa_report and not args.do_not_read_timing:
         try:
             get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
         except Exception as e:
