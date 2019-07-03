@@ -14,7 +14,7 @@ def run():
     # get the current director
     cwd = os.getcwd()
     # get the obs id
-    obs_id = cwd.split("/")[-2]
+    obs_id = cwd.split("/")[-3]
     obs_file = "../{}_obs.ecsv".format(obs_id)
     if not os.path.exists(obs_file):
         # technically it is not necssary to have this file here
