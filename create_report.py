@@ -112,7 +112,7 @@ def main():
     if add_osa_report:
         # name of the osa report for this observation
         osa_report = os.path.join(
-            qa_report_dir, "OSA_Report/{}_OSA_report.ecsv")
+            qa_report_dir, "OSA_Report/{}_OSA_report.ecsv".format(obs_id))
 
         # check that the file is actually there
         if not os.path.exists(osa_report):
@@ -221,7 +221,7 @@ def main():
 
     try:
         hp.create_main_html(qa_report_dir, obs_id, subpages,
-                            css_file=css_file_name, js_file=js_file_name, obs_info=obs_info, add_osa_report=add_osa_report)
+                            css_file=css_file_name, js_file=js_file_name, obs_info=obs_info, osa_report=osa_report)
     except Exception as e:
         logger.error(e)
 

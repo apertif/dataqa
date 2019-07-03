@@ -259,7 +259,7 @@ def create_main_html(qa_report_dir, obs_id, subpages, css_file=None, js_file=Non
     # Create index file
     # +++++++++++++++++
 
-    if not add_osa_report:
+    if osa_report == '':
         index_file = '{0:s}/index.html'.format(qa_report_dir)
         logging.info("## Creating index file: {0:s}".format(index_file))
 
