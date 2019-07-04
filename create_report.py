@@ -29,8 +29,8 @@ from report import html_report_dir as hpd
 from report.pipeline_run_time import get_pipeline_run_time
 from scandata import get_default_imagepath
 
-if __name__ == "__main__":
 
+def main():
     start_time = time.time()
 
     # Create and parse argument list
@@ -60,8 +60,14 @@ if __name__ == "__main__":
     parser.add_argument("-b", "--basedir", type=str,
                         help='Base directory where the obs id is')
 
+    parser.add_argument("-a", "--add_osa_report", action="store_true", default=False,
+                        help='Add only the osa report to the webpage')
+
     parser.add_argument("-c", "--combine", action="store_true", default=False,
-                        help='Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
+                        help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
+
+    parser.add_argument("--do_not_read_timing", action="store_true", default=False,
+                        help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
 
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
@@ -73,6 +79,7 @@ if __name__ == "__main__":
     qa_dir = args.path
     base_dir = args.basedir
     do_combine = args.combine
+    add_osa_report = args.add_osa_report
 
     # directory where the output will be of pybdsf will be stored
     if qa_dir is None:
@@ -100,6 +107,19 @@ if __name__ == "__main__":
     lib.setup_logger(
         'debug', logfile='{0:s}/create_report.log'.format(qa_report_dir))
     logger = logging.getLogger(__name__)
+
+    # if osa report should be added, check it is available
+    if add_osa_report:
+        # name of the osa report for this observation
+        osa_report = os.path.join(
+            qa_report_dir, "OSA_Report/{}_OSA_report.ecsv".format(obs_id))
+
+        # check that the file is actually there
+        if not os.path.exists(osa_report):
+            logger.error("No OSA report found. Abort")
+            return -1
+    else:
+        osa_report = ''
 
     # Saving observation information if they do not exist yet
     # =======================================================
@@ -157,10 +177,11 @@ if __name__ == "__main__":
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
     # getting timing measurment for apercal
-    try:
-        get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
-    except Exception as e:
-        logger.error(e)
+    if not add_osa_report and not args.do_not_read_timing:
+        try:
+            get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
+        except Exception as e:
+            logger.error(e)
 
     # the subpages to be created
     subpages = ['observing_log', 'summary', 'inspection_plots', 'preflag', 'crosscal',
@@ -174,6 +195,14 @@ if __name__ == "__main__":
     css_file_name = "{0:s}/report_style.css".format(
         hp.__file__.split("/html_report.py")[0])
 
+    # for copying osa_files:
+    osa_nb_file = "{0:s}/OSA_report.ipynb".format(
+        hp.__file__.split("/html_report.py")[0])
+    osa_py_file = "{0:s}/osa_functions.py".format(
+        hp.__file__.split("/html_report.py")[0])
+
+    osa_files = [osa_nb_file, osa_py_file]
+
     # Check that qa_dir and the other directories exists
     if not os.path.exists(qa_dir):
         logger.error(
@@ -181,19 +210,24 @@ if __name__ == "__main__":
         sys.exit(-1)
     else:
         # Create directory structure for the report
-        try:
-            hpd.create_report_dirs(
-                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info)
-        except Exception as e:
-            logger.error(e)
+        if not add_osa_report:
+            try:
+                hpd.create_report_dirs(
+                    obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info, osa_files=osa_files)
+            except Exception as e:
+                logger.error(e)
 
     logger.info("#### Creating report")
 
     try:
         hp.create_main_html(qa_report_dir, obs_id, subpages,
-                            css_file=css_file_name, js_file=js_file_name, obs_info=obs_info)
+                            css_file=css_file_name, js_file=js_file_name, obs_info=obs_info, osa_report=osa_report)
     except Exception as e:
         logger.error(e)
 
     logger.info("#### Report. Done ({0:.0f}s)".format(
         time.time()-start_time))
+
+
+if __name__ == "__main__":
+    main()

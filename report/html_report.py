@@ -165,7 +165,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
         logger.error(e)
 
 
-def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None, obs_info=None):
+def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None, obs_info=None, osa_report=''):
     """
     Function to create the subpages
     """
@@ -187,15 +187,24 @@ def write_obs_page(qa_report_path, obs_id, css_file, js_file, subpages=None, obs
                               page_type=page, obs_id=obs_id)
 
             hrc.write_obs_content(page_name, qa_report_path,
-                                  page_type=page, obs_id=obs_id, obs_info=obs_info)
+                                  page_type=page, obs_id=obs_id, obs_info=obs_info, osa_report=osa_report)
 
             # Close the index file
             write_html_end(page_name)
 
 
-def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=True, line=True, mosaic=True, selfcal=True, css_file=None, js_file=None, obs_info=None):
+def create_main_html(qa_report_dir, obs_id, subpages, css_file=None, js_file=None, obs_info=None, osa_report=''):
     """
     Function to create the main HTML file
+
+    Args:
+        qa_report_dir (str): Directory of report
+        obs_id (str): ID of observation
+        subpages (list(str)): The subpages of the report
+        css_file (str): The css file of the report (depracated)
+        js_file (str): The javascript file for the report
+        obs_info (dict): Information about the observation
+        add_osa_report (bool): Update web report to add only the osa report.
     """
 
     # qa_report_dir = '{0:s}/report'.format(qa_report_dir)
@@ -249,18 +258,20 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
 
     # Create index file
     # +++++++++++++++++
-    index_file = '{0:s}/index.html'.format(qa_report_dir)
-    logging.info("## Creating index file: {0:s}".format(index_file))
 
-    # create the header
-    write_html_header(index_file, os.path.basename(css_file),
-                      os.path.basename(js_file), page_type='index')
+    if osa_report == '':
+        index_file = '{0:s}/index.html'.format(qa_report_dir)
+        logging.info("## Creating index file: {0:s}".format(index_file))
 
-    # Add a list of Observations
-    write_html_obs_index(index_file, obs_id)
+        # create the header
+        write_html_header(index_file, os.path.basename(css_file),
+                          os.path.basename(js_file), page_type='index')
 
-    # Close the index file
-    write_html_end(index_file)
+        # Add a list of Observations
+        write_html_obs_index(index_file, obs_id)
+
+        # Close the index file
+        write_html_end(index_file)
 
     # Creating subpages
     # +++++++++++++++++
@@ -270,6 +281,6 @@ def create_main_html(qa_report_dir, obs_id, subpages, continuum=True, crosscal=T
 
     try:
         write_obs_page(qa_report_dir, obs_id, os.path.basename(css_file),
-                       os.path.basename(js_file), subpages=subpages, obs_info=obs_info)
+                       os.path.basename(js_file), subpages=subpages, obs_info=obs_info, osa_report=osa_report)
     except Exception as e:
         logger.error(e)

@@ -12,7 +12,7 @@ import logging
 import glob
 import time
 import socket
-from shutil import copy
+from shutil import copy2
 
 logger = logging.getLogger(__name__)
 
@@ -1022,7 +1022,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
             "Did not fine time measurement files in {0:s}apercal_performance/".format(qa_dir))
 
 
-def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False, obs_info=None):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False, obs_info=None, osa_files=None):
     """Function to create the directory structure of the report document
 
     Files that are required will be linked to there.
@@ -1050,17 +1050,28 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     qa_dir_report = os.path.join(qa_dir,"report")
 
     # copy the js and css files
-    try:
-        copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
-                                           os.path.basename(js_file)))
-    except Exception as e:
-        logger.error(e)
+    if js_file != '':
+        try:
+            copy2(js_file, "{0:s}/{1:s}".format(qa_dir_report,
+                                            os.path.basename(js_file)))
+        except Exception as e:
+            logger.error(e)
 
-    try:
-        copy(css_file,
-             "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
-    except Exception as e:
-        logger.error(e)
+    if css_file == '':
+        try:
+            copy2(css_file,
+                "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
+        except Exception as e:
+            logger.error(e)
+    
+    # copy the OSA files
+    if osa_files is not None:
+        for osa_file in osa_files:
+            try:
+                copy2(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
+                                                os.path.basename(osa_file)))
+            except Exception as e:
+                logger.error(e)
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined
