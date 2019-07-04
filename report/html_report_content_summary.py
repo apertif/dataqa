@@ -68,8 +68,8 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
             </div>
         </div>\n\n""".format(obs_id, target, fluxcal, polcal, osa)
 
-    # Create html code for the osa repor table
-    # ========================================
+    # Create html code for the osa report table
+    # =========================================
 
     if osa_report != '':
         pass
