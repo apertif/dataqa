@@ -189,7 +189,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                     "#### Inspection plot QA {0}... Done ".format(name_target))
             except Exception as e:
                 logger.warning(
-                    "Inspection plot QA for {} failed. Continue with next QA".format(name_target))
+                    "Inspection plot QA for {} failed.".format(name_target))
                 logger.exception(e)
 
         # get inspection plot for flux calibrator
@@ -206,7 +206,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                     name_fluxcal, beamnr_cal))
             except Exception as e:
                 logger.warning(
-                    "Inspection plot QA for {} beam {1} failed. Continue with next QA".format(name_fluxcal, beamnr_cal))
+                    "Inspection plot QA for {} beam {1} failed.".format(name_fluxcal, beamnr_cal))
                 logger.exception(e)
 
         # get inspection plot for pol calibrator if it exists
@@ -225,7 +225,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                         name_polcal, beamnr_cal))
                 except Exception as e:
                     logger.warning(
-                        "Inspection plot QA for {} beam {1} failed. Continue with next QA".format(name_polcal, beamnr_cal))
+                        "Inspection plot QA for {} beam {1} failed.".format(name_polcal, beamnr_cal))
                     logger.exception(e)
 
         logger.info("#### Inspection plot QA ... Done (time {0:.1f}s)".format(
@@ -236,7 +236,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
     # Preflag QA
     # ==========
 
-    if 'preflag' in steps and name_fluxcal != '':
+    if 'preflag' in steps and host_name == "happili-01":
 
         logger.info("#### Running preflag QA ...")
 
@@ -244,7 +244,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             preflag_msg = os.system(
-                'python /home/apercal/dataqa/run_rfinder.py {0:d} {1:s} --trigger_mode'.format(taskid_target, name_fluxcal))
+                'python /home/apercal/dataqa/run_preflag_qa.py {0:d}'.format(taskid_target))
             logger.info(
                 "Preflag QA finished with msg {0}".format(preflag_msg))
             logger.info("#### Running preflag QA ... Done (time {0:.1f}s)".format(
@@ -252,6 +252,18 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
         except Exception as e:
             logger.warning("Preflag QA failed. Continue with next QA")
             logger.exception(e)
+
+        # Disabled rfinder
+        # try:
+        #     preflag_msg = os.system(
+        #         'python /home/apercal/dataqa/run_rfinder.py {0:d} {1:s} --trigger_mode'.format(taskid_target, name_fluxcal))
+        #     logger.info(
+        #         "Preflag QA finished with msg {0}".format(preflag_msg))
+        #     logger.info("#### Running preflag QA ... Done (time {0:.1f}s)".format(
+        #         time.time()-start_time_preflag))
+        # except Exception as e:
+        #     logger.warning("Preflag QA failed. Continue with next QA")
+        #     logger.exception(e)
     else:
         logger.warning("#### Did not perform preflag QA")
 
