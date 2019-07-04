@@ -113,7 +113,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                 html_code += """</tr>\n"""
 
                 # go through the list for each beam
-                for k in range(beam_list):
+                for k in range(len(beam_list)):
 
                     # open row
                     html_code += """<tr>\n"""
