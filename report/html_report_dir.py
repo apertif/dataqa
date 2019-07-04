@@ -265,6 +265,28 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
         qa_preflag_dir_list=[default_qa_preflag_dir, default_qa_preflag_dir.replace(
             "data", "data2"), default_qa_preflag_dir.replace("data", "data3"), default_qa_preflag_dir.replace("data", "data4")]
 
+    # Get the summary file
+    # ====================
+    preflag_summary_file = os.path.join(default_qa_preflag_dir,"{0}_{1}_summary.csv")
+
+    if os.path.exists(preflag_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(preflag_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            preflag_summary_file = preflag_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(preflag_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(preflag_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(preflag_summary_file))
+
     # Get the combined preflag plots when on happili-01
     # =================================================
     if socket.gethostname() == 'happili-01':
