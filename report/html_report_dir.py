@@ -1079,7 +1079,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
         except Exception as e:
             logger.error(e)
 
-    if css_file == '':
+    if css_file != '':
         try:
             copy(css_file,
                 "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
