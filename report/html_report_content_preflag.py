@@ -107,7 +107,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                 # fill header keys
                 for key in table_keys:
                     html_code += """<th>{}</th>\n""".format(
-                        key.replace("preflag_").replace("_targetbeams_"))
+                        key.replace("preflag_", "").replace("_targetbeams_", ""))
 
                 # close table header
                 html_code += """</tr>\n"""
@@ -124,9 +124,9 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
                         # check whether it is masked
                         if np.ma.is_masked(element):
-                            html_code += """<td>-</td>\n""".format(elment)
+                            html_code += """<td>-</td>\n""".format(element)
                         else:
-                            html_code += """<td>{0}</td>\n""".format(elment)
+                            html_code += """<td>{0}</td>\n""".format(element)
 
                     # close row
                     html_code += """</tr>\n"""
