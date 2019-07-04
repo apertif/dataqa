@@ -88,11 +88,11 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
                 html_code += """
                     <div class="w3-container">
-                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" class="disabled" onclick="show_hide_plots('{0:s}')">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
                             {1:s}
                         </button>
                     </div>
-                    <div class="w3-container w3-margin-top w3-show" name="{2}">\n""".format(button_src_name, src, div_name)
+                    <div class="w3-container w3-margin-top w3-show" name="{0}">\n""".format(div_name, source)
 
                 # beginning of table
                 html_code += """
@@ -143,10 +143,10 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                     "Could not find entries for source {}".format(source))
                 html_code += """
                     <div class="w3-container">
-                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
                             {1:s}
                         </button>
-                    </div>\n""".format(button_src_name, src)
+                    </div>\n""".format(div_name, source)
 
         # closing the table button div
         html_code += """</div>\n"""

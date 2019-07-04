@@ -148,7 +148,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                         src))
                     html_code += """
                     <div class="w3-container">
-                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class="disabled" onclick="show_hide_plots('{0:s}')">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
                             {1:s}
                         </button>
                     </div>\n""".format(button_src_name, src)
@@ -197,7 +197,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
 
                             html_code += """
                                     <div class="w3-container">
-                                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom"  onclick="show_hide_plots('{0:s}')">
                                             {1:s}
                                         </button>
                                     </div>
@@ -253,7 +253,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                                 "No plots found for polarisation {}".format(pol))
                             html_code += """
                             <div class="w3-container">
-                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" class="button_continuum" onclick="show_hide_plots('{0:s}')">
+                                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
                                     {1:s}
                                 </button>
                             </div>\n""".format(div_name_pol, pol)
@@ -267,7 +267,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                         src))
                     html_code += """
                     <div class = "w3-container" >
-                        <button class = "w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" class = "disabled" onclick = "show_hide_plots('{0:s}')" >
+                        <button class = "w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick = "show_hide_plots('{0:s}')" >
                             {1:s}
                         </button>
                     </div>\n""".format(button_src_name, src)
