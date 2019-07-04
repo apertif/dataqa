@@ -84,7 +84,7 @@ def extract_beam(path, beamnum, module, source):
         # print('No file for beam: ', i)
         logger.info("No file for beam: {}".format(beamnum))
 
-    logger.info("Extracting data ... Done")
+    logger.info("Extracting data for beam {} ... Done".format(beamnum))
 
     dict_cut.update({'beam': beamnum})
 
