@@ -27,6 +27,7 @@ from apercal.libs import lib
 from report import html_report as hp
 from report import html_report_dir as hpd
 from report.pipeline_run_time import get_pipeline_run_time
+from report.make_nptabel_summary import make_nptabel_csv
 from scandata import get_default_imagepath
 
 
@@ -203,19 +204,32 @@ def main():
 
     osa_files = [osa_nb_file, osa_py_file]
 
-    # Check that qa_dir and the other directories exists
+    # Check that directory of the qa exists
     if not os.path.exists(qa_dir):
         logger.error(
             "Directory {0:s} does not exists. Abort".format(qa_report_dir))
-        sys.exit(-1)
+        return -1
     else:
+        # read out numpy files for the different apercal steps if not run in triggered mode
+        if not args.trigger_mode and host_name == "happili-01":
+            # go through some of the subpages and get info
+            for page in subpages:
+                # exclude non-apercal modules (and mosaic)
+                if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
+                    # just run it on preflag for now
+                    if page == "preflag":
+                        make_nptabel_csv(
+                            obs_id, page, output_path=os.path.join(qa_dir, page))
         # Create directory structure for the report
         if not add_osa_report:
+            logger.info("#### Creating directory structrure")
             try:
                 hpd.create_report_dirs(
                     obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info, osa_files=osa_files)
             except Exception as e:
                 logger.error(e)
+            else:
+                logger.info("#### Creating directory structrure ... Done")
 
     logger.info("#### Creating report")
 
