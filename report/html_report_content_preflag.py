@@ -92,7 +92,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                             {1:s}
                         </button>
                     </div>
-                    <div class="w3-container w3-margin-top w3-hide" name="{0}">\n""".format(div_name, source)
+                    <div class="w3-container w3-margin-bottom w3-hide" name="{0}">\n""".format(div_name, source)
 
                 # beginning of table
                 html_code += """
