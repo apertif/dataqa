@@ -73,7 +73,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                         Preflag summary table
                     </button>
                 </div>
-            <div class="w3-container w3-margin-top w3-show" name="gallery-2">\n"""
+            <div class="w3-container w3-margin-top w3-hide" name="gallery-2">\n"""
 
         for source in source_list:
 
@@ -88,11 +88,11 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
                 html_code += """
                     <div class="w3-container">
-                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
                             {1:s}
                         </button>
                     </div>
-                    <div class="w3-container w3-margin-top w3-show" name="{0}">\n""".format(div_name, source)
+                    <div class="w3-container w3-margin-top w3-hide" name="{0}">\n""".format(div_name, source)
 
                 # beginning of table
                 html_code += """
@@ -107,7 +107,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                 # fill header keys
                 for key in table_keys:
                     html_code += """<th>{}</th>\n""".format(
-                        key.replace("preflag_", "").replace("_targetbeams_", ""))
+                        key.replace("preflag_", "").replace("targetbeams_", ""))
 
                 # close table header
                 html_code += """</tr>\n"""
@@ -124,7 +124,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
                         # check whether it is masked
                         if np.ma.is_masked(element):
-                            html_code += """<td>-</td>\n""".format(element)
+                            html_code += """<td>-</td>\n"""
                         else:
                             html_code += """<td>{0}</td>\n""".format(element)
 
