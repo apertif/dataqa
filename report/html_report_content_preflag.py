@@ -38,7 +38,8 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
     if obs_info is not None:
         obs_id = obs_info['Obs_ID'][0]
-        source_list = np.array([obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0]])
+        source_list = np.array(
+            [obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0]])
     else:
         obs_id = os.path.basename(qa_report_obs_path)
         source_list = None
@@ -61,7 +62,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
     if summary_table is not None:
 
         # get the keys for the table
-        table_key s= summary_table.keys()
+        table_keys = summary_table.keys()
         # remove the source key as it is not necessary
         table_keys.remove('source')
 
@@ -119,10 +120,10 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
                     # now go through keys and fill table
                     for key in table_keys:
-                        element= summary_table_src[key][k]
+                        element = summary_table_src[key][k]
 
                         # check whether it is masked
-                        if np.ma.is_masked(element)
+                        if np.ma.is_masked(element):
                             html_code += """<td>-</td>\n""".format(elment)
                         else:
                             html_code += """<td>{0}</td>\n""".format(elment)
@@ -171,7 +172,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                     </div>
                 <div class="w3-container w3-margin-top w3-hide" name="gallery-1">\n"""
 
-        img_counter= 0
+        img_counter = 0
 
         for image in image_list:
             if img_counter % 3 == 0:
@@ -209,7 +210,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
     beam_list = glob.glob(
         "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
 
-    n_beams= len(beam_list)
+    n_beams = len(beam_list)
 
     # if there are beams go through them
     if n_beams != 0:
@@ -219,9 +220,9 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
         for k in range(n_beams):
 
             # get the images
-            images_in_beam= glob.glob("{0:s}/*png".format(beam_list[k]))
+            images_in_beam = glob.glob("{0:s}/*png".format(beam_list[k]))
 
-            div_name= "gallery{0:d}".format(k)
+            div_name = "gallery{0:d}".format(k)
 
             if len(images_in_beam) != 0:
 
@@ -235,7 +236,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                     </div>
                     <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format(div_name, os.path.basename(beam_list[k]))
 
-                img_counter= 0
+                img_counter = 0
 
                 for image in images_in_beam:
                     if img_counter % 3 == 0:
