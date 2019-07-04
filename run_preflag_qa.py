@@ -1,7 +1,7 @@
 """
 Script to automatically run preflag qa
 
-Currently, preflag QA only runs 
+Combines the preflag plots
 
 Requires a scan number
 Optionally takes a directory for writing plots
@@ -19,7 +19,7 @@ import logging
 
 start = timer()
 
-parser = argparse.ArgumentParser(description='Get prepare QA plots')
+parser = argparse.ArgumentParser(description='Combine preflag QA plots')
 
 # 1st argument: File name
 parser.add_argument("scan", help='Scan of target field')
@@ -58,7 +58,7 @@ logger = logging.getLogger(__name__)
 
 logger.info("Running preflag QA")
 
-# now combine the functions
+# now combine the plots
 try:
     start_time = time.time()
     preflag_plots.combine_preflag_plots(
