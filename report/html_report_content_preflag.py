@@ -95,9 +95,11 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No combined preflag plots found")
         html_code += """
+            <div class="w3-container">
                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
                     Combined plots
-                </button>\n"""
+                </button>
+            </div>\n"""
 
     # Create html code for individual beam plots
     # ==========================================
