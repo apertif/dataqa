@@ -12,7 +12,7 @@ import logging
 import glob
 import time
 import socket
-from shutil import copy2
+from shutil import copy2, copy
 
 logger = logging.getLogger(__name__)
 
@@ -1074,14 +1074,14 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     # copy the js and css files
     if js_file != '':
         try:
-            copy2(js_file, "{0:s}/{1:s}".format(qa_dir_report,
+            copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
                                             os.path.basename(js_file)))
         except Exception as e:
             logger.error(e)
 
     if css_file == '':
         try:
-            copy2(css_file,
+            copy(css_file,
                 "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
         except Exception as e:
             logger.error(e)
@@ -1090,7 +1090,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     if osa_files is not None:
         for osa_file in osa_files:
             try:
-                copy2(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
+                copy(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
                                                 os.path.basename(osa_file)))
             except Exception as e:
                 logger.error(e)
