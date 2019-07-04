@@ -38,7 +38,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
     if obs_info is not None:
         obs_id = obs_info['Obs_ID'][0]
-        source_list = np.array([obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0])
+        source_list = np.array([obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0]])
     else:
         obs_id = os.path.basename(qa_report_obs_path)
         source_list = None
