@@ -218,8 +218,19 @@ def main():
                 if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
                     # just run it on preflag for now
                     if page == "preflag":
-                        make_nptabel_csv(
-                            obs_id, page, output_path=os.path.join(qa_dir, page))
+                        try:
+                            logging.info(
+                                "## Getting summary table for {}".format(page))
+                            make_nptabel_csv(
+                                obs_id, page, output_path=os.path.join(qa_dir, page))
+                        except Exception as e:
+                            logging.warning(
+                                "## Getting summary table for {} failed".format(page))
+                            logger.exception(e)
+                        else:
+                            logging.info(
+                                "## Getting summary table for {} ... Done".format(page))
+
         # Create directory structure for the report
         if not add_osa_report:
             logger.info("#### Creating directory structrure")
