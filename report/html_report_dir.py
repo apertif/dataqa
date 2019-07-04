@@ -267,7 +267,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
 
     # Get the summary file
     # ====================
-    preflag_summary_file = os.path.join(default_qa_preflag_dir,"{0}_{1}_summary.csv")
+    preflag_summary_file = os.path.join(default_qa_preflag_dir,"{0}_{1}_summary.csv".format(obs_id,"preflag"))
 
     if os.path.exists(preflag_summary_file):
         link_name = "{0:s}/{1:s}".format(
