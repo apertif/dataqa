@@ -304,36 +304,38 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
     if 'mosaic' in steps and host_name == 'happili-01':
 
-        logger.info('#### Running mosaic QA ...')
+        logger.info('#### Mosaic QA is currently not available ...')
 
-        start_time_mosaic = time.time()
+        # logger.info('#### Running mosaic QA ...')
 
-        try:
-            # Create the mosaic
-            logger.info('## Making the mosaic ...')
-            start_time_make_mosaic = time.time()
-            make_mosaic_msg = os.system(
-                'python /home/apercal/dataqa/make_mosaic_image.py {0:d}'.format(taskid_target))
-            logger.info(
-                "Making mosaic finished with msg {0}".format(make_mosaic_msg))
-            logger.info("## Making the mosaic ... Done (time {0:.1f}s)".format(
-                time.time()-start_time_make_mosaic))
+        # start_time_mosaic = time.time()
 
-            # Run the validation tool
-            logger.info('## Run validation ...')
-            start_time_mosaic_validation = time.time()
-            mosaic_validation_msg = os.system(
-                'python /home/apercal/dataqa/run_continuum_validation.py {0:d} --for_mosaic'.format(taskid_target))
-            logger.info(
-                "Mosaic validation finished with msg {0}".format(mosaic_validation_msg))
-            logger.info("## Run validation ... Done (time {0:.1f}s)".format(
-                time.time()-start_time_mosaic_validation))
+        # try:
+        #     # Create the mosaic
+        #     logger.info('## Making the mosaic ...')
+        #     start_time_make_mosaic = time.time()
+        #     make_mosaic_msg = os.system(
+        #         'python /home/apercal/dataqa/make_mosaic_image.py {0:d}'.format(taskid_target))
+        #     logger.info(
+        #         "Making mosaic finished with msg {0}".format(make_mosaic_msg))
+        #     logger.info("## Making the mosaic ... Done (time {0:.1f}s)".format(
+        #         time.time()-start_time_make_mosaic))
 
-            logger.info("#### Running mosaic QA ... Done (time {0:.1f}s)".format(
-                time.time()-start_time_mosaic))
-        except Exception as e:
-            logger.warning("Mosaic QA failed. Continue with next QA")
-            logger.exception(e)
+        #     # Run the validation tool
+        #     logger.info('## Run validation ...')
+        #     start_time_mosaic_validation = time.time()
+        #     mosaic_validation_msg = os.system(
+        #         'python /home/apercal/dataqa/run_continuum_validation.py {0:d} --for_mosaic'.format(taskid_target))
+        #     logger.info(
+        #         "Mosaic validation finished with msg {0}".format(mosaic_validation_msg))
+        #     logger.info("## Run validation ... Done (time {0:.1f}s)".format(
+        #         time.time()-start_time_mosaic_validation))
+
+        #     logger.info("#### Running mosaic QA ... Done (time {0:.1f}s)".format(
+        #         time.time()-start_time_mosaic))
+        # except Exception as e:
+        #     logger.warning("Mosaic QA failed. Continue with next QA")
+        #     logger.exception(e)
     else:
         logger.warning("#### Did not perform mosaic QA")
 
@@ -359,25 +361,25 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                 time.time()-start_time_get_cube_stat))
 
             # Subtract continuum
-            logger.info('## Subtract continuum ...')
-            start_time_subtract_continuum = time.time()
-            subtract_cont_msg = os.system(
-                'python /home/apercal/dataqa/subtract_continuum.py {0:d} --trigger_mode'.format(taskid_target))
-            logger.info(
-                "Continuum subtraction finished with msg {0}".format(subtract_cont_msg))
-            logger.info("## Subtract continuum ... Done (time {0:.1f}s)".format(
-                time.time()-start_time_subtract_continuum))
+            # logger.info('## Subtract continuum ...')
+            # start_time_subtract_continuum = time.time()
+            # subtract_cont_msg = os.system(
+            #     'python /home/apercal/dataqa/subtract_continuum.py {0:d} --trigger_mode'.format(taskid_target))
+            # logger.info(
+            #     "Continuum subtraction finished with msg {0}".format(subtract_cont_msg))
+            # logger.info("## Subtract continuum ... Done (time {0:.1f}s)".format(
+            #     time.time()-start_time_subtract_continuum))
 
-            # Get cube statistic after continuum subtraction
-            logger.info(
-                '## Get cube statistic after continuum subtraction ...')
-            start_time_get_cube_stat_cont = time.time()
-            get_cube_stat_cont_msg = os.system(
-                'python /home/apercal/dataqa/run_cube_stats_cont.py {0:d} --trigger_mode'.format(taskid_target))
-            logger.info(
-                "Cube stat cont finished with msg {0}".format(get_cube_stat_cont_msg))
-            logger.info("## Get cube statistic after continuum subtraction ... Done (time {0:.1f}s)".format(
-                time.time()-start_time_get_cube_stat_cont))
+            # # Get cube statistic after continuum subtraction
+            # logger.info(
+            #     '## Get cube statistic after continuum subtraction ...')
+            # start_time_get_cube_stat_cont = time.time()
+            # get_cube_stat_cont_msg = os.system(
+            #     'python /home/apercal/dataqa/run_cube_stats_cont.py {0:d} --trigger_mode'.format(taskid_target))
+            # logger.info(
+            #     "Cube stat cont finished with msg {0}".format(get_cube_stat_cont_msg))
+            # logger.info("## Get cube statistic after continuum subtraction ... Done (time {0:.1f}s)".format(
+            #     time.time()-start_time_get_cube_stat_cont))
 
             logger.info("#### Running line QA ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_line))
