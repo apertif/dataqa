@@ -59,11 +59,13 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                         <th>Pol calibrator</th>
                         <th>OSA</th>
                     </tr>
+                    <tr>
                         <td>{0}</td>
                         <td>{1}</td>
                         <td>{2}</td>
                         <td>{3}</td>
                         <td>{4}</td>
+                    </tr>
                 </table>
             </div>
         </div>\n\n""".format(obs_id, target, fluxcal, polcal, osa)
