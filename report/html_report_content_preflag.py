@@ -26,12 +26,12 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <div class="w3-container w3-large">
-            <p>This page provides information on the performance of the preflag module. You can find the following information here.</p>
+        <div class="w3-container w3-large w3-margin-bottom">
+            <p>This page provides information on the performance of the preflag module. You can find the following information here:</p>
             <div class="w3-container w3-large">
-                - Table of the preflag parameters for each source. In the current version of preflag, the parameters should all be identical for the calibrators and target. So, it is usually sufficient to look at the output from the target<br>
-                - The preflag plots from the different beams compound into one plot per source and baseline<br>
-                - The preflag plots for each beam individually<br>
+                1. Table of the preflag parameters for each source. In the current version of preflag, the parameters should all be identical for the calibrators and target. So, it is usually sufficient to look at the output from the target.<br>
+                2. The preflag plots from the different beams compound into one plot per source and baseline.<br>
+                3. The preflag plots for each beam individually.<br>
             </div>
         </div>\n
         """
