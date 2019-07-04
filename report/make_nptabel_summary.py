@@ -116,25 +116,25 @@ def extract_all_beams(obs_id, module):
         source_list = find_sources(obs_id)
         for j in range(len(source_list)):
             for i in beamnum:
-                if i < 11:
+                if i < 10:
                     dict_beams_v1 = (extract_beam(
                         beams_1, i, module, source_list[j]))
                     dict_beams_v1.update({'source': source_list[j]})
                     dict_beams.append(dict_beams_v1)
 
-                if i > 10 and i < 21:
+                if i >= 10 and i < 20:
                     dict_beams_v1 = (extract_beam(
                         beams_2, i, module, source_list[j]))
                     dict_beams_v1.update({'source': source_list[j]})
                     dict_beams.append(dict_beams_v1)
 
-                if i > 20 and i < 31:
+                if i >= 20 and i < 30:
                     dict_beams_v1 = (extract_beam(
                         beams_3, i, module, source_list[j]))
                     dict_beams_v1.update({'source': source_list[j]})
                     dict_beams.append(dict_beams_v1)
 
-                if i > 30 and i < 40:
+                if i >= 30 and i < 40:
                     dict_beams_v1 = (extract_beam(
                         beams_4, i, module, source_list[j]))
                     dict_beams_v1.update({'source': source_list[j]})
