@@ -49,7 +49,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
         qa_report_obs_page_path, "{0}_{1}_summary.csv".format(obs_id, page_type))
 
     if os.path.exists(preflag_summary_file):
-        summary_table = Table.read(preflag_summary_file, format="ascii.ecsv")
+        summary_table = Table.read(preflag_summary_file, format="ascii.csv")
 
         # check if a source list already exists
         if source_list is None:
