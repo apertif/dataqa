@@ -35,7 +35,7 @@ h3
 Tables
 ****************** */
 
-table 
+/* table 
 {
     border-collapse: collapse;
     table-layout: auto;
@@ -79,7 +79,7 @@ table
 
 .obs_links{
   color: white;
-}
+} */
 
 /* *****************
 Navigation 
@@ -126,7 +126,7 @@ li a:hover {
 Buttons
 ******************************/
 
-button {
+/* button {
   background-color: rgb(252, 152, 95);
   width: 100%;
   margin: auto;
@@ -142,7 +142,7 @@ button:hover {
   background-color: rgb(255, 123, 46);
 } */
 
-/* button:nth-child(even) {background-color: rgb(252, 179, 137);} */
+/* button:nth-child(even) {background-color: rgb(252, 179, 137);}
 
 .button_continuum {
   background-color: rgb(192, 192, 192);
@@ -160,13 +160,13 @@ button:hover {
   z-index: 3;
   opacity: 0.6;
   cursor: not-allowed;
-}
+} */
 
 /******************************
 Gallery
 ******************************/
 
-div.plots {
+/* div.plots {
   margin: auto;
   clear: both;
   padding: 0px 0px;
@@ -241,7 +241,7 @@ div.plots {
   flex: 24%;
   max-width: 22%;
   padding: 0px 4px;
-}
+} */
 
 
 /* .mosaic_img{
