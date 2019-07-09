@@ -5,3 +5,4 @@
 *.egg-info/
 .eggs/
 .vscode/
+.DS_Store
