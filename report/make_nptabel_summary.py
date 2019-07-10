@@ -49,16 +49,17 @@ def simplify_data(d, beamnum):
 
 def extract_beam(path, beamnum, module, source):
     """
-Function to return numpy files contents as a dictionary filtered for certain keys
-Args:
-    path (str): Directory of the data
-    beamnum (int): Beam number
-    module (str): name of the apercal module e.g. 'preflag', 'convert', 'croscal'
-    source (str): name of the source or calibrators for preflag, for other modules it should be an empty string ('')
+    Function to return numpy files contents as a dictionary filtered for certain keys
 
-Returns
-    a dictionary with information extracted from a numpy log file
-"""
+    Args:
+        path (str): Directory of the data
+        beamnum (int): Beam number
+        module (str): name of the apercal module e.g. 'preflag', 'convert', 'croscal'
+        source (str): name of the source or calibrators for preflag, for other modules it should be an empty string ('')
+
+    Returns:
+        a dictionary with information extracted from a numpy log file
+    """
 
     #logger.info('Checking NPY files for beam {}'.format(beamnum))
 
@@ -75,7 +76,7 @@ Returns
     res = {}
     dict_cut = {}
 
-    print(f)
+    # print(f)
 
     if len(f) != 0:
         d = np.load(f[0]).item()
@@ -107,9 +108,9 @@ Returns
 
     else:
         #print('No file for beam: ', i)
-        logging.info("No file for beam: {}".format(beamnum))
+        logger.info("No file for beam: {}".format(beamnum))
 
-    logging.info("Extracting data ... Done")
+    logger.info("Extracting data for beam {} ... Done".format(beamnum))
 
     dict_cut.update({'beam': beamnum})
 
@@ -118,15 +119,15 @@ Returns
 
 def extract_all_beams(obs_id, module):
     """
-Combine data from all beams into a directory.
+    Combine data from all beams into a directory.
 
-Args:
-    obs_id (str): Directory of the data
-    module (str): name of the apercal module e.g. 'preflag', 'convert', 'croscal'
+    Args:
+        obs_id (str): Directory of the data
+        module (str): name of the apercal module e.g. 'preflag', 'convert', 'croscal'
 
-Returns
-    a dictionary with information extracted from a numpy log file
-"""
+    Returns
+        a dictionary with information extracted from a numpy log file
+    """
     beams_1 = '/data/apertif/'+str(obs_id)+'/'
     beams_2 = '/data2/apertif/'+str(obs_id)+'/'
     beams_3 = '/data3/apertif/'+str(obs_id)+'/'
@@ -187,6 +188,7 @@ def make_nptabel_csv(obs_id, module, output_path=''):
     """
     Creates a dictionary with the summary into
     from the numpy files and saves it as a csv file.
+
     Args:
             obs_id (str): ID of observation
             module (str): Apercal module for which information are extracted
