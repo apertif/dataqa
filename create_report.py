@@ -217,7 +217,7 @@ def main():
                 # exclude non-apercal modules (and mosaic)
                 if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
                     # just run it on preflag for now
-                    if page == "preflag" or page == "crosscal" or page == "selfcal" or page == "continuum":
+                    if page == "preflag" or page == "crosscal" or page == "convert" or page == "selfcal" or page == "continuum":
                         try:
                             logging.info(
                                 "## Getting summary table for {}".format(page))
