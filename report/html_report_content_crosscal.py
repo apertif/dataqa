@@ -27,8 +27,12 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
     html_code += """
         <div class="w3-container w3-large">
             <p>
-                Here you can go through the different plots created by crosscal.
+                This page provides information on the performance of the crosscal module. You can find the following information here: 
             </p>
+            <div class="w3-container w3-large">
+                1. Table of the crosscal quality parameters from the pipeline separated for target, flux calibrator and polarisation calibrator.<br>
+                2. Various plots related to the cross calibration<br>
+            </div>
         </div>\n
         """
 
