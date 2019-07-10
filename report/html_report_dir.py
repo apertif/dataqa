@@ -403,7 +403,7 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
 
     # if crosscal from different happilis should be combined
     if do_combine:
-        pass
+        logger.info("Nothing to combine. This is done in a separate step.")
         # combine images
         # try:
         #     logging.info("Combining crosscal plots")
@@ -414,6 +414,32 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
         # else:
         #     logger.info("Combining crosscal plots ... Done")
     
+    # Get the summary file
+    # ====================
+    crosscal_summary_file = os.path.join(
+        default_qa_crosscal_dir, "{0}_{1}_summary.csv".format(obs_id, "crosscal"))
+
+    if os.path.exists(crosscal_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(crosscal_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            crosscal_summary_file = crosscal_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(crosscal_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(crosscal_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(crosscal_summary_file))
+
+    # Get the crosscal images
+    # =======================
+
     # get the images for crosscal
     images_crosscal = glob.glob(
         "{0:s}/*.png".format(qa_crosscal_dir))
