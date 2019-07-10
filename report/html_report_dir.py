@@ -385,7 +385,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                 "No beams found for preflag QA in {0:s}".format(qa_preflag_dir))
 
 
-def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
+def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the create directory for the report
 
     Note:
@@ -1185,7 +1185,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_crosscal(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
                 logger.exception(e)
 
