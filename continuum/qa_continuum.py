@@ -432,9 +432,9 @@ def print_summary(sdict):
     df.columns=df.iloc[0]
     df = df.drop(index=0)
     df.columns = ['beam', u'RMS', u'IDR', u'LDR']
+    df.insert(loc=0, column='Success', value=True)
+    df['Success'][df.RMS=='F'] = False
     df.to_csv('../../continuum_summary.csv', index=False)
-
-
 
 
 def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=True):
@@ -524,9 +524,9 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
             except Exception as e:
                 logger.error(e)
                 logger.error("## Running validation tool failed.")
-                img_rms = 'F'
-                idr = 'F'
-                ldr_min, _ = 'F', 'F'
+                img_rms = 0.0
+                idr = 0.0
+                ldr_min, _ = 0.0, 0.0
                 summary.update({'{:02d}'.format(beam_index)
                                : [img_rms, idr, ldr_min]})
 
