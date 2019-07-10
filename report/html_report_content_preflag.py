@@ -134,6 +134,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
 
                     # close row
                     html_code += """</tr>\n"""
+                        
                 # end of table
                 html_code += """
                             </table>
