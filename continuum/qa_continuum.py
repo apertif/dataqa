@@ -422,7 +422,7 @@ def print_summary(sdict):
     df['desc'] = ['RMS', 'IDR', 'LDR']
     for beam in beams:
         if not beam in sdict.keys():
-            df[beam] = ['F', 'F', 'F']
+            df[beam] = [0.0, 0.0, 0.0]
         else:
             df[beam] = sdict[beam]
 
@@ -433,6 +433,8 @@ def print_summary(sdict):
     df = df.drop(index=0)
     df.columns = ['beam', u'RMS', u'IDR', u'LDR']
     df.to_csv('../../continuum_summary.csv', index=False)
+
+
 
 
 def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=True):
