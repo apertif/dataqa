@@ -46,11 +46,11 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
         source_list = None
 
     # set the file name
-    preflag_summary_file = os.path.join(
+    crosscal_summary_file = os.path.join(
         qa_report_obs_page_path, "{0}_{1}_summary.csv".format(obs_id, page_type))
 
-    if os.path.exists(preflag_summary_file):
-        summary_table = Table.read(preflag_summary_file, format="ascii.csv")
+    if os.path.exists(crosscal_summary_file):
+        summary_table = Table.read(crosscal_summary_file, format="ascii.csv")
 
     else:
         summary_table = None
@@ -168,9 +168,11 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
     else:
         logger.warning("No summary table available")
         html_code += """
-                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
-                    Crosscal summary table
-                </button>\n"""
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
+                        Crosscal summary table
+                    </button>
+                </div>\n"""
 
     # Create html code for plots
     # ==========================
