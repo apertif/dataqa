@@ -417,7 +417,7 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
     # Get the summary file
     # ====================
     crosscal_summary_file = os.path.join(
-        default_qa_crosscal_dir, "{0}_{1}_summary.csv".format(obs_id, "crosscal"))
+        qa_crosscal_dir, "{0}_{1}_summary.csv".format(obs_id, "crosscal"))
 
     if os.path.exists(crosscal_summary_file):
         link_name = "{0:s}/{1:s}".format(
