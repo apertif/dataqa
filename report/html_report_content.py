@@ -89,7 +89,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
 
         try:
             html_code = write_obs_content_crosscal(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.warning("Creating content for crosscal failed.")
             logger.exception(e)
