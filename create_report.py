@@ -219,16 +219,16 @@ def main():
                     # just run it on preflag for now
                     if page == "preflag" or page == "crosscal" or page == "convert" or page == "selfcal" or page == "continuum":
                         try:
-                            logging.info(
+                            logger.info(
                                 "## Getting summary table for {}".format(page))
                             make_nptabel_csv(
                                 obs_id, page, output_path=os.path.join(qa_dir, page))
                         except Exception as e:
-                            logging.warning(
+                            logger.warning(
                                 "## Getting summary table for {} failed".format(page))
                             logger.exception(e)
                         else:
-                            logging.info(
+                            logger.info(
                                 "## Getting summary table for {} ... Done".format(page))
 
         # Create directory structure for the report
