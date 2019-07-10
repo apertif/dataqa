@@ -104,7 +104,7 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
                         html_code += """<div class="w3-row">\n"""
 
                     html_code += """
-                        <div class="w3-thrid">
+                        <div class="w3-third">
                             <a href="{0:s}/{1:s}/{2:s}">
                                 <img src="{0:s}/{1:s}/{2:s}" alt="No cube available for beam {1:s}", width="100%">
                             </a>
