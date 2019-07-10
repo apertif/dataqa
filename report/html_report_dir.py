@@ -907,7 +907,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
                 os.unlink(link_name)
                 os.symlink(image, link_name)
     else:
-        logging.warning("No images found for mosaic")
+        logger.warning("No images found for mosaic")
 
     # link the validation tool
     validation_tool_dir = glob.glob("{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(
@@ -1102,15 +1102,19 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
         try:
             copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
                                             os.path.basename(js_file)))
+            logger.info("Copied {}".format(js_file))
         except Exception as e:
-            logger.error(e)
+            logger.warning("Copying {} failed".format(js_file))
+            logger.exception(e)
 
     if css_file != '':
         try:
             copy(css_file,
                 "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
+            logger.info("Copied {}".format(css_file))
         except Exception as e:
-            logger.error(e)
+            logger.warning("Copying {} failed".format(css_file))
+            logger.exception(e)
     
     # copy the OSA files
     if osa_files is not None:
@@ -1118,8 +1122,10 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
             try:
                 copy(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
                                                 os.path.basename(osa_file)))
+                logger.info("Copied {}".format(osa_files))
             except Exception as e:
-                logger.error(e)
+                logger.warning("Copied {}".format(osa_files))
+                logger.exception(e)
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined
