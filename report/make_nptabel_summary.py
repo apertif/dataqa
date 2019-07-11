@@ -40,9 +40,9 @@ def simplify_data(d, beamnum):
                 chunks = ''
                 for i in range(12):
                 	if d[k][i] == False:
-                		chunks = chunks+'F'
+                		chunks = chunks+'F,'
                 	else:
-                		chunks = chunks+'T'
+                		chunks = chunks+'T,'
                 dict.update({k: chunks})
         else:
             dict.update({k: d[k]})
