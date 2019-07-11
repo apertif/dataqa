@@ -71,7 +71,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                         Selfcal summary table
                     </button>
                 </div>
-            <div class="w3-container w3-margin-top w3-show" name="gallery-1">\n"""
+            <div class="w3-container w3-margin-top w3-hide" name="gallery-1">\n"""
 
         beam_list = summary_table['beam']
 
