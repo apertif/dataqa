@@ -28,10 +28,13 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
     html_code += """
         <div class="w3-container w3-large">
             <p>
-                This page shows the images and residuals from every major and minor phase self-cal iteration.
-                In addition selfcal phase and amplitude gains are shown for each antenna. <br>
-                This page will only have content after the selfcal QA step has been performed.
+                This page provides information on the performance of the selfcal module. You can find the following information here: 
             </p>
+            <div class="w3-container w3-large">
+                1. Table of the selfcal parameters from the pipeline. For example, you can see for which beams amplitude calibration was turned on.<br>
+                2. Plots of the self-calibration gain factors for amplitude and phase. These are the most important plots, you want to check. <br>
+                3. Images of the selfcal image and residual from phase self-calibration.
+            </div>
         </div>\n
         """
 
@@ -71,7 +74,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                         Selfcal summary table
                     </button>
                 </div>
-            <div class="w3-container w3-margin-top w3-hide" name="gallery-1">\n"""
+            <div class="w3-container w3-margin-top w3-margin-bottom w3-hide" name="gallery-1">\n"""
 
         beam_list = summary_table['beam']
 
@@ -159,7 +162,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                 </a>
             </div>\n""".format(page_type, os.path.basename(image))
 
-            if img_counter % 3 == 2:
+            if img_counter % 3 == 2 or img_counter == len(phase_list)-1:
                 html_code += """</div>\n"""
 
             img_counter += 1
@@ -193,13 +196,13 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                 html_code += """<div class="w3-row">\n"""
 
             html_code += """
-                <div class="third">
+                <div class="w3-third">
                     <a href="{0:s}/{1:s}">
                     <img src="{0:s}/{1:s}" alt="No image", width="100%">
                     </a>
                 </div>\n""".format(page_type, os.path.basename(image))
 
-            if img_counter % 3 == 2:
+            if img_counter % 3 == 2 or img_counter == len(phase_list)-1:
                 html_code += """</div>\n"""
 
             img_counter += 1
