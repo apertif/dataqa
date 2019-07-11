@@ -37,10 +37,13 @@ def simplify_data(d, beamnum):
             if len(d[k]) == 40:
                 dict.update({k: d[k][beamnum]})
             if len(d[k]) == 12:
-                if np.isin('False', d[k]) == True:
-                    dict.update({k: 'False'})
-                else:
-                    dict.update({k: 'True'})
+                chunks = ''
+                for i in range(12):
+                	if d[k][i] == False:
+                		chunks = chunks+'F'
+                	else:
+                		chunks = chunks+'T'
+                dict.update({k: chunks})
         else:
             dict.update({k: d[k]})
 
