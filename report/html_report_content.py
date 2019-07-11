@@ -100,7 +100,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
 
         try:
             html_code = write_obs_content_selfcal(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.warning("Creating content for selfcal failed.")
             logger.exception(e)
@@ -111,7 +111,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
 
         try:
             html_code = write_obs_content_continuum(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.warning("Creating content for continuum failed.")
             logger.exception(e)
