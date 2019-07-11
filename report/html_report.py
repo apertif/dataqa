@@ -114,6 +114,8 @@ def write_html_obs_index(html_file_name, obs_id):
                     href="{0:s}/{0:s}_selfcal.html">selfcal</a>
                 <a class="w3-bar-item w3-button w3-hover-yellow"
                     href="{0:s}/{0:s}_continuum.html">continuum</a>
+                <a class="w3-bar-item w3-button w3-hover-yellow"
+                    href="{0:s}/{0:s}_polarisation.html">polarisation</a>
                 <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_line.html">line</a>
                 <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_mosaic.html">mosaic</a>
                 <a class="w3-bar-item w3-button w3-hover-yellow" href="{0:s}/{0:s}_apercal_log.html">apercal
@@ -151,7 +153,7 @@ def write_html_navbar(html_file_name, links, page_type='preflag', obs_id=0):
 
     html_code += """
                     <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="../index.html">Overview of Observation</a>
-                    <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="https://docs.google.com/document/d/1EuifDF8wwYRtaeX_jjEkUCyquP0Xwn3XPQUVVZVMoi4/edit#" target="_blank">OSA Guide</a>
+                    <a class="w3-bar-item w3-button w3-hover-yellow w3-right" href="https://docs.google.com/document/d/1LBcx7MmfLeBlSxj7bFI_TRDFMLsQ3cFmFXXrrNf5xIc/edit?usp=sharing" target="_blank">OSA Guide</a>
                 </div>
             </div>
         </div>
