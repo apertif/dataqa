@@ -186,7 +186,7 @@ def main():
 
     # the subpages to be created
     subpages = ['observing_log', 'summary', 'inspection_plots', 'preflag', 'crosscal',
-                'selfcal', 'continuum', 'line', 'mosaic', 'apercal_log']
+                'selfcal', 'continuum', 'polarisation', 'line', 'mosaic', 'apercal_log']
 
     logger.info("#### Create report directory structure")
 
