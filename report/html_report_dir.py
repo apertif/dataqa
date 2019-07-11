@@ -738,6 +738,30 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
     else:
         logger.info("Did not find {} for linking".format(
             continuum_summary_file))
+    
+    # Get the image properties file
+    # =============================
+    continuum_image_properties = os.path.join(
+        qa_continuum_dir, "{0}_{1}_summary.csv".format(obs_id, "continuum"))
+
+    if os.path.exists(continuum_image_properties):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(continuum_image_properties))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            continuum_image_properties = continuum_image_properties.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(continuum_image_properties, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(continuum_image_properties, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(
+            continuum_image_properties))
 
     # Getting continuum images
     # ======================
