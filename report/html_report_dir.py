@@ -469,7 +469,7 @@ def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigge
     else:
         logger.warning("No images found for crosscal.")
 
-def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
+def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the selfcal directory for the report
 
     Note:
@@ -498,6 +498,32 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         #     logger.exception(e)
         # else:
         #     logger.info("Combining crosscal plots ... Done")
+
+    qa_selfcal_dir = os.path.join(qa_dir, "selfcal")
+
+    # Get the summary file
+    # ====================
+    selfcal_summary_file = os.path.join(
+        qa_selfcal_dir, "{0}_{1}_summary.csv".format(obs_id, "selfcal"))
+
+    if os.path.exists(selfcal_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(selfcal_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            selfcal_summary_file = selfcal_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(selfcal_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(selfcal_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(
+            selfcal_summary_file))
 
     # Getting selfcal images
     # ======================
@@ -671,7 +697,7 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
 #        "## Creating report directory for selfcal and linking files. Done")
 
 
-def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the continuum directory for the report
 
     Note:
@@ -686,6 +712,32 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
     
     """
+
+    qa_continuum_dir = os.path.join(qa_dir, "continuum")
+
+    # Get the summary file
+    # ====================
+    continuum_summary_file = os.path.join(
+        qa_continuum_dir, "{0}_{1}_summary.csv".format(obs_id, "continuum"))
+
+    if os.path.exists(continuum_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(continuum_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            continuum_summary_file = continuum_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(continuum_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(continuum_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(
+            continuum_summary_file))
 
     # Getting continuum images
     # ======================
@@ -1201,7 +1253,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_selfcal(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
                 logger.exception(e)
 
@@ -1211,7 +1263,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_continuum(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.exception(e)
 
