@@ -29,7 +29,6 @@ def write_obs_content_polarisation(html_code, qa_report_obs_path, page_type, obs
         <div class="w3-container w3-large">
             <p>
                 This page will provide information on the performance of the polarisation module. The content of the polarisation QA has not been defined yet<br>
-                This page will only have content after the continuum QA step has been performed.
             </p>
         </div>\n
         """
