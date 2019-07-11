@@ -422,19 +422,20 @@ def print_summary(sdict):
     df['desc'] = ['RMS', 'IDR', 'LDR']
     for beam in beams:
         if not beam in sdict.keys():
-            df[beam] = [0.0, 0.0, 0.0]
+            df[beam] = [0, 0, 0]
         else:
             df[beam] = sdict[beam]
 
-    print(df.to_csv(sys.stdout, index=False))
+    # print(df.to_csv(sys.stdout, index=False))
     df = df.T
     df.reset_index(level=0, inplace=True)
     df.columns=df.iloc[0]
     df = df.drop(index=0)
     df.columns = ['beam', u'RMS', u'IDR', u'LDR']
-    df.insert(loc=0, column='Success', value=True)
-    df['Success'][df.RMS=='F'] = False
-    df.to_csv('../../continuum_summary.csv', index=False)
+    df.insert(loc=1, column='Success', value=True)
+    df['Success'][df.RMS==0] = False
+    df.to_csv('../../continuum_image_properties.csv', index=False)
+
 
 
 def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=True):
@@ -524,9 +525,9 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
             except Exception as e:
                 logger.error(e)
                 logger.error("## Running validation tool failed.")
-                img_rms = 0.0
-                idr = 0.0
-                ldr_min, _ = 0.0, 0.0
+                img_rms = 0
+                idr = 0
+                ldr_min, _ = 0, 0
                 summary.update({'{:02d}'.format(beam_index)
                                : [img_rms, idr, ldr_min]})
 
