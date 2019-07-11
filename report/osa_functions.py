@@ -296,6 +296,7 @@ def run():
 
         if prepare_menu.value == 'Unchecked':
             show_warning_label("Prepare")
+            return -1
         elif prepare_menu.value != 'Excellent' and prepare_notes.value == "-":
             show_warning_label("Prepare", request_info=True)
             return -1
