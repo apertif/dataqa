@@ -1,6 +1,6 @@
 import os
 import sys
-from astropy.table import Table
+from astropy.table import Table, join
 import logging
 import glob
 import time
@@ -48,15 +48,27 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type, obs_in
         obs_id = os.path.basename(qa_report_obs_path)
         source_list = None
 
-    # set the file name
-    crosscal_summary_file = os.path.join(
+    # set the file name where information from the param*npy is stored
+    continuum_summary_file = os.path.join(
         qa_report_obs_page_path, "{0}_{1}_summary.csv".format(obs_id, page_type))
 
-    if os.path.exists(crosscal_summary_file):
-        summary_table = Table.read(crosscal_summary_file, format="ascii.csv")
+    # set the file name where information of the image properties is stored
+    continuum_image_properties_file = os.path.join(
+        qa_report_obs_page_path, "continuum_image_properties.csv")
 
+    if os.path.exists(continuum_summary_file):
+        summary_table = Table.read(continuum_summary_file, format="ascii.csv")
     else:
         summary_table = None
+
+    if os.path.exists(continuum_image_properties_file):
+        image_properties_table = Table.read(
+            continuum_image_properties_file, format="ascii.csv")
+        if summary_table is None:
+            summary_table = image_properties_table
+        else:
+            summary_table = join(
+                summary_table, image_properties_table, keys='beam')
 
     # if there is a summary table
     # create tables for each source
