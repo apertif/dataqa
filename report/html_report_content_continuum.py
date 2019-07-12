@@ -1,6 +1,6 @@
 import os
 import sys
-from astropy.table import Table
+from astropy.table import Table, join
 import logging
 import glob
 import time
@@ -10,13 +10,14 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
+def write_obs_content_continuum(html_code, qa_report_obs_path, page_type, obs_info=None):
     """Function to create the html page for continuum
 
     Args:
         html_code (str): HTML code with header and title
         qa_report_obs_path (str): Path to the report directory
         page_type (str): The type of report page
+        obs_info (list(str)): Basic information of observation
 
     Return:
         html_code (str): Body of HTML code for this page
@@ -34,23 +35,103 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type):
         </div>\n
         """
 
+    qa_report_obs_page_path = os.path.join(qa_report_obs_path, page_type)
+
     # Create html code for summary table
     # ==================================
 
-    table_found = False
+    if obs_info is not None:
+        obs_id = obs_info['Obs_ID'][0]
+        source_list = np.array(
+            [obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0]])
+    else:
+        obs_id = os.path.basename(qa_report_obs_path)
+        source_list = None
 
-    if table_found:
+    # set the file name where information from the param*npy is stored
+    continuum_summary_file = os.path.join(
+        qa_report_obs_page_path, "{0}_{1}_summary.csv".format(obs_id, page_type))
+
+    # set the file name where information of the image properties is stored
+    continuum_image_properties_file = os.path.join(
+        qa_report_obs_page_path, "continuum_image_properties.csv")
+
+    if os.path.exists(continuum_summary_file):
+        summary_table = Table.read(continuum_summary_file, format="ascii.csv")
+    else:
+        summary_table = None
+
+    if os.path.exists(continuum_image_properties_file):
+        image_properties_table = Table.read(
+            continuum_image_properties_file, format="ascii.csv")
+        if summary_table is None:
+            summary_table = image_properties_table
+        else:
+            summary_table = join(
+                summary_table, image_properties_table, keys='beam')
+
+    # if there is a summary table
+    # create tables for each source
+    if summary_table is not None:
+
+         # get the keys for the table
+        table_keys = summary_table.keys()
+
         html_code += """
             <div class="w3-container">
                     <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-1')">
                         Continuum summary table
                     </button>
                 </div>
-            <div class="w3-container w3-margin-top w3-show" name="gallery-1">\n"""
+            <div class="w3-container w3-margin-top w3-hide" name="gallery-1">\n"""
 
+        beam_list = summary_table['beam']
+
+        # beginning of table
         html_code += """
-            <p> No table here yet.
-            </p>\n"""
+                <div class="w3-container w3-center">
+                    <div class="w3-responsive">
+                        <table class="w3-table-all">\n"""
+
+        # write the header
+        html_code += """
+                            <tr class="w3-amber">\n"""
+
+        # fill header keys
+        for key in table_keys:
+            # make sure that the beam is always there
+            html_code += """<th>{}</th>\n""".format(
+                key.replace("targetbeams_", ""))
+
+        # close table header
+        html_code += """</tr>\n"""
+
+        for k in range(len(beam_list)):
+
+            # open row
+            html_code += """<tr>\n"""
+
+            # now go through keys and fill table
+            for key in table_keys:
+
+                # get the element from table
+                element = summary_table[key][k]
+
+                # check whether it is masked
+                if np.ma.is_masked(element):
+                    html_code += """<td>-</td>\n"""
+                else:
+                    html_code += """<td>{0}</td>\n""".format(element)
+
+            # close row
+            html_code += """</tr>\n"""
+
+        # end of table
+        html_code += """
+                    </table>
+                </div>
+            </div>\n"""
+
         html_code += """</div>\n"""
     else:
         logger.warning("No continuum table found")

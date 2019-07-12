@@ -20,6 +20,7 @@ from html_report_content_preflag import write_obs_content_preflag
 from html_report_content_crosscal import write_obs_content_crosscal
 from html_report_content_selfcal import write_obs_content_selfcal
 from html_report_content_continuum import write_obs_content_continuum
+from html_report_content_polarisation import write_obs_content_polarisation
 from html_report_content_line import write_obs_content_line
 from html_report_content_mosaic import write_obs_content_mosaic
 from html_report_content_apercal_logs import write_obs_content_apercal_log
@@ -78,7 +79,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
 
         try:
             html_code = write_obs_content_preflag(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.warning("Creating content for preflag failed.")
             logger.exception(e)
@@ -89,7 +90,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
 
         try:
             html_code = write_obs_content_crosscal(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.warning("Creating content for crosscal failed.")
             logger.exception(e)
@@ -100,7 +101,7 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
 
         try:
             html_code = write_obs_content_selfcal(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.warning("Creating content for selfcal failed.")
             logger.exception(e)
@@ -111,9 +112,20 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
 
         try:
             html_code = write_obs_content_continuum(
-                html_code, qa_report_obs_path, page_type)
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
         except Exception as e:
             logger.warning("Creating content for continuum failed.")
+            logger.exception(e)
+
+    # create html content for subpage polarisation
+    # +++++++++++++++++++++++++++++++++++++++++
+    elif page_type == 'polarisation':
+
+        try:
+            html_code = write_obs_content_polarisation(
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
+        except Exception as e:
+            logger.warning("Creating content for polarisation failed.")
             logger.exception(e)
 
     # create html content for subpage line

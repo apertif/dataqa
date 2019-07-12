@@ -10,13 +10,14 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
+def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info=None):
     """Function to create the html page for preflag
 
     Args:
         html_code (str): HTML code with header and title
         qa_report_obs_path (str): Path to the report directory
         page_type (str): The type of report page
+        obs_id (str): ID of Observation
 
     Return:
         html_code (str): Body of HTML code for this page
@@ -25,35 +26,143 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     logger.info("Writing html code for page {0:s}".format(page_type))
 
     html_code += """
-        <div class="w3-container w3-large">
-            <p>Here you can go through the different plots created by preflag.</p>
+        <div class="w3-container w3-large w3-margin-bottom">
+            <p>This page provides information on the performance of the preflag module. You can find the following information here:</p>
+            <div class="w3-container w3-large">
+                1. Table of the preflag parameters for each source. In the current version of preflag, the parameters should all be identical for the calibrators and target. So, it is usually sufficient to look at the output from the target.<br>
+                2. The preflag plots from the different beams compound into one plot per source and baseline.<br>
+                3. The preflag plots for each beam individually.<br>
+            </div>
         </div>\n
         """
+
+    qa_report_obs_page_path = os.path.join(qa_report_obs_path, page_type)
 
     # Create html code for summary table
     # ==================================
 
-    table_found = True
+    if obs_info is not None:
+        obs_id = obs_info['Obs_ID'][0]
+        source_list = np.array(
+            [obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0]])
+    else:
+        obs_id = os.path.basename(qa_report_obs_path)
+        source_list = None
 
-    if table_found:
+    # set the file name
+    preflag_summary_file = os.path.join(
+        qa_report_obs_page_path, "{0}_{1}_summary.csv".format(obs_id, page_type))
+
+    if os.path.exists(preflag_summary_file):
+        summary_table = Table.read(preflag_summary_file, format="ascii.csv")
+
+        # check if a source list already exists
+        if source_list is None:
+            source_list = np.unique(summary_table['source'])
+    else:
+        summary_table = None
+
+    # if there is a summary table
+    # create tables for each source
+    if summary_table is not None:
+
+        # get the keys for the table
+        table_keys = summary_table.keys()
+        # remove the source key as it is not necessary
+        table_keys.remove('source')
+
+        # button for table
         html_code += """
             <div class="w3-container">
                     <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-2')">
                         Preflag summary table
                     </button>
                 </div>
-            <div class="w3-container w3-margin-top w3-show" name="gallery-2">\n"""
+            <div class="w3-container w3-margin-top w3-hide" name="gallery-2">\n"""
 
-        html_code += """
-            <p> No table here yet.
-            </p>\n"""
+        for source in source_list:
+
+            # get the rows for a given source
+            summary_table_src = summary_table[summary_table['source'] == source]
+
+            div_name = "gallery_preflag_{0}".format(source)
+
+            if len(summary_table_src) != 0:
+
+                beam_list = summary_table_src['beam']
+
+                html_code += """
+                    <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                            {1:s}
+                        </button>
+                    </div>
+                    <div class="w3-container w3-margin-bottom w3-hide" name="{0}">\n""".format(div_name, source)
+
+                # beginning of table
+                html_code += """
+                    <div class="w3-container w3-center">
+                        <div class="w3-responsive">
+                            <table class="w3-table-all">\n"""
+
+                # write the header
+                html_code += """
+                                <tr class="w3-amber">\n"""
+                # fill header keys
+                for key in table_keys:
+                    html_code += """<th>{}</th>\n""".format(
+                        key.replace("preflag_", "").replace("targetbeams_", ""))
+
+                # close table header
+                html_code += """</tr>\n"""
+
+                # go through the list for each beam
+                for k in range(len(beam_list)):
+
+                    # open row
+                    html_code += """<tr>\n"""
+
+                    # now go through keys and fill table
+                    for key in table_keys:
+                        element = summary_table_src[key][k]
+
+                        # check whether it is masked
+                        if np.ma.is_masked(element):
+                            html_code += """<td>-</td>\n"""
+                        else:
+                            html_code += """<td>{0}</td>\n""".format(element)
+
+                    # close row
+                    html_code += """</tr>\n"""
+
+                # end of table
+                html_code += """
+                            </table>
+                        </div>
+                    </div>\n"""
+
+                # closing the source button div
+                html_code += """</div>\n"""
+            else:
+                logger.warning(
+                    "Could not find entries for source {}".format(source))
+                html_code += """
+                    <div class="w3-container">
+                        <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+                            {1:s}
+                        </button>
+                    </div>\n""".format(div_name, source)
+
+        # closing the table button div
         html_code += """</div>\n"""
     else:
-        logger.warning("No combined preflag plots found")
+        logger.warning("No summary table available")
         html_code += """
-                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-2')">
-                    Preflag summary table
-                </button>\n"""
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-2')">
+                        Preflag summary table
+                    </button>
+                </div>\n"""
 
     # Create html code for combined preflag plots
     # ===========================================
@@ -95,9 +204,11 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type):
     else:
         logger.warning("No combined preflag plots found")
         html_code += """
+            <div class="w3-container">
                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('gallery-1')">
                     Combined plots
-                </button>\n"""
+                </button>
+            </div>\n"""
 
     # Create html code for individual beam plots
     # ==========================================

@@ -10,13 +10,14 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
+def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info=None):
     """Function to create the html page for selfcal
 
     Args:
         html_code (str): HTML code with header and title
         qa_report_obs_path (str): Path to the report directory
         page_type (str): The type of report page
+        obs_info (list(str)): Basic information from observation
 
     Return:
         html_code (str): Body of HTML code for this page
@@ -27,30 +28,101 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
     html_code += """
         <div class="w3-container w3-large">
             <p>
-                This page shows the images and residuals from every major and minor phase self-cal iteration.
-                In addition selfcal phase and amplitude gains are shown for each antenna. <br>
-                This page will only have content after the selfcal QA step has been performed.
+                This page provides information on the performance of the selfcal module. You can find the following information here: 
             </p>
+            <div class="w3-container w3-large">
+                1. Table of the selfcal parameters from the pipeline. For example, you can see for which beams amplitude calibration was turned on.<br>
+                2. Plots of the self-calibration gain factors for amplitude and phase. These are the most important plots, you want to check. <br>
+                3. Images of the selfcal image and residual from phase self-calibration.
+            </div>
         </div>\n
         """
+
+    qa_report_obs_page_path = os.path.join(qa_report_obs_path, page_type)
 
     # Create html code for summary table
     # ==================================
 
-    table_found = False
+    if obs_info is not None:
+        obs_id = obs_info['Obs_ID'][0]
+        source_list = np.array(
+            [obs_info['Target'][0], obs_info['Flux_Calibrator'][0], obs_info['Pol_Calibrator'][0]])
+    else:
+        obs_id = os.path.basename(qa_report_obs_path)
+        source_list = None
 
-    if table_found:
+    # set the file name
+    crosscal_summary_file = os.path.join(
+        qa_report_obs_page_path, "{0}_{1}_summary.csv".format(obs_id, page_type))
+
+    if os.path.exists(crosscal_summary_file):
+        summary_table = Table.read(crosscal_summary_file, format="ascii.csv")
+
+    else:
+        summary_table = None
+
+    # if there is a summary table
+    # create tables for each source
+    if summary_table is not None:
+
+        # get the keys for the table
+        table_keys = summary_table.keys()
+
         html_code += """
             <div class="w3-container">
                     <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('gallery-1')">
                         Selfcal summary table
                     </button>
                 </div>
-            <div class="w3-container w3-margin-top w3-show" name="gallery-1">\n"""
+            <div class="w3-container w3-margin-top w3-margin-bottom w3-hide" name="gallery-1">\n"""
 
+        beam_list = summary_table['beam']
+
+        # beginning of table
         html_code += """
-            <p> No table here yet.
-            </p>\n"""
+                <div class="w3-container w3-center">
+                    <div class="w3-responsive">
+                        <table class="w3-table-all">\n"""
+
+        # write the header
+        html_code += """
+                            <tr class="w3-amber">\n"""
+
+        # fill header keys
+        for key in table_keys:
+            # make sure that the beam is always there
+            html_code += """<th>{}</th>\n""".format(
+                key.replace("targetbeams_", ""))
+
+        # close table header
+        html_code += """</tr>\n"""
+
+        for k in range(len(beam_list)):
+
+            # open row
+            html_code += """<tr>\n"""
+
+            # now go through keys and fill table
+            for key in table_keys:
+
+                # get the element from table
+                element = summary_table[key][k]
+
+                # check whether it is masked
+                if np.ma.is_masked(element):
+                    html_code += """<td>-</td>\n"""
+                else:
+                    html_code += """<td>{0}</td>\n""".format(element)
+
+            # close row
+            html_code += """</tr>\n"""
+
+        # end of table
+        html_code += """
+                    </table>
+                </div>
+            </div>\n"""
+
         html_code += """</div>\n"""
     else:
         logger.warning("No selfcal table found")
@@ -90,7 +162,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 </a>
             </div>\n""".format(page_type, os.path.basename(image))
 
-            if img_counter % 3 == 2:
+            if img_counter % 3 == 2 or img_counter == len(phase_list)-1:
                 html_code += """</div>\n"""
 
             img_counter += 1
@@ -124,13 +196,13 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type):
                 html_code += """<div class="w3-row">\n"""
 
             html_code += """
-                <div class="third">
+                <div class="w3-third">
                     <a href="{0:s}/{1:s}">
                     <img src="{0:s}/{1:s}" alt="No image", width="100%">
                     </a>
                 </div>\n""".format(page_type, os.path.basename(image))
 
-            if img_counter % 3 == 2:
+            if img_counter % 3 == 2 or img_counter == len(phase_list)-1:
                 html_code += """</div>\n"""
 
             img_counter += 1

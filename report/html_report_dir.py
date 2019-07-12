@@ -12,7 +12,7 @@ import logging
 import glob
 import time
 import socket
-from shutil import copy2
+from shutil import copy2, copy
 
 logger = logging.getLogger(__name__)
 
@@ -265,6 +265,28 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
         qa_preflag_dir_list=[default_qa_preflag_dir, default_qa_preflag_dir.replace(
             "data", "data2"), default_qa_preflag_dir.replace("data", "data3"), default_qa_preflag_dir.replace("data", "data4")]
 
+    # Get the summary file
+    # ====================
+    preflag_summary_file = os.path.join(default_qa_preflag_dir,"{0}_{1}_summary.csv".format(obs_id,"preflag"))
+
+    if os.path.exists(preflag_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(preflag_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            preflag_summary_file = preflag_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(preflag_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(preflag_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(preflag_summary_file))
+
     # Get the combined preflag plots when on happili-01
     # =================================================
     if socket.gethostname() == 'happili-01':
@@ -363,7 +385,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                 "No beams found for preflag QA in {0:s}".format(qa_preflag_dir))
 
 
-def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
+def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the create directory for the report
 
     Note:
@@ -381,7 +403,7 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
 
     # if crosscal from different happilis should be combined
     if do_combine:
-        pass
+        logger.info("Nothing to combine. This is done in a separate step.")
         # combine images
         # try:
         #     logging.info("Combining crosscal plots")
@@ -392,6 +414,32 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
         # else:
         #     logger.info("Combining crosscal plots ... Done")
     
+    # Get the summary file
+    # ====================
+    crosscal_summary_file = os.path.join(
+        qa_crosscal_dir, "{0}_{1}_summary.csv".format(obs_id, "crosscal"))
+
+    if os.path.exists(crosscal_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(crosscal_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            crosscal_summary_file = crosscal_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(crosscal_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(crosscal_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(crosscal_summary_file))
+
+    # Get the crosscal images
+    # =======================
+
     # get the images for crosscal
     images_crosscal = glob.glob(
         "{0:s}/*.png".format(qa_crosscal_dir))
@@ -421,7 +469,7 @@ def create_report_dir_crosscal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=F
     else:
         logger.warning("No images found for crosscal.")
 
-def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
+def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
     """Function to create the selfcal directory for the report
 
     Note:
@@ -450,6 +498,32 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         #     logger.exception(e)
         # else:
         #     logger.info("Combining crosscal plots ... Done")
+
+    qa_selfcal_dir = os.path.join(qa_dir, "selfcal")
+
+    # Get the summary file
+    # ====================
+    selfcal_summary_file = os.path.join(
+        qa_selfcal_dir, "{0}_{1}_summary.csv".format(obs_id, "selfcal"))
+
+    if os.path.exists(selfcal_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(selfcal_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            selfcal_summary_file = selfcal_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(selfcal_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(selfcal_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(
+            selfcal_summary_file))
 
     # Getting selfcal images
     # ======================
@@ -623,7 +697,7 @@ def create_report_dir_selfcal(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
 #        "## Creating report directory for selfcal and linking files. Done")
 
 
-def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the continuum directory for the report
 
     Note:
@@ -638,6 +712,56 @@ def create_report_dir_continuum(qa_dir, qa_dir_report_obs_subpage, trigger_mode=
         trigger_mode (bool): Set for when automatically run after Apercal on a single node
     
     """
+
+    qa_continuum_dir = os.path.join(qa_dir, "continuum")
+
+    # Get the summary file
+    # ====================
+    continuum_summary_file = os.path.join(
+        qa_continuum_dir, "{0}_{1}_summary.csv".format(obs_id, "continuum"))
+
+    if os.path.exists(continuum_summary_file):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(continuum_summary_file))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            continuum_summary_file = continuum_summary_file.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(continuum_summary_file, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(continuum_summary_file, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(
+            continuum_summary_file))
+    
+    # Get the image properties file
+    # =============================
+    continuum_image_properties = os.path.join(
+        qa_continuum_dir, "{0}_image_properties.csv".format("continuum"))
+
+    if os.path.exists(continuum_image_properties):
+        link_name = "{0:s}/{1:s}".format(
+            qa_dir_report_obs_subpage, os.path.basename(continuum_image_properties))
+
+        # change to relative link when in trigger mode
+        if trigger_mode:
+            continuum_image_properties = continuum_image_properties.replace(
+                qa_dir, "../../../")
+
+        # check if link exists
+        if not os.path.exists(link_name):
+            os.symlink(continuum_image_properties, link_name)
+        else:
+            os.unlink(link_name)
+            os.symlink(continuum_image_properties, link_name)
+    else:
+        logger.info("Did not find {} for linking".format(
+            continuum_image_properties))
 
     # Getting continuum images
     # ======================
@@ -859,7 +983,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
                 os.unlink(link_name)
                 os.symlink(image, link_name)
     else:
-        logging.warning("No images found for mosaic")
+        logger.warning("No images found for mosaic")
 
     # link the validation tool
     validation_tool_dir = glob.glob("{0:s}/*continuum_validation_pybdsf_snr5.0_int".format(
@@ -1052,26 +1176,32 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     # copy the js and css files
     if js_file != '':
         try:
-            copy2(js_file, "{0:s}/{1:s}".format(qa_dir_report,
+            copy(js_file, "{0:s}/{1:s}".format(qa_dir_report,
                                             os.path.basename(js_file)))
+            logger.info("Copied {}".format(js_file))
         except Exception as e:
-            logger.error(e)
+            logger.warning("Copying {} failed".format(js_file))
+            logger.exception(e)
 
-    if css_file == '':
+    if css_file != '':
         try:
-            copy2(css_file,
+            copy(css_file,
                 "{0:s}/{1:s}".format(qa_dir_report, os.path.basename(css_file)))
+            logger.info("Copied {}".format(css_file))
         except Exception as e:
-            logger.error(e)
+            logger.warning("Copying {} failed".format(css_file))
+            logger.exception(e)
     
     # copy the OSA files
     if osa_files is not None:
         for osa_file in osa_files:
             try:
-                copy2(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
+                copy(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
                                                 os.path.basename(osa_file)))
+                logger.info("Copied {}".format(osa_files))
             except Exception as e:
-                logger.error(e)
+                logger.warning("Copied {}".format(osa_files))
+                logger.exception(e)
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined
@@ -1137,7 +1267,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_crosscal(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
                 logger.exception(e)
 
@@ -1147,7 +1277,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_selfcal(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
             except Exception as e:
                 logger.exception(e)
 
@@ -1157,7 +1287,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_continuum(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.exception(e)
 
