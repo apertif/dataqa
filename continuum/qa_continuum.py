@@ -419,10 +419,10 @@ def print_summary(sdict):
 
     beams = ['{:02d}'.format(i) for i in range(40)]
     df = pd.DataFrame(columns=['desc'] + beams)
-    df['desc'] = ['RMS', 'IDR', 'LDR']
+    df['desc'] = ['RMS', 'IDR', 'LDR', 'BMAJ', 'BMIN', 'BPA']
     for beam in beams:
         if not beam in sdict.keys():
-            df[beam] = [0, 0, 0]
+            df[beam] = [0, 0, 0, 0, 0, 0]
         else:
             df[beam] = sdict[beam]
 
@@ -431,9 +431,13 @@ def print_summary(sdict):
     df.reset_index(level=0, inplace=True)
     df.columns=df.iloc[0]
     df = df.drop(index=0)
-    df.columns = ['beam', u'RMS', u'IDR', u'LDR']
+    df.columns = ['beam', u'RMS', u'IDR', u'LDR', u'BMAJ', u'BMIN', u'BPA']
     df.insert(loc=1, column='Success', value=True)
     df['Success'][df.RMS==0] = False
+    df['BMAJ'].map('{:.1f}'.format)
+    df['BMIN'].map('{:.1f}'.format)
+    df['BPA'].map('{:.1f}'.format)
+
     df.to_csv('../../continuum_image_properties.csv', index=False)
 
 
@@ -517,9 +521,12 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 idr = int(cat.dynamic_range)
                 ldr_min, _ = cat.local_dynrange
                 ldr_min = int(ldr_min)
+                bmaj = img.bmaj
+                bmin = img.bmin
+                bpa = img.bpa
 
                 summary.update({'{:02d}'.format(beam_index)
-                               : [img_rms, idr, ldr_min]})
+                               : [img_rms, idr, ldr_min, bmaj, bmin, bpa]})
 
                 logger.info("## Running validation tool. Done")
             except Exception as e:
@@ -528,8 +535,9 @@ def qa_continuum_run_validation(data_basedir_list, qa_validation_dir, overwrite=
                 img_rms = 0
                 idr = 0
                 ldr_min, _ = 0, 0
+                bmaj = bmin = bpa = 0
                 summary.update({'{:02d}'.format(beam_index)
-                               : [img_rms, idr, ldr_min]})
+                               : [img_rms, idr, ldr_min, bmaj, bmin, bpa]})
 
             plot_type_list = ['gaus_model', 'gaus_resid',
                               'rms', 'mean', 'island_mask']
