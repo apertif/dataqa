@@ -434,9 +434,9 @@ def print_summary(sdict):
     df.columns = ['beam', u'RMS', u'IDR', u'LDR', u'BMAJ', u'BMIN', u'BPA']
     df.insert(loc=1, column='Success', value=True)
     df['Success'][df.RMS==0] = False
-    df['BMAJ'].map('{:.1f}'.format)
-    df['BMIN'].map('{:.1f}'.format)
-    df['BPA'].map('{:.1f}'.format)
+    df['BMAJ'] = df['BMAJ'].map('{:.1f}'.format)
+    df['BMIN'] = df['BMIN'].map('{:.1f}'.format)
+    df['BPA'] = df['BPA'].map('{:.2f}'.format)
 
     df.to_csv('../../continuum_image_properties.csv', index=False)
 
