@@ -34,8 +34,8 @@ def run():
 
     display(obs_text)
 
+    # if the observation information is not available the OSA needs to fill in some stuff
     if not os.path.exists(obs_file):
-        # technically it is not necssary to have this file here
         print("Warning: Could not find observation information. Please provide your name")
 
         osa_text = widgets.Text(value='',
@@ -69,6 +69,7 @@ def run():
         display(pol_cal_text)
 
         pol_cal_obs_id_list = []
+    # otherwise the information will be inserted automatically
     else:
         obs_table = Table.read(obs_file, format="ascii.ecsv")
 
