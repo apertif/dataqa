@@ -140,13 +140,24 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
     # This information is important for the OSA report
     # =================================================================
 
+    # flux calibrator tid list
+    flux_cal_tid_list = [cal[0] for cal in fluxcals]
+
+    # pol calibrator tid list
+    if name_polcal != '':
+        pol_cal_tid_list = [cal[0] for cal in polcals]
+    else:
+        pol_cal_tid_list = []
+
     summary_table = Table([
         [taskid_target],
         [name_target],
         [name_fluxcal],
+        flux_cal_tid_list,
         [name_polcal],
+        pol_cal_tid_list,
         [osa]], names=(
-        'Obs_ID', 'Target', 'Flux_Calibrator', 'Pol_Calibrator', 'OSA'))
+        'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA'))
 
     table_name = "{0}_obs.ecsv".format(taskid_target)
 
