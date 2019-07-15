@@ -22,7 +22,7 @@ def run():
     obs_file = "../{}_obs.ecsv".format(obs_id)
 
     prepare_label = widgets.HTML(
-        value="<h2 style='text-decoration: underline'> Observation and OSA </h2>"
+        value="<h2 style='text-decoration: underline'> General Information </h2>"
     )
     display(prepare_label)
 
@@ -44,6 +44,31 @@ def run():
                                 disabled=False,
                                 layout=layout_select)
         display(osa_text)
+
+        target_text = widgets.Text(value='',
+                                   placeholder='',
+                                   description='Target:',
+                                   disabled=False,
+                                   layout=layout_select)
+        display(target_text)
+
+        flux_cal_text = widgets.Text(value='',
+                                     placeholder='',
+                                     description='Flux Cal:',
+                                     disabled=False,
+                                     layout=layout_select)
+        display(flux_cal_text)
+
+        flux_cal_obs_id_list = []
+
+        pol_cal_text = widgets.Text(value='',
+                                    placeholder='',
+                                    description='Pol Cal:',
+                                    disabled=False,
+                                    layout=layout_select)
+        display(pol_cal_text)
+
+        pol_cal_obs_id_list = []
     else:
         obs_table = Table.read(obs_file, format="ascii.ecsv")
 
@@ -53,6 +78,31 @@ def run():
                                 disabled=False,
                                 layout=layout_select)
         display(osa_text)
+
+        target_text = widgets.Text(value=obs_table['Target'][0],
+                                   placeholder='',
+                                   description='Target:',
+                                   disabled=False,
+                                   layout=layout_select)
+        display(target_text)
+
+        flux_cal_text = widgets.Text(value=obs_table['Flux_Calibrator'][0],
+                                     placeholder='',
+                                     description='Flux Cal:',
+                                     disabled=False,
+                                     layout=layout_select)
+        display(flux_cal_text)
+
+        flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0]
+
+        pol_cal_text = widgets.Text(value=obs_table['Pol_Calibrator'][0],
+                                    placeholder='',
+                                    description='Pol Cal:',
+                                    disabled=False,
+                                    layout=layout_select)
+        display(pol_cal_text)
+
+        pol_cal_obs_id_list = obs_table['Pol_Calibrator_Obs_IDs'][0]
 
     dropdown_options = ['unchecked', 'unknown',
                         'failed', 'bad', 'acceptable',  'good']
@@ -353,6 +403,11 @@ def run():
         # create the table
         summary_table = Table([
             [obs_text.value],
+            [target_text.value],
+            [flux_cal_text.value],
+            [flux_cal_obs_id_list],
+            [pol_cal_text.value],
+            [pol_cal_obs_id_list],
             [osa_text.value],
             [prepare_menu.value],
             [prepare_notes.value],
@@ -370,7 +425,7 @@ def run():
             [line_notes.value],
             [summary_menu.value],
             [summary_notes.value]], names=(
-            'Obs_ID', 'OSA', 'prepare', 'prepare_notes', 'preflag', 'preflag_notes', 'crosscal', 'crosscal_notes', 'selfcal', 'selfcal_notes', 'continuum', 'continuum_notes', 'polarisation', 'polarisation_notes', 'line', 'line_notes', 'summary', 'summary_notes'))
+            'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA', 'prepare', 'prepare_notes', 'preflag', 'preflag_notes', 'crosscal', 'crosscal_notes', 'selfcal', 'selfcal_notes', 'continuum', 'continuum_notes', 'polarisation', 'polarisation_notes', 'line', 'line_notes', 'summary', 'summary_notes'))
 
         table_name = "{0}_OSA_report.ecsv".format(obs_id)
 
