@@ -135,9 +135,11 @@ def main():
             [obs_id],
             [args.target],
             [args.fluxcal],
+            [],
             [args.polcal],
+            [],
             [args.osa]], names=(
-            'Obs_ID', 'Target', 'Flux_Calibrator', 'Pol_Calibrator', 'OSA'))
+            'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA'))
 
         try:
             obs_info.write(
