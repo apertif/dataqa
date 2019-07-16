@@ -19,7 +19,11 @@ def run():
     cwd = os.getcwd()
     # get the obs id
     obs_id = cwd.split("/")[-3]
+
+    # hopefully this file is available
     obs_file = "../{}_obs.ecsv".format(obs_id)
+    # if the report has already been created, then it should als be there
+    osa_report_file = "{}_OSA_report.ecsv".format(obs_id)
 
     prepare_label = widgets.HTML(
         value="<h2 style='text-decoration: underline'> General Information </h2>"
@@ -34,79 +38,89 @@ def run():
 
     display(obs_text)
 
-    # if the observation information is not available the OSA needs to fill in some stuff
-    if not os.path.exists(obs_file):
-        print("Warning: Could not find observation information. Please provide your name")
+    # in case the OSA report already exists, get the values for all fields
+    if os.path.exists(osa_report_file):
+        report_table = Table.read(osa_report_file, format="ascii.ecsv")
 
-        osa_text = widgets.Text(value='',
-                                placeholder='',
-                                description='OSA:',
-                                disabled=False,
-                                layout=layout_select)
-        display(osa_text)
+        osa_text_value = report_table['OSA'][0]
+        target_text_value = report_table['Target'][0]
+        flux_cal_text_value = report_table['Flux_Calibrator'][0]
+        flux_cal_obs_id_list = report_table['Flux_Calibrator_Obs_IDs'][0]
+        pol_cal_text_value = report_table['Pol_Calibrator'][0]
+        pol_cal_obs_id_list = report_table['Pol_Calibrator_Obs_IDs'][0]
+        prepare_status_value = report_table['Prepare'][0]
+        prepare_notes_value = report_table['Prepare_Notes'][0]
+        preflag_status_value = report_table['Preflag'][0]
+        preflag_notes_value = report_table['Preflag_Notes'][0]
+        crosscal_status_value = report_table['Crosscal'][0]
+        crosscal_notes_value = report_table['Crosscal_Notes'][0]
+        selfcal_status_value = report_table['Selfcal'][0]
+        selfcal_notes_value = report_table['Selfcal_Notes'][0]
+        continuum_status_value = report_table['Continuum'][0]
+        continuum_notes_value = report_table['Continuum_Notes'][0]
+        polarisation_status_value = report_table['Polarisation'][0]
+        polarisation_notes_value = report_table['Polarisation_Notes'][0]
+        line_status_value = report_table['Line'][0]
+        line_notes_value = report_table['Line_Notes'][0]
+        summary_status_value = report_table['Summary'][0]
+        summary_notes_value = report_table['Summary_Notes'][0]
 
-        target_text = widgets.Text(value='',
-                                   placeholder='',
-                                   description='Target:',
-                                   disabled=False,
-                                   layout=layout_select)
-        display(target_text)
-
-        flux_cal_text = widgets.Text(value='',
-                                     placeholder='',
-                                     description='Flux Cal:',
-                                     disabled=False,
-                                     layout=layout_select)
-        display(flux_cal_text)
-
-        flux_cal_obs_id_list = []
-
-        pol_cal_text = widgets.Text(value='',
-                                    placeholder='',
-                                    description='Pol Cal:',
-                                    disabled=False,
-                                    layout=layout_select)
-        display(pol_cal_text)
-
-        pol_cal_obs_id_list = []
-    # otherwise the information will be inserted automatically
-    else:
+    # if the report does not yet exists try the observation table
+    elif os.path.exists(obs_file):
         obs_table = Table.read(obs_file, format="ascii.ecsv")
 
-        osa_text = widgets.Text(value=obs_table['OSA'][0],
-                                placeholder='',
-                                description='OSA:',
-                                disabled=False,
-                                layout=layout_select)
-        display(osa_text)
-
-        target_text = widgets.Text(value=obs_table['Target'][0],
-                                   placeholder='',
-                                   description='Target:',
-                                   disabled=False,
-                                   layout=layout_select)
-        display(target_text)
-
-        flux_cal_text = widgets.Text(value=obs_table['Flux_Calibrator'][0],
-                                     placeholder='',
-                                     description='Flux Cal:',
-                                     disabled=False,
-                                     layout=layout_select)
-        display(flux_cal_text)
-
+        osa_text_value = obs_table['OSA'][0]
+        target_text_value = obs_table['Target'][0]
+        flux_cal_text_value = obs_table['Flux_Calibrator'][0]
         flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0]
-
-        pol_cal_text = widgets.Text(value=obs_table['Pol_Calibrator'][0],
-                                    placeholder='',
-                                    description='Pol Cal:',
-                                    disabled=False,
-                                    layout=layout_select)
-        display(pol_cal_text)
-
+        pol_cal_text_value = obs_table['Pol_Calibrator'][0]
         pol_cal_obs_id_list = obs_table['Pol_Calibrator_Obs_IDs'][0]
+        prepare_status_value = 'Unchecked'
+        prepare_notes_value = '-'
+        preflag_status_value = 'Unchecked'
+        preflag_notes_value = '-'
+        crosscal_status_value = 'Unchecked'
+        crosscal_notes_value = '-'
+        selfcal_status_value = 'Unchecked'
+        selfcal_notes_value = '-'
+        continuum_status_value = 'Unchecked'
+        continuum_notes_value = '-'
+        polarisation_status_value = 'Unchecked'
+        polarisation_notes_value = '-'
+        line_status_value = 'Unchecked'
+        line_notes_value = '-'
+        summary_status_value = 'Unchecked'
+        summary_notes_value = '-'
 
-    dropdown_options = ['unchecked', 'unknown',
-                        'failed', 'bad', 'acceptable',  'good']
+    # otherwise leve most things empty
+    else:
+        print("Warning: Could not find observation information. Please provide your name")
+
+        osa_text_value = ''
+        target_text_value = ''
+        flux_cal_text_value = ''
+        flux_cal_obs_id_list = ''
+        pol_cal_text_value = ''
+        pol_cal_obs_id_list = ''
+        prepare_status_value = 'Unchecked'
+        prepare_notes_value = '-'
+        preflag_status_value = 'Unchecked'
+        preflag_notes_value = '-'
+        crosscal_status_value = 'Unchecked'
+        crosscal_notes_value = '-'
+        selfcal_status_value = 'Unchecked'
+        selfcal_notes_value = '-'
+        continuum_status_value = 'Unchecked'
+        continuum_notes_value = '-'
+        polarisation_status_value = 'Unchecked'
+        polarisation_notes_value = '-'
+        line_status_value = 'Unchecked'
+        line_notes_value = '-'
+        summary_status_value = 'Unchecked'
+        summary_notes_value = '-'
+
+    # dropdown_options = ['unchecked', 'unknown',
+    #                     'failed', 'bad', 'acceptable',  'good']
 
     dropdown_options = ['Unchecked', 'Unknown',
                         'Critical', 'Bad', 'Acceptable', 'Good', 'Excellent']
@@ -119,6 +133,36 @@ def run():
     status_legend_polarisation = status_legend_selfcal
     status_legend_line = status_legend_selfcal
     status_legend_summary = status_legend_selfcal
+
+    # General information
+    # ===================
+    osa_text = widgets.Text(value=osa_text_value,
+                            placeholder='',
+                            description='OSA:',
+                            disabled=False,
+                            layout=layout_select)
+    display(osa_text)
+
+    target_text = widgets.Text(value=target_text_value,
+                               placeholder='',
+                               description='Target:',
+                               disabled=False,
+                               layout=layout_select)
+    display(target_text)
+
+    flux_cal_text = widgets.Text(value=flux_cal_text_value,
+                                 placeholder='',
+                                 description='Flux Cal:',
+                                 disabled=False,
+                                 layout=layout_select)
+    display(flux_cal_text)
+
+    pol_cal_text = widgets.Text(value=pol_cal_text_value,
+                                placeholder='',
+                                description='Pol Cal:',
+                                disabled=False,
+                                layout=layout_select)
+    display(pol_cal_text)
 
     # Prepare
     # =======
@@ -133,13 +177,13 @@ def run():
     display(prepare_label_info)
 
     prepare_menu = widgets.Dropdown(options=dropdown_options,
-                                    value='Unchecked',
+                                    value=prepare_status_value,
                                     description='Status:',
                                     disabled=False,
                                     layout=layout_select)
     display(prepare_menu)
 
-    prepare_notes = widgets.Textarea(value='-',
+    prepare_notes = widgets.Textarea(value=prepare_notes_value,
                                      placeholder='Nothing to add',
                                      description='Notes:',
                                      disabled=False,
@@ -158,13 +202,13 @@ def run():
     display(preflag_label_info)
 
     preflag_menu = widgets.Dropdown(options=dropdown_options,
-                                    value='Unchecked',
+                                    value=preflag_status_value,
                                     description='Select:',
                                     disabled=False,
                                     layout=layout_select)
     display(preflag_menu)
 
-    preflag_notes = widgets.Textarea(value='-',
+    preflag_notes = widgets.Textarea(value=preflag_notes_value,
                                      placeholder='Nothing to add',
                                      description='Notes:',
                                      disabled=False,
@@ -182,13 +226,13 @@ def run():
     display(crosscal_label_info)
 
     crosscal_menu = widgets.Dropdown(options=dropdown_options,
-                                     value='Unchecked',
+                                     value=crosscal_status_value,
                                      description='Select:',
                                      disabled=False,
                                      layout=layout_select)
     display(crosscal_menu)
 
-    crosscal_notes = widgets.Textarea(value='-',
+    crosscal_notes = widgets.Textarea(value=crosscal_notes_value,
                                       placeholder='Nothing to add',
                                       description='Notes:',
                                       disabled=False,
@@ -206,13 +250,13 @@ def run():
     display(selfcal_label_info)
 
     selfcal_menu = widgets.Dropdown(options=dropdown_options,
-                                    value='Unchecked',
+                                    value=selfcal_status_value,
                                     description='Select:',
                                     disabled=False,
                                     layout=layout_select)
     display(selfcal_menu)
 
-    selfcal_notes = widgets.Textarea(value='-',
+    selfcal_notes = widgets.Textarea(value=selfcal_notes_value,
                                      placeholder='Nothing to add',
                                      description='Notes:',
                                      disabled=False,
@@ -230,13 +274,13 @@ def run():
     display(continuum_label_info)
 
     continuum_menu = widgets.Dropdown(options=dropdown_options,
-                                      value='Unchecked',
+                                      value=continuum_status_value,
                                       description='Select:',
                                       disabled=False,
                                       layout=layout_select)
     display(continuum_menu)
 
-    continuum_notes = widgets.Textarea(value='-',
+    continuum_notes = widgets.Textarea(value=continuum_notes_value,
                                        placeholder='Nothing to add',
                                        description='Notes:',
                                        disabled=False,
@@ -254,13 +298,13 @@ def run():
     display(polarisation_label_info)
 
     polarisation_menu = widgets.Dropdown(options=dropdown_options,
-                                         value='Unchecked',
+                                         value=polarisation_status_value,
                                          description='Select:',
                                          disabled=False,
                                          layout=layout_select)
     display(polarisation_menu)
 
-    polarisation_notes = widgets.Textarea(value='-',
+    polarisation_notes = widgets.Textarea(value=polarisation_notes_value,
                                           placeholder='Nothing to add',
                                           description='Notes:',
                                           disabled=False,
@@ -278,13 +322,13 @@ def run():
     display(line_label_info)
 
     line_menu = widgets.Dropdown(options=dropdown_options,
-                                 value='Unchecked',
+                                 value=line_status_value,
                                  description='Select:',
                                  disabled=False,
                                  layout=layout_select)
     display(line_menu)
 
-    line_notes = widgets.Textarea(value='-',
+    line_notes = widgets.Textarea(value=line_notes_value,
                                   placeholder='Nothing to add',
                                   description='Notes:',
                                   disabled=False,
@@ -302,7 +346,7 @@ def run():
     display(summary_label_info)
 
     summary_menu = widgets.Dropdown(options=dropdown_options,
-                                    value='Unchecked',
+                                    value=summary_status_value,
                                     description='Select:',
                                     disabled=False,
                                     layout=layout_select)
@@ -310,7 +354,7 @@ def run():
 
     # notes_label = widgets.Label("#### Notes")
     # display(notes_label)
-    summary_notes = widgets.Textarea(value='-',
+    summary_notes = widgets.Textarea(value=summary_notes_value,
                                      placeholder='Nothing to add',
                                      description='Summary:',
                                      disabled=False,
@@ -426,7 +470,7 @@ def run():
             [line_notes.value],
             [summary_menu.value],
             [summary_notes.value]], names=(
-            'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA', 'prepare', 'prepare_notes', 'preflag', 'preflag_notes', 'crosscal', 'crosscal_notes', 'selfcal', 'selfcal_notes', 'continuum', 'continuum_notes', 'polarisation', 'polarisation_notes', 'line', 'line_notes', 'summary', 'summary_notes'))
+            'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA', 'Prepare', 'Prepare_Notes', 'Preflag', 'Preflag_Notes', 'Crosscal', 'Crosscal_Notes', 'Selfcal', 'Selfcal_Notes', 'Continuum', 'Continuum_Notes', 'Polarisation', 'Polarisation_Notes', 'Line', 'Line_Notes', 'Summary', 'Summary_Notes'))
 
         table_name = "{0}_OSA_report.ecsv".format(obs_id)
 
@@ -452,7 +496,7 @@ def run():
             display(warning_copy_table_label)
         else:
             copy_table_label = widgets.HTML(
-                value="<p style='font-size:large; color:green'> Created backup of OSA report.</p>".format(table_name))
+                value="<p style='font-size:large; color:green'> Created backup of OSA report.</p>")
             display(copy_table_label)
             print("Created backup of OSA report")
 
