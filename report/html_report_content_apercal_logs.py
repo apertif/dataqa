@@ -28,6 +28,8 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
         <div class="w3-container w3-large">
             <p>
                 Here you can go through the four log files created by apercal. 
+                Please note that there is an issue with reading the timing information which is why they are
+                incorrect for prepare and polarisation.
                 Click on one of the buttons and then on the link to open the log file. 
                 You can use the search function of your browser to search the log files.
             </p>
@@ -85,7 +87,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                 timinginfo_table = Table.read(csv_file, format="csv")
 
                 pipeline_step_list = ["start_pipeline", "prepare",
-                                      "preflag", "ccal", "convert", "scal", "continuum", "line"]
+                                      "preflag", "ccal", "convert", "scal", "continuum", "line", "transfer"]
 
                 # # get the minimum and maximum values for each step
                 # pipeline_step_max_list = np.array([str for pipeline_step in pipeline_step_list])
