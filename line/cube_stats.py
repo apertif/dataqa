@@ -16,7 +16,7 @@ import glob
 from dataqa.scandata import get_default_imagepath
 
 import matplotlib.pyplot as plt
-#from scipy.optimize import curve_fit
+# from scipy.optimize import curve_fit
 
 logger = logging.getLogger(__name__)
 
@@ -55,11 +55,11 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
             # sort beam list
             data_dir_beam_list.sort()
 
+            start_time_beam = time.time()
+
             # going through all the beams that were found
             # +++++++++++++++++++++++++++++++++++++++++++
             for data_dir_beam in data_dir_beam_list:
-
-                start_time_beam = time.time()
 
                 # getting the beam
                 beam = os.path.basename(data_dir_beam)
@@ -124,9 +124,9 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                             n_channels)], names=('channel', 'noise'))
 
                         # define range for histogram
-                        #histrange = np.arange(-0.5, 0.5, 0.0001)
+                        # histrange = np.arange(-0.5, 0.5, 0.0001)
                         # p0 is the initial guess for the fitting coefficients (A, mu and sigma above)
-                        #p0 = [1., 0., 0.001]
+                        # p0 = [1., 0., 0.001]
 
                         # This determines the noise in each channel, using standard rms and also by
                         # fitting the width of a histogram of image values.
@@ -138,24 +138,24 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                             # get rms
                             cube_info['noise'][ch] = np.std(cube[ch])
                             # determine histogram and fit gaussian
-                            #values = cube[ch]
+                            # values = cube[ch]
                             # histch, binedges = np.histogram(
                             #    values, bins=500, range=(-0.2, 0.2))
-                            #bin_centres = binedges[:-1] + np.diff(binedges) / 2
+                            # bin_centres = binedges[:-1] + np.diff(binedges) / 2
                             # coeff, var_matrix = curve_fit(
                             #    gauss, bin_centres, histch, p0=p0)
                             # Get the fitted curve
-                            #hist_fit = gauss(bin_centres, *coeff)
+                            # hist_fit = gauss(bin_centres, *coeff)
                             # print 'Fitted mean = ', coeff[1]
                             # print 'Fitted standard deviation = ', coeff[2]
-                            #cube_info['gauss'][ch] = coeff[2]
+                            # cube_info['gauss'][ch] = coeff[2]
 
                         # write noise data
                         cube_info.write(
                             "{0:s}/beam_{1:s}_{2:s}_info.csv".format(qa_line_beam_dir, beam, os.path.basename(cube_file).rstrip(".fits").split("_")[-1]), format="csv", overwrite=True)
 
                         themedian = np.nanmedian(cube_info['noise'])
-                        #print("Median is " + str(round(themedian*1000, 2)) + " mJy")
+                        # print("Median is " + str(round(themedian*1000, 2)) + " mJy")
 
                         # Create plot
                         # +++++++++++
@@ -209,11 +209,14 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                         # close fits file
                         fits_hdulist
 
-                        logger.info("Finished analyzing beam {0:s} ({1:.1f}s)".format(
-                            beam, time.time()-start_time_beam))
+                        logger.info("Finished analyzing cube {0:s}".format(
+                            cube_file))
                 else:
                     logger.warning(
                         "No HI cube found for beam {0:s}".format(beam))
+
+                logger.info("Finished analyzing beam {0:s} ({1:.1f}s)".format(
+                            beam, time.time()-start_time_beam))
 
             logger.info("Finished going through data directory {0:s} ({1:.1f}s)".format(
                 data_dir, time.time()-start_time_data))
