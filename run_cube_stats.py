@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     # Create and parse argument list
     # ++++++++++++++++++++++++++++++
-    parser = argparse.ArgumentParser(description='Run validation for line QA')
+    parser = argparse.ArgumentParser(description='Run line QA')
 
     # main argument: Observation number
     parser.add_argument("obs_id", type=str,
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     try:
         get_cube_stats(qa_line_dir, data_base_dir_list)
     except Exception as e:
-        logger.error(e)
+        logger.exception(e)
 
     logger.info("Getting cube statistics. Done ({0:.0f}s)".format(
         time.time()-start_time))
