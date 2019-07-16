@@ -374,13 +374,13 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
         try:
             # Get cube statistic without continuum subtraction
             logger.info(
-                '## Get cube statistic prior to continuum subtraction ...')
+                '## Get cube statistic ...')
             start_time_get_cube_stat = time.time()
             cube_stat_msg = os.system(
                 'python /home/apercal/dataqa/run_cube_stats.py {0:d} --trigger_mode'.format(taskid_target))
             logger.info(
                 "Cube stat finished with msg {0}".format(cube_stat_msg))
-            logger.info("## Get cube statistic prior to continuum subtraction ... Done (time {0:.1f}s)".format(
+            logger.info("## Get cube statistic ... Done (time {0:.1f}s)".format(
                 time.time()-start_time_get_cube_stat))
 
             # Subtract continuum
