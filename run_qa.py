@@ -153,9 +153,9 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
         [taskid_target],
         [name_target],
         [name_fluxcal],
-        [str(flux_cal_tid_list).replace("]","").replace("[","")],
+        [str(flux_cal_tid_list).replace("]", "").replace("[", "")],
         [name_polcal],
-        [str(pol_cal_tid_list).replace("]","").replace("[","")],
+        [str(pol_cal_tid_list).replace("]", "").replace("[", "")],
         [osa]], names=(
         'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA'))
 
