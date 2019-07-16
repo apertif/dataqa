@@ -422,6 +422,41 @@ class GDSols(ScanData):
         plt.close('all')
 
 
+    def plot_dish_delay(self, imagepath=None):
+        """Plot global delays, dish-based views"""
+
+        logging.info("Creating dish-based plots for global delay")
+
+        imagepath = self.create_imagepath(imagepath)
+
+        # put plots in default place w/ default name
+        ant_names = self.ants[0]
+        # figlist = ['fig_'+str(i) for i in range(len(ant_names))]
+        # set up for 4x3 plots (12 dishes)
+        nx = 4
+        ny = 3
+        xsize = nx * 4
+        ysize = ny * 4
+        plt.figure(figsize=(xsize, ysize))
+        plt.suptitle('Global dish-based delay', size=30)
+
+        #reshape array
+        delays = np.hstack(self.delays).reshape((12,40,2))
+        beamarray = np.arange(len(self.beamlist))
+
+        for n, ant in enumerate(ant_names):
+            plt.subplot(ny, nx, n + 1)
+            plt.scatter(beamarray, delays[n,:,0], label='X', marker='o', s=5)
+            plt.scatter(beamarray, delays[n,:,1], label='Y', marker='o', s=5)
+            plt.title('Dish {0}'.format(ant))
+        plt.legend(markerscale=3, fontsize=14)
+        plt.xlabel('beam number')
+        plt.ylabel('Delay, nanoseconds')
+        plt.savefig(plt.savefig('{imagepath}/K_dish_{scan}.png'.format(scan=self.scan, imagepath=imagepath)))
+        # to really close the plot, this will do
+        plt.close('all')
+
+
 class LeakSols(ScanData):
     def __init__(self, scan, fluxcal, trigger_mode):
         ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
