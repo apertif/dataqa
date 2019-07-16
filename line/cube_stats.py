@@ -96,6 +96,9 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                             logger.exception(e)
                             continue
 
+                        logger.info(
+                            "Getting statistics for cube {}".format(cube_file))
+
                         # get wcs object
                         wcs = WCS(fits_hdulist[0].header)
 
@@ -200,7 +203,7 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
                                        which='major', direction='in')
 
                         plt.savefig(
-                            '{0:s}/beam_{1:s}_{2:s}_noise.png'.format(qa_line_beam_dir, beam, os.path.basename(a).rstrip(".fits").split("_")[-1]), dpi=300)
+                            '{0:s}/beam_{1:s}_{2:s}_noise.png'.format(qa_line_beam_dir, beam, os.path.basename(cube_file).rstrip(".fits").split("_")[-1]), dpi=300)
                         plt.close('all')
 
                         # close fits file
