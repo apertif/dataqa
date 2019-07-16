@@ -152,7 +152,7 @@ def get_cube_stats(qa_line_dir, data_base_dir_list):
 
                         # write noise data
                         cube_info.write(
-                            "{0:s}/beam_{1:s}_{2:s}_info.csv".format(qa_line_beam_dir, beam, os.path.basename(a).rstrip(".fits").split("_")[-1]), format="csv", overwrite=True)
+                            "{0:s}/beam_{1:s}_{2:s}_info.csv".format(qa_line_beam_dir, beam, os.path.basename(cube_file).rstrip(".fits").split("_")[-1]), format="csv", overwrite=True)
 
                         themedian = np.nanmedian(cube_info['noise'])
                         #print("Median is " + str(round(themedian*1000, 2)) + " mJy")
