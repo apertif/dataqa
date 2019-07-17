@@ -742,7 +742,7 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
     # Get the image properties file
     # =============================
     continuum_image_properties = os.path.join(
-        qa_continuum_dir, "{0}_image_properties.csv".format("continuum"))
+        qa_continuum_dir, "{0}_combined_continuum_image_properties.csv".format(obs_id))
 
     if os.path.exists(continuum_image_properties):
         link_name = "{0:s}/{1:s}".format(

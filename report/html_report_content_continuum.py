@@ -54,7 +54,7 @@ def write_obs_content_continuum(html_code, qa_report_obs_path, page_type, obs_in
 
     # set the file name where information of the image properties is stored
     continuum_image_properties_file = os.path.join(
-        qa_report_obs_page_path, "continuum_image_properties.csv")
+        qa_report_obs_page_path, "{0}_combined_continuum_image_properties.csv".format(obs_id))
 
     if os.path.exists(continuum_summary_file):
         summary_table = Table.read(continuum_summary_file, format="ascii.csv")
