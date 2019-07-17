@@ -541,7 +541,7 @@ def run():
 
         try:
             with open(json_file_name, "w") as f:
-                json.dump(json_dict, json_file_name)
+                json.dump(json_dict, f)
         except:
             warning_save_table_label = widgets.HTML(
                 value="<p style='font-size:large; color:red'> ERROR: Could not save report. Please ask for help.</p>")
