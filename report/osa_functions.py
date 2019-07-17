@@ -552,7 +552,7 @@ def run():
             display(save_table_label)
 
         # copy the file to the collection directory
-        json_copy = "/data/apertif/qa/OSA_reports/{0}".format(table_name)
+        json_copy = "/data/apertif/qa/OSA_reports/{0}".format(json_file_name)
         try:
             shutil.copy(json_file_name, json_copy)
         except:
