@@ -23,7 +23,7 @@ def run():
     obs_id = cwd.split("/")[-3]
 
     # hopefully this file is available
-    obs_file = "/data/apertif/{}/{}_obs.ecsv".format(obs_id)
+    obs_file = "/data/apertif/{0}/{0}_obs.ecsv".format(obs_id)
     # if the report has already been created, then it should als be there
     osa_report_file = "{}_OSA_report.json".format(obs_id)
 
