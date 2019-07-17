@@ -21,7 +21,7 @@ def run():
     obs_id = cwd.split("/")[-3]
 
     # hopefully this file is available
-    obs_file = "../{}_obs.ecsv".format(obs_id)
+    obs_file = "/data/apertif/{}/{}_obs.ecsv".format(obs_id)
     # if the report has already been created, then it should als be there
     osa_report_file = "{}_OSA_report.ecsv".format(obs_id)
 
@@ -67,14 +67,26 @@ def run():
 
     # if the report does not yet exists try the observation table
     elif os.path.exists(obs_file):
+
         obs_table = Table.read(obs_file, format="ascii.ecsv")
+
+        # get the obs IDs from the other obs
+        obs_table_2 = Table.read(obs_file.replace("/data/","/data2/"), format="ascii.ecsv")
+        obs_table_3 = Table.read(obs_file.replace(
+            "/data/", "/data3/"), format="ascii.ecsv")
+        obs_table_4 = Table.read(obs_file.replace(
+            "/data/", "/data4/"), format="ascii.ecsv")
 
         osa_text_value = obs_table['OSA'][0]
         target_text_value = obs_table['Target'][0]
         flux_cal_text_value = obs_table['Flux_Calibrator'][0]
-        flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0]
+        flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0] + \
+            ", " + obs_table_2['Flux_Calibrator_Obs_IDs'][0] + ", " + obs_table_3['Flux_Calibrator_Obs_IDs'][0] + ", " + obs_table_4['Flux_Calibrator_Obs_IDs'][0]
         pol_cal_text_value = obs_table['Pol_Calibrator'][0]
-        pol_cal_obs_id_list = obs_table['Pol_Calibrator_Obs_IDs'][0]
+        pol_cal_obs_id_list = obs_table['Pol_Calibrator_Obs_IDs'][0] + \
+            ", " + obs_table_2['Pol_Calibrator_Obs_IDs'][0] + ", " + \
+            obs_table_3['Pol_Calibrator_Obs_IDs'][0] + ", " + \
+            obs_table_4['Pol_Calibrator_Obs_IDs'][0]
         prepare_status_value = 'Unchecked'
         prepare_notes_value = '-'
         preflag_status_value = 'Unchecked'
@@ -157,12 +169,22 @@ def run():
                                  layout=layout_select)
     display(flux_cal_text)
 
+    flux_cal_id_label = widgets.HTML(
+        value="Flux calibrator Obs IDs: {}".format(flux_cal_obs_id_list)
+    )
+    display(flux_cal_id_label)
+
     pol_cal_text = widgets.Text(value=pol_cal_text_value,
                                 placeholder='',
                                 description='Pol Cal:',
                                 disabled=False,
                                 layout=layout_select)
     display(pol_cal_text)
+
+    pol_cal_id_label = widgets.HTML(
+        value="Pol calibrator Obs IDs: {}".format(pol_cal_obs_id_list)
+    )
+    display(pol_cal_id_label)
 
     # Prepare
     # =======
