@@ -70,7 +70,7 @@ def extract_beam(path, beamnum, module, source):
     selfcal_filters = ['targetbeams_average', 'targetbeams_flagline',
                        'targetbeams_parametric', 'targetbeams_phase_status', 'targetbeams_amp_status']
 
-    if module == 'selfcal' or module == 'continuum':
+    if module == 'selfcal' or module == 'continuum' or module == 'transfer':
         f = glob.glob(os.path.join(path, 'param_{:02d}.npy'.format(beamnum)))
     else:
         f = glob.glob(os.path.join(
@@ -106,6 +106,9 @@ def extract_beam(path, beamnum, module, source):
                 for j in range(len(selfcal_filters)):
                     if selfcal_filters[j] in k:
                         res.update({selfcal_filters[j]: d[k]})
+
+            if module == 'transfer' and "transfer" in k:
+                res.update({'transfer': d[k]})
 
         dict_cut = simplify_data(res, beamnum)
 
@@ -188,49 +191,56 @@ def extract_all_beams(obs_id, module):
 
 
 def make_nptabel_csv(obs_id, module, output_path=''):
-    """
-    Creates a dictionary with the summary into
-    from the numpy files and saves it as a csv file.
+	"""
+	Creates a dictionary with the summary into
+	from the numpy files and saves it as a csv file.
 
-    Args:
-            obs_id (str): ID of observation
-            module (str): Apercal module for which information are extracted
-            output_path (str): Optional path to where the information is save (default current directory)
-    """
+	Args:
+			obs_id (str): ID of observation
+			module (str): Apercal module for which information are extracted
+			output_path (str): Optional path to where the information is save (default current directory)
+	"""
 
-    logger.info(
-        "Reading param information for {0} of {1}".format(module, obs_id))
-    summary_data = extract_all_beams(obs_id, module)
-    logger.info(
-        "Reading param information for {0} of {1}... Done".format(module, obs_id))
+	logger.info(
+		"Reading param information for {0} of {1}".format(module, obs_id))
+	summary_data = extract_all_beams(obs_id, module)
+	logger.info(
+		"Reading param information for {0} of {1}... Done".format(module, obs_id))
 
-    i = 0
-    while len(summary_data[i]) <= 2:
-        i += 1
-        if len(summary_data[i]) > 2:
-            break
+	i = 0
+	if module == 'transfer':
+		while len(summary_data[i]) <= 1:
+			i += 1
+			if len(summary_data[i]) > 1:
+				break
 
-    csv_columns = summary_data[i].keys()
+	else:
+		while len(summary_data[i]) <= 2:
+			i += 1
+			if len(summary_data[i]) > 2:
+				break
 
-    csv_columns.sort()
-    dict_data = summary_data
+	csv_columns = summary_data[i].keys()
 
-    # save the file
-    if output_path == '':
-        csv_file = str(obs_id)+"_"+str(module)+"_summary.csv"
-    else:
-        csv_file = os.path.join(output_path, str(
-            obs_id)+"_"+str(module)+"_summary.csv")
+	csv_columns.sort()
+	dict_data = summary_data
 
-    try:
-        with open(csv_file, 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-            writer.writeheader()
-            for data in dict_data:
-                writer.writerow(data)
-    except Exception as e:
-        logger.warning("Creating file {} failed".format(csv_file))
-        logger.exception(e)
+	# save the file
+	if output_path == '':
+		csv_file = str(obs_id)+"_"+str(module)+"_summary.csv"
+	else:
+		csv_file = os.path.join(output_path, str(
+			obs_id)+"_"+str(module)+"_summary.csv")
 
-    # print("Created file: "+str(obs_id)+"_"+str(module)+"_summary.csv")
-    logger.info("Creating file: {} ... Done".format(csv_file))
+	try:
+		with open(csv_file, 'w') as csvfile:
+			writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+			writer.writeheader()
+			for data in dict_data:
+				writer.writerow(data)
+	except Exception as e:
+		logger.warning("Creating file {} failed".format(csv_file))
+		logger.exception(e)
+
+	# print("Created file: "+str(obs_id)+"_"+str(module)+"_summary.csv")
+	logger.info("Creating file: {} ... Done".format(csv_file))
