@@ -472,36 +472,8 @@ def run():
             show_warning_label("Summary", request_info=True)
             return -1
 
-        # create the table
-        summary_table = Table([
-            [obs_text.value],
-            [target_text.value],
-            [flux_cal_text.value],
-            [flux_cal_obs_id_list],
-            [pol_cal_text.value],
-            [pol_cal_obs_id_list],
-            [osa_text.value],
-            [prepare_menu.value],
-            [prepare_notes.value],
-            [preflag_menu.value],
-            [preflag_notes.value],
-            [crosscal_menu.value],
-            [crosscal_notes.value],
-            [selfcal_menu.value],
-            [selfcal_notes.value],
-            [continuum_menu.value],
-            [continuum_notes.value],
-            [polarisation_menu.value],
-            [polarisation_notes.value],
-            [line_menu.value],
-            [line_notes.value],
-            [summary_menu.value],
-            [summary_notes.value]], names=(
-            'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA', 'Prepare', 'Prepare_Notes', 'Preflag', 'Preflag_Notes', 'Crosscal', 'Crosscal_Notes', 'Selfcal', 'Selfcal_Notes', 'Continuum', 'Continuum_Notes', 'Polarisation', 'Polarisation_Notes', 'Line', 'Line_Notes', 'Summary', 'Summary_Notes'))
-
-        table_name = "{0}_OSA_report.ecsv".format(obs_id)
-
         # save as json
+        # OrderedDict to preserve order when dumping to json
         json_dict = OrderedDict()
         json_dict['Observation'] = OrderedDict()
         json_dict['Observation']['Obs_ID'] = obs_text.value
@@ -543,26 +515,26 @@ def run():
             with open(json_file_name, "w") as f:
                 json.dump(json_dict, f)
         except:
-            warning_save_table_label = widgets.HTML(
+            warning_save_json_label = widgets.HTML(
                 value="<p style='font-size:large; color:red'> ERROR: Could not save report. Please ask for help.</p>")
-            display(warning_save_table_label)
+            display(warning_save_json_label)
         else:
-            save_table_label = widgets.HTML(
-                value="<p style='font-size:large; color:green'> Saved OSA report {0:s}. Thank You.</p>".format(table_name))
-            display(save_table_label)
+            save_json_label = widgets.HTML(
+                value="<p style='font-size:large; color:green'> Saved OSA report {0:s}. Thank You.</p>".format(json_file_name))
+            display(save_json_label)
 
         # copy the file to the collection directory
         json_copy = "/data/apertif/qa/OSA_reports/{0}".format(json_file_name)
         try:
             shutil.copy(json_file_name, json_copy)
         except:
-            warning_copy_table_label = widgets.HTML(
+            warning_copy_json_label = widgets.HTML(
                 value="<p style='font-size:large; color:red'> ERROR: Could not create back up of report. Please ask for help</p>")
-            display(warning_copy_table_label)
+            display(warning_copy_json_label)
         else:
-            copy_table_label = widgets.HTML(
+            copy_json_label = widgets.HTML(
                 value="<p style='font-size:large; color:green'> Created backup of OSA report.</p>")
-            display(copy_table_label)
+            display(copy_json_label)
             print("Created backup of OSA report")
 
     btn.on_click(save_info)
