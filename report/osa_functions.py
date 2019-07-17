@@ -6,6 +6,8 @@ from astropy.table import Table, join
 from ipywidgets import widgets, Layout
 from IPython.display import display
 import glob
+import json
+from collections import OrderedDict
 
 
 def run():
@@ -21,9 +23,9 @@ def run():
     obs_id = cwd.split("/")[-3]
 
     # hopefully this file is available
-    obs_file = "/data/apertif/{}/{}_obs.ecsv".format(obs_id)
+    obs_file = "/data/apertif/{0}/{0}_obs.ecsv".format(obs_id)
     # if the report has already been created, then it should als be there
-    osa_report_file = "{}_OSA_report.ecsv".format(obs_id)
+    osa_report_file = "{}_OSA_report.json".format(obs_id)
 
     prepare_label = widgets.HTML(
         value="<h2 style='text-decoration: underline'> General Information </h2>"
@@ -40,30 +42,33 @@ def run():
 
     # in case the OSA report already exists, get the values for all fields
     if os.path.exists(osa_report_file):
-        report_table = Table.read(osa_report_file, format="ascii.ecsv")
+        with open(osa_report_file, "r") as f:
+            report_data = f.read()
+        
+        report_json = json.loads(report_data)
 
-        osa_text_value = report_table['OSA'][0]
-        target_text_value = report_table['Target'][0]
-        flux_cal_text_value = report_table['Flux_Calibrator'][0]
-        flux_cal_obs_id_list = report_table['Flux_Calibrator_Obs_IDs'][0]
-        pol_cal_text_value = report_table['Pol_Calibrator'][0]
-        pol_cal_obs_id_list = report_table['Pol_Calibrator_Obs_IDs'][0]
-        prepare_status_value = report_table['Prepare'][0]
-        prepare_notes_value = report_table['Prepare_Notes'][0]
-        preflag_status_value = report_table['Preflag'][0]
-        preflag_notes_value = report_table['Preflag_Notes'][0]
-        crosscal_status_value = report_table['Crosscal'][0]
-        crosscal_notes_value = report_table['Crosscal_Notes'][0]
-        selfcal_status_value = report_table['Selfcal'][0]
-        selfcal_notes_value = report_table['Selfcal_Notes'][0]
-        continuum_status_value = report_table['Continuum'][0]
-        continuum_notes_value = report_table['Continuum_Notes'][0]
-        polarisation_status_value = report_table['Polarisation'][0]
-        polarisation_notes_value = report_table['Polarisation_Notes'][0]
-        line_status_value = report_table['Line'][0]
-        line_notes_value = report_table['Line_Notes'][0]
-        summary_status_value = report_table['Summary'][0]
-        summary_notes_value = report_table['Summary_Notes'][0]
+        osa_text_value = report_json['OSA']
+        target_text_value = report_json['Observation']['Target']
+        flux_cal_text_value = report_json['Observation']['Flux_Calibrator']
+        flux_cal_obs_id_list = report_json['Observation']['Flux_Calibrator_Obs_IDs']
+        pol_cal_text_value = report_json['Observation']['Pol_Calibrator']
+        pol_cal_obs_id_list = report_json['Observation']['Pol_Calibrator_Obs_IDs']
+        prepare_status_value = report_json['Apercal']['Prepare']['Status']
+        prepare_notes_value = report_json['Apercal']['Prepare']['Notes']
+        preflag_status_value = report_json['Apercal']['Preflag']['Status']
+        preflag_notes_value = report_json['Apercal']['Preflag']['Notes']
+        crosscal_status_value = report_json['Apercal']['Crosscal']['Status']
+        crosscal_notes_value = report_json['Apercal']['Crosscal']['Notes']
+        selfcal_status_value = report_json['Apercal']['Selfcal']['Status']
+        selfcal_notes_value = report_json['Apercal']['Selfcal']['Notes']
+        continuum_status_value = report_json['Apercal']['Continuum']['Status']
+        continuum_notes_value = report_json['Apercal']['Continuum']['Notes']
+        polarisation_status_value = report_json['Apercal']['Polarisation']['Status']
+        polarisation_notes_value = report_json['Apercal']['Polarisation']['Notes']
+        line_status_value = report_json['Apercal']['Line']['Status']
+        line_notes_value = report_json['Apercal']['Line']['Notes']
+        summary_status_value = report_json['Summary']['Status']
+        summary_notes_value = report_json['Summary']['Notes']
 
     # if the report does not yet exists try the observation table
     elif os.path.exists(obs_file):
@@ -467,59 +472,69 @@ def run():
             show_warning_label("Summary", request_info=True)
             return -1
 
-        # create the table
-        summary_table = Table([
-            [obs_text.value],
-            [target_text.value],
-            [flux_cal_text.value],
-            [flux_cal_obs_id_list],
-            [pol_cal_text.value],
-            [pol_cal_obs_id_list],
-            [osa_text.value],
-            [prepare_menu.value],
-            [prepare_notes.value],
-            [preflag_menu.value],
-            [preflag_notes.value],
-            [crosscal_menu.value],
-            [crosscal_notes.value],
-            [selfcal_menu.value],
-            [selfcal_notes.value],
-            [continuum_menu.value],
-            [continuum_notes.value],
-            [polarisation_menu.value],
-            [polarisation_notes.value],
-            [line_menu.value],
-            [line_notes.value],
-            [summary_menu.value],
-            [summary_notes.value]], names=(
-            'Obs_ID', 'Target', 'Flux_Calibrator', 'Flux_Calibrator_Obs_IDs', 'Pol_Calibrator', 'Pol_Calibrator_Obs_IDs', 'OSA', 'Prepare', 'Prepare_Notes', 'Preflag', 'Preflag_Notes', 'Crosscal', 'Crosscal_Notes', 'Selfcal', 'Selfcal_Notes', 'Continuum', 'Continuum_Notes', 'Polarisation', 'Polarisation_Notes', 'Line', 'Line_Notes', 'Summary', 'Summary_Notes'))
+        # save as json
+        # OrderedDict to preserve order when dumping to json
+        json_dict = OrderedDict()
+        json_dict['Observation'] = OrderedDict()
+        json_dict['Observation']['Obs_ID'] = obs_text.value
+        json_dict['Observation']['Target'] = target_text.value
+        json_dict['Observation']['Flux_Calibrator'] = flux_cal_text.value
+        json_dict['Observation']['Flux_Calibrator_Obs_IDs'] = flux_cal_obs_id_list
+        json_dict['Observation']['Pol_Calibrator'] = pol_cal_text.value
+        json_dict['Observation']['Pol_Calibrator_Obs_IDs'] = pol_cal_obs_id_list
+        json_dict['OSA'] = osa_text.value
+        json_dict['Apercal'] = OrderedDict()
+        json_dict['Apercal']['Prepare'] = OrderedDict()
+        json_dict['Apercal']['Prepare']['Status'] = prepare_menu.value
+        json_dict['Apercal']['Prepare']['Notes'] = prepare_notes.value
+        json_dict['Apercal']['Preflag'] = OrderedDict()
+        json_dict['Apercal']['Preflag']['Status'] = preflag_menu.value
+        json_dict['Apercal']['Preflag']['Notes'] = preflag_notes.value
+        json_dict['Apercal']['Crosscal'] = OrderedDict()
+        json_dict['Apercal']['Crosscal']['Status'] = crosscal_menu.value
+        json_dict['Apercal']['Crosscal']['Notes'] = crosscal_notes.value
+        json_dict['Apercal']['Selfcal'] = OrderedDict()
+        json_dict['Apercal']['Selfcal']['Status'] = selfcal_menu.value
+        json_dict['Apercal']['Selfcal']['Notes'] = selfcal_notes.value
+        json_dict['Apercal']['Continuum'] = OrderedDict()
+        json_dict['Apercal']['Continuum']['Status'] = continuum_menu.value
+        json_dict['Apercal']['Continuum']['Notes'] = continuum_notes.value
+        json_dict['Apercal']['Polarisation'] = OrderedDict()
+        json_dict['Apercal']['Polarisation']['Status'] = polarisation_menu.value
+        json_dict['Apercal']['Polarisation']['Notes'] = polarisation_notes.value
+        json_dict['Apercal']['Line'] = OrderedDict()
+        json_dict['Apercal']['Line']['Status'] = line_menu.value
+        json_dict['Apercal']['Line']['Notes'] = line_notes.value
+        json_dict['Summary'] = OrderedDict()
+        json_dict['Summary']['Status'] = summary_menu.value
+        json_dict['Summary']['Notes'] = summary_notes.value
 
-        table_name = "{0}_OSA_report.ecsv".format(obs_id)
+        json_file_name = "{0}_OSA_report.json".format(obs_id)
 
         try:
-            summary_table.write(
-                table_name, format='ascii.ecsv', overwrite=True)
+            with open(json_file_name, "w") as f:
+                json.dump(json_dict, f)
         except:
-            warning_save_table_label = widgets.HTML(
+            warning_save_json_label = widgets.HTML(
                 value="<p style='font-size:large; color:red'> ERROR: Could not save report. Please ask for help.</p>")
-            display(warning_save_table_label)
+            display(warning_save_json_label)
         else:
-            save_table_label = widgets.HTML(
-                value="<p style='font-size:large; color:green'> Saved OSA report {0:s}. Thank You.</p>".format(table_name))
-            display(save_table_label)
+            save_json_label = widgets.HTML(
+                value="<p style='font-size:large; color:green'> Saved OSA report {0:s}. Thank You.</p>".format(json_file_name))
+            display(save_json_label)
 
         # copy the file to the collection directory
-        table_copy = "/data/apertif/qa/OSA_reports/{0}".format(table_name)
+        json_copy = "/data/apertif/qa/OSA_reports/{0}".format(json_file_name)
         try:
-            shutil.copy2(table_name, table_copy)
+            shutil.copy(json_file_name, json_copy)
         except:
-            warning_copy_table_label = widgets.HTML(
+            warning_copy_json_label = widgets.HTML(
                 value="<p style='font-size:large; color:red'> ERROR: Could not create back up of report. Please ask for help</p>")
-            display(warning_copy_table_label)
+            display(warning_copy_json_label)
         else:
-            copy_table_label = widgets.HTML(
+            copy_json_label = widgets.HTML(
                 value="<p style='font-size:large; color:green'> Created backup of OSA report.</p>")
-            display(copy_table_label)
+            display(copy_json_label)
             print("Created backup of OSA report")
 
     btn.on_click(save_info)
