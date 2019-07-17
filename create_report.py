@@ -28,6 +28,7 @@ from report import html_report as hp
 from report import html_report_dir as hpd
 from report.pipeline_run_time import get_pipeline_run_time
 from report.make_nptabel_summary import make_nptabel_csv
+from continuum.continuum_tables import merge_continuum_image_properties_table
 from scandata import get_default_imagepath
 
 
@@ -232,6 +233,10 @@ def main():
                         else:
                             logger.info(
                                 "## Getting summary table for {} ... Done".format(page))
+
+                # merge the continuum image properties
+                if page == 'continuum':
+                    merge_continuum_image_properties_table(obs_id, qa_dir)
 
         # Create directory structure for the report
         if not add_osa_report:
