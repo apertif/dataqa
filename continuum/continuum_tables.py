@@ -18,11 +18,11 @@ def merge_continuum_image_properties_table(obs_id, qa_dir):
     cont_table_file_1 = os.path.join(
         qa_dir, "continuum/continuum_image_propertis.csv")
     cont_table_file_2 = os.path.join(
-        qa_dir.replace("/data/", "/data2/"), "continuum/continuum_image_propertis.csv")
+        qa_dir.replace("/data/", "/data2/"), "continuum/continuum_image_properties.csv")
     cont_table_file_3 = os.path.join(
-        qa_dir.replace("/data/", "/data3/"), "continuum/continuum_image_propertis.csv")
+        qa_dir.replace("/data/", "/data3/"), "continuum/continuum_image_properties.csv")
     cont_table_file_4 = os.path.join(
-        qa_dir.replace("/data/", "/data4/"), "continuum/continuum_image_propertis.csv")
+        qa_dir.replace("/data/", "/data4/"), "continuum/continuum_image_properties.csv")
 
     # read the content and get only the relevant beams
     combined_table = []
