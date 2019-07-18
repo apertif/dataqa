@@ -1194,14 +1194,15 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     
     # copy the OSA files
     if osa_files is not None:
-        for osa_file in osa_files:
-            try:
-                copy(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
-                                                os.path.basename(osa_file)))
-                logger.info("Copied {}".format(osa_files))
-            except Exception as e:
-                logger.warning("Copied {}".format(osa_files))
-                logger.exception(e)
+        if not trigger_mode:
+            for osa_file in osa_files:
+                try:
+                    copy(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
+                                                    os.path.basename(osa_file)))
+                    logger.info("Copied {}".format(osa_files))
+                except Exception as e:
+                    logger.warning("Copied {}".format(osa_files))
+                    logger.exception(e)
 
     # create sub-directory for observation
     # not necessary, but useful if multiple reports are combined
