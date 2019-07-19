@@ -104,6 +104,9 @@ def make_cb_plot_value(filename,column,goodrange=None,
         outpath = "{0}/{1}".format(outputdir,outname)
     else:
         outpath = outname #write to current directory
+    #check automatically if a column is boolean
+    if (table[column][0]) == 'False' or (table[column][0] == 'True'):
+        boolean = True
     #make an array to hold colors:
     colors = np.full(40,'r')
     #find empty beams
