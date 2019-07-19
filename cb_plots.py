@@ -131,6 +131,9 @@ def make_cb_plot_value(filename,column,goodrange=None,
         #find trues and make green
         goodind = np.where(table[column] == 'True')[0]
         colors[goodind] = 'green'
+        #in this case, also make sure to overwrite anything done by exist column
+        badind = np.where(table[column] == 'False')[0]
+        colors[badind] = 'red'
     #get the beams
     cbpos = ascii.read(cboffsets)
     #open figure
