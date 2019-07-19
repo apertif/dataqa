@@ -107,9 +107,13 @@ def make_cb_plot_value(filename,column,goodrange=None,
     #make an array to hold colors:
     colors = np.full(40,'r')
     #find empty beams
-    #'exist' column is read as strings
-    nanind = np.where(table['exist'] == 'False')[0]
-    colors[nanind] = 'k'
+    #not all tables have this so do as try/except
+    try:
+        #'exist' column is read as strings
+        nanind = np.where(table['exist'] == 'False')[0]
+        colors[nanind] = 'k'
+    except:
+        pass
     #find "good" values
     if goodrange != None:
         if len(goodrange) == 2:
