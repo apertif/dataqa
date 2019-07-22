@@ -17,7 +17,7 @@ import matplotlib.colors as mc
 logger = logging.getLogger(__name__)
 
 
-def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir):
+def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir, plot_residuals=False):
     """This function plots the selfcal maps
     """
 
@@ -41,7 +41,12 @@ def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir):
     ax = plt.subplot(projection=wcs)
 
     # create image
-    fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(0.2),  origin='lower')
+    if plot_residuals:
+        fig = ax.imshow(img * 1.e3, norm=mc.Normalize(vmin=-
+                                                      1, vmax=1.),  origin='lower')
+    else:
+        fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-9,
+                                                       vmin=0.03, vmax=200.),  origin='lower')
 
     cbar = plt.colorbar(fig)
     cbar.set_label('Flux Density [mJy/beam]')
