@@ -42,8 +42,11 @@ def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir, plot_residuals=False):
 
     # create image
     if plot_residuals:
-        fig = ax.imshow(img * 1.e3, norm=mc.Normalize(vmin=-
-                                                      1, vmax=1.),  origin='lower')
+        # fig = ax.imshow(img * 1.e3, norm=mc.Normalize(vmin=-
+        #                                               1, vmax=1.),  origin='lower')
+        fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-3,
+                                                       vmin=-1, vmax=1.),  origin='lower')
+
     else:
         fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-9,
                                                        vmin=0.03, vmax=200.),  origin='lower')
@@ -190,6 +193,9 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
             if not os.path.exists(qa_selfcal_beam_dir):
                 os.mkdir(qa_selfcal_beam_dir)
 
+            # Phase selfcal
+            # =============
+
             # get major cycles
             major_cycle_dir_list = glob.glob(
                 "{0:s}/selfcal/[0-9][0-9]".format(data_beam_dir))
@@ -230,6 +236,9 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
             else:
                 logger.warning(
                     "No major selfcal cycles found for {0:s}/selfcal/".format(data_beam_dir))
+
+            # Amplitude selfcal
+            # =================
 
     else:
         logger.error("Could not find any beams for selfcal QA")
