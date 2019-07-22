@@ -234,17 +234,19 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
         # go through the beams to get the image directory
         for k in range(len(beam_dir_list)):
 
+            beam_dir = beam_dir_list[k]
+
             # get the beam which serves as the index for the image list
-            beam = int(os.path.basename(beam_dir_list[k]))
+            beam = int(os.path.basename(beam_dir))
 
             # get amplitude selfcal images
             image_list_amp = glob.glob(
-                "{0:s}/{1:s}/amplitude*image.png".format(qa_report_obs_path, page_type))
+                "{0:s}/{1:s}/amplitude*image.png".format(beam_dir, page_type))
             image_list_amp.sort()
 
             # get phase selfcal images
             image_list_phase = glob.glob(
-                "{0:s}/{1:s}/phase*image.png".format(qa_report_obs_path, page_type))
+                "{0:s}/{1:s}/phase*image.png".format(beam_dir, page_type))
             image_list_phase.sort()
 
             # if there are no phase selfcal images, then there are no amplitude selfcal images
@@ -304,6 +306,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
 
             html_code += """</div>\n"""
         else:
+            logger.warning("No images found for selfcal image gallery")
             html_code += """
                 <div class="w3-container">
                     <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
@@ -311,6 +314,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                     </button>
                 </div>\n""".format("gallery_images", "Selfcal images")
     else:
+        logger.warning("No beams found for selfcal image gallery")
         html_code += """
             <div class="w3-container">
                 <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
