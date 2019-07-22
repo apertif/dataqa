@@ -9,7 +9,7 @@ from astropy.io import fits
 import matplotlib.pyplot as plt
 import matplotlib.colors as mc
 from astropy.wcs import WCS
-import qa_continuum
+#import qa_continuum
 import time
 
 
@@ -37,12 +37,15 @@ def main():
     args = parser.parse_args()
 
     fits_file = args.fits_file
+    print("Reading {}".format(fits_file))
 
     if args.output_file == '':
         output_file = os.path.basename(fits_file).replace(
             ".fits", "{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
     else:
         output_file = args.output
+
+    print("Saving file as {}".format(output_file))
 
     # get hdus
     fits_hdulist = fits.open(fits_file)
@@ -60,6 +63,8 @@ def main():
         img = fits_hdulist[0].data[0]
     else:
         img = fits_hdulist[0].data
+
+    print("Plotting image")
 
     # set up plot
     ax = plt.subplot(projection=wcs)
@@ -80,4 +85,5 @@ def main():
 
     ax.set_title("{0:s}".format(output_file.replace(".png", "")))
 
-    plt.savefig(output, overwrite=True, bbox_inches='tight', dpi=300)
+    print("Saving image")
+    plt.savefig(output_file, overwrite=True, bbox_inches='tight', dpi=300)
