@@ -230,7 +230,7 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
     if len(beam_dir_list) != 0:
 
         # go through the beams to get the image directory
-        for k in range(beam_dir_list):
+        for k in range(len(beam_dir_list)):
 
             beam_list.sort()
 
