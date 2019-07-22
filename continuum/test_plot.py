@@ -87,3 +87,7 @@ def main():
 
     print("Saving image")
     plt.savefig(output_file, overwrite=True, bbox_inches='tight', dpi=300)
+
+
+if __name__ == "__main__":
+    main()
