@@ -216,6 +216,108 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                     </button>
                 </div>\n""".format("gallery_amp", "Gain factors Amplitude")
 
+    # Gallery of selfcal images
+    # =========================
+
+    # get beams
+    beam_dir_list = glob.glob(
+        "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
+
+    n_beams = 40
+
+    image_list = ["" for k in range(2 * n_beams)]
+
+    if len(beam_dir_list) != 0:
+
+        # go through the beams to get the image directory
+        for k in range(beam_dir_list):
+
+            beam_list.sort()
+
+            # get the beam which serves as the index for the image list
+            beam = int(os.path.basename(beam_dir_list))
+
+            # get amplitude selfcal images
+            image_list_amp = glob.glob(
+                "{0:s}/{1:s}/amplitude*image.png".format(qa_report_obs_path, page_type))
+            image_list_amp.sort()
+
+            # get phase selfcal images
+            image_list_phase = glob.glob(
+                "{0:s}/{1:s}/phase*image.png".format(qa_report_obs_path, page_type))
+            image_list_phase.sort()
+
+            # if there are no phase selfcal images, then there are no amplitude selfcal images
+            if len(image_list_phase) != 0:
+
+                # the first image is always from selfcal
+                image_first = image_list_phase[0]
+
+                # final selfcal image can be from amplitude selfcal
+                if len(image_list_amp) != 0:
+                    image_last = image_list_amp[-1]
+                else:
+                    image_last = image_list_phase[-1]
+
+                # the first image has an even index
+                image_list[2 * beam] = image_first
+                # the laste image has an uneven index
+                image_list[2 * beam + 1] = image_last
+
+        # check that the list of images is not empty
+        if len(np.unique(image_list)) != 1:
+
+            html_code += """
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">{1:s}
+                    </button>
+                </div>
+                <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format("gallery_images", "Selfcal images")
+
+            img_counter = 0
+
+            beam_counter = 0
+
+            for k in range(len(image_list)):
+
+                # count one beam every second image
+                if k != 0 and k % 2 == 0:
+                    beam_counter += 1
+
+                image = image_list[k]
+
+                if img_counter % 4 == 0:
+                    html_code += """<div class="w3-row">\n"""
+
+                html_code += """
+                        <div class="w3-quarter">
+                            <a href="{0:s}/{1:02d}/{2:s}">
+                                <img src="{0:s}/{1:02d}/{2:s}" alt="No image for beam {1:02d}", width="100%">
+                            </a>
+                            <div class="w3-container"><h5>Beam {1:02d}</h5></div>
+                        </div>\n""".format(page_type, beam_counter, os.path.basename(image))
+
+                if img_counter % 4 == 3 or img_counter == len(image_list)-1:
+                    html_code += """</div>\n"""
+
+                img_counter += 1
+
+            html_code += """</div>\n"""
+        else:
+            html_code += """
+                <div class="w3-container">
+                    <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+                {1:s}
+                    </button>
+                </div>\n""".format("gallery_images", "Selfcal images")
+    else:
+        html_code += """
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+            {1:s}
+                </button>
+            </div>\n""".format("gallery_images", "Selfcal images")
+
     # Selfcal iteration maps sorted by beam
     # =====================================
 
@@ -237,7 +339,8 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
             # get the diagnostic plots
             image_list_phase = glob.glob(
                 "{0:s}/phase*png".format(beam_list[k]))
-            image_list_amp = glob.glob("{0:s}/amp*png".format(beam_list[k]))
+            image_list_amp = glob.glob(
+                "{0:s}/amplitude*png".format(beam_list[k]))
 
             n_images = len(image_list_phase) + len(image_list_amp)
 
