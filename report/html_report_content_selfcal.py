@@ -235,13 +235,18 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
             div_name = "gallery{0:d}".format(k)
 
             # get the diagnostic plots
-            image_list = glob.glob("{0:s}/*png".format(beam_list[k]))
+            image_list_phase = glob.glob(
+                "{0:s}/phase*png".format(beam_list[k]))
+            image_list_amp = glob.glob("{0:s}/amp*png".format(beam_list[k]))
 
-            n_images = len(image_list)
+            n_images = len(image_list_phase) + len(image_list_amp)
 
             if n_images != 0:
 
-                image_list.sort()
+                image_list_phase.sort()
+                image_list_amp.sort()
+
+                image_list = np.append(image_list_phase, image_list_amp)
 
                 html_code += """
                     <div class="w3-container">
@@ -255,19 +260,21 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
 
                 for image in image_list:
 
-                    major_cycle = os.path.basename(image).split("_")[0]
+                    selfcal_type = os.path.basename(image).split("_")[0]
 
-                    minor_cycle = os.path.basename(image).split("_")[1]
+                    major_cycle = os.path.basename(image).split("_")[1]
+
+                    minor_cycle = os.path.basename(image).split("_")[2]
 
                     image_type = os.path.basename(image).split(".")[
                         0].split("_")[-1]
 
                     if image_type == "image":
-                        caption = "Image: major {0:s}, minor {1:s}".format(
-                            major_cycle, minor_cycle)
+                        caption = "{0:s} image: major {1:s}, minor {2:s}".format(
+                            selfcal_type, major_cycle, minor_cycle)
                     elif image_type == "residual":
-                        caption = "Residual: major {0:s}, minor {1:s}".format(
-                            major_cycle, minor_cycle)
+                        caption = "{0:s} residual: major {1:s}, minor {2:s}".format(
+                            selfcal_type, major_cycle, minor_cycle)
                     else:
                         caption = ""
 
