@@ -17,7 +17,7 @@ import matplotlib.colors as mc
 logger = logging.getLogger(__name__)
 
 
-def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir):
+def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir, plot_residuals=False):
     """This function plots the selfcal maps
     """
 
@@ -41,7 +41,15 @@ def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir):
     ax = plt.subplot(projection=wcs)
 
     # create image
-    fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(0.2),  origin='lower')
+    if plot_residuals:
+        fig = ax.imshow(img * 1.e3, norm=mc.Normalize(vmin=-
+                                                      .1, vmax=.1),  origin='lower')
+        # fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-3,
+        #                                                vmin=-1, vmax=1.),  origin='lower')
+
+    else:
+        fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-9,
+                                                       vmin=0.03, vmax=200.),  origin='lower')
 
     cbar = plt.colorbar(fig)
     cbar.set_label('Flux Density [mJy/beam]')
@@ -80,7 +88,7 @@ def convert_mir2fits(mir_name, fits_name):
         logger.error(e)
 
 
-def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
+def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir, plot_residuals=False, selfcal_type="phase"):
     """
     This function creates plots for the selfcal maps.
     """
@@ -100,8 +108,8 @@ def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
         major_cycle = mir_image.split("/")[-2]
         minor_cycle = os.path.basename(mir_image).split("_")[-1]
 
-        fits_name = "{0:s}_{1:s}_{2:s}.fits".format(
-            major_cycle, minor_cycle, link_name.split("_")[0])
+        fits_name = "{0:s}_{1:s}_{2:s}_{3:s}.fits".format(
+            selfcal_type, major_cycle, minor_cycle, link_name.split("_")[0])
 
         try:
             convert_mir2fits(link_name, fits_name)
@@ -114,7 +122,8 @@ def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
 
             logger.info("Plotting {0:s}".format(mir_image))
 
-            plot_selfcal_maps(fits_name, qa_selfcal_beam_dir)
+            plot_selfcal_maps(fits_name, qa_selfcal_beam_dir,
+                              plot_residuals=plot_residuals)
 
             # remove the fits file
             try:
@@ -184,6 +193,9 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
             if not os.path.exists(qa_selfcal_beam_dir):
                 os.mkdir(qa_selfcal_beam_dir)
 
+            # Phase selfcal
+            # =============
+
             # get major cycles
             major_cycle_dir_list = glob.glob(
                 "{0:s}/selfcal/[0-9][0-9]".format(data_beam_dir))
@@ -215,7 +227,7 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
 
                         # create plots for miriad selfcal residuals
                         create_selfcal_maps(
-                            mir_image_list, qa_selfcal_beam_dir)
+                            mir_image_list, qa_selfcal_beam_dir, plot_residuals=True)
 
                     else:
                         logger.warning(
@@ -225,6 +237,47 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
                 logger.warning(
                     "No major selfcal cycles found for {0:s}/selfcal/".format(data_beam_dir))
 
+            # Amplitude selfcal
+            # =================
+
+            # amplitude selfcal directory
+            data_beam_dir_amp = os.path.join(data_beam_dir, "selfcal/amp")
+
+            # create images only if directory exists (thus amplitude selfcal ran)
+            if os.path.exists(data_beam_dir_amp):
+
+                # get all images for this major cycle:
+                mir_image_list = glob.glob(
+                    os.path.join(data_beam_dir_amp, "image*"))
+
+                if len(mir_image_list) != 0:
+
+                    # create plots for miriad selfcal images
+                    create_selfcal_maps(
+                        mir_image_list, qa_selfcal_beam_dir, selfcal_type="amplitude")
+
+                else:
+                    logger.warning(
+                        "No images found in {0:s}".format(major_cycle_dir))
+
+                # get all residuals for this major cycle:
+                mir_image_list = glob.glob(
+                    os.path.join(data_beam_dir_amp, "residual*"))
+
+                if len(mir_image_list) != 0:
+
+                    # create plots for miriad selfcal residuals
+                    create_selfcal_maps(
+                        mir_image_list, qa_selfcal_beam_dir, selfcal_type="amplitude", plot_residuals=True)
+
+                else:
+                    logger.warning(
+                        "No residual found in {0:s}".format(major_cycle_dir))
+
+                pass
+            else:
+                logger.warning(
+                    "No amplitude selfcal directory found in {0:s}/selfcal/".format(data_beam_dir))
     else:
         logger.error("Could not find any beams for selfcal QA")
 
