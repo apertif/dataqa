@@ -42,10 +42,10 @@ def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir, plot_residuals=False):
 
     # create image
     if plot_residuals:
-        # fig = ax.imshow(img * 1.e3, norm=mc.Normalize(vmin=-
-        #                                               1, vmax=1.),  origin='lower')
-        fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-3,
-                                                       vmin=-1, vmax=1.),  origin='lower')
+        fig = ax.imshow(img * 1.e3, norm=mc.Normalize(vmin=-
+                                                      .1, vmax=.1),  origin='lower')
+        # fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-3,
+        #                                                vmin=-1, vmax=1.),  origin='lower')
 
     else:
         fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-9,
@@ -240,6 +240,44 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
             # Amplitude selfcal
             # =================
 
+            # amplitude selfcal directory
+            data_beam_dir_amp = os.path.join(data_beam_dir, "amp")
+
+            # create images only if directory exists (thus amplitude selfcal ran)
+            if os.path.exists(data_beam_dir_amp):
+
+                # # get all images for this major cycle:
+                # mir_image_list = glob.glob(
+                #     "{0:s}/image*".format(major_cycle_dir))
+
+                # if len(mir_image_list) != 0:
+
+                #     # create plots for miriad selfcal images
+                #     create_selfcal_maps(
+                #         mir_image_list, qa_selfcal_beam_dir)
+
+                # else:
+                #     logger.warning(
+                #         "No images found in {0:s}".format(major_cycle_dir))
+
+                # # get all residuals for this major cycle:
+                # mir_image_list = glob.glob(
+                #     "{0:s}/residual*".format(major_cycle_dir))
+
+                # if len(mir_image_list) != 0:
+
+                #     # create plots for miriad selfcal residuals
+                #     create_selfcal_maps(
+                #         mir_image_list, qa_selfcal_beam_dir, plot_residuals=True)
+
+                # else:
+                #     logger.warning(
+                #         "No residual found in {0:s}".format(major_cycle_dir))
+
+                pass
+            else:
+                logger.warning(
+                    "No amplitude selfcal directore found for {0:s}/selfcal/".format(data_beam_dir))
     else:
         logger.error("Could not find any beams for selfcal QA")
 
