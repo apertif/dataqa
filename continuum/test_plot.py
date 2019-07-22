@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mc
 from astropy.wcs import WCS
 import qa_continuum
+import time
 
 
 def main():
