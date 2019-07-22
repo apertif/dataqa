@@ -241,12 +241,12 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
 
             # get amplitude selfcal images
             image_list_amp = glob.glob(
-                "{0:s}/{1:s}/amplitude*image.png".format(beam_dir, page_type))
+                "{0:s}/amplitude*image.png".format(beam_dir))
             image_list_amp.sort()
 
             # get phase selfcal images
             image_list_phase = glob.glob(
-                "{0:s}/{1:s}/phase*image.png".format(beam_dir, page_type))
+                "{0:s}/phase*image.png".format(beam_dir))
             image_list_phase.sort()
 
             # if there are no phase selfcal images, then there are no amplitude selfcal images
