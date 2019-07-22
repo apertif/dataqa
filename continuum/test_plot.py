@@ -2,7 +2,7 @@
 Script to test plotting images
 """
 
-import numpy
+import numpy as np
 import os
 import argparse
 from astropy.io import fits
@@ -34,6 +34,9 @@ def main():
     parser.add_argument("--vmax", type=float, default=1000.,
                         help='Min for logscale')
 
+    parser.add_argument("--symlog", action="store_true", default=False,
+                        help='Enable sym log')
+
     args = parser.parse_args()
 
     fits_file = args.fits_file
@@ -43,6 +46,8 @@ def main():
         output_file = os.path.basename(fits_file).replace(
             ".fits", "_{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
     else:
+        output_file = output_file.replace(
+            ".png", "_{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
         output_file = args.output
 
     print("Saving file as {}".format(output_file))
@@ -69,11 +74,15 @@ def main():
     # set up plot
     ax = plt.subplot(projection=wcs)
 
-    # fig = ax.imshow(
-    #     img * 1.e3, norm=mc.SymLogNorm(0.2),  origin='lower')
-
-    fig = ax.imshow(
-        img * 1.e3, norm=mc.LogNorm(vmin=args.vmin, vmax=args.vmax),  origin='lower')
+    if args.symlog:
+        output_file = output_file.repalce(".png", "_symlog.png")
+        fig = ax.imshow(
+            img * 1.e3, norm=mc.SymLogNorm(1.e-3, vmin=args.vmin, vmax=args.vmax, clip=False),  origin='lower', interpolation="none")
+    else:
+        output_file = output_file.repalce(".png", "_log.png")
+        img[np.where(img < 1.e-9)] = 1.e-9
+        fig = ax.imshow(
+            img * 1.e3, norm=mc.LogNorm(vmin=args.vmin, vmax=args.vmax, clip=False),  origin='lower', interpolation="none")
 
     cbar = plt.colorbar(fig)
     cbar.set_label('Flux Density [mJy/beam]')
