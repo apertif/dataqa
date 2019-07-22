@@ -241,14 +241,14 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
             # =================
 
             # amplitude selfcal directory
-            data_beam_dir_amp = os.path.join(data_beam_dir, "amp")
+            data_beam_dir_amp = os.path.join(data_beam_dir, "selfcal/amp")
 
             # create images only if directory exists (thus amplitude selfcal ran)
             if os.path.exists(data_beam_dir_amp):
 
                 # get all images for this major cycle:
                 mir_image_list = glob.glob(
-                    "{0:s}/image*".format(major_cycle_dir))
+                    os.path.join(data_beam_dir_amp, "image*"))
 
                 if len(mir_image_list) != 0:
 
@@ -262,7 +262,7 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
 
                 # get all residuals for this major cycle:
                 mir_image_list = glob.glob(
-                    "{0:s}/residual*".format(major_cycle_dir))
+                    os.path.join(data_beam_dir_amp, "residual*"))
 
                 if len(mir_image_list) != 0:
 
