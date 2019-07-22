@@ -33,7 +33,9 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
             <div class="w3-container w3-large">
                 1. Table of the selfcal parameters from the pipeline. For example, you can see for which beams amplitude calibration was turned on.<br>
                 2. Plots of the self-calibration gain factors for amplitude and phase. These are the most important plots, you want to check. <br>
-                3. Images of the selfcal image and residual from phase self-calibration.
+                3. Selfcal image from the the first and last cycle from each beam. If amplitude self-calibration is available, it is the chosen as the last cycle.<br>
+                4. Selfcal residuals from the the first and last cycle from each beam. If amplitude self-calibration is available, it is the chosen as the last .cycle.<br>
+                5. For each beam, plots of all selfcal images and residuals from phase and if available amplitude self-calibration.
             </div>
         </div>\n
         """
