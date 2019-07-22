@@ -41,7 +41,7 @@ def main():
 
     if args.output_file == '':
         output_file = os.path.basename(fits_file).replace(
-            ".fits", "{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
+            ".fits", "_{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
     else:
         output_file = args.output
 
