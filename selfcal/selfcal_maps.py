@@ -85,7 +85,7 @@ def convert_mir2fits(mir_name, fits_name):
         logger.error(e)
 
 
-def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
+def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir, plot_residuals=False):
     """
     This function creates plots for the selfcal maps.
     """
@@ -119,7 +119,8 @@ def create_selfcal_maps(mir_image_list, qa_selfcal_beam_dir):
 
             logger.info("Plotting {0:s}".format(mir_image))
 
-            plot_selfcal_maps(fits_name, qa_selfcal_beam_dir)
+            plot_selfcal_maps(fits_name, qa_selfcal_beam_dir,
+                              plot_residuals=plot_residuals)
 
             # remove the fits file
             try:
@@ -220,7 +221,7 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
 
                         # create plots for miriad selfcal residuals
                         create_selfcal_maps(
-                            mir_image_list, qa_selfcal_beam_dir)
+                            mir_image_list, qa_selfcal_beam_dir, plot_residuals=True)
 
                     else:
                         logger.warning(
