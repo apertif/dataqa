@@ -50,8 +50,6 @@ def main():
         output_file = output_file.replace(
             ".png", "_{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
 
-    print("Saving file as {}".format(output_file))
-
     # get hdus
     fits_hdulist = fits.open(fits_file)
 
@@ -75,11 +73,11 @@ def main():
     ax = plt.subplot(projection=wcs)
 
     if args.symlog:
-        output_file = output_file.repalce(".png", "_symlog.png")
+        output_file = output_file.replace(".png", "_symlog.png")
         fig = ax.imshow(
             img * 1.e3, norm=mc.SymLogNorm(1.e-3, vmin=args.vmin, vmax=args.vmax, clip=False),  origin='lower', interpolation="none")
     else:
-        output_file = output_file.repalce(".png", "_log.png")
+        output_file = output_file.replace(".png", "_log.png")
         img[np.where(img < 1.e-9)] = 1.e-9
         fig = ax.imshow(
             img * 1.e3, norm=mc.LogNorm(vmin=args.vmin, vmax=args.vmax, clip=False),  origin='lower', interpolation="none")
@@ -94,7 +92,7 @@ def main():
 
     ax.set_title("{0:s}".format(output_file.replace(".png", "")))
 
-    print("Saving image")
+    print("Saving image as {}".format(output_file))
     plt.savefig(output_file, overwrite=True, bbox_inches='tight', dpi=300)
 
 
