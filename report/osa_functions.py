@@ -54,21 +54,38 @@ def run():
         pol_cal_text_value = report_json['Observation']['Pol_Calibrator']
         pol_cal_obs_id_list = report_json['Observation']['Pol_Calibrator_Obs_IDs']
         prepare_status_value = report_json['Apercal']['Prepare']['Status']
+        # account for change in status values
+        if prepare_status_value == "Critical":
+            prepare_status_value = "Failed"
         prepare_notes_value = report_json['Apercal']['Prepare']['Notes']
         preflag_status_value = report_json['Apercal']['Preflag']['Status']
         preflag_notes_value = report_json['Apercal']['Preflag']['Notes']
+        if preflag_status_value == "Critical":
+            preflag_status_value = "Failed"
         crosscal_status_value = report_json['Apercal']['Crosscal']['Status']
         crosscal_notes_value = report_json['Apercal']['Crosscal']['Notes']
+        if crosscal_status_value == "Critical":
+            crosscal_status_value = "Failed"
         selfcal_status_value = report_json['Apercal']['Selfcal']['Status']
         selfcal_notes_value = report_json['Apercal']['Selfcal']['Notes']
+        if selfcal_status_value == "Critical":
+            selfcal_status_value = "Failed"
         continuum_status_value = report_json['Apercal']['Continuum']['Status']
         continuum_notes_value = report_json['Apercal']['Continuum']['Notes']
+        if continuum_status_value == "Critical":
+            continuum_status_value = "Failed"
         polarisation_status_value = report_json['Apercal']['Polarisation']['Status']
         polarisation_notes_value = report_json['Apercal']['Polarisation']['Notes']
+        if polarisation_status_value == "Critical":
+            polarisation_status_value = "Failed"
         line_status_value = report_json['Apercal']['Line']['Status']
         line_notes_value = report_json['Apercal']['Line']['Notes']
+        if line_status_value == "Critical":
+            line_status_value = "Failed"
         summary_status_value = report_json['Summary']['Status']
         summary_notes_value = report_json['Summary']['Notes']
+        if summary_status_value == "Critical":
+            summary_status_value = "Failed"
 
     # if the report does not yet exists try the observation table
     elif os.path.exists(obs_file):
@@ -140,7 +157,7 @@ def run():
     #                     'failed', 'bad', 'acceptable',  'good']
 
     dropdown_options = ['Unchecked', 'Unknown',
-                        'Critical', 'Bad', 'Acceptable', 'Good', 'Excellent']
+                        'Failed', 'Bad', 'Acceptable', 'Good', 'Excellent']
 
     status_legend_prepare = "<p style='font-weight:bold'>Status legend:</p> Excellent: 100% (0 beams missing); Good: 95% (1-2 beams missing); Acceptable: 85% (3-6 beams missing); Bad: 75% (7-10 beams missing); Critical: <75% (More than 10 beams missing); Unknown (No information available)</p>"
     status_legend_preflag = "<p style='font-weight:bold'>Status legend:</p> Excellent: 100% (0 beams failed); Good: 95% (1-2 beams failed); Acceptable: 85% (3-6 beams failed); Bad: 75% (7-10 beams failed); Critical: <75% (More than 10 beams failed); Unknown (No information available)</p>"
