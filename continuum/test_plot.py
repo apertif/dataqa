@@ -46,9 +46,9 @@ def main():
         output_file = os.path.basename(fits_file).replace(
             ".fits", "_{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
     else:
+        output_file = args.output_file
         output_file = output_file.replace(
             ".png", "_{0:.2f}_{1:.0f}.png".format(args.vmin, args.vmax))
-        output_file = args.output
 
     print("Saving file as {}".format(output_file))
 
