@@ -7,6 +7,8 @@ __author__ = "E.A.K. Adams"
 """
 Functions for producing compound beam plots
 showing an overview of data QA
+
+Contributions from R. Schulz
 """
 
 from astropy.io import ascii
@@ -32,7 +34,18 @@ offset_beam0_y = -1.5
 
 def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
     """
-    Function to create the different cb plots for the web report
+    Function to create the different cb plots for the web report.
+
+    The function currently creates the following plots
+    - phase selfcal done
+    - amplitude selfcal done
+    - continuum rms (range: 10-50 muJy/beam)
+    - continuum minor axis (range: 10-15 arcsec)
+
+    Args:
+        obs_id (int): ID of observation
+        qa_dir (str): Path to QA directory of the observation
+        plot_dir (str): Optional directory for the plots
     """
 
     logger.info("Creating summary cb plots")
@@ -83,7 +96,7 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         # plot rms
         plot_name = "{}_continuum_rms".format(obs_id)
         make_cb_plot_value(continuum_summary_file, "RMS",
-                           goodrange=[10, 30], outputdir=output_dir, outname=plot_name)
+                           goodrange=[10, 50], outputdir=output_dir, outname=plot_name)
 
         # plot minor beam axis
         plot_name = "{}_continuum_beam_min".format(obs_id)
@@ -178,8 +191,8 @@ def make_cb_plot_value(filename, column, goodrange=None,
     if (table[column][0]) == 'False' or (table[column][0] == 'True'):
         boolean = True
     # make an array to hold colors:
-    #colors = np.full(40, 'r')
-    colors = np.array(['r' for k in range(40)])
+    colors = np.full(40, 'r')
+    #colors = np.array(['r' for k in range(40)])
     # find empty beams
     # not all tables have this so do as try/except
     try:
@@ -223,7 +236,12 @@ def make_cb_plot_value(filename, column, goodrange=None,
         fig.gca().add_artist(circle)
         # beams.append(circle)
         # write text with value
-        ax.text(x1, y1, ('{0}').format(str(table[column][i])),
+        value = table[column][i]
+        if type(value) == float or type(value) == np.float64:
+            value_label = "{0:.1f}".format(value)
+        else:
+            value_label = str(value)
+        ax.text(x1, y1, ('{0}').format(value_label),
                 horizontalalignment='center',
                 verticalalignment='center', size=18,
                 fontweight='medium')
