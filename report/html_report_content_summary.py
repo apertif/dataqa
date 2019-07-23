@@ -140,15 +140,12 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                         <a href="{0:s}/{1:s}">
                             <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                         </a>
-                        <div class="w3-container w3-center">
-                            <h5>Summary plot</h5>
-                        </div>
                     </div>\n""".format(page_type, os.path.basename(image))
 
                 if image_counter % 3 == 2 or image_counter == len(image_list)-1:
                     html_code += """</div>\n"""
 
-                image_counter += 0
+                image_counter += 1
 
         html_code += """
                     </div>
@@ -176,9 +173,6 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                         <a href="{0:s}/{1:s}">
                             <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                         </a>
-                        <div class="w3-container w3-center">
-                            <h5>Summary plot</h5>
-                        </div>
                     </div>\n""".format(page_type, os.path.basename(image))
 
                 if image_counter % 3 == 2 or image_counter == len(image_list)-1:
