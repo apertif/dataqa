@@ -1292,6 +1292,16 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.exception(e)
+        
+        # Create links for files from Observation log
+        # +++++++++++++++++++++++++++++++++++++++++++++++
+        if page == "summary":
+
+            try:
+                create_report_dir_summary(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+            except Exception as e:
+                logger.exception(e)
 
         # Create links for files from inspection plot QA
         # +++++++++++++++++++++++++++++++++++++++++++++++
