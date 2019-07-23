@@ -251,6 +251,11 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                 "{0:s}/phase*image.png".format(beam_dir))
             image_list_phase.sort()
 
+            if len(image_list_phase) == 0:
+                image_list_phase = glob.glob(
+                    "{0:s}/*image.png".format(beam_dir))
+                image_list_phase.sort()
+
             # if there are no phase selfcal images, then there are no amplitude selfcal images
             if len(image_list_phase) != 0:
 
@@ -357,6 +362,11 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                 "{0:s}/phase*residual.png".format(beam_dir))
             image_list_phase.sort()
 
+            if len(image_list_phase) == 0:
+                image_list_phase = glob.glob(
+                    "{0:s}/*residual.png".format(beam_dir))
+                image_list_phase.sort()
+
             # if there are no phase selfcal residual, then there are no amplitude selfcal residual
             if len(image_list_phase) != 0:
 
@@ -453,6 +463,11 @@ def write_obs_content_selfcal(html_code, qa_report_obs_path, page_type, obs_info
                 "{0:s}/phase*png".format(beam_list[k]))
             image_list_amp = glob.glob(
                 "{0:s}/amplitude*png".format(beam_list[k]))
+
+            if len(image_list_phase) == 0:
+                image_list_phase = glob.glob(
+                    "{0:s}/*image.png".format(beam_dir))
+                image_list_phase.sort()
 
             n_images = len(image_list_phase) + len(image_list_amp)
 
