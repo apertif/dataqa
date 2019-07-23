@@ -29,6 +29,7 @@ from report import html_report_dir as hpd
 from report.pipeline_run_time import get_pipeline_run_time
 from report.make_nptabel_summary import make_nptabel_csv
 from continuum.continuum_tables import merge_continuum_image_properties_table
+from cb_plots import make_cb_plots_for_report
 from scandata import get_default_imagepath
 
 
@@ -237,6 +238,16 @@ def main():
                 # merge the continuum image properties
                 if page == 'continuum':
                     merge_continuum_image_properties_table(obs_id, qa_dir)
+
+            # create compound beam plots
+            try:
+                logger.info("Getting compound beam plots")
+                make_cb_plots_for_report(obs_id, qa_dir)
+            except Exception as e:
+                logger.warning("Getting compound beam plots ... Failed")
+                logger.exception(e)
+            else:
+                logger.info("Getting compound beam plots ... Done")
 
         # Create directory structure for the report
         if not add_osa_report:
