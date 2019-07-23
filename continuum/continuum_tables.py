@@ -16,7 +16,7 @@ def merge_continuum_image_properties_table(obs_id, qa_dir):
 
     # the original tables
     cont_table_file_1 = os.path.join(
-        qa_dir, "continuum/continuum_image_propertis.csv")
+        qa_dir, "continuum/continuum_image_properties.csv")
     cont_table_file_2 = os.path.join(
         qa_dir.replace("/data/", "/data2/"), "continuum/continuum_image_properties.csv")
     cont_table_file_3 = os.path.join(
