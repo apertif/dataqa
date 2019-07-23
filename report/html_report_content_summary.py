@@ -126,13 +126,13 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                     <div class="w3-container w3-large">
                     \n"""
 
-        for m in range(len(image_list)):
+        image_counter = 0
 
-            image = image_list[m]
+        for image in image_list:
 
             if "cb_overview" in image or "selfcal" in image:
 
-                if m % 3 == 0:
+                if image_counter % 3 == 0:
                     html_code += """<div class="w3-row">\n"""
 
                 html_code += """
@@ -145,8 +145,10 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                         </div>
                     </div>\n""".format(page_type, os.path.basename(image))
 
-                if m % 3 == 2 or m == len(image_list)-1:
+                if image_counter % 3 == 2 or image_counter == len(image_list)-1:
                     html_code += """</div>\n"""
+
+                image_counter += 0
 
         html_code += """
                     </div>
@@ -179,7 +181,7 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                         </div>
                     </div>\n""".format(page_type, os.path.basename(image))
 
-                if image_counter % 3 == 2 or m == len(image_list)-1:
+                if image_counter % 3 == 2 or image_counter == len(image_list)-1:
                     html_code += """</div>\n"""
 
                 image_counter += 1
