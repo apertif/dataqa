@@ -66,6 +66,56 @@ def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_m
     #     "## Creating report directory for inspection plots and linking files. Done")
 
 
+def create_report_dir_summary(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+    """Function to create the summary directory for the report
+
+    Note:
+        All necessary files will be linked to this directory
+        from the QA directory. Currently, it only reads the 
+        compound beam plots
+
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+    """
+
+    logger.info(
+        "## Creating report directory for summary.")
+
+    # get the images in the subdirectory
+    images_summary = glob.glob(
+        os.path.join(qa_dir, "cb_plots/*.png"))
+
+    if len(images_summary) != 0:
+
+        images_summary.sort()
+
+        # go through all beams
+        for image in images_summary:
+
+            link_name = "{0:s}/{1:s}".format(
+                qa_dir_report_obs_subpage, os.path.basename(image))
+
+            # change to relative link when in trigger mode
+            if trigger_mode:
+                image = image.replace(
+                    qa_dir, "../../../")
+
+            # check if link exists
+            if not os.path.exists(link_name):
+                os.symlink(image, link_name)
+            else:
+                os.unlink(link_name)
+                os.symlink(image, link_name)
+
+    else:
+        logger.warning("No images found for summary.")
+
+    logger.info(
+        "## Creating report directory for summary and linking files. Done")
+
+
 def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, obs_info=None):
     """Function to create the inspection plot directory for the report
 
