@@ -100,18 +100,18 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
 
                 for image in images_in_beam:
 
-                    if img_counter % 3 == 0:
+                    if img_counter % 4 == 0:
                         html_code += """<div class="w3-row">\n"""
 
                     html_code += """
-                        <div class="w3-third">
+                        <div class="w3-quarter">
                             <a href="{0:s}/{1:s}/{2:s}">
                                 <img src="{0:s}/{1:s}/{2:s}" alt="No cube available for beam {1:s}", width="100%">
                             </a>
                             <div class="w3-container w3-center"><h5>{2:s}</h5></div>
                         </div>\n""".format(page_type, os.path.basename(beam_list[k]), os.path.basename(image))
 
-                    if img_counter % 3 == 2 or img_counter == len(images_in_beam) - 1:
+                    if img_counter % 4 == 3 or img_counter == len(images_in_beam) - 1:
                         html_code += """</div>\n"""
 
                     img_counter += 1

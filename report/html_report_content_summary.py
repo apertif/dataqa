@@ -117,25 +117,109 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
         "{0:s}/{1:s}/*.png".format(qa_report_obs_path, page_type))
 
     if len(image_list) != 0:
+
+        # Make gallery for selfcal
         html_code += """
                 <div class="w3-container w3-margin-top w3-show">
+                    <h3> Selfcal CB plots </h3>
+                    <p> These plots summarise the selfcal step of the pipeline for each of the compound beams. The left plot shows the beam numbers for reference. The middle and right plots shows whether amplitude and phase selfcalibration was performed. A missing beam would be gray. Amplitude selfcalibration is only turned on if the SNR is high enough. Phase selfcalibration is always done which is why only this plot shows if a beam failed on selfcal. Have a look at the selfcal page for further information on a given beam.</p>
                     <div class="w3-container w3-large">
-                        <p> This plot summarizes the observation and pipeline processing for each of the compound beams</p>
-                    </div>\n"""
+                    \n"""
+
+        image_counter = 0
 
         for image in image_list:
-            html_code += """
-                <div class="w3-half">
-                    <a href="{0:s}/{1:s}">
-                        <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
-                    </a>
-                    <div class="w3-container w3-center">
-                        <h5>Summary plot</h5>
+
+            if "cb_overview" in image or "selfcal" in image:
+
+                if image_counter % 3 == 0:
+                    html_code += """<div class="w3-row">\n"""
+
+                html_code += """
+                    <div class="w3-third">
+                        <a href="{0:s}/{1:s}">
+                            <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+                        </a>
+                    </div>\n""".format(page_type, os.path.basename(image))
+
+                if image_counter % 3 == 2 or image_counter == len(image_list)-1:
+                    html_code += """</div>\n"""
+
+                image_counter += 1
+
+        html_code += """
                     </div>
-                </div>\n""".format(page_type, os.path.basename(image))
-        html_code += """</div>\n"""
+                </div>\n"""
+
+        # Make gallery for continuum
+        html_code += """
+                <div class="w3-container w3-margin-top w3-show">
+                    <h3> Continuum CB plots </h3>
+                    <p> These plots summarise the continuum step of the pipeline for each of the compound beams. The left plot shows the beam numbers for reference. The middle and right plots shows the minor beam axis and continuum rms, respectively. A missing beam would be gray. Red indicates the beam has failed if the rms is above 50mJy/beam or the minor axis above 15arcsec. Have a look at the continuum page for further information on a given beam and the image gallery from all beams.</p>
+                    <div class="w3-container w3-large">
+                    \n"""
+
+        image_counter = 0
+
+        for image in image_list:
+
+            if "cb_overview" in image or "continuum" in image:
+
+                if image_counter % 3 == 0:
+                    html_code += """<div class="w3-row">\n"""
+
+                html_code += """
+                    <div class="w3-third">
+                        <a href="{0:s}/{1:s}">
+                            <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+                        </a>
+                    </div>\n""".format(page_type, os.path.basename(image))
+
+                if image_counter % 3 == 2 or image_counter == len(image_list)-1:
+                    html_code += """</div>\n"""
+
+                image_counter += 1
+
+        html_code += """
+                    </div>
+                </div>\n"""
+
+        # Make gallery for continuum
+        html_code += """
+                <div class="w3-container w3-margin-top w3-show">
+                    <h3> Line </h3>
+                    <p> No plots available yet.</p>
+                </div>
+                    \n"""
+
+        # for m in range(len(image_list)):
+
+        #     image = image_list[m]
+
+        #     if "cb_plots" in image or "continuum" in image:
+
+        #         if m % 3 == 0:
+        #             html_code += """<div class="w3-row">\n"""
+
+        #         html_code += """
+        #             <div class="w3-half">
+        #                 <a href="{0:s}/{1:s}">
+        #                     <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+        #                 </a>
+        #                 <div class="w3-container w3-center">
+        #                     <h5>Summary plot</h5>
+        #                 </div>
+        #             </div>\n""".format(page_type, os.path.basename(image))
+
+        #         if m % 3 == 2 or m == len(image_list)-1:
+        #             html_code += """</div>\n"""
+
+        # html_code += """
+        #             </div>
+        #         </div>\n"""
+
     else:
-        logger.warning("No summary plot found found")
+        logger.warning("No summary plots found")
         html_code += """
         <div class="w3-container w3-large w3-text-red">
             <p>
