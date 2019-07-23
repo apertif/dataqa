@@ -121,7 +121,7 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
         # Make gallery for selfcal
         html_code += """
                 <div class="w3-container w3-margin-top w3-show">
-                    <h3> Selfcal </h3>
+                    <h3> Selfcal CB plots </h3>
                     <p> These plots summarise the selfcal step of the pipeline for each of the compound beams. The left plot shows the beam numbers for reference. The middle and right plots refers to phase and amplitude selfcalibration, respectively. A missing beam would be gray. Amplitude selfcalibration is only turned on if the SNR is high enough. Phase selfcalibration is always done which is why only this plot shows if a beam failed on selfcal. Have a look at the selfcal page for further information on a given beam.</p>
                     <div class="w3-container w3-large">
                     \n"""
@@ -130,13 +130,13 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
 
             image = image_list[m]
 
-            if "cb_plots" in image or "selfcal" in image:
+            if "cb_overview" in image or "selfcal" in image:
 
                 if m % 3 == 0:
                     html_code += """<div class="w3-row">\n"""
 
                 html_code += """
-                    <div class="w3-half">
+                    <div class="w3-third">
                         <a href="{0:s}/{1:s}">
                             <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                         </a>
@@ -155,7 +155,7 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
         # Make gallery for continuum
         html_code += """
                 <div class="w3-container w3-margin-top w3-show">
-                    <h3> Continuum </h3>
+                    <h3> Continuum CB plots </h3>
                     <p> These plots summarise the continuum step of the pipeline for each of the compound beams. The left plot shows the beam numbers for reference. The middle and right plots gives the continuum rms and minor beam axis, respectively. A missing beam would be gray. Red indicates the beam has failed if the rms is above 50mJy/beam or the minor axis above 15arcsec. Have a look at the continuum page for further information on a given beam and the image gallery from all beams.</p>
                     <div class="w3-container w3-large">
                     \n"""
@@ -164,13 +164,13 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
 
             image = image_list[m]
 
-            if "cb_plots" in image or "continuum" in image:
+            if "cb_overview" in image or "continuum" in image:
 
                 if m % 3 == 0:
                     html_code += """<div class="w3-row">\n"""
 
                 html_code += """
-                    <div class="w3-half">
+                    <div class="w3-third">
                         <a href="{0:s}/{1:s}">
                             <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                         </a>
