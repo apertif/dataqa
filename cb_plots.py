@@ -12,6 +12,7 @@ Contributions from R. Schulz
 """
 
 from astropy.io import ascii
+from astropy.table import Table
 from matplotlib.patches import Circle
 from matplotlib.collections import PatchCollection
 import matplotlib.pyplot as plt
@@ -107,6 +108,41 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         logger.warning("Could not find {}".format(continuum_summary_file))
         logger.info("Creating cb plot for continuum ... Failed")
 
+    # Create line plots
+    logger.info("Creating cb plots for line")
+    line_summary_file = os.path.join(
+        qa_dir, "line/{}_HI_cube_noise_statistics.ecsv".format(obs_id))
+    if os.path.exists(line_summary_file):
+        # read the file
+        line_summary_data = Table.read(line_summary_file, format="ascii.ecsv")
+
+        # number of cubes
+        n_cubes = np.size(np.unique(line_summary_data['cube']))
+
+        # go through the cubes and create plots for each one
+        for cube_counter in range(n_cubes):
+            cube_data = line_summary_data[np.where(
+                line_summary_data['cube'] == cube_counter)]
+
+            # convert median rms into mJy
+            cube_data['noise'] *= 1.e3
+
+            # plot name
+            plot_name = "{0}_HI_median_rms_cube{1}".format(
+                obs_id, cube_counter)
+            # use a different range of good values for
+            if cube_counter < 7:
+                goodrange = [0, 2]
+            else:
+                goodrange = [0, 3]
+            make_cb_plot_value(cube_data, "median_rms",
+                               goodrange=goodrange, outputdir=output_dir, outname=plot_name)
+
+        logger.info("Creating cb plot for line ... Done")
+    else:
+        logger.warning("Could not find {}".format(line_summary_file))
+        logger.info("Creating cb plot for line ... Failed")
+
     logger.info("Creating summary cb plots ... Done")
 
 
@@ -158,7 +194,7 @@ def make_cb_plot_value(filename, column, goodrange=None,
                        boolean=False, cboffsets='cb_offsets.txt',
                        outputdir=None, outname=None):
     """
-    Take a csv file and produce the plots
+    Take a csv file or a table object and produce the plots
     Provide the column name to plot
     Optionally provide a range of good values that 
     will have beams plotted in green
@@ -168,8 +204,13 @@ def make_cb_plot_value(filename, column, goodrange=None,
     Color scheme should be updated to 
     take into account colorblindness
     """
-    # read the csv file
-    table = ascii.read(filename, format='csv')
+    # check if file name is a string
+    if type(filename) == str:
+        # read the csv file
+        table = ascii.read(filename, format='csv')
+    # otherwise assume a table object as been given
+    else:
+        table = filename
     # print(table.colnames)
     # check that column name exists:
     if column in table.colnames:
