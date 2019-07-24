@@ -86,7 +86,7 @@ def combine_cube_stats(obs_id, qa_dir):
             line_dir = qa_line_dir_list[dir_counter]
 
             cube_list = glob.glob(os.path.join(
-                line_dir, "[0-3][0-9]/*cube{0:d}_info.csv"))
+                line_dir, "[0-3][0-9]/*cube{0:d}_info.csv".format(cube_counter)))
 
             # in case there are no such cubes, fill only beam and cube column
             if len(cube_list) == 0:
