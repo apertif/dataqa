@@ -129,7 +129,7 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
                     # if there is a cube for this beam add it to gallery
                     if len(image) != 0:
                         html_code += """
-                                <div class="w3-quarter">
+                                <div class="w3-col" style="width:20%">
                                     <a href="{0:s}/{1:02d}/{2:s}">
                                         <img src="{0:s}/{1:02d}/{2:s}" alt="No image for beam {1:02d}", width="100%">
                                     </a>
