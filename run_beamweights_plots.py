@@ -135,7 +135,7 @@ def main():
             logger.warning("No beams found in {}".format(data_dir))
             return None
         else:
-            beam_list = [int(os.path.dirname(beam).split("/")[-1])
+            beam_list = [int(os.path.basename(beam))
                          for beam in data_dir_beam_list]
     else:
         beam_list = [args.beam]
