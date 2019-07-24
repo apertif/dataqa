@@ -133,7 +133,7 @@ def combine_cube_stats(obs_id, qa_dir):
     cube_summary = Table([beam, cube, median_rms, mean_rms, min_rms, max_rms, percentile_rms_below_2mJy, percentile_rms_below_3mJy, percentile_rms_below_4mJy], names=(
         'beam', 'cube', 'median_rms', 'mean_rms', 'min_rms', 'max_rms', 'precentile_rms_below_2mJy', 'precentile_rms_below_3mJy', 'precentile_rms_below_4mJy'))
 
-    cube_summary.write(table_file_name, format="ascii.ecsv")
+    cube_summary.write(table_file_name, format="ascii.ecsv", overwrite=True)
 
     logger.info(
         "Collecting cube statistics ... Done. Saving to {}".format(table_file_name))
