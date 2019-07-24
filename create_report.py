@@ -28,6 +28,7 @@ from report import html_report as hp
 from report import html_report_dir as hpd
 from report.pipeline_run_time import get_pipeline_run_time
 from report.make_nptabel_summary import make_nptabel_csv
+from line.cube_stats import combine_cube_stats
 from continuum.continuum_tables import merge_continuum_image_properties_table
 from cb_plots import make_cb_plots_for_report
 from scandata import get_default_imagepath
@@ -71,6 +72,9 @@ def main():
 
     parser.add_argument("--read_timing", action="store_true", default=False,
                         help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
+
+    parser.add_argument("--page_only", action="store_true", default=False,
+                        help='Set only create the webpages themselves')
 
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
@@ -214,9 +218,9 @@ def main():
             "Directory {0:s} does not exists. Abort".format(qa_report_dir))
         return -1
     else:
-        # read out numpy files for the different apercal steps if not run in triggered mode
-        if not args.trigger_mode and host_name == "happili-01":
-            # go through some of the subpages and get info
+        # do things that should only happen on happili-01 when the OSA runs this function
+        if not args.trigger_mode and host_name == "happili-01" and not args.page_only:
+            # go through some of the subpages and process numpy files
             for page in subpages:
                 # exclude non-apercal modules (and mosaic)
                 if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
@@ -239,6 +243,10 @@ def main():
                 if page == 'continuum':
                     merge_continuum_image_properties_table(obs_id, qa_dir)
 
+                # get line statistics
+                if page == 'line':
+                    combine_cube_stats(obs_id, qa_dir)
+
             # create compound beam plots
             try:
                 logger.info("Getting compound beam plots")
@@ -250,7 +258,7 @@ def main():
                 logger.info("Getting compound beam plots ... Done")
 
         # Create directory structure for the report
-        if not add_osa_report:
+        if not add_osa_report and not args.page_only:
             logger.info("#### Creating directory structrure")
             try:
                 hpd.create_report_dirs(

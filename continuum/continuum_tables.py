@@ -68,6 +68,6 @@ def merge_continuum_image_properties_table(obs_id, qa_dir):
         new_table = vstack(combined_table)
         new_table_name = os.path.join(
             qa_dir, "continuum/{}_combined_continuum_image_properties.csv".format(obs_id))
-        new_table.write(new_table_name, format="ascii.csv")
+        new_table.write(new_table_name, format="ascii.csv", overwrite=True)
     else:
         logger.warning("No tables with continuum image properties found")

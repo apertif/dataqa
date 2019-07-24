@@ -12,6 +12,7 @@ Contributions from R. Schulz
 """
 
 from astropy.io import ascii
+from astropy.table import Table
 from matplotlib.patches import Circle
 from matplotlib.collections import PatchCollection
 import matplotlib.pyplot as plt
@@ -107,6 +108,47 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         logger.warning("Could not find {}".format(continuum_summary_file))
         logger.info("Creating cb plot for continuum ... Failed")
 
+    # Create line plots
+    logger.info("Creating cb plots for line")
+    line_summary_file = os.path.join(
+        qa_dir, "line/{}_HI_cube_noise_statistics.ecsv".format(obs_id))
+    if os.path.exists(line_summary_file):
+        # read the file
+        line_summary_data = Table.read(line_summary_file, format="ascii.ecsv")
+
+        # number of cubes
+        n_cubes = np.size(np.unique(line_summary_data['cube']))
+
+        # go through the cubes and create plots for each one
+        for cube_counter in range(n_cubes):
+            logger.info("Plotting cube {}".format(cube_counter))
+
+            cube_data = line_summary_data[np.where(
+                line_summary_data['cube'] == cube_counter)]
+
+            # remove non-existing beams
+            cube_data['median_rms'][np.where(
+                cube_data['median_rms'] == -1)] = np.nan
+
+            # convert median rms into mJy
+            cube_data['median_rms'] *= 1.e3
+
+            # plot name
+            plot_name = "{0}_HI_median_rms_cube{1}".format(
+                obs_id, cube_counter)
+            # use a different range of good values for
+            if cube_counter < 7:
+                goodrange = [0, 2]
+            else:
+                goodrange = [0, 3]
+            make_cb_plot_value(cube_data, "median_rms",
+                               goodrange=goodrange, outputdir=output_dir, outname=plot_name)
+
+        logger.info("Creating cb plot for line ... Done")
+    else:
+        logger.warning("Could not find {}".format(line_summary_file))
+        logger.info("Creating cb plot for line ... Failed")
+
     logger.info("Creating summary cb plots ... Done")
 
 
@@ -145,7 +187,7 @@ def make_cb_beam_plot(cboffsets='cb_offsets.txt',
                 horizontalalignment='center',
                 verticalalignment='center', size=18,
                 fontweight='medium')
-    #p=PatchCollection(beams, alpha=0.4)
+    # p=PatchCollection(beams, alpha=0.4)
     # ax.add_collection(p)
     ax.set_xlabel('RA offset, deg', size=15)
     ax.set_ylabel('Dec offset, deg', size=15)
@@ -158,18 +200,23 @@ def make_cb_plot_value(filename, column, goodrange=None,
                        boolean=False, cboffsets='cb_offsets.txt',
                        outputdir=None, outname=None):
     """
-    Take a csv file and produce the plots
+    Take a csv file or a table object and produce the plots
     Provide the column name to plot
-    Optionally provide a range of good values that 
+    Optionally provide a range of good values that
     will have beams plotted in green
     Or set boolean=True to plot colors based on a boolean value
     Lack of data in plotted in grey
     Default is to plot as red
-    Color scheme should be updated to 
+    Color scheme should be updated to
     take into account colorblindness
     """
-    # read the csv file
-    table = ascii.read(filename, format='csv')
+    # check if file name is a string
+    if type(filename) == str:
+        # read the csv file
+        table = ascii.read(filename, format='csv')
+    # otherwise assume a table object as been given
+    else:
+        table = filename
     # print(table.colnames)
     # check that column name exists:
     if column in table.colnames:
@@ -192,7 +239,7 @@ def make_cb_plot_value(filename, column, goodrange=None,
         boolean = True
     # make an array to hold colors:
     colors = np.full(40, 'r')
-    #colors = np.array(['r' for k in range(40)])
+    # colors = np.array(['r' for k in range(40)])
     # find empty beams
     # not all tables have this so do as try/except
     try:
@@ -200,14 +247,17 @@ def make_cb_plot_value(filename, column, goodrange=None,
         nanind = np.where(table['exist'] == 'False')[0]
         colors[nanind] = 'k'
     except:
-        pass
+        # assume that the columns have NaNs
+        if table[column].dtype == np.float64:
+            nanind = np.where(np.isnan(table[column]) == True)[0]
+            colors[nanind] = 'k'
     # find "good" values
     if goodrange != None:
         if len(goodrange) == 2:
             # first turn good data into floats:
             goodind = np.where(np.logical_and(table[column] >= goodrange[0],
                                               table[column] <= goodrange[1]))[0]
-            #goodind = np.where(table[column]>=goodrange[0])[0]
+            # goodind = np.where(table[column]>=goodrange[0])[0]
             # print(goodind)
             colors[goodind] = 'green'
     if boolean == True:
@@ -235,17 +285,20 @@ def make_cb_plot_value(filename, column, goodrange=None,
         circle = Circle((x1, y1), r, color=colors[i], alpha=0.4)
         fig.gca().add_artist(circle)
         # beams.append(circle)
-        # write text with value
-        value = table[column][i]
-        if type(value) == float or type(value) == np.float64:
-            value_label = "{0:.1f}".format(value)
-        else:
-            value_label = str(value)
-        ax.text(x1, y1, ('{0}').format(value_label),
-                horizontalalignment='center',
-                verticalalignment='center', size=18,
-                fontweight='medium')
-    #p=PatchCollection(beams, alpha=0.4)
+
+        # only add text if the color is not grey:
+        if colors[i] != 'k':
+            # write text with value
+            value = table[column][i]
+            if type(value) == float or type(value) == np.float64:
+                value_label = "{0:.1f}".format(value)
+            else:
+                value_label = str(value)
+            ax.text(x1, y1, ('{0}').format(value_label),
+                    horizontalalignment='center',
+                    verticalalignment='center', size=18,
+                    fontweight='medium')
+    # p=PatchCollection(beams, alpha=0.4)
     # ax.add_collection(p)
     ax.set_xlabel('RA offset, deg', size=15)
     ax.set_ylabel('Dec offset, deg', size=15)

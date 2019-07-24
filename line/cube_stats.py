@@ -27,6 +27,119 @@ logger = logging.getLogger(__name__)
 #    A, mu, sigma = p
 #    return A*np.exp(-(x-mu)**2/(2.*sigma**2))
 
+def combine_cube_stats(obs_id, qa_dir):
+    """
+    Function to combine the statistic information from all cubes
+    """
+
+    logger.info("Collecting cube statistics")
+
+    host_name = socket.gethostname()
+
+    qa_line_dir = os.path.join(qa_dir, "line")
+
+    # output file name
+    table_file_name = os.path.join(
+        qa_line_dir, "{}_HI_cube_noise_statistics.ecsv".format(obs_id))
+
+    # list of data directories
+    qa_line_dir_list = [qa_line_dir, qa_line_dir.replace(
+        "/data/", "/data2/"), qa_line_dir.replace("/data/", "/data3/"), qa_line_dir.replace("/data/", "/data4/")]
+
+    # total number of expected beams
+    # catching the host should make it work on other happilis, too
+    if host_name == "happili-01":
+        n_beams = 40
+    else:
+        happili_number = int(host_name.split("-")[-1])
+        n_beams = 10 * happili_number
+
+    # total number of cubes
+    n_cubes = 8
+
+    # define table columns
+    # this column will hold the beam number
+    beam = np.full(n_cubes * n_beams, -1)
+    # this one will specify the cube
+    cube = np.full(n_cubes * n_beams, -1)
+    # this one will store the median rms
+    median_rms = np.full(n_cubes * n_beams, -1.)
+    # this one will store the mean rms
+    mean_rms = np.full(n_cubes * n_beams, -1.)
+    # this one will store the min rms
+    min_rms = np.full(n_cubes * n_beams, -1.)
+    # this one will store the max rms
+    max_rms = np.full(n_cubes * n_beams, -1.)
+    # percentile below a limit of 2mJy/beam and 3mJy/beam
+    percentile_rms_below_2mJy = np.full(n_cubes * n_beams, -1.)
+    percentile_rms_below_3mJy = np.full(n_cubes * n_beams, -1.)
+    percentile_rms_below_4mJy = np.full(n_cubes * n_beams, -1.)
+
+    # now go through the different cubes
+    for cube_counter in range(n_cubes):
+
+        logger.info(
+            "Processing noise information for cube {}".format(cube_counter))
+
+        # now go through the data directories and get the cube files
+        for dir_counter in range(len(qa_line_dir_list)):
+            line_dir = qa_line_dir_list[dir_counter]
+
+            cube_list = glob.glob(os.path.join(
+                line_dir, "[0-3][0-9]/*cube{0:d}_info.csv".format(cube_counter)))
+
+            # first fill beam and cube column
+            # only 10 beams, because there are 4 happili directories
+            # here beam_counter is only the last digit in the beam number
+            for beam_counter in range(10):
+                table_index = n_beams * cube_counter + 10 * dir_counter + beam_counter
+                beam[table_index] = 10 * dir_counter + beam_counter
+                cube[table_index] = cube_counter
+
+            # in case there are no such cubes, fill only beam and cube column
+            if len(cube_list) == 0:
+                logger.warning("No cube files found in {}".format(line_dir))
+            # if there are cubes, go through them
+            else:
+                cube_list.sort()
+                for file_counter in range(len(cube_list)):
+                    cube_file = cube_list[file_counter]
+                    # read in the file
+                    cube_data = Table.read(cube_file, format="ascii.csv")
+                    # get only the non-nan values
+                    noise = cube_data['noise'][np.isnan(
+                        cube_data['noise']) == False]
+                    # the beam number is part of the file name
+                    beam_nr = int(os.path.basename(cube_file).split("_")[1])
+                    # get the table index based on the beam numbder
+                    table_index = n_beams * cube_counter + beam_nr
+                    beam[table_index] = beam_nr
+                    cube[table_index] = cube_counter
+
+                    median_rms[table_index] = np.nanmedian(noise)
+                    mean_rms[table_index] = np.nanmean(noise)
+                    min_rms[table_index] = np.nanmin(noise)
+                    max_rms[table_index] = np.nanmax(noise)
+
+                    percentile_rms_below_2mJy[table_index] = np.size(
+                        np.where(noise < 0.002)[0]) / float(np.size(noise))
+                    percentile_rms_below_3mJy[table_index] = np.size(
+                        np.where(noise < 0.003)[0]) / float(np.size(noise))
+                    percentile_rms_below_4mJy[table_index] = np.size(
+                        np.where(noise < 0.004)[0]) / float(np.size(noise))
+
+        logger.info(
+            "Processing noise information for cube {} ... Done".format(cube_counter))
+
+    # create the table
+    cube_summary = Table([beam, cube, median_rms, mean_rms, min_rms, max_rms, percentile_rms_below_2mJy, percentile_rms_below_3mJy, percentile_rms_below_4mJy], names=(
+        'beam', 'cube', 'median_rms', 'mean_rms', 'min_rms', 'max_rms', 'precentile_rms_below_2mJy', 'precentile_rms_below_3mJy', 'precentile_rms_below_4mJy'))
+
+    cube_summary.write(table_file_name, format="ascii.ecsv", overwrite=True)
+
+    logger.info(
+        "Collecting cube statistics ... Done. Saving to {}".format(table_file_name))
+
 
 def get_cube_stats(qa_line_dir, data_base_dir_list):
     """Function to get a simple rms per channel
