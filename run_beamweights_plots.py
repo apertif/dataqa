@@ -229,44 +229,43 @@ def main():
         #     args.taskid, beam_nr)
         # cal = pt.table(ms_name, ack=False)
 
-        logger.info("Get weights")
+        logger.info("Getting weights")
         weights_gershape = cal.getcol(
             'BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
-        logger.info("Get weights ... Done")
+        logger.info("Getting weights ... Done")
 
         # parallelise it to plot faster
-        # with pymp.Parallel(n_threads) as p:
-        # go throught the subband
-        # for subband_index in p.range(len(num_subbands)):
-        for subband in range(0, num_subbands, subband_step):
-            for antenna in range(num_antennas):
-                beamweights[beam_nr, subband, antenna] = convert_weights(
-                    weights_gershape[subband, antenna])
+        with pymp.Parallel(n_threads) as p:
+            # go throught the subband
+            for subband in p.range(0, num_subbands, subband_step):
+                for antenna in range(num_antennas):
+                    beamweights[beam_nr, subband, antenna] = convert_weights(
+                        weights_gershape[subband, antenna])
 
-            fig, axs = plt.subplots(3, 4, figsize=(10, 7))
-            fig.suptitle("Beam {}; Subband {}".format(
-                beam_nr, subband), fontsize=14)
-            for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
-                ax.imshow(
-                    np.abs(beamweights[beam_nr, subband, plot_ant]), cmap='plasma')
-                ax.set_title("Antenna " + str(plot_ant))
-                if plot_ant < 8:
-                    ax.set_xticklabels([])
-                for i in range(61):
-                    x, y = give_coord('X', i)
-                    ax.text(x - 0.35, y + 0.18, 'X' + str(i),
-                            color='white', fontsize=5)
-                    x, y = give_coord('Y', i)
-                    ax.text(x - 0.35, y + 0.18, 'Y' + str(i),
-                            color='white', fontsize=5)
+                fig, axs = plt.subplots(3, 4, figsize=(10, 7))
+                fig.suptitle("Beam {}; Subband {}".format(
+                    beam_nr, subband), fontsize=14)
+                for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
+                    ax.imshow(
+                        np.abs(beamweights[beam_nr, subband, plot_ant]), cmap='plasma')
+                    ax.set_title("Antenna " + str(plot_ant))
+                    if plot_ant < 8:
+                        ax.set_xticklabels([])
+                    for i in range(61):
+                        x, y = give_coord('X', i)
+                        ax.text(x - 0.35, y + 0.18, 'X' + str(i),
+                                color='white', fontsize=5)
+                        x, y = give_coord('Y', i)
+                        ax.text(x - 0.35, y + 0.18, 'Y' + str(i),
+                                color='white', fontsize=5)
 
-            plot_name = os.path.join(qa_beamweights_beam_dir, "{0}_{1}_B{2:02d}_S{3:03d}_weights.png".format(
-                obs_id, flux_cal, beam_nr, subband))
-            # plt.savefig('/home/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.taskid, args.cal_date,
-            #                                                                          beam_nr, subband))
-            plt.savefig(plot_name, overwrite=True)
-            logger.info("Saving plot {}".format(plot_name))
-            plt.close('all')
+                plot_name = os.path.join(qa_beamweights_beam_dir, "{0}_{1}_B{2:02d}_S{3:03d}_weights.png".format(
+                    obs_id, flux_cal, beam_nr, subband))
+                # plt.savefig('/home/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.taskid, args.cal_date,
+                #                                                                          beam_nr, subband))
+                plt.savefig(plot_name, overwrite=True)
+                logger.info("Saving plot {}".format(plot_name))
+                plt.close('all')
 
         logger.info("Processing beam {0} ... Done ({1:.0f}s)".format(
             beam_nr, time.time()-start_time_beam))
