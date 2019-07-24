@@ -184,39 +184,54 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                     </div>
                 </div>\n"""
 
-        # Make gallery for continuum
+        # Make gallery for line
         html_code += """
                 <div class="w3-container w3-margin-top w3-show">
-                    <h3> Line </h3>
-                    <p> No plots available yet.</p>
-                </div>
+                    <h3> Line CB plots </h3>
+                    <p> These plots summarise the line step of the pipeline for each of the compound beams. The first one shows the beam numbers for reference. The other 8 plots show the median rms for each cube. A missing/failed cube for a beam would be gray. Red indicates a failed cube if the median rms is above 2mJy/beam for the cubes 0-6 (which are 3-channel averaged) and above 3mJy/beam for cube 7 (which has the full spectral resolution). It is important to check even good cubes in a beam for systematic affects (subband edges, slopes, etc.). Have a look at the line page to view the noise spectra for all cubes from all beams.</p>
+                    <div class="w3-container w3-large">
                     \n"""
 
-        # for m in range(len(image_list)):
+        for m in range(len(image_list)):
 
-        #     image = image_list[m]
+            image = image_list[m]
 
-        #     if "cb_plots" in image or "continuum" in image:
+            # make the reference plots in an extra line
 
-        #         if m % 3 == 0:
-        #             html_code += """<div class="w3-row">\n"""
+            if "cb_plots" in image:
 
-        #         html_code += """
-        #             <div class="w3-half">
-        #                 <a href="{0:s}/{1:s}">
-        #                     <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
-        #                 </a>
-        #                 <div class="w3-container w3-center">
-        #                     <h5>Summary plot</h5>
-        #                 </div>
-        #             </div>\n""".format(page_type, os.path.basename(image))
+                html_code += """<div class="w3-row">\n"""
 
-        #         if m % 3 == 2 or m == len(image_list)-1:
-        #             html_code += """</div>\n"""
+                html_code += """
+                    <div class="w3-quarter">
+                        <a href="{0:s}/{1:s}">
+                            <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+                        </a>
+                        <div class="w3-container w3-center">
+                            <h5>Summary plot</h5>
+                        </div>
+                    </div>\n""".format(page_type, os.path.basename(image))
 
-        # html_code += """
-        #             </div>
-        #         </div>\n"""
+                html_code += """</div>\n"""
+
+            elif "cube" in image:
+
+                if m % 4 == 0:
+                    html_code += """<div class="w3-row">\n"""
+
+                html_code += """
+                    <div class="w3-quarter">
+                        <a href="{0:s}/{1:s}">
+                            <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
+                        </a>
+                    </div>\n""".format(page_type, os.path.basename(image))
+
+                if m % 4 == 3 or m == len(image_list)-1:
+                    html_code += """</div>\n"""
+
+        html_code += """
+                    </div>
+                </div>\n"""
 
     else:
         logger.warning("No summary plots found")
