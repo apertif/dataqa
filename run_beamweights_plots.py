@@ -26,7 +26,7 @@ def parse_args():
     parser = ArgumentParser(description="Plot beam weights for a given scan.",
                             formatter_class=RawTextHelpFormatter)
 
-    parser.add_argument('taskid', type=str,
+    parser.add_argument('obs_id', type=str,
                         help='Specify the task ID number')
     parser.add_argument('calibrator', type=str,
                         help='Specify the calibrator.')
