@@ -73,6 +73,9 @@ def main():
     parser.add_argument("--read_timing", action="store_true", default=False,
                         help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
 
+    parser.add_argument("--page_only", action="store_true", default=False,
+                        help='Set only create the webpages themselves')
+
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
                         help='Set it to run Autocal triggering mode automatically after Apercal.')
@@ -216,7 +219,7 @@ def main():
         return -1
     else:
         # do things that should only happen on happili-01 when the OSA runs this function
-        if not args.trigger_mode and host_name == "happili-01":
+        if not args.trigger_mode and host_name == "happili-01" and not args.page_only:
             # go through some of the subpages and process numpy files
             for page in subpages:
                 # exclude non-apercal modules (and mosaic)
@@ -255,7 +258,7 @@ def main():
                 logger.info("Getting compound beam plots ... Done")
 
         # Create directory structure for the report
-        if not add_osa_report:
+        if not add_osa_report and not args.page_only:
             logger.info("#### Creating directory structrure")
             try:
                 hpd.create_report_dirs(
