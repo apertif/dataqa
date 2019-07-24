@@ -27,13 +27,13 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
     html_code += """
         <div class="w3-container w3-large">
             <p>
-                Here you can find a plot of the noise versus channel/frequency for all available cubes. 
-                Please note that at this stage, the cube is cleaned and continuum subtracted. The rms is determined over the entire
-                image without taking into account the existenc of continuum sources. The fit is a simple Gaussian fit to the noise of 
-                each channel
-                The noise data is not accessible from this page, but can be found in the QA directory as a csv table.<br>
-                This page will only have content after the line QA step has been performed.
+                This page provides information on the performance of the line module. You can find the following information here: 
             </p>
+            <div class="w3-container w3-large">
+                1. A summary table (not yet available)<br>
+                2. For each cube, the spectra of the channal rms per beam. This allows you to look for difference between beams<br>
+                3. For each beam, the spectra of the channal rms per cube. <br>
+            </div>
         </div>\n
         """
 
