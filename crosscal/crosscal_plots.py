@@ -194,7 +194,7 @@ class BPSols(ScanData):
     def plot_phase(self, imagepath=None):
         """Plot phase, one plot per antenna"""
 
-        logging.info("Creating plots for bandpass phase")
+        logger.info("Creating plots for bandpass phase")
         
         imagepath = self.create_imagepath(imagepath)
         ant_names = self.ants[0]
@@ -295,7 +295,7 @@ class GainSols(ScanData):
     def plot_amp(self, imagepath=None):
         """Plot amplitude, one plot per antenna"""
 
-        logging.info("Creating plots for gain amplitude")
+        logger.info("Creating plots for gain amplitude")
 
         imagepath = self.create_imagepath(imagepath)
 
@@ -332,7 +332,7 @@ class GainSols(ScanData):
     def plot_phase(self,imagepath=None):
         """Plot phase, one plot per antenna"""
 
-        logging.info("Creating plots for gain phase")
+        logger.info("Creating plots for gain phase")
 
         imagepath = self.create_imagepath(imagepath)
 
@@ -395,7 +395,7 @@ class GDSols(ScanData):
     def plot_delay(self, imagepath=None):
         """Plot amplitude, one plot per antenna"""
 
-        logging.info("Creating plots for global delay")
+        logger.info("Creating plots for global delay")
 
         imagepath = self.create_imagepath(imagepath)
 
@@ -425,7 +425,7 @@ class GDSols(ScanData):
     def plot_dish_delay(self, imagepath=None):
         """Plot global delays, dish-based views"""
 
-        logging.info("Creating dish-based plots for global delay")
+        logger.info("Creating dish-based plots for global delay")
 
         imagepath = self.create_imagepath(imagepath)
 
@@ -503,7 +503,7 @@ class LeakSols(ScanData):
     def plot_amp(self, imagepath=None):
         """Plot leakage, one plot per antenna"""
 
-        logging.info("Creating plots for amplitude leakage")
+        logger.info("Creating plots for amplitude leakage")
         imagepath = self.create_imagepath(imagepath)
         # put plots in default place w/ default name
         ant_names = self.ants[0]
@@ -531,7 +531,7 @@ class LeakSols(ScanData):
     def plot_phase(self, imagepath=None):
         """Plot leakage, one plot per antenna"""
 
-        logging.info("Creating plots for phase leakage")
+        logger.info("Creating plots for phase leakage")
         imagepath = self.create_imagepath(imagepath)
         # put plots in default place w/ default name
         ant_names = self.ants[0]
@@ -587,7 +587,7 @@ class KCrossSols(ScanData):
     def plot_delay(self, imagepath=None):
         """Plot amplitude, one plot per antenna"""
 
-        logging.info("Creating plots for cross hand delay")
+        logger.info("Creating plots for cross hand delay")
 
         imagepath = self.create_imagepath(imagepath)
 
@@ -660,7 +660,7 @@ class PolangleSols(ScanData):
     def plot_amp(self, imagepath=None):
         """Plot leakage, one plot per antenna"""
 
-        logging.info("Creating plots for amplitude polarisation angle corrections")
+        logger.info("Creating plots for amplitude polarisation angle corrections")
         imagepath = self.create_imagepath(imagepath)
         # put plots in default place w/ default name
         ant_names = self.ants[0]
@@ -686,7 +686,7 @@ class PolangleSols(ScanData):
     def plot_phase(self, imagepath=None):
         """Plot leakage, one plot per antenna"""
 
-        logging.info("Creating plots for phase polarisation angle corrections")
+        logger.info("Creating plots for phase polarisation angle corrections")
         imagepath = self.create_imagepath(imagepath)
         # put plots in default place w/ default name
         ant_names = self.ants[0]
@@ -738,7 +738,7 @@ class ModelData(ScanData):
     def plot_amp(self,imagepath=None):
         """Plot amplitude, one subplot per beam"""
 
-        logging.info("Creating plots for model amplitude")
+        logger.info("Creating plots for model amplitude")
 
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
@@ -767,7 +767,7 @@ class ModelData(ScanData):
     def plot_phase(self,imagepath=None):
         """Plot amplitude, one subplot per beam"""
 
-        logging.info("Creating plots for model phase")
+        logger.info("Creating plots for model phase")
 
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
@@ -844,7 +844,7 @@ class CorrectedData(ScanData):
             
     def plot_amp(self,imagepath=None):
 
-        logging.info("Creating plots for corrected amplitude")
+        logger.info("Creating plots for corrected amplitude")
 
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
@@ -882,7 +882,7 @@ class CorrectedData(ScanData):
             
     def plot_phase(self,imagepath=None):
 
-        logging.info("Creating plots for corrected phase")
+        logger.info("Creating plots for corrected phase")
 
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
@@ -966,7 +966,7 @@ class RawData(ScanData):
             self.ants[i] = ant_names
             
     def plot_amp(self,imagepath=None):
-        logging.info("Creating plots for raw amplitude")
+        logger.info("Creating plots for raw amplitude")
 
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
@@ -1002,7 +1002,7 @@ class RawData(ScanData):
             
     def plot_phase(self,imagepath=None):
 
-        logging.info("Creating plots for raw phase")
+        logger.info("Creating plots for raw phase")
 
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
