@@ -285,16 +285,19 @@ def make_cb_plot_value(filename, column, goodrange=None,
         circle = Circle((x1, y1), r, color=colors[i], alpha=0.4)
         fig.gca().add_artist(circle)
         # beams.append(circle)
-        # write text with value
-        value = table[column][i]
-        if type(value) == float or type(value) == np.float64:
-            value_label = "{0:.1f}".format(value)
-        else:
-            value_label = str(value)
-        ax.text(x1, y1, ('{0}').format(value_label),
-                horizontalalignment='center',
-                verticalalignment='center', size=18,
-                fontweight='medium')
+
+        # only add text if the color is not grey:
+        if colors[i] != 'k':
+            # write text with value
+            value = table[column][i]
+            if type(value) == float or type(value) == np.float64:
+                value_label = "{0:.1f}".format(value)
+            else:
+                value_label = str(value)
+            ax.text(x1, y1, ('{0}').format(value_label),
+                    horizontalalignment='center',
+                    verticalalignment='center', size=18,
+                    fontweight='medium')
     # p=PatchCollection(beams, alpha=0.4)
     # ax.add_collection(p)
     ax.set_xlabel('RA offset, deg', size=15)
