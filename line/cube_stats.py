@@ -88,15 +88,17 @@ def combine_cube_stats(obs_id, qa_dir):
             cube_list = glob.glob(os.path.join(
                 line_dir, "[0-3][0-9]/*cube{0:d}_info.csv".format(cube_counter)))
 
+            # first fill beam and cube column
+            # only 10 beams, because there are 4 happili directories
+            # here beam_counter is only the last digit in the beam number
+            for beam_counter in range(10):
+                table_index = n_beams * cube_counter + 10 * dir_counter + beam_counter
+                beam[table_index] = 10 * dir_counter + beam_counter
+                cube[table_index] = cube_counter
+
             # in case there are no such cubes, fill only beam and cube column
             if len(cube_list) == 0:
                 logger.warning("No cube files found in {}".format(line_dir))
-                # only 10 beams, because there are 4 happili directories
-                # here beam_counter is only the last digit in the beam number
-                for beam_counter in range(10):
-                    table_index = n_beams * cube_counter + 10 * dir_counter + beam_counter
-                    beam[table_index] = 10 * dir_counter + beam_counter
-                    cube[table_index] = cube_counter
             # if there are cubes, go through them
             else:
                 cube_list.sort()
@@ -120,11 +122,11 @@ def combine_cube_stats(obs_id, qa_dir):
                     max_rms[table_index] = np.nanmax(noise)
 
                     percentile_rms_below_2mJy[table_index] = np.size(
-                        np.where(noise < 0.002)[0]) / np.size(noise)
+                        np.where(noise < 0.002)[0]) / float(np.size(noise))
                     percentile_rms_below_3mJy[table_index] = np.size(
-                        np.where(noise < 0.003)[0]) / np.size(noise)
+                        np.where(noise < 0.003)[0]) / float(np.size(noise))
                     percentile_rms_below_4mJy[table_index] = np.size(
-                        np.where(noise < 0.004)[0]) / np.size(noise)
+                        np.where(noise < 0.004)[0]) / float(np.size(noise))
 
         logger.info(
             "Processing noise information for cube {} ... Done".format(cube_counter))
