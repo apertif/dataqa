@@ -90,7 +90,7 @@ def main():
     obs_id = args.obs_id
     flux_cal = args.calibrator
     qa_dir = args.path
-    base_dir = args.basedir
+    base_dir = args.base_dir
     n_threads = args.threads
     subband_step = args.subband_step
 
