@@ -17,6 +17,7 @@ import pymp
 from apercal.libs import lib
 import logging
 import glob
+import time
 
 ###################################################################
 
@@ -85,6 +86,8 @@ def give_coord(x_or_y, el_num):
 
 def main():
 
+    start_time = time.time()
+
     args = parse_args()
 
     obs_id = args.obs_id
@@ -122,6 +125,8 @@ def main():
         'debug', logfile='{0:s}/create_beamweights.log'.format(qa_beamweights_dir))
     logger = logging.getLogger(__name__)
 
+    logger.info("Getting beamweight plots for {}".format(flux_cal))
+
     # get a list of beams if no beam was provided
     if args.beam is None:
         data_dir_beam_list = glob.glob(os.path.join(data_dir, "[0-3][0-9]"))
@@ -137,6 +142,10 @@ def main():
 
     # now go through the beams
     for beam_nr in beam_list:
+
+        start_time_beam = time.time()
+
+        logger.info("Processing beam {}".format(beam_nr))
 
         # check that the given calibrator exists
         data_cal_dir = os.path.join(data_dir, "{0:02d}".format(beam_nr))
@@ -169,7 +178,6 @@ def main():
         cal = pt.table(os.path.join(
             cal_file, "APERTIF_CALIBRATION"), ack=False)
 
-        # Set up array for all beams, subbands, antennas
         num_beams = 40
         num_subbands = pt.taql(
             'select distinct SPECTRAL_WINDOW_ID FROM $cal').nrows()
@@ -221,16 +229,16 @@ def main():
         #     args.taskid, beam_nr)
         # cal = pt.table(ms_name, ack=False)
 
+        logger.info("Get weights")
         weights_gershape = cal.getcol(
             'BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
+        logger.info("Get weights ... Done")
 
         # parallelise it to plot faster
         # with pymp.Parallel(n_threads) as p:
         # go throught the subband
         # for subband_index in p.range(len(num_subbands)):
-        for subband_index in range(num_subbands):
-            # to speed things, every subband_step-th subband can be used
-            subband = subband_index * subband_step
+        for subband in range(0, num_subbands, subband_step):
             for antenna in range(num_antennas):
                 beamweights[beam_nr, subband, antenna] = convert_weights(
                     weights_gershape[subband, antenna])
@@ -257,7 +265,14 @@ def main():
             # plt.savefig('/home/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.taskid, args.cal_date,
             #                                                                          beam_nr, subband))
             plt.savefig(plot_name, overwrite=True)
+            logger.info("Saving plot {}".format(plot_name))
             plt.close('all')
+
+        logger.info("Processing beam {0} ... Done ({1:.0f}s)".format(
+            beam_nr, time.time()-start_time_beam))
+
+    logger.info("Getting beamweight plots for {0} ... Done ({1:.0f}s)".format(
+        flux_cal, time.time()-start_time))
 
 
 if __name__ == '__main__':
