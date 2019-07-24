@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 #    A, mu, sigma = p
 #    return A*np.exp(-(x-mu)**2/(2.*sigma**2))
 
-def combine_cube_stats(obs_id, qa_line_dir):
+def combine_cube_stats(obs_id, qa_dir):
     """
     Function to combine the statistic information from all cubes
     """
@@ -35,6 +35,8 @@ def combine_cube_stats(obs_id, qa_line_dir):
     logger.info("Collecting cube statistics")
 
     host_name = socket.gethostname()
+
+    qa_line_dir = os.path.join(qa_dir, "line")
 
     # output file name
     table_file_name = os.path.join(
