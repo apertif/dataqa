@@ -121,8 +121,13 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
 
         # go through the cubes and create plots for each one
         for cube_counter in range(n_cubes):
+            logging.info("Plotting cube {}".format(cube_counter))
+
             cube_data = line_summary_data[np.where(
                 line_summary_data['cube'] == cube_counter)]
+
+            # remove non-existing beams
+            cube_data = cube_data[np.where(cube_data['median_rms'] == -1.)]
 
             # convert median rms into mJy
             cube_data['median_rms'] *= 1.e3
