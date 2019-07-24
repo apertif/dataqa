@@ -34,7 +34,7 @@ def parse_args():
                         help='Specify the beam to plot. (default: %(default)s).')
     parser.add_argument('--subband_step', default=10, type=int,
                         help='Take every subband_step-th subband. (default: %(default)s).')
-    parser.add_argument('--base_dir', default='', type=str,
+    parser.add_argument('--base_dir', type=str,
                         help='Specify the base directory (default: %(default)s).')
     parser.add_argument("-p", "--path", type=str,
                         help='Path to QA output')
