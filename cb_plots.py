@@ -127,7 +127,8 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
                 line_summary_data['cube'] == cube_counter)]
 
             # remove non-existing beams
-            cube_data[np.where(cube_data['median_rms'] == -1)] = np.nan
+            cube_data['median_rms'][np.where(
+                cube_data['median_rms'] == -1)] = np.nan
 
             # convert median rms into mJy
             cube_data['median_rms'] *= 1.e3
