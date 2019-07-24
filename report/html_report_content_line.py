@@ -64,6 +64,102 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
                 </button>
             </div>\n"""
 
+    # Create html code for cube gallery
+    # =================================
+
+    # get beams
+    beam_list = glob.glob(
+        "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
+
+    # total number of expected beams
+    n_beams = 40
+
+    # total number of expected cubes per beam
+    n_cubes = 8
+
+    if beam_list != 0:
+
+        html_code += """
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom" onclick="show_hide_plots('{0:s}')">{1:s}
+                </button>
+            </div>
+            <div class="w3-container w3-margin-top w3-hide" name="{0:s}">\n""".format("gallery_cubes", "Cubes")
+
+        # go through the list of cubes
+        for cube_counter in range(n_cubes):
+
+            # get a list of cubes
+            cube_list = glob.glob(
+                "{0:s}/{1:s}/[0-3][0-9]/*cube{2:d}*.png".format(qa_report_obs_path, page_type, cube_counter))
+
+            # if there plots for this cube, create the gallery
+            if cube_list != 0:
+
+                cube_list = np.array(cube_list.sort())
+
+                div_name = "gallery_cube_{0}".format(cube_counter)
+
+                # create button for source
+                html_code += """
+                        <div class="w3-container">
+                            <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                                Cube {1:d}
+                            </button>
+                        </div>
+                        <div class="w3-container w3-margin-bottom w3-hide" name="{0}">\n""".format(div_name, cube_counter)
+
+                # get a list of beams with cubes
+                beam_list = np.array(
+                    [int(os.path.dirname(cube).split("/")[-1]) for cube in cube_list])
+
+                for beam_nr in range(n_beams):
+
+                    image = cube_list[np.where(beam_list == beam_nr)]
+
+                    if beam_nr % 5 == 0:
+                        html_code += """<div class="w3-row">\n"""
+
+                    # if there is a cube for this beam add it to gallery
+                    if len(image) != 0:
+                        html_code += """
+                                <div class="w3-quarter">
+                                    <a href="{0:s}/{1:02d}/{2:s}">
+                                        <img src="{0:s}/{1:02d}/{2:s}" alt="No image for beam {1:02d}", width="100%">
+                                    </a>
+                                    <div class="w3-container"><h5>Beam {1:02d}</h5></div>
+                                </div>\n""".format(page_type, beam_nr, os.path.basename(image[0]))
+                    # otherwise keep it empty
+                    else:
+                        html_code += """
+                                <div class="w3-quarter">
+                                    <a href="#">
+                                        <img src="#" alt="No image for beam {0:02d}", width="100%">
+                                    </a>
+                                </div>\n""".format(beam_nr)
+
+                    if beam_nr % 5 == 4 or beam_nr == n_beams-1:
+                        html_code += """</div>\n"""
+
+                html_code += """</div>\n"""
+            else:
+                html_code += """
+                        <div class="w3-container">
+                            <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+                                Cube {1:d}
+                            </button>
+                        </div>\n""".format(div_name, cube_counter)
+
+        html_code += """</div>\n"""
+    else:
+        logger.warning("No beams found for line cube gallery")
+        html_code += """
+            <div class="w3-container">
+                <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled" onclick="show_hide_plots('{0:s}')">
+            {1:s}
+                </button>
+            </div>\n""".format("gallery_cubes", "Cubes")
+
     # Create html code for image gallery
     # ==================================
 
