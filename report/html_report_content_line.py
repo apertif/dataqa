@@ -96,7 +96,7 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
             print(cube_list)
 
             # if there plots for this cube, create the gallery
-            if cube_list != 0:
+            if len(cube_list) != 0:
 
                 cube_list = np.array(cube_list.sort())
 
