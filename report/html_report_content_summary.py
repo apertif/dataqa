@@ -118,6 +118,8 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
 
     if len(image_list) != 0:
 
+        image_list.sort()
+
         # Make gallery for selfcal
         html_code += """
                 <div class="w3-container w3-margin-top w3-show">
