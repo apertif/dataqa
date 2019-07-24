@@ -125,7 +125,7 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
                 line_summary_data['cube'] == cube_counter)]
 
             # convert median rms into mJy
-            cube_data['noise'] *= 1.e3
+            cube_data['median_rms'] *= 1.e3
 
             # plot name
             plot_name = "{0}_HI_median_rms_cube{1}".format(
