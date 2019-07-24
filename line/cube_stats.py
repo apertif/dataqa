@@ -119,11 +119,11 @@ def combine_cube_stats(obs_id, qa_dir):
                     min_rms[table_index] = np.nanmin(noise)
                     max_rms[table_index] = np.nanmax(noise)
 
-                    percentile_rms_below_2mJy = np.size(
+                    percentile_rms_below_2mJy[table_index] = np.size(
                         np.where(noise < 0.002)[0]) / np.size(noise)
-                    percentile_rms_below_3mJy = np.size(
+                    percentile_rms_below_3mJy[table_index] = np.size(
                         np.where(noise < 0.003)[0]) / np.size(noise)
-                    percentile_rms_below_4mJy = np.size(
+                    percentile_rms_below_4mJy[table_index] = np.size(
                         np.where(noise < 0.004)[0]) / np.size(noise)
 
         logger.info(
