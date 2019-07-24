@@ -138,7 +138,7 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
                     # otherwise keep it empty
                     else:
                         html_code += """
-                                <div class="w3-quarter">
+                                <div class="w3-col" style="width:20%">
                                     <a href="#">
                                         <img src="#" alt="No image for beam {0:02d}", width="100%">
                                     </a>
