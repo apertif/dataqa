@@ -228,7 +228,7 @@ def main():
         # with pymp.Parallel(n_threads) as p:
         # go throught the subband
         # for subband_index in p.range(len(num_subbands)):
-        for subband_index in range(len(num_subbands)):
+        for subband_index in range(num_subbands):
             # to speed things, every subband_step-th subband can be used
             subband = subband_index * subband_step
             for antenna in range(num_antennas):
