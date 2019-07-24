@@ -182,10 +182,10 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
     # ==========================
 
     # the different plots
-    categories = ["BP_amp", "BP_phase", "Gain_amp", "Gain_phase", "K_", "Df_amp", "Df_phase", "Kcross", "Xf_amp",
+    categories = ["BP_amp", "BP_phase", "Gain_amp", "Gain_phase", "K_", "K_dish" "Df_amp", "Df_phase", "Kcross", "Xf_amp",
                   "Xf_phase", "Raw_amp", "Raw_phase", "Model_amp", "Model_phase", "Corrected_amp", "Corrected_phase"]
 
-    categories_titles = ["Bandpass Amplitude", "Bandpass Phase", "Gain factors Amplitude", "Gain factors Phase", "Global Delay", "Leakage Amplitude", "Leakage Phase", "Cross Hand Delay",
+    categories_titles = ["Bandpass Amplitude", "Bandpass Phase", "Gain factors Amplitude", "Gain factors Phase", "Global Delay", "Dish-based Delay", "Leakage Amplitude", "Leakage Phase", "Cross Hand Delay",
                          "Polarization Angle Amplitude", "Polarization Angle Phase", "Raw visibility Amplitude", "Raw Visibility Phase", "Model Amplitude", "Model Phase", "Corrected Amplitude", "Corrected Phase"]
 
     n_cats = len(categories)
