@@ -124,137 +124,139 @@ def main():
 
     # get a list of beams if no beam was provided
     if args.beam is None:
-        beam_list = glob.glob(os.path.join(data_dir, "[0-3][0-9]"))
+        data_dir_beam_list = glob.glob(os.path.join(data_dir, "[0-3][0-9]"))
+        # check that there are beams
+        if len(data_dir_beam_list) == 0:
+            logger.warning("No beams found in {}".format(data_dir))
+            return None
+        else:
+            beam_list = [int(os.path.dirname(beam).split("/")[-1])
+                         for beam in data_dir_beam_list]
     else:
         beam_list = [args.beam]
 
-    # check that there are beams
-    if len(beam_list) != 0:
+    # now go through the beams
+    for beam_nr in beam_list:
 
-        # now go through the beams
-        for beam in beam_list:
+        # check that the given calibrator exists
+        data_cal_dir = os.path.join(data_dir, "{0:02d}".format(beam_nr))
 
-            beam_nr = int(beam)
+        # calibrator file
+        cal_file = os.path.join(data_cal_dir, "raw/{}.MS".format(flux_cal))
 
-            # check that the given calibrator exists
-            data_cal_dir = os.path.join(data_dir, beam)
+        # check that it exists
+        if not os.path.exists(cal_file):
+            logger.warning(
+                "Could not find calibrator {}. Continue with next beam".format(cal_file))
+            continue
+        else:
+            logger.info("Found calibrator {}".format(cal_file))
 
-            # calibrator file
-            cal_file = os.path.join(data_cal_dir, "{}.MS".format(flux_cal))
+        # set output directory for plots
+        qa_beamweights_beam_dir = os.path.join(
+            qa_beamweights_dir, "{0:02d}".format(beam_nr))
+        # check that this directory exists (just in case)
+        if not os.path.exists(qa_beamweights_beam_dir):
+            logger.info("Directory {0:s} does not exist and will be created".format(
+                qa_beamweights_beam_dir))
+            os.makedirs(qa_beamweights_beam_dir)
 
-            # check that it exists
-            if not os.path.exists(cal_file):
-                logger.warning(
-                    "Could not find calibrator {}. Continue with next beam".format(cal_file))
-                continue
-            else:
-                logger.info("Found calibrator {}".format(cal_file))
+        # Start with one measurement set to set up the size of the array
+        #
+        # cal = pt.table(
+        #     "/data/hess/apertif/{}/{}/WSRTA{}_B000.MS/APERTIF_CALIBRATION".format(args.cal_date, args.taskid, args.taskid),
+        #     ack=False)
+        cal = pt.table(os.path.join(
+            cal_file, "APERTIF_CALIBRATION"), ack=False)
 
-            # set output directory for plots
-            qa_beamweights_beam_dir = os.path.join(
-                qa_beamweights_dir, beam)
-            # check that this directory exists (just in case)
-            if not os.path.exists(qa_beamweights_beam_dir):
-                logger.info("Directory {0:s} does not exist and will be created".format(
-                    qa_beamweights_beam_dir))
-                os.makedirs(qa_beamweights_beam_dir)
+        # Set up array for all beams, subbands, antennas
+        num_beams = 40
+        num_subbands = pt.taql(
+            'select distinct SPECTRAL_WINDOW_ID FROM $cal').nrows()
+        num_antennas = pt.taql(
+            'select distinct ANTENNA_ID FROM $cal').nrows()
 
-            # Start with one measurement set to set up the size of the array
-            #
-            # cal = pt.table(
-            #     "/data/hess/apertif/{}/{}/WSRTA{}_B000.MS/APERTIF_CALIBRATION".format(args.cal_date, args.taskid, args.taskid),
-            #     ack=False)
-            cal = pt.table(os.path.join(
-                cal_file, "APERTIF_CALIBRATION"), ack=False)
+        beamweights = np.zeros(
+            (num_beams, num_subbands, num_antennas, 11, 11), dtype=np.complex64)
 
-            # Set up array for all beams, subbands, antennas
-            num_beams = 40
-            num_subbands = pt.taql(
-                'select distinct SPECTRAL_WINDOW_ID FROM $cal').nrows()
-            num_antennas = pt.taql(
-                'select distinct ANTENNA_ID FROM $cal').nrows()
+        logger.info("Number of subbands in {0} is {1}".format(
+            os.path.basename(cal_file), num_subbands))
 
-            beamweights = np.zeros(
-                (num_beams, num_subbands, num_antennas, 11, 11), dtype=np.complex64)
+        # Old implementation looped over beams (and I just picked a subband for simplicity, but this could be expanded to loop over subbands)
+        #
+        # plot_sub = 350
+        # for beam_nr in range(40):
+        #     ms_name = "/data/hess/apertif/{}/{}/WSRTA{}_B0{:02}.MS/APERTIF_CALIBRATION".format(args.cal_date, args.taskid,
+        #                                                                                         args.taskid, beam_nr)
+        #     print(ms_name)
+        #     cal = pt.table(ms_name, ack=False)
+        #     weights_gershape = cal.getcol('BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
+        #
+        #     for subband in range(num_subbands):
+        #         for antenna in range(num_antennas):
+        #             beamweights[beam_nr, subband, antenna] = convert_weights(weights_gershape[subband, antenna])
+        #
+        #     print("BEAM NUMBER {}".format(beam_nr))
+        #     # fig, axs = plt.subplots(3, 4, figsize=(15, 11))
+        #     fig, axs = plt.subplots(3, 4, figsize=(10, 7))
+        #     fig.suptitle("Beam {}; Subband {}".format(beam_nr, plot_sub), fontsize=14)
+        #     for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
+        #         ax.imshow(np.abs(beamweights[beam_nr, plot_sub, plot_ant]), cmap='plasma')
+        #         ax.set_title("Antenna " + str(plot_ant))
+        #         if plot_ant < 8:
+        #             ax.set_xticklabels([])
+        #         for i in range(61):
+        #             x, y = give_coord('X', i)
+        #             ax.text(x - 0.35, y + 0.18, 'X' + str(i), color='white', fontsize=5)
+        #             x, y = give_coord('Y', i)
+        #             ax.text(x - 0.35, y + 0.18, 'Y' + str(i), color='white', fontsize=5)
+        #
+        #     plt.savefig('/data/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.cal_date, args.cal_date,
+        #                                                                              beam_nr, plot_sub))
+        #     plt.close()
 
-            logger.info("Number of subbands in {0} is {1}".format(
-                os.path.basename(cal_file), num_subbands))
+        # New implementation because I was just thinking of using a single beam and plotting a bunch of subbands. (quick and dirty solution)
+        # Beam is chosen by the user and saved in args.beam
+        # ms_name = "/home/hess/apertif/{}/{:02}/3C147.MS/APERTIF_CALIBRATION".format(
+        #     args.taskid, beam_nr)
+        # cal = pt.table(ms_name, ack=False)
 
-            # Old implementation looped over beams (and I just picked a subband for simplicity, but this could be expanded to loop over subbands)
-            #
-            # plot_sub = 350
-            # for beam_nr in range(40):
-            #     ms_name = "/data/hess/apertif/{}/{}/WSRTA{}_B0{:02}.MS/APERTIF_CALIBRATION".format(args.cal_date, args.taskid,
-            #                                                                                         args.taskid, beam_nr)
-            #     print(ms_name)
-            #     cal = pt.table(ms_name, ack=False)
-            #     weights_gershape = cal.getcol('BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
-            #
-            #     for subband in range(num_subbands):
-            #         for antenna in range(num_antennas):
-            #             beamweights[beam_nr, subband, antenna] = convert_weights(weights_gershape[subband, antenna])
-            #
-            #     print("BEAM NUMBER {}".format(beam_nr))
-            #     # fig, axs = plt.subplots(3, 4, figsize=(15, 11))
-            #     fig, axs = plt.subplots(3, 4, figsize=(10, 7))
-            #     fig.suptitle("Beam {}; Subband {}".format(beam_nr, plot_sub), fontsize=14)
-            #     for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
-            #         ax.imshow(np.abs(beamweights[beam_nr, plot_sub, plot_ant]), cmap='plasma')
-            #         ax.set_title("Antenna " + str(plot_ant))
-            #         if plot_ant < 8:
-            #             ax.set_xticklabels([])
-            #         for i in range(61):
-            #             x, y = give_coord('X', i)
-            #             ax.text(x - 0.35, y + 0.18, 'X' + str(i), color='white', fontsize=5)
-            #             x, y = give_coord('Y', i)
-            #             ax.text(x - 0.35, y + 0.18, 'Y' + str(i), color='white', fontsize=5)
-            #
-            #     plt.savefig('/data/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.cal_date, args.cal_date,
-            #                                                                              beam_nr, plot_sub))
-            #     plt.close()
+        weights_gershape = cal.getcol(
+            'BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
 
-            # New implementation because I was just thinking of using a single beam and plotting a bunch of subbands. (quick and dirty solution)
-            # Beam is chosen by the user and saved in args.beam
-            # ms_name = "/home/hess/apertif/{}/{:02}/3C147.MS/APERTIF_CALIBRATION".format(
-            #     args.taskid, beam_nr)
-            # cal = pt.table(ms_name, ack=False)
+        # parallelise it to plot faster
+        with pymp.Parallel(n_threads) as p:
+            # go throught the subband
+            for subband_index in p.range(len(num_subbands)):
+                # to speed things, every subband_step-th subband can be used
+                subband = subband_index * subband_step
+                for antenna in range(num_antennas):
+                    beamweights[beam_nr, subband, antenna] = convert_weights(
+                        weights_gershape[subband, antenna])
 
-            weights_gershape = cal.getcol(
-                'BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
+                fig, axs = plt.subplots(3, 4, figsize=(10, 7))
+                fig.suptitle("Beam {}; Subband {}".format(
+                    beam_nr, subband), fontsize=14)
+                for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
+                    ax.imshow(
+                        np.abs(beamweights[beam_nr, subband, plot_ant]), cmap='plasma')
+                    ax.set_title("Antenna " + str(plot_ant))
+                    if plot_ant < 8:
+                        ax.set_xticklabels([])
+                    for i in range(61):
+                        x, y = give_coord('X', i)
+                        ax.text(x - 0.35, y + 0.18, 'X' + str(i),
+                                color='white', fontsize=5)
+                        x, y = give_coord('Y', i)
+                        ax.text(x - 0.35, y + 0.18, 'Y' + str(i),
+                                color='white', fontsize=5)
 
-            # parallelise it to plot faster
-            with pymp.Parallel(n_threads) as p:
-                for subband_index in p.range(len(num_subbands)):
-                    subband = subband_index * subband_step
-                    for antenna in range(num_antennas):
-                        beamweights[beam_nr, subband, antenna] = convert_weights(
-                            weights_gershape[subband, antenna])
-
-                    fig, axs = plt.subplots(3, 4, figsize=(10, 7))
-                    fig.suptitle("Beam {}; Subband {}".format(
-                        beam_nr, subband), fontsize=14)
-                    for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
-                        ax.imshow(
-                            np.abs(beamweights[beam_nr, subband, plot_ant]), cmap='plasma')
-                        ax.set_title("Antenna " + str(plot_ant))
-                        if plot_ant < 8:
-                            ax.set_xticklabels([])
-                        for i in range(61):
-                            x, y = give_coord('X', i)
-                            ax.text(x - 0.35, y + 0.18, 'X' + str(i),
-                                    color='white', fontsize=5)
-                            x, y = give_coord('Y', i)
-                            ax.text(x - 0.35, y + 0.18, 'Y' + str(i),
-                                    color='white', fontsize=5)
-
-                    plot_name = os.path.join(qa_beamweights_beam_dir, "{0}_{1}_B{2}_S{3:03d}_weights.png".format(
-                        obs_id, flux_cal, beam, subband))
-                    # plt.savefig('/home/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.taskid, args.cal_date,
-                    #                                                                          beam_nr, subband))
-                    plt.savefig(plot_name, overwrite=True)
-                    plt.close('all')
-    else:
-        logger.warning("No beams found in {}".format(data_dir))
+                plot_name = os.path.join(qa_beamweights_beam_dir, "{0}_{1}_B{2:02d}_S{3:03d}_weights.png".format(
+                    obs_id, flux_cal, beam_nr, subband))
+                # plt.savefig('/home/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.taskid, args.cal_date,
+                #                                                                          beam_nr, subband))
+                plt.savefig(plot_name, overwrite=True)
+                plt.close('all')
 
 
 if __name__ == '__main__':
