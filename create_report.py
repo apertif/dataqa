@@ -31,6 +31,7 @@ from report.make_nptabel_summary import make_nptabel_csv
 from line.cube_stats import combine_cube_stats
 from continuum.continuum_tables import merge_continuum_image_properties_table
 from cb_plots import make_cb_plots_for_report
+from crosscal.dish_delay_plot import get_dish_delay_plots
 from scandata import get_default_imagepath
 
 
@@ -246,6 +247,16 @@ def main():
                 # get line statistics
                 if page == 'line':
                     combine_cube_stats(obs_id, qa_dir)
+
+            # create dish delay plot
+            try:
+                logger.info("Getting dish delay plot")
+                get_dish_delay_plots(obs_id, obs_info['Flux_Calibrator'][0])
+            except Exception as e:
+                logger.warning("Getting dish delay plot ... Failed")
+                logger.exception(e)
+            else:
+                logger.info("Getting dish delay plot ... Done")
 
             # create compound beam plots
             try:
