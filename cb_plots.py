@@ -247,8 +247,6 @@ def make_cb_plot_value(filename, column, goodrange=None,
         nanind = np.where(table['exist'] == 'False')[0]
         colors[nanind] = 'k'
     except:
-        pass
-    else:
         # assume that the columns have NaNs
         nanind = np.where(np.isnan(table[column]) == True)[0]
         colors[nanind] = 'k'
