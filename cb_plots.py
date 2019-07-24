@@ -121,13 +121,13 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
 
         # go through the cubes and create plots for each one
         for cube_counter in range(n_cubes):
-            logging.info("Plotting cube {}".format(cube_counter))
+            logger.info("Plotting cube {}".format(cube_counter))
 
             cube_data = line_summary_data[np.where(
                 line_summary_data['cube'] == cube_counter)]
 
             # remove non-existing beams
-            cube_data = cube_data[np.where(cube_data['median_rms'] == -1.)]
+            cube_data[np.where(cube_data['median_rms'] == -1)[0]] = np.nan
 
             # convert median rms into mJy
             cube_data['median_rms'] *= 1.e3
@@ -186,7 +186,7 @@ def make_cb_beam_plot(cboffsets='cb_offsets.txt',
                 horizontalalignment='center',
                 verticalalignment='center', size=18,
                 fontweight='medium')
-    #p=PatchCollection(beams, alpha=0.4)
+    # p=PatchCollection(beams, alpha=0.4)
     # ax.add_collection(p)
     ax.set_xlabel('RA offset, deg', size=15)
     ax.set_ylabel('Dec offset, deg', size=15)
@@ -201,12 +201,12 @@ def make_cb_plot_value(filename, column, goodrange=None,
     """
     Take a csv file or a table object and produce the plots
     Provide the column name to plot
-    Optionally provide a range of good values that 
+    Optionally provide a range of good values that
     will have beams plotted in green
     Or set boolean=True to plot colors based on a boolean value
     Lack of data in plotted in grey
     Default is to plot as red
-    Color scheme should be updated to 
+    Color scheme should be updated to
     take into account colorblindness
     """
     # check if file name is a string
@@ -238,7 +238,7 @@ def make_cb_plot_value(filename, column, goodrange=None,
         boolean = True
     # make an array to hold colors:
     colors = np.full(40, 'r')
-    #colors = np.array(['r' for k in range(40)])
+    # colors = np.array(['r' for k in range(40)])
     # find empty beams
     # not all tables have this so do as try/except
     try:
@@ -247,13 +247,17 @@ def make_cb_plot_value(filename, column, goodrange=None,
         colors[nanind] = 'k'
     except:
         pass
+    else:
+        # assume that the columns have NaNs
+        nanind = np.where(np.isnan(table[column]) == True)[0]
+        colors[nanind] = 'k'
     # find "good" values
     if goodrange != None:
         if len(goodrange) == 2:
             # first turn good data into floats:
             goodind = np.where(np.logical_and(table[column] >= goodrange[0],
                                               table[column] <= goodrange[1]))[0]
-            #goodind = np.where(table[column]>=goodrange[0])[0]
+            # goodind = np.where(table[column]>=goodrange[0])[0]
             # print(goodind)
             colors[goodind] = 'green'
     if boolean == True:
@@ -291,7 +295,7 @@ def make_cb_plot_value(filename, column, goodrange=None,
                 horizontalalignment='center',
                 verticalalignment='center', size=18,
                 fontweight='medium')
-    #p=PatchCollection(beams, alpha=0.4)
+    # p=PatchCollection(beams, alpha=0.4)
     # ax.add_collection(p)
     ax.set_xlabel('RA offset, deg', size=15)
     ax.set_ylabel('Dec offset, deg', size=15)
