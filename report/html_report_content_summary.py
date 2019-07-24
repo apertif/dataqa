@@ -198,7 +198,7 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
 
             # make the reference plots in an extra line
 
-            if "cb_plots" in image:
+            if "cb_overview" in image:
 
                 html_code += """<div class="w3-row">\n"""
 
@@ -207,9 +207,6 @@ def write_obs_content_summary(html_code, qa_report_obs_path, page_type, obs_info
                         <a href="{0:s}/{1:s}">
                             <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                         </a>
-                        <div class="w3-container w3-center">
-                            <h5>Summary plot</h5>
-                        </div>
                     </div>\n""".format(page_type, os.path.basename(image))
 
                 html_code += """</div>\n"""
