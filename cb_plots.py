@@ -248,8 +248,9 @@ def make_cb_plot_value(filename, column, goodrange=None,
         colors[nanind] = 'k'
     except:
         # assume that the columns have NaNs
-        nanind = np.where(np.isnan(table[column]) == True)[0]
-        colors[nanind] = 'k'
+        if table[column].dtype == np.float64:
+            nanind = np.where(np.isnan(table[column]) == True)[0]
+            colors[nanind] = 'k'
     # find "good" values
     if goodrange != None:
         if len(goodrange) == 2:
