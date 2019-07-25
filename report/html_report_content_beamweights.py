@@ -74,6 +74,8 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
         # go through the beams
         for beam_counter in range(n_beams):
 
+            print(beam_counter)
+
             # get a list of all images to make sure that at least one exists
             image_list = glob.glob(
                 "{0:s}/{1:s}/{2:02d}/*.png".format(qa_report_obs_path, page_type, beam_counter))
@@ -120,6 +122,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
                 # close the slideshow div
                 html_code += """</div>\n"""
             else:
+                print(beam_nr_list[beam_counter])
                 html_code += """
                         <div class="w3-content w3-display-container w3-quarter">
                             <img src="" alt="No image for beam {0:s}", width="100%">
