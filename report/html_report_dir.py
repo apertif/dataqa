@@ -116,6 +116,99 @@ def create_report_dir_summary(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         "## Creating report directory for summary and linking files. Done")
 
 
+def create_report_dir_beam_weights(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+    """Function to create the beamweights directory for the report
+
+    Note:
+        All necessary files will be linked to this directory
+        from the QA directory. Currently, it only reads the 
+        compound beam plots
+
+    Args:
+        qa_dir (str): Directory of the QA
+        qa_dir_report_obs_subpage (str): Directory of the subpage
+        trigger_mode (bool): Set for when automatically run after Apercal on a single node
+    """
+
+    logger.info(
+        "## Creating report directory for beam weights.")
+
+    default_qa_beamweights_dir = os.path.join(qa_dir, "beamweights")
+
+    if socket.gethostname() != 'happili-01' or trigger_mode:
+        qa_beamweights_dir_list = [default_qa_beamweights_dir]
+    else:
+        qa_beamweights_dir_list = [default_qa_beamweights_dir, default_qa_beamweights_dir.replace(
+            "data", "data2"), default_qa_beamweights_dir.replace("data", "data3"), default_qa_beamweights_dir.replace("data", "data4")]
+
+    # Get every single beamweights plot
+    # =============================
+    logger.info("Linking individual beamweights plots")
+
+    for qa_beamweights_dir in qa_beamweights_dir_list:
+
+        # get beams
+        qa_beamweights_dir_beam_list = glob.glob(
+            "{0:s}/[0-3][0-9]".format(qa_beamweights_dir))
+
+        # number of beams
+        n_beams = len(qa_beamweights_dir_beam_list)
+
+        if n_beams != 0:
+
+            qa_beamweights_dir_beam_list.sort()
+
+            # go through all beams
+            for qa_beamweights_dir_beam in qa_beamweights_dir_beam_list:
+
+                qa_dir_report_obs_subpage_beamweights_beam = "{0:s}/{1:s}".format(
+                    qa_dir_report_obs_subpage, os.path.basename(qa_beamweights_dir_beam))
+
+                # create a subdirectory in the report dir
+                if not os.path.exists(qa_dir_report_obs_subpage_beamweights_beam):
+                    try:
+                        os.mkdir(qa_dir_report_obs_subpage_beamweights_beam)
+                    except Exception as e:
+                        logger.error(e)
+
+                # get the images in the beam directory and link them
+                images_in_beam = glob.glob(
+                    "{0:s}/*png".format(qa_beamweights_dir_beam))
+
+                # check that there are images in there
+                if len(images_in_beam) != 0:
+
+                    images_in_beam.sort()
+
+                    # go through the images and link them
+                    for image in images_in_beam:
+                        link_name = "{0:s}/{1:s}".format(
+                            qa_dir_report_obs_subpage_beamweights_beam, os.path.basename(image))
+
+                        # change to relative link when in trigger mode
+                        if trigger_mode:
+                            image = image.replace(
+                                qa_dir, "../../../../")
+
+                        # check if link exists
+                        if not os.path.exists(link_name):
+                            os.symlink(image, link_name)
+                        else:
+                            # link needs to be removed before it can be overwritten
+                            os.unlink(link_name)
+                            os.symlink(image, link_name)
+
+                else:
+                    logger.warning("No images in beam {0:s} found".format(
+                        qa_beamweights_dir_beam))
+        else:
+            logger.warning(
+                "No beams found for beamweights in {0:s}".format(qa_beamweights_dir))
+
+    logger.info(
+        "## Creating report directory for beamweights and linking files. Done")
+
+
 def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, obs_info=None):
     """Function to create the inspection plot directory for the report
 
@@ -1293,12 +1386,22 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
             except Exception as e:
                 logger.exception(e)
         
-        # Create links for files from Observation log
-        # +++++++++++++++++++++++++++++++++++++++++++++++
+        # Create links for files from summary
+        # +++++++++++++++++++++++++++++++++++
         if page == "summary":
 
             try:
                 create_report_dir_summary(
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+            except Exception as e:
+                logger.exception(e)
+        
+        # Create links for files from beamweights
+        # +++++++++++++++++++++++++++++++++++++++
+        if page == "beamweights":
+
+            try:
+                create_report_dir_beamweights(
                     qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
             except Exception as e:
                 logger.exception(e)
