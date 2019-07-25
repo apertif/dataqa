@@ -65,7 +65,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
     if steps is None:
         # steps = ['preflag', 'crosscal', 'selfcal',
         #          'continuum', 'line', 'mosaic', 'report']
-        steps = ['inspection_plots', 'preflag', 'crosscal', 'selfcal',
+        steps = ['inspection_plots', 'beamweights', 'preflag', 'crosscal', 'selfcal',
                  'continuum', 'line', 'report']
 
     # Set up
@@ -193,7 +193,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
             try:
                 inspection_plot_msg = os.system(
-                    'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s}'.format(taskid_target, name_target))
+                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s}'.format(taskid_target, name_target))
                 logger.info(
                     "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                 logger.info(
@@ -210,7 +210,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
             try:
                 inspection_plot_msg = os.system(
-                    'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
+                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
                 logger.info(
                     "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                 logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
@@ -229,7 +229,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
                 try:
                     inspection_plot_msg = os.system(
-                        'python /home/schulz/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_polcal, beamnr_cal, taskid_cal))
+                        'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_polcal, beamnr_cal, taskid_cal))
                     logger.info(
                         "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                     logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
@@ -243,6 +243,34 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
             time.time()-start_time_inspection_plot))
     else:
         logger.warning("#### Did not perform inspection plot QA")
+
+    # Beamweights Plots
+    # =================
+
+    if 'beamweights' in steps:
+
+        start_time_beamweights = time.time()
+
+        # this needs to run on every node
+
+        logger.info(
+            "#### Beamweights QA for {}...".format(name_fluxcal))
+
+        try:
+            beamweights_msg = os.system(
+                'python /home/schulz/apercal/dataqa/run_beamweights_plots.py {0:d} {1:s} -t 20'.format(taskid_target, name_fluxcal))
+            logger.info(
+                "Getting Beamweightss finished with msg {0}".format(beamweights_msg))
+
+        except Exception as e:
+            logger.warning(
+                "Beamweights QA for {} failed.".format(name_fluxcal))
+            logger.exception(e)
+        else:
+            logger.info("#### Beamweights QA ... Done (time {0:.1f}s)".format(
+                time.time()-start_time_beamweights))
+    else:
+        logger.warning("#### Did not perform Beamweights QA")
 
     # Preflag QA
     # ==========
