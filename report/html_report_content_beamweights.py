@@ -100,7 +100,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
                 src="{1:s}"
                 style="width:100%">\n""".format(beam_counter, image_list[0])
 
-                for image_counter in range(1, image_list):
+                for image_counter in range(1, len(image_list)):
                     html_code += """
                             <a href="{0:s}/{1:02d}/{2:s}">
                                 <img name="slideshow{1:d}" class="w3-show" src="{0:s}/{1:02d}/{2:s}" style="width:100%">
