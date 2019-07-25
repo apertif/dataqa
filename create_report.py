@@ -194,7 +194,7 @@ def main():
             logger.error(e)
 
     # the subpages to be created
-    subpages = ['observing_log', 'summary', 'inspection_plots', 'preflag', 'crosscal',
+    subpages = ['observing_log', 'summary',  'beamweights', 'inspection_plots', 'preflag', 'crosscal',
                 'selfcal', 'continuum', 'polarisation', 'line', 'mosaic', 'apercal_log']
 
     logger.info("#### Create report directory structure")
@@ -268,16 +268,16 @@ def main():
             else:
                 logger.info("Getting compound beam plots ... Done")
 
-        # Create directory structure for the report
-        if not add_osa_report and not args.page_only:
-            logger.info("#### Creating directory structrure")
-            try:
-                hpd.create_report_dirs(
-                    obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info, osa_files=osa_files)
-            except Exception as e:
-                logger.error(e)
-            else:
-                logger.info("#### Creating directory structrure ... Done")
+    # Create directory structure for the report
+    if not add_osa_report:
+        logger.info("#### Creating directory structrure")
+        try:
+            hpd.create_report_dirs(
+                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, do_combine=do_combine, obs_info=obs_info, osa_files=osa_files)
+        except Exception as e:
+            logger.error(e)
+        else:
+            logger.info("#### Creating directory structrure ... Done")
 
     logger.info("#### Creating report")
 
