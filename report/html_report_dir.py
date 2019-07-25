@@ -116,7 +116,7 @@ def create_report_dir_summary(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         "## Creating report directory for summary and linking files. Done")
 
 
-def create_report_dir_beam_weights(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_beamweights(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
     """Function to create the beamweights directory for the report
 
     Note:
