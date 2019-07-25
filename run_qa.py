@@ -258,7 +258,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             beamweights_msg = os.system(
-                'python /home/schulz/apercal/dataqa/run_beamweights_plots.py {0:d} {1:s} -t 20'.format(taskid_target, name_fluxcal))
+                'python /home/apercal/dataqa/run_beamweights_plots.py {0:d} {1:s} -t 20'.format(taskid_target, name_fluxcal))
             logger.info(
                 "Getting Beamweightss finished with msg {0}".format(beamweights_msg))
 
