@@ -53,16 +53,10 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
     beam_list = glob.glob(
         "{0:s}/{1:s}/[0-3][0-9]".format(qa_report_obs_path, page_type))
 
-    n_beams = len(beam_list)
-
-    if n_beams != 0:
+    if len(beam_list) != 0:
 
         html_code += """
                 <div class="w3-container w3-margin-top">\n"""
-
-        beam_list.sort()
-
-        beam_list = np.array(beam_list)
 
         # get a list of beam numbers
         #beam_nr_list = np.array([os.path.basename(beam) for beam in beam_list])
