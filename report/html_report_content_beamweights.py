@@ -98,7 +98,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
                 html_code += """
                             <a href="{0:s}/{1:02d}/{2:s}">
                                 <img name="slideshow{1:d}" class="w3-show" src="{0:s}/{1:02d}/{2:s}" style="width:100%">
-                             </a>\n""".format(page_type, beam_counter, os.path.basename(image_list[image_counter]))
+                             </a>\n""".format(page_type, beam_counter, os.path.basename(image_list[0]))
 
                 for image_counter in range(1, len(image_list)):
                     html_code += """
@@ -110,7 +110,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
                 html_code += """
                             <div class="w3-container w3-center">
                                 <h5 name="slideshow_label{0:d}">Beam {0:02d}, Subband {1:s}</h5>
-                            </div>""".format(beam_counter, os.path.basename(image_list[image_counter]).split("_")[3].replace("S", ""))
+                            </div>""".format(beam_counter, os.path.basename(image_list[0]).split("_")[3].replace("S", ""))
 
                 # write the buttons
                 html_code += """
