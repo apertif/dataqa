@@ -36,7 +36,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
     html_code += """
         <div class="w3-container w3-large">
             <p>
-                Here you can inspect the beamweights per beam for different subbands for the calibrator used in this observation: {0:s} 
+                Here you can inspect the beamweights per beam for different subbands for the calibrator used in this observation: {0:s}. For each individual beam, you can click your way through the subbands using the back and forward arrows. When you reach the last image, it starts at the beginning. 
             </p>
         </div>\n
         """.format(source_list[1])
