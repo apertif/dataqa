@@ -190,85 +190,91 @@ def main():
         logger.info("Number of subbands in {0} is {1}".format(
             os.path.basename(cal_file), num_subbands))
 
-        # Old implementation looped over beams (and I just picked a subband for simplicity, but this could be expanded to loop over subbands)
-        #
-        # plot_sub = 350
-        # for beam_nr in range(40):
-        #     ms_name = "/data/hess/apertif/{}/{}/WSRTA{}_B0{:02}.MS/APERTIF_CALIBRATION".format(args.cal_date, args.taskid,
-        #                                                                                         args.taskid, beam_nr)
-        #     print(ms_name)
-        #     cal = pt.table(ms_name, ack=False)
-        #     weights_gershape = cal.getcol('BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
-        #
-        #     for subband in range(num_subbands):
-        #         for antenna in range(num_antennas):
-        #             beamweights[beam_nr, subband, antenna] = convert_weights(weights_gershape[subband, antenna])
-        #
-        #     print("BEAM NUMBER {}".format(beam_nr))
-        #     # fig, axs = plt.subplots(3, 4, figsize=(15, 11))
-        #     fig, axs = plt.subplots(3, 4, figsize=(10, 7))
-        #     fig.suptitle("Beam {}; Subband {}".format(beam_nr, plot_sub), fontsize=14)
-        #     for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
-        #         ax.imshow(np.abs(beamweights[beam_nr, plot_sub, plot_ant]), cmap='plasma')
-        #         ax.set_title("Antenna " + str(plot_ant))
-        #         if plot_ant < 8:
-        #             ax.set_xticklabels([])
-        #         for i in range(61):
-        #             x, y = give_coord('X', i)
-        #             ax.text(x - 0.35, y + 0.18, 'X' + str(i), color='white', fontsize=5)
-        #             x, y = give_coord('Y', i)
-        #             ax.text(x - 0.35, y + 0.18, 'Y' + str(i), color='white', fontsize=5)
-        #
-        #     plt.savefig('/data/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.cal_date, args.cal_date,
-        #                                                                              beam_nr, plot_sub))
-        #     plt.close()
+        # in case there are no subbands or antennas better check
+        if num_subbands != 0 and num_antennas != 0:
 
-        # New implementation because I was just thinking of using a single beam and plotting a bunch of subbands. (quick and dirty solution)
-        # Beam is chosen by the user and saved in args.beam
-        # ms_name = "/home/hess/apertif/{}/{:02}/3C147.MS/APERTIF_CALIBRATION".format(
-        #     args.taskid, beam_nr)
-        # cal = pt.table(ms_name, ack=False)
+            # Old implementation looped over beams (and I just picked a subband for simplicity, but this could be expanded to loop over subbands)
+            #
+            # plot_sub = 350
+            # for beam_nr in range(40):
+            #     ms_name = "/data/hess/apertif/{}/{}/WSRTA{}_B0{:02}.MS/APERTIF_CALIBRATION".format(args.cal_date, args.taskid,
+            #                                                                                         args.taskid, beam_nr)
+            #     print(ms_name)
+            #     cal = pt.table(ms_name, ack=False)
+            #     weights_gershape = cal.getcol('BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
+            #
+            #     for subband in range(num_subbands):
+            #         for antenna in range(num_antennas):
+            #             beamweights[beam_nr, subband, antenna] = convert_weights(weights_gershape[subband, antenna])
+            #
+            #     print("BEAM NUMBER {}".format(beam_nr))
+            #     # fig, axs = plt.subplots(3, 4, figsize=(15, 11))
+            #     fig, axs = plt.subplots(3, 4, figsize=(10, 7))
+            #     fig.suptitle("Beam {}; Subband {}".format(beam_nr, plot_sub), fontsize=14)
+            #     for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
+            #         ax.imshow(np.abs(beamweights[beam_nr, plot_sub, plot_ant]), cmap='plasma')
+            #         ax.set_title("Antenna " + str(plot_ant))
+            #         if plot_ant < 8:
+            #             ax.set_xticklabels([])
+            #         for i in range(61):
+            #             x, y = give_coord('X', i)
+            #             ax.text(x - 0.35, y + 0.18, 'X' + str(i), color='white', fontsize=5)
+            #             x, y = give_coord('Y', i)
+            #             ax.text(x - 0.35, y + 0.18, 'Y' + str(i), color='white', fontsize=5)
+            #
+            #     plt.savefig('/data/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.cal_date, args.cal_date,
+            #                                                                              beam_nr, plot_sub))
+            #     plt.close()
 
-        logger.info("Getting weights")
-        weights_gershape = cal.getcol(
-            'BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
-        logger.info("Getting weights ... Done")
+            # New implementation because I was just thinking of using a single beam and plotting a bunch of subbands. (quick and dirty solution)
+            # Beam is chosen by the user and saved in args.beam
+            # ms_name = "/home/hess/apertif/{}/{:02}/3C147.MS/APERTIF_CALIBRATION".format(
+            #     args.taskid, beam_nr)
+            # cal = pt.table(ms_name, ack=False)
 
-        # parallelise it to plot faster
-        with pymp.Parallel(n_threads) as p:
-            # go throught the subband
-            for subband in p.range(0, num_subbands, subband_step):
-                for antenna in range(num_antennas):
-                    beamweights[beam_nr, subband, antenna] = convert_weights(
-                        weights_gershape[subband, antenna])
+            logger.info("Getting weights")
+            weights_gershape = cal.getcol(
+                'BEAM_FORMER_WEIGHTS').reshape((num_subbands, -1, 2, 64))
+            logger.info("Getting weights ... Done")
 
-                fig, axs = plt.subplots(3, 4, figsize=(10, 7))
-                fig.suptitle("Beam {}; Subband {}".format(
-                    beam_nr, subband), fontsize=14)
-                for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
-                    ax.imshow(
-                        np.abs(beamweights[beam_nr, subband, plot_ant]), cmap='plasma')
-                    ax.set_title("Antenna " + str(plot_ant))
-                    if plot_ant < 8:
-                        ax.set_xticklabels([])
-                    for i in range(61):
-                        x, y = give_coord('X', i)
-                        ax.text(x - 0.35, y + 0.18, 'X' + str(i),
-                                color='white', fontsize=5)
-                        x, y = give_coord('Y', i)
-                        ax.text(x - 0.35, y + 0.18, 'Y' + str(i),
-                                color='white', fontsize=5)
+            # parallelise it to plot faster
+            with pymp.Parallel(n_threads) as p:
+                # go throught the subband
+                for subband in p.range(0, num_subbands, subband_step):
+                    for antenna in range(num_antennas):
+                        beamweights[beam_nr, subband, antenna] = convert_weights(
+                            weights_gershape[subband, antenna])
 
-                plot_name = os.path.join(qa_beamweights_beam_dir, "{0}_{1}_B{2:02d}_S{3:03d}_weights.png".format(
-                    obs_id, flux_cal, beam_nr, subband))
-                # plt.savefig('/home/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.taskid, args.cal_date,
-                #                                                                          beam_nr, subband))
-                plt.savefig(plot_name, overwrite=True)
-                logger.info("Saving plot {}".format(plot_name))
-                plt.close('all')
+                    fig, axs = plt.subplots(3, 4, figsize=(10, 7))
+                    fig.suptitle("Beam {}; Subband {}".format(
+                        beam_nr, subband), fontsize=14)
+                    for ax, plot_ant in zip(np.array(axs).flatten(), range(num_antennas)):
+                        ax.imshow(
+                            np.abs(beamweights[beam_nr, subband, plot_ant]), cmap='plasma')
+                        ax.set_title("Antenna " + str(plot_ant))
+                        if plot_ant < 8:
+                            ax.set_xticklabels([])
+                        for i in range(61):
+                            x, y = give_coord('X', i)
+                            ax.text(x - 0.35, y + 0.18, 'X' + str(i),
+                                    color='white', fontsize=5)
+                            x, y = give_coord('Y', i)
+                            ax.text(x - 0.35, y + 0.18, 'Y' + str(i),
+                                    color='white', fontsize=5)
 
-        logger.info("Processing beam {0} ... Done ({1:.0f}s)".format(
-            beam_nr, time.time()-start_time_beam))
+                    plot_name = os.path.join(qa_beamweights_beam_dir, "{0}_{1}_B{2:02d}_S{3:03d}_weights.png".format(
+                        obs_id, flux_cal, beam_nr, subband))
+                    # plt.savefig('/home/hess/apertif/{}/{}_B0{:02}_S{:03}_weights.png'.format(args.taskid, args.cal_date,
+                    #                                                                          beam_nr, subband))
+                    plt.savefig(plot_name, overwrite=True)
+                    logger.info("Saving plot {}".format(plot_name))
+                    plt.close('all')
+
+            logger.info("Processing beam {0} ... Done ({1:.0f}s)".format(
+                beam_nr, time.time()-start_time_beam))
+        else:
+            logger.warning(
+                "Found {0} subbands and {1} antennas for beam {2} in {3}".format(num_subbands, num_antennas, beam_nr, flux_cal))
 
     logger.info("Getting beamweight plots for {0} ... Done ({1:.0f}s)".format(
         flux_cal, time.time()-start_time))
