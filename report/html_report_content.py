@@ -15,6 +15,7 @@ import numpy as np
 
 from html_report_content_observing_log import write_obs_content_observing_log
 from html_report_content_summary import write_obs_content_summary
+from html_report_content_beamweights import write_obs_content_beamweights
 from html_report_content_inspection_plots import write_obs_content_inspection_plots
 from html_report_content_preflag import write_obs_content_preflag
 from html_report_content_crosscal import write_obs_content_crosscal
@@ -60,6 +61,17 @@ def write_obs_content(page_name, qa_report_path, page_type='', obs_id='', obs_in
                 html_code, qa_report_obs_path, page_type, obs_info=obs_info, osa_report=osa_report)
         except Exception as e:
             logger.warning("Creating content for summary failed.")
+            logger.exception(e)
+
+    # create html content for subpage inspection plots
+    # ++++++++++++++++++++++++++++++++++++++++++++++++
+    if page_type == 'beamweights':
+
+        try:
+            html_code = write_obs_content_beamweights(
+                html_code, qa_report_obs_path, page_type, obs_info=obs_info)
+        except Exception as e:
+            logger.warning("Creating content for beamweights failed.")
             logger.exception(e)
 
     # create html content for subpage inspection plots
