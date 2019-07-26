@@ -400,7 +400,7 @@ def run():
     # display(notes_label)
     summary_notes = widgets.Textarea(value=summary_notes_value,
                                      placeholder='Nothing to add',
-                                     description='Summary:',
+                                     description='Notes:',
                                      disabled=False,
                                      layout=layout_area)
     display(summary_notes)
@@ -411,83 +411,107 @@ def run():
     def show_warning_label(module, request_info=False):
         if request_info:
             warning_label = widgets.HTML(
-                value="<p style='font-size:large; color:red'> Cannot save report. You have selected a status other then <i> Excellent </i> for <i>{0}</i>. Please provide at least the beam numbers and if possible a short statement </p>".format(module))
+                value="<p style='font-size:large; color:red'> Warning: You have selected a status other then <i> Excellent </i> for <i>{0}</i>. Please provide the beam numbers and a short statement </p>".format(module))
             display(warning_label)
         else:
             warning_label = widgets.HTML(
-                value="<p style='font-size:large; color:red'> Cannot save report. Please choose status for <i>{0}</i> </p>".format(module))
+                value="<p style='font-size:large; color:red'> Warning: <i>{0}</i> still unchecked. Please choose status for <i>{0}</i> </p>".format(module))
             display(warning_label)
 
     def save_info(b):
+
+        save_try_label = widgets.HTML(
+            value="<p style='font-size:large; color:black'> Trying to to save the report</p>")
+        display(save_try_label)
+
+        report_complete = True
 
         # Check that a name has been entered for the OSA (depracted)
         # and that each of the pipeline steps have been checked
         if obs_text.value == '':
             warning_label = widgets.HTML(
-                value="<p style='font-size:large; color:red'> Cannot save report. Please enter your Obs ID </p>")
+                value="<p style='font-size:large; color:red'> Warning: Obs ID is missing. Please enter your Obs ID </p>")
             display(warning_label)
-            return -1
+            report_complete = False
+            #return -1
         if osa_text.value == '':
             warning_label = widgets.HTML(
-                value="<p style='font-size:large; color:red'> Cannot save report. Please enter your name </p>")
+                value="<p style='font-size:large; color:red'> Warning: OSA name is missing. Please enter your name </p>")
             display(warning_label)
-            return -1
+            report_complete = False
+            #return -1
 
         if prepare_menu.value == 'Unchecked':
             show_warning_label("Prepare")
-            return -1
+            report_complete = False
+            #return -1
         elif prepare_menu.value != 'Excellent' and prepare_notes.value == "-":
             show_warning_label("Prepare", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         if preflag_menu.value == 'Unchecked':
             show_warning_label("Preflag")
-            return -1
+            report_complete = False
+            #return -1
         elif preflag_menu.value != 'Excellent' and preflag_notes.value == "-":
             show_warning_label("Preflag", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         if crosscal_menu.value == 'Unchecked':
             show_warning_label("Crosscal")
-            return -1
+            report_complete = False
+            #return -1
         elif crosscal_menu.value != 'Excellent' and crosscal_notes.value == "-":
             show_warning_label("Crosscal", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         if selfcal_menu.value == 'Unchecked':
             show_warning_label("Selfcal")
-            return -1
+            report_complete = False
+            #return -1
         elif selfcal_menu.value != 'Excellent' and selfcal_notes.value == "-":
             show_warning_label("Selfcal", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         if continuum_menu.value == 'Unchecked':
             show_warning_label("Continuum")
-            return -1
+            report_complete = False
+            #return -1
         elif continuum_menu.value != 'Excellent' and continuum_notes.value == "-":
             show_warning_label("Continuum", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         if polarisation_menu.value == 'Unchecked':
             show_warning_label("Polarisation")
-            return -1
+            report_complete = False
+            #return -1
         elif polarisation_menu.value != 'Excellent' and polarisation_notes.value == "-":
             show_warning_label("Polarisation", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         if line_menu.value == 'Unchecked':
             show_warning_label("Line")
-            return -1
+            report_complete = False
+            #return -1
         elif line_menu.value != 'Excellent' and line_notes.value == "-":
             show_warning_label("Line", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         if summary_menu.value == 'Unchecked':
             show_warning_label("Summary")
-            return -1
+            report_complete = False
+            #return -1
         elif summary_menu.value != 'Excellent' and summary_notes.value == "-":
             show_warning_label("Summary", request_info=True)
-            return -1
+            report_complete = False
+            #return -1
 
         # save as json
         # OrderedDict to preserve order when dumping to json
@@ -536,9 +560,14 @@ def run():
                 value="<p style='font-size:large; color:red'> ERROR: Could not save report. Please ask for help.</p>")
             display(warning_save_json_label)
         else:
-            save_json_label = widgets.HTML(
-                value="<p style='font-size:large; color:green'> Saved OSA report {0:s}. Thank You.</p>".format(json_file_name))
-            display(save_json_label)
+            if report_complete:
+                save_json_label = widgets.HTML(
+                    value="<p style='font-size:large; color:green'> Saved OSA report {0:s}. Thank You.</p>".format(json_file_name))
+                display(save_json_label)
+            else:
+                save_json_label = widgets.HTML(
+                    value="<p style='font-size:large; color:orange'> Saved incomplete OSA report {0:s}. Please remember to finish the report. Thank you.</p>".format(json_file_name))
+                display(save_json_label)
 
         # copy the file to the collection directory
         json_copy = "/data/apertif/qa/OSA_reports/{0}".format(json_file_name)
@@ -549,9 +578,14 @@ def run():
                 value="<p style='font-size:large; color:red'> ERROR: Could not create back up of report. Please ask for help</p>")
             display(warning_copy_json_label)
         else:
-            copy_json_label = widgets.HTML(
-                value="<p style='font-size:large; color:green'> Created backup of OSA report.</p>")
-            display(copy_json_label)
-            print("Created backup of OSA report")
+            if report_complete:
+                copy_json_label = widgets.HTML(
+                    value="<p style='font-size:large; color:green'> Created backup of OSA report.</p>")
+                display(copy_json_label)
+            else:
+                copy_json_label = widgets.HTML(
+                    value="<p style='font-size:large; color:orange'> Created backup of incomplete OSA report.</p>")
+                display(copy_json_label)
+
 
     btn.on_click(save_info)
