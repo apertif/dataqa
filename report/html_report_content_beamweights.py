@@ -75,7 +75,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
 
             # to properly make the gallery, open the row
             if beam_counter % 4 == 0:
-                html_code += """<div class="w3-row">\n"""
+                html_code += """<div class="w3-row w3-margin-top">\n"""
 
             # check that there are images for this beam
             if len(image_list) != 0:
