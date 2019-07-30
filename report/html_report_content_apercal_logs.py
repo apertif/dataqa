@@ -168,6 +168,8 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
 
                     if beam == "":
                         log_button_name = "Apercal log"
+                    elif beam == "line":
+                        log_button_name = "Apercal log for line"
                     else:
                         log_button_name = "Apercal log for beam {0:s}".format(
                             beam)
