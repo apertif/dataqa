@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import logging
+import pkg_resources
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,12 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         logger.info("Creating directory {}".format(cb_plot_dir))
     else:
         logger.info("Directory {} already exists".format(cb_plot_dir))
+
+    # get path for cboffset file
+    package_name = __name__
+    file_path = '/'.join(('', 'cboffsets.txt'))
+    cboffsets_file = pkg_resources.resource_string(
+        package_name, file_path)
 
     # first create the compound beam plot
     logger.info("Plotting compound beams")
