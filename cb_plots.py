@@ -68,7 +68,7 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
     package_name = __name__
     file_name = 'cb_offsets.txt'
     cboffsets_file = pkg_resources.resource_filename(
-        package_name, file_path)
+        package_name, file_name)
     logger.info(
         "Using file {0} for compound beam offsets".format(cboffsets_file))
 
