@@ -66,7 +66,7 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
 
     # get path for cboffset file
     package_name = __name__
-    file_path = '/'.join(('', 'cboffsets.txt'))
+    file_path = '/'.join(('', 'cb_offsets.txt'))
     cboffsets_file = pkg_resources.resource_string(
         package_name, file_path)
     logger.info(
