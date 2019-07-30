@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import logging
+import pkg_resources
 
 logger = logging.getLogger(__name__)
 
@@ -63,11 +64,20 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
     else:
         logger.info("Directory {} already exists".format(cb_plot_dir))
 
+    # get path for cboffset file
+    package_name = __name__
+    file_name = 'cb_offsets.txt'
+    cboffsets_file = pkg_resources.resource_filename(
+        package_name, file_name)
+    logger.info(
+        "Using file {0} for compound beam offsets".format(cboffsets_file))
+
     # first create the compound beam plot
     logger.info("Plotting compound beams")
     output_dir = cb_plot_dir
     plot_name = "{}_cb_overview".format(obs_id)
-    make_cb_beam_plot(outputdir=output_dir, outname=plot_name)
+    make_cb_beam_plot(outputdir=output_dir, outname=plot_name,
+                      cboffsets=cboffsets_file)
     logger.info("Plotting compound beams ... Done")
 
     # Create selfcal plots
@@ -78,12 +88,12 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         # first plot phase selfcal
         plot_name = "{}_selfcal_phase".format(obs_id)
         make_cb_plot_value(selfcal_summary_file, "targetbeams_phase_status",
-                           boolean=True, outputdir=output_dir, outname=plot_name)
+                           boolean=True, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
 
         # now plot amplitude selfcal
         plot_name = "{}_selfcal_amp".format(obs_id)
         make_cb_plot_value(selfcal_summary_file, "targetbeams_amp_status",
-                           boolean=True, outputdir=output_dir, outname=plot_name)
+                           boolean=True, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
         logger.info("Creating cb plot for selfcal ... Done")
     else:
         logger.warning("Could not find {}".format(selfcal_summary_file))
@@ -97,12 +107,12 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         # plot rms
         plot_name = "{}_continuum_rms".format(obs_id)
         make_cb_plot_value(continuum_summary_file, "RMS",
-                           goodrange=[10, 50], outputdir=output_dir, outname=plot_name)
+                           goodrange=[10, 50], outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
 
         # plot minor beam axis
         plot_name = "{}_continuum_beam_min".format(obs_id)
         make_cb_plot_value(continuum_summary_file, "BMIN",
-                           goodrange=[10, 15], outputdir=output_dir, outname=plot_name)
+                           goodrange=[10, 15], outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
         logger.info("Creating cb plot for continuum ... Done")
     else:
         logger.warning("Could not find {}".format(continuum_summary_file))
@@ -142,7 +152,7 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
             else:
                 goodrange = [0, 3]
             make_cb_plot_value(cube_data, "median_rms",
-                               goodrange=goodrange, outputdir=output_dir, outname=plot_name)
+                               goodrange=goodrange, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
 
         logger.info("Creating cb plot for line ... Done")
     else:
