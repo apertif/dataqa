@@ -86,7 +86,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
                 # create the slideshow for this beam
                 # open the slideshow div
                 html_code += """
-                        <div class="w3-content w3-display-container w3-quarter">\n"""
+                        <div class="w3-content w3-display-container w3-quarter w3-border">\n"""
 
                 # go through each plot and add elements to the slideshow
                 # the first element gets a different class value

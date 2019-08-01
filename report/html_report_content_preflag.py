@@ -186,7 +186,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                 html_code += """<div class="w3-row">\n"""
 
             html_code += """
-                <div class="w3-third">
+                <div class="w3-third w3-border">
                     <a href="{0:s}/{1:s}">
                         <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                     </a>
@@ -250,7 +250,7 @@ def write_obs_content_preflag(html_code, qa_report_obs_path, page_type, obs_info
                         html_code += """<div class="w3-row">\n"""
 
                     html_code += """
-                        <div class="w3-third">
+                        <div class="w3-third w3-border">
                             <a href="{0:s}/{1:s}/{2:s}">
                                 <img src="{0:s}/{1:s}/{2:s}" alt="No image" style="width:100%">
                             </a>

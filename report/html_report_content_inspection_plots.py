@@ -55,7 +55,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                     html_code += """<div class="w3-row">\n"""
 
                 html_code += """
-                    <div class="w3-quarter">
+                    <div class="w3-quarter w3-border">
                         <a href="{0:s}/{1:s}">
                             <img src="{0:s}/{1:s}" alt="No image" style="width:100%">
                         </a>
@@ -127,7 +127,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
 
                         # no caption need for the image
                         html_code += """
-                            <div class="w3-quarter">
+                            <div class="w3-quarter w3-border">
                                 <a href="{0:s}/{1:s}/{2:s}">
                                     <img src="{0:s}/{1:s}/{2:s}" alt="No image" style="width:100%">
                                 </a>
@@ -223,7 +223,7 @@ def write_obs_content_inspection_plots(html_code, qa_report_obs_path, page_type,
                                 # if there is an image plot it
                                 if image_exists:
                                     html_code += """
-                                        <div class="w3-col" style="width:20%">
+                                        <div class="w3-col w3-border" style="width:20%">
                                             <a href="{0:s}/{1:s}/{2:s}/{3:s}">
                                                 <img src="{0:s}/{1:s}/{2:s}/{3:s}" alt="No image", width="100%">
                                             </a>
