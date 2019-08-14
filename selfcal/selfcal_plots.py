@@ -104,7 +104,7 @@ class AMPSols(ScanData):
             ampdata = "{0}/selfcal/{1}_amp.mir".format(path, self.sourcename)
             if os.path.isdir(ampdata):
                 try:
-                    ampgains, times = readmirlog.get_phases(ampdata)
+                    ampgains, times = readmirlog.get_amps(ampdata)
                     self.ampants[i] = misc.create_antnames()
                     self.amptimes[i] = times
                     self.amps[i] = ampgains
@@ -128,7 +128,7 @@ class AMPSols(ScanData):
                     np.nan), np.array(np.nan), np.array(np.nan)
 
     def plot_amp(self, imagepath=None):
-        """Plot phase, one plot per antenna"""
+        """Plot amplitudes, one plot per antenna"""
         imagepath = self.create_imagepath(imagepath)
         ant_names = misc.create_antnames()
         for a, ant in enumerate(ant_names):
