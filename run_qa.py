@@ -186,7 +186,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
         # for the flux and pol calibrator, they have to be run on every node
 
         # get inspection plots for target
-        if host_name == "happili-01" or host_name == "happili-05":
+        if host_name == "happili-01":
 
             logger.info(
                 "#### Inspection plot QA for {}...".format(name_target))
