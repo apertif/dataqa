@@ -36,7 +36,7 @@ def get_inspection_plot_list(is_calibrator=False):
                           '_beams_waterfall_amplitude_autoscale_XX',
                           '_beams_waterfall_amplitude_noscale_XX',
                           '_beams_waterfall_phase_autoscale_XX',
-                          '_beams_waterfall_amplitude_noscale_XX',
+                          '_beams_waterfall_phase_noscale_XX',
                           '_beams_xx',
                           '_beams_yy']
 
