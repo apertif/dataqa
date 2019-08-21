@@ -46,7 +46,8 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
             "{0:s}/{1:s}/apercal*_log_{2:s}.txt".format(qa_report_obs_path, page_type, node))
 
         # get the log files in linke to the apercal_log report directory:
-        csv_file = "{0:s}/{1:s}/apercal_log_timeinfo_{2:s}.csv".format(
+        # delibrately used the wrong name to avoid running this part of the code
+        csv_file = "{0:s}/{1:s}/apercal_log_timeinfo_{2:s}_wrong_name.csv".format(
             qa_report_obs_path, page_type, node)
 
         button_name = "Apercal performance on {0:s}".format(node)
