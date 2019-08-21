@@ -186,8 +186,9 @@ def main():
     # logging.basicConfig(filename='{0:s}/create_report.log'.format(qa_dir), level=logging.DEBUG,
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
-    # getting timing measurment for apercal
-    if not add_osa_report and not args.do_not_read_timing:
+    # getting timing measurment for apercal only in trigger mode
+    # if not add_osa_report and not args.do_not_read_timing:
+    if args.trigger_mode:
         try:
             get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
         except Exception as e:
