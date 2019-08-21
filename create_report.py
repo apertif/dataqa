@@ -71,7 +71,7 @@ def main():
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
 
-    parser.add_argument("--read_timing", action="store_true", default=False,
+    parser.add_argument("--do_not_read_timing", action="store_true", default=False,
                         help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
 
     parser.add_argument("--page_only", action="store_true", default=False,
@@ -187,7 +187,7 @@ def main():
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
     # getting timing measurment for apercal
-    if not add_osa_report and args.read_timing:
+    if not add_osa_report and not args.do_not_read_timing:
         try:
             get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
         except Exception as e:
