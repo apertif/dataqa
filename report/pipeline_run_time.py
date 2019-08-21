@@ -59,7 +59,8 @@ def get_pipeline_run_time(obs_id, trigger_mode=False):
                              "Running convert ... Done",
                              "Running selfcal and/or continuum and/or polarisation ... Done",
                              "Running line ... Done",
-                             "Running transfer ... Done"]
+                             "Running transfer ... Done",
+                             "Apercal finished after"]
 
     # go through the list of data directories
     for k in range(len(data_dir_list)):
