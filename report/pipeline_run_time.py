@@ -111,7 +111,11 @@ def get_pipeline_run_time(obs_id, trigger_mode=False):
                                     results.append(time_str)
 
                                 # the line that was found
-                                lines_found.append(line)
+                                if line == original_useful_lines[5]:
+                                    lines_found.append(
+                                        line.replace(" and/or ", "+"))
+                                else:
+                                    lines_found.append(line)
 
                                 # remove the useful line that was found
                                 useful_lines.remove(line)
