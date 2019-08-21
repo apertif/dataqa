@@ -71,7 +71,7 @@ def main():
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
 
-    parser.add_argument("--read_timing", action="store_true", default=False,
+    parser.add_argument("--do_not_read_timing", action="store_true", default=False,
                         help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
 
     parser.add_argument("--page_only", action="store_true", default=False,
@@ -186,12 +186,13 @@ def main():
     # logging.basicConfig(filename='{0:s}/create_report.log'.format(qa_dir), level=logging.DEBUG,
     #                     format='%(asctime)s - %(levelname)s: %(message)s')
 
-    # getting timing measurment for apercal
-    if not add_osa_report and args.read_timing:
+    # getting timing measurment for apercal only in trigger mode
+    # if not add_osa_report and not args.do_not_read_timing:
+    if args.trigger_mode:
         try:
             get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
         except Exception as e:
-            logger.error(e)
+            logger.exception(e)
 
     # the subpages to be created
     subpages = ['observing_log', 'summary',  'beamweights', 'inspection_plots', 'preflag', 'crosscal',
