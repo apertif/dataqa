@@ -192,7 +192,7 @@ def main():
         try:
             get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
         except Exception as e:
-            logger.error(e)
+            logger.exception(e)
 
     # the subpages to be created
     subpages = ['observing_log', 'summary',  'beamweights', 'inspection_plots', 'preflag', 'crosscal',
