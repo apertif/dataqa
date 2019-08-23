@@ -93,14 +93,14 @@ def write_obs_content_line(html_code, qa_report_obs_path, page_type):
             cube_list = glob.glob(
                 "{0:s}/{1:s}/[0-3][0-9]/*cube{2:d}*.png".format(qa_report_obs_path, page_type, cube_counter))
 
+            div_name = "gallery_cube_{0}".format(cube_counter)
+
             # if there plots for this cube, create the gallery
             if len(cube_list) != 0:
 
                 cube_list.sort()
 
                 cube_list = np.array(cube_list)
-
-                div_name = "gallery_cube_{0}".format(cube_counter)
 
                 # create button for source
                 html_code += """
