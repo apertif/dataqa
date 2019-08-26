@@ -228,7 +228,7 @@ def main():
     else:
         # do things that should only happen on happili-01 when the OSA runs this function
         if not args.trigger_mode and not args.page_only:
-            if host_name == "happili-01" or single_node:
+            if host_name == "happili-01" or args.single_node:
                 # go through some of the subpages and process numpy files
                 for page in subpages:
                     # exclude non-apercal modules (and mosaic)
