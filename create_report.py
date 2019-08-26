@@ -65,8 +65,8 @@ def main():
     parser.add_argument("-b", "--basedir", type=str,
                         help='Base directory where the obs id is')
 
-                        help='Add only the osa report to the webpage')
     parser.add_argument("-a", "--add_osa_report", action="store_true", default=False,
+                        help='Add only the osa report to the webpage')
 
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
@@ -80,9 +80,9 @@ def main():
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
                         help='Set it to run Autocal triggering mode automatically after Apercal.')
-    
+
     parser.add_argument("--single_node", action="store_true", default=False,
-                        help='Set it to run QA on a single node. Note, this is different from trigger mode.')
+                        help='Set it to run QA on a single node and get same result as if running like the OSA. Note, this is different from trigger mode.')
 
     args = parser.parse_args()
 
@@ -259,7 +259,8 @@ def main():
                 # create dish delay plot
                 try:
                     logger.info("Getting dish delay plot")
-                    get_dish_delay_plots(obs_id, obs_info['Flux_Calibrator'][0])
+                    get_dish_delay_plots(
+                        obs_id, obs_info['Flux_Calibrator'][0])
                 except Exception as e:
                     logger.warning("Getting dish delay plot ... Failed")
                     logger.exception(e)
