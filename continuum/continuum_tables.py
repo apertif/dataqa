@@ -35,7 +35,9 @@ def merge_continuum_image_properties_table(obs_id, qa_dir, single_node=False):
         if not single_node:
             cont_data_1_beams = cont_data_1[np.where(
                 (cont_data_1['beam'] >= 0) & (cont_data_1['beam'] <= 9))]
-        combined_table.append(cont_data_1_beams)
+            combined_table.append(cont_data_1_beams)
+        else:
+            combined_table.append(cont_data_1)
     else:
         logger.warning("Could not find {}".format(cont_table_file_1))
 
