@@ -86,15 +86,26 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         qa_dir, "selfcal/{}_selfcal_summary.csv".format(obs_id))
     if os.path.exists(selfcal_summary_file):
         # first plot phase selfcal
-        plot_name = "{}_selfcal_phase".format(obs_id)
-        make_cb_plot_value(selfcal_summary_file, "targetbeams_phase_status",
-                           boolean=True, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+        try:
+            plot_name = "{}_selfcal_phase".format(obs_id)
+            make_cb_plot_value(selfcal_summary_file, "targetbeams_phase_status",
+                               boolean=True, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+        except Exception as e:
+            logger.warning("Creating cb plot for selfcal phase ... Failed")
+            logger.exception(e)
+        else:
+            logger.info("Creating cb plot for selfcal phase ... Done")
 
         # now plot amplitude selfcal
-        plot_name = "{}_selfcal_amp".format(obs_id)
-        make_cb_plot_value(selfcal_summary_file, "targetbeams_amp_status",
-                           boolean=True, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
-        logger.info("Creating cb plot for selfcal ... Done")
+        try:
+            plot_name = "{}_selfcal_amp".format(obs_id)
+            make_cb_plot_value(selfcal_summary_file, "targetbeams_amp_status",
+                               boolean=True, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+        except Exception as e:
+            logger.warning("Creating cb plot for selfcal amplitude ... Failed")
+            logger.exception(e)
+        else:
+            logger.info("Creating cb plot for selfcal amplitude ... Done")
     else:
         logger.warning("Could not find {}".format(selfcal_summary_file))
         logger.info("Creating cb plot for selfcal ... Failed")
@@ -105,15 +116,27 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
         qa_dir, "continuum/{}_combined_continuum_image_properties.csv".format(obs_id))
     if os.path.exists(continuum_summary_file):
         # plot rms
-        plot_name = "{}_continuum_rms".format(obs_id)
-        make_cb_plot_value(continuum_summary_file, "RMS",
-                           goodrange=[10, 50], outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+        try:
+            plot_name = "{}_continuum_rms".format(obs_id)
+            make_cb_plot_value(continuum_summary_file, "RMS",
+                               goodrange=[10, 50], outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+        except Exception as e:
+            logger.warning("Creating cb plot for continuum rms ... Failed")
+            logger.exception(e)
+        else:
+            logger.info("Creating cb plot for continuum rms ... Done")
 
         # plot minor beam axis
-        plot_name = "{}_continuum_beam_min".format(obs_id)
-        make_cb_plot_value(continuum_summary_file, "BMIN",
-                           goodrange=[10, 15], outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
-        logger.info("Creating cb plot for continuum ... Done")
+        try:
+            plot_name = "{}_continuum_beam_min".format(obs_id)
+            make_cb_plot_value(continuum_summary_file, "BMIN",
+                               goodrange=[10, 15], outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+        except Exception as e:
+            logger.warning(
+                "Creating cb plot for continuum beam min ... Failed")
+            logger.exception(e)
+        else:
+            logger.info("Creating cb plot for continuum beam min ... Done")
     else:
         logger.warning("Could not find {}".format(continuum_summary_file))
         logger.info("Creating cb plot for continuum ... Failed")
@@ -123,6 +146,7 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
     line_summary_file = os.path.join(
         qa_dir, "line/{}_HI_cube_noise_statistics.ecsv".format(obs_id))
     if os.path.exists(line_summary_file):
+
         # read the file
         line_summary_data = Table.read(line_summary_file, format="ascii.ecsv")
 
@@ -151,8 +175,12 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
                 goodrange = [0, 2]
             else:
                 goodrange = [0, 3]
-            make_cb_plot_value(cube_data, "median_rms",
-                               goodrange=goodrange, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+
+            try:
+                make_cb_plot_value(cube_data, "median_rms",
+                                   goodrange=goodrange, outputdir=output_dir, outname=plot_name, cboffsets=cboffsets_file)
+            except Exception as e:
+                logger.warning("Creating cb plot for line ... Failed")
 
         logger.info("Creating cb plot for line ... Done")
     else:
