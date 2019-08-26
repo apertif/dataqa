@@ -17,7 +17,7 @@ from shutil import copy2, copy
 logger = logging.getLogger(__name__)
 
 
-def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False):
     """Function to create the observing log  for the report
 
     Note:
@@ -48,7 +48,7 @@ def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_m
     #             qa_dir_report_obs_subpage, os.path.basename(image))
 
     #         # change to relative link when in trigger mode
-    #         if trigger_mode:
+    #         if trigger_mode or single_node:
     #             image = image.replace(
     #                 qa_dir, "../../../")
 
@@ -66,7 +66,7 @@ def create_report_dir_observing_log(qa_dir, qa_dir_report_obs_subpage, trigger_m
     #     "## Creating report directory for inspection plots and linking files. Done")
 
 
-def create_report_dir_summary(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_summary(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False):
     """Function to create the summary directory for the report
 
     Note:
@@ -98,7 +98,7 @@ def create_report_dir_summary(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
             # change to relative link when in trigger mode
-            if trigger_mode:
+            if trigger_mode or single_node:
                 image = image.replace(
                     qa_dir, "../../../")
 
@@ -116,7 +116,7 @@ def create_report_dir_summary(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fa
         "## Creating report directory for summary and linking files. Done")
 
 
-def create_report_dir_beamweights(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_beamweights(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False):
     """Function to create the beamweights directory for the report
 
     Note:
@@ -186,7 +186,7 @@ def create_report_dir_beamweights(qa_dir, qa_dir_report_obs_subpage, trigger_mod
                             qa_dir_report_obs_subpage_beamweights_beam, os.path.basename(image))
 
                         # change to relative link when in trigger mode
-                        if trigger_mode:
+                        if trigger_mode or single_node:
                             image = image.replace(
                                 qa_dir, "../../../../")
 
@@ -209,7 +209,7 @@ def create_report_dir_beamweights(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         "## Creating report directory for beamweights and linking files. Done")
 
 
-def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, obs_info=None):
+def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False, obs_info=None):
     """Function to create the inspection plot directory for the report
 
     Note:
@@ -245,7 +245,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                     qa_dir_report_obs_subpage, os.path.basename(image))
 
                 # change to relative link when in trigger mode
-                if trigger_mode:
+                if trigger_mode or single_node:
                     image = image.replace(
                         qa_dir, "../../../")
 
@@ -319,7 +319,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                                 qa_dir_report_obs_subpage_src, os.path.basename(image))
 
                             # change to relative link when in trigger mode
-                            if trigger_mode:
+                            if trigger_mode or single_node:
                                 image = image.replace(
                                     qa_dir, "../../../../")
 
@@ -367,7 +367,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                                     logger.info("Linking {0} to {1}".format(image, link_name))
 
                                     # change to relative link when in trigger mode
-                                    if trigger_mode:
+                                    if trigger_mode or single_node:
                                         image=image.replace(
                                             qa_dir, "../../../../../")
 
@@ -417,7 +417,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
             qa_dir_report_obs_subpage, os.path.basename(preflag_summary_file))
 
         # change to relative link when in trigger mode
-        if trigger_mode:
+        if trigger_mode or single_node:
             preflag_summary_file = preflag_summary_file.replace(
                 qa_dir, "../../../")
 
@@ -449,7 +449,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                     qa_dir_report_obs_subpage, os.path.basename(image))
 
                 # change to relative link when in trigger mode
-                if trigger_mode:
+                if trigger_mode or single_node:
                     image=image.replace(
                         qa_dir, "../../../")
 
@@ -508,7 +508,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                             qa_dir_report_obs_subpage_preflag_beam, os.path.basename(image))
 
                         # change to relative link when in trigger mode
-                        if trigger_mode:
+                        if trigger_mode or single_node:
                             image=image.replace(
                                 qa_dir, "../../../../")
 
@@ -528,7 +528,7 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                 "No beams found for preflag QA in {0:s}".format(qa_preflag_dir))
 
 
-def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
+def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False, do_combine=False):
     """Function to create the create directory for the report
 
     Note:
@@ -567,7 +567,7 @@ def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigge
             qa_dir_report_obs_subpage, os.path.basename(crosscal_summary_file))
 
         # change to relative link when in trigger mode
-        if trigger_mode:
+        if trigger_mode or single_node:
             crosscal_summary_file = crosscal_summary_file.replace(
                 qa_dir, "../../../")
 
@@ -599,7 +599,7 @@ def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigge
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
             # change to relative link when in trigger mode
-            if trigger_mode:
+            if trigger_mode or single_node:
                 image = image.replace(
                     qa_dir, "../../../")
 
@@ -612,7 +612,7 @@ def create_report_dir_crosscal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigge
     else:
         logger.warning("No images found for crosscal.")
 
-def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, do_combine=False):
+def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False, do_combine=False):
     """Function to create the selfcal directory for the report
 
     Note:
@@ -654,7 +654,7 @@ def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
             qa_dir_report_obs_subpage, os.path.basename(selfcal_summary_file))
 
         # change to relative link when in trigger mode
-        if trigger_mode:
+        if trigger_mode or single_node:
             selfcal_summary_file = selfcal_summary_file.replace(
                 qa_dir, "../../../")
 
@@ -715,7 +715,7 @@ def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                             qa_dir_report_obs_subpage_selfcal_beam, os.path.basename(image))
 
                         # change to relative link when in trigger mode
-                        if trigger_mode:
+                        if trigger_mode or single_node:
                             image = image.replace(
                                 qa_dir, "../../../../")
 
@@ -746,7 +746,7 @@ def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
             # change to relative link when in trigger mode
-            if trigger_mode:
+            if trigger_mode or single_node:
                 image = image.replace(
                     qa_dir, "../../../")
 
@@ -775,7 +775,7 @@ def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
             # change to relative link when in trigger mode
-            if trigger_mode:
+            if trigger_mode or single_node:
                 image = image.replace(
                     qa_dir, "../../../")
 
@@ -840,7 +840,7 @@ def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
 #        "## Creating report directory for selfcal and linking files. Done")
 
 
-def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False):
     """Function to create the continuum directory for the report
 
     Note:
@@ -868,7 +868,7 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
             qa_dir_report_obs_subpage, os.path.basename(continuum_summary_file))
 
         # change to relative link when in trigger mode
-        if trigger_mode:
+        if trigger_mode or single_node:
             continuum_summary_file = continuum_summary_file.replace(
                 qa_dir, "../../../")
 
@@ -892,7 +892,7 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
             qa_dir_report_obs_subpage, os.path.basename(continuum_image_properties))
 
         # change to relative link when in trigger mode
-        if trigger_mode:
+        if trigger_mode or single_node:
             continuum_image_properties = continuum_image_properties.replace(
                 qa_dir, "../../../")
 
@@ -956,7 +956,7 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
                             qa_dir_report_obs_subpage_continuum_beam, os.path.basename(image))
 
                         # change to relative link when in trigger mode
-                        if trigger_mode:
+                        if trigger_mode or single_node:
                             image = image.replace(
                                 qa_dir, "../../../../")
 
@@ -984,7 +984,7 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
                             qa_dir_report_obs_subpage_continuum_beam, os.path.basename(validation_tool_dir))
 
                         # change to relative link when in trigger mode
-                        if trigger_mode:
+                        if trigger_mode or single_node:
                             validation_tool_dir = validation_tool_dir.replace(
                                 qa_dir, "../../../../")
 
@@ -1004,7 +1004,7 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
             logger.warning("No beams found for continuum found")
 
 
-def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False):
     """Function to create the line directory for the report
 
     Note:
@@ -1068,7 +1068,7 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False
                             qa_dir_report_obs_subpage_line_beam, os.path.basename(image))
 
                         # change to relative link when in trigger mode
-                        if trigger_mode:
+                        if trigger_mode or single_node:
                             image = image.replace(
                                 qa_dir, "../../../../")
 
@@ -1085,7 +1085,7 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False
             logger.warning("No beams found for line found")
 
 
-def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False):
     """Function to create the mosaic directory for the report
 
     Note:
@@ -1115,7 +1115,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
                 qa_dir_report_obs_subpage, os.path.basename(image))
 
             # change to relative link when in trigger mode
-            if trigger_mode:
+            if trigger_mode or single_node:
                 image = image.replace(
                     qa_dir, "../../../moasic/")
 
@@ -1142,7 +1142,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
                 qa_dir_report_obs_subpage, os.path.basename(validation_tool_dir))
 
             # change to relative link when in trigger mode
-            if trigger_mode:
+            if trigger_mode or single_node:
                 validation_tool_dir = validation_tool_dir.replace(
                     qa_dir, "../../../")
 
@@ -1158,7 +1158,7 @@ def create_report_dir_mosaic(qa_dir, qa_dir_report_obs_subpage, trigger_mode=Fal
         logger.warning("No validation tool output found for mosaic")
 
 
-def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False):
+def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False, single_node=False):
     """Function to create the apercal log directory for the report
 
     Note:
@@ -1193,7 +1193,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
 
         if os.path.exists(apercal_log_file):
 
-            if trigger_mode:
+            if trigger_mode or single_node:
                 apercal_log_file = apercal_log_file.replace(qa_dir.replace("qa/",""),"../../../../")
 
             # rename the link to the log file according to host
@@ -1274,7 +1274,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
                 qa_dir_report_obs_subpage, os.path.basename(time_file))
 
             # change to relative link when in trigger mode
-            if trigger_mode:
+            if trigger_mode or single_node:
                 time_file = time_file.replace(
                     qa_dir, "../../../")
 
@@ -1289,7 +1289,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
             "Did not fine time measurement files in {0:s}apercal_performance/".format(qa_dir))
 
 
-def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, do_combine=False, obs_info=None, osa_files=None):
+def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigger_mode=False, single_node=False, do_combine=False, obs_info=None, osa_files=None):
     """Function to create the directory structure of the report document
 
     Files that are required will be linked to there.
@@ -1337,7 +1337,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
     
     # copy the OSA files
     if osa_files is not None:
-        if not trigger_mode:
+        if not trigger_mode or single_node:
             for osa_file in osa_files:
                 try:
                     copy(osa_file, "{0:s}/{1:s}".format(qa_dir_report,
@@ -1382,7 +1382,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_observing_log(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
         
@@ -1392,7 +1392,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_summary(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
         
@@ -1402,7 +1402,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_beamweights(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
 
@@ -1411,7 +1411,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
         if page == "inspection_plots":
 
             try:
-                create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, obs_info=obs_info)
+                create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node, obs_info=obs_info)
             except Exception as e:
                 logger.exception(e)
 
@@ -1421,7 +1421,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_preflag(
-                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
 
@@ -1431,7 +1431,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_crosscal(
-                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node, do_combine=do_combine)
             except Exception as e:
                 logger.exception(e)
 
@@ -1441,7 +1441,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_selfcal(
-                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, do_combine=do_combine)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node, do_combine=do_combine)
             except Exception as e:
                 logger.exception(e)
 
@@ -1451,7 +1451,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_continuum(
-                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
 
@@ -1461,7 +1461,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_line(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
 
@@ -1471,7 +1471,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_mosaic(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
 
@@ -1481,7 +1481,7 @@ def create_report_dirs(obs_id, qa_dir, subpages, css_file='', js_file='', trigge
 
             try:
                 create_report_dir_apercal_log(
-                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode)
+                    qa_dir, qa_dir_report_obs_subpage, trigger_mode=trigger_mode, single_node=single_node)
             except Exception as e:
                 logger.exception(e)
         
