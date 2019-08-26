@@ -65,8 +65,8 @@ def main():
     parser.add_argument("-b", "--basedir", type=str,
                         help='Base directory where the obs id is')
 
-    parser.add_argument("-a", "--add_osa_report", action="store_true", default=False,
                         help='Add only the osa report to the webpage')
+    parser.add_argument("-a", "--add_osa_report", action="store_true", default=False,
 
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
@@ -80,6 +80,9 @@ def main():
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
                         help='Set it to run Autocal triggering mode automatically after Apercal.')
+    
+    parser.add_argument("--single_node", action="store_true", default=False,
+                        help='Set it to run QA on a single node. Note, this is different from trigger mode.')
 
     args = parser.parse_args()
 
@@ -169,6 +172,9 @@ def main():
     if args.trigger_mode:
         logger.info(
             "--> Running report QA in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
+    elif args.single_node:
+        logger.info(
+            "--> Running report QA in single-node mode. Looking only for data processed by Apercal on {0:s} <--".format(host_name))
     elif do_combine:
         logger.info("Combining QAs from different happilis")
         if host_name != "happili-01":
@@ -188,7 +194,7 @@ def main():
 
     # getting timing measurment for apercal only in trigger mode
     # if not add_osa_report and not args.do_not_read_timing:
-    if args.trigger_mode:
+    if args.trigger_mode or args.single_node:
         try:
             get_pipeline_run_time(obs_id, trigger_mode=args.trigger_mode)
         except Exception as e:
@@ -221,53 +227,54 @@ def main():
         return -1
     else:
         # do things that should only happen on happili-01 when the OSA runs this function
-        if not args.trigger_mode and host_name == "happili-01" and not args.page_only:
-            # go through some of the subpages and process numpy files
-            for page in subpages:
-                # exclude non-apercal modules (and mosaic)
-                if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
-                    # just run it on preflag for now
-                    if page == "preflag" or page == "crosscal" or page == "convert" or page == "selfcal" or page == "continuum":
-                        try:
-                            logger.info(
-                                "## Getting summary table for {}".format(page))
-                            make_nptabel_csv(
-                                obs_id, page, output_path=os.path.join(qa_dir, page))
-                        except Exception as e:
-                            logger.warning(
-                                "## Getting summary table for {} failed".format(page))
-                            logger.exception(e)
-                        else:
-                            logger.info(
-                                "## Getting summary table for {} ... Done".format(page))
+        if not args.trigger_mode and not args.page_only:
+            if host_name == "happili-01" or single_node:
+                # go through some of the subpages and process numpy files
+                for page in subpages:
+                    # exclude non-apercal modules (and mosaic)
+                    if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
+                        # just run it on preflag for now
+                        if page == "preflag" or page == "crosscal" or page == "convert" or page == "selfcal" or page == "continuum":
+                            try:
+                                logger.info(
+                                    "## Getting summary table for {}".format(page))
+                                make_nptabel_csv(
+                                    obs_id, page, output_path=os.path.join(qa_dir, page))
+                            except Exception as e:
+                                logger.warning(
+                                    "## Getting summary table for {} failed".format(page))
+                                logger.exception(e)
+                            else:
+                                logger.info(
+                                    "## Getting summary table for {} ... Done".format(page))
 
-                # merge the continuum image properties
-                if page == 'continuum':
-                    merge_continuum_image_properties_table(obs_id, qa_dir)
+                    # merge the continuum image properties
+                    if page == 'continuum':
+                        merge_continuum_image_properties_table(obs_id, qa_dir)
 
-                # get line statistics
-                if page == 'line':
-                    combine_cube_stats(obs_id, qa_dir)
+                    # get line statistics
+                    if page == 'line':
+                        combine_cube_stats(obs_id, qa_dir)
 
-            # create dish delay plot
-            try:
-                logger.info("Getting dish delay plot")
-                get_dish_delay_plots(obs_id, obs_info['Flux_Calibrator'][0])
-            except Exception as e:
-                logger.warning("Getting dish delay plot ... Failed")
-                logger.exception(e)
-            else:
-                logger.info("Getting dish delay plot ... Done")
+                # create dish delay plot
+                try:
+                    logger.info("Getting dish delay plot")
+                    get_dish_delay_plots(obs_id, obs_info['Flux_Calibrator'][0])
+                except Exception as e:
+                    logger.warning("Getting dish delay plot ... Failed")
+                    logger.exception(e)
+                else:
+                    logger.info("Getting dish delay plot ... Done")
 
-            # create compound beam plots
-            try:
-                logger.info("Getting compound beam plots")
-                make_cb_plots_for_report(obs_id, qa_dir)
-            except Exception as e:
-                logger.warning("Getting compound beam plots ... Failed")
-                logger.exception(e)
-            else:
-                logger.info("Getting compound beam plots ... Done")
+                # create compound beam plots
+                try:
+                    logger.info("Getting compound beam plots")
+                    make_cb_plots_for_report(obs_id, qa_dir)
+                except Exception as e:
+                    logger.warning("Getting compound beam plots ... Failed")
+                    logger.exception(e)
+                else:
+                    logger.info("Getting compound beam plots ... Done")
 
     # Create directory structure for the report
     if not add_osa_report:
