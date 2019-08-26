@@ -282,7 +282,7 @@ def main():
         logger.info("#### Creating directory structrure")
         try:
             hpd.create_report_dirs(
-                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, single_node=args.single_node do_combine=do_combine, obs_info=obs_info, osa_files=osa_files)
+                obs_id, qa_dir, subpages, css_file=css_file_name, js_file=js_file_name, trigger_mode=args.trigger_mode, single_node=args.single_node, do_combine=do_combine, obs_info=obs_info, osa_files=osa_files)
         except Exception as e:
             logger.error(e)
         else:
