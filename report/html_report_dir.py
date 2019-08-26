@@ -1179,7 +1179,7 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
 
     # this one does not take parallelisation into account
     # only the code for running it on happili-01 does
-    if host_name != "happili-01" or trigger_mode:
+    if host_name != "happili-01" or trigger_mode or single_node:
 
         logger.warning(
             "Cannot account for parallalized log files unless running from happili-01 !!!")
