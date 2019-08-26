@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def merge_continuum_image_properties_table(obs_id, qa_dir):
+def merge_continuum_image_properties_table(obs_id, qa_dir, single_node=False):
     """
     This function combines the image properties tables from the different 
     """
@@ -30,8 +30,11 @@ def merge_continuum_image_properties_table(obs_id, qa_dir):
     # check that table exists, then get content
     if os.path.exists(cont_table_file_1):
         cont_data_1 = Table.read(cont_table_file_1, format="ascii.csv")
-        cont_data_1_beams = cont_data_1[np.where(
-            (cont_data_1['beam'] >= 0) & (cont_data_1['beam'] <= 9))]
+
+        # if everything is on one node, the next line is not necessary
+        if not single_node:
+            cont_data_1_beams = cont_data_1[np.where(
+                (cont_data_1['beam'] >= 0) & (cont_data_1['beam'] <= 9))]
         combined_table.append(cont_data_1_beams)
     else:
         logger.warning("Could not find {}".format(cont_table_file_1))

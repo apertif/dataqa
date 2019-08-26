@@ -250,11 +250,13 @@ def main():
 
                     # merge the continuum image properties
                     if page == 'continuum':
-                        merge_continuum_image_properties_table(obs_id, qa_dir)
+                        merge_continuum_image_properties_table(
+                            obs_id, qa_dir, single_node=args.single_node)
 
                     # get line statistics
                     if page == 'line':
-                        combine_cube_stats(obs_id, qa_dir)
+                        combine_cube_stats(
+                            obs_id, qa_dir, single_node=args.single_node)
 
                 # create dish delay plot
                 try:

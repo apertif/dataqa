@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 #    A, mu, sigma = p
 #    return A*np.exp(-(x-mu)**2/(2.*sigma**2))
 
-def combine_cube_stats(obs_id, qa_dir):
+def combine_cube_stats(obs_id, qa_dir, single_node=False):
     """
     Function to combine the statistic information from all cubes
     """
@@ -48,7 +48,7 @@ def combine_cube_stats(obs_id, qa_dir):
 
     # total number of expected beams
     # catching the host should make it work on other happilis, too
-    if host_name == "happili-01":
+    if host_name == "happili-01" or single_node:
         n_beams = 40
     else:
         happili_number = int(host_name.split("-")[-1])
