@@ -384,7 +384,7 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
                         logger.warning("No beam directories found for calibrator {}".format(src))
 
 
-def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode = False):
+def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger_mode = False, single_node = False):
     """Function to create the preflag directory for the report
 
     Note:
