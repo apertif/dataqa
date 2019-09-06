@@ -116,10 +116,16 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
     if (fluxcals and fluxcals != '') and (polcals and polcals != ''):
         assert(len(fluxcals) == len(polcals))
 
+    # avoid symmetry bias, if there is only a polcal but no fluxcal, switch them
+    if fluxcals is None and polcals is not None:
+        logger.info(
+            "Only polcal was provided. Setting polcal {} to fluxcal".format(name_polcal))
+        fluxcals, polcals = polcals, fluxcals
+        name_polcal = ""
     # Exchange polcal and fluxcal if specified in the wrong order
     # (taken from start_pipeline)
     # (except for how the names are switched)
-    if not subs_calmodels.is_polarised(name_polcal) and name_polcal != '':
+    elif not subs_calmodels.is_polarised(name_polcal) and name_polcal != '':
         if subs_calmodels.is_polarised(name_fluxcal):
             logger.debug("Switching polcal and fluxcal because " + name_polcal +
                          " is not polarised")
