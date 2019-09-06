@@ -121,6 +121,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
         logger.info(
             "Only polcal was provided. Setting polcal {} to fluxcal".format(name_polcal))
         fluxcals, polcals = polcals, fluxcals
+        name_fluxcal, name_polcal = name_polcal, name_fluxcal
         name_polcal = ""
     # Exchange polcal and fluxcal if specified in the wrong order
     # (taken from start_pipeline)
