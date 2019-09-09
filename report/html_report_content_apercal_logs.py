@@ -27,10 +27,10 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
     html_code += """
         <div class="w3-container w3-large">
             <p>
-                Here you can go through the four log files created by apercal. 
+                Here you can go through the four log files created by apercal.
                 Please note that there is an issue with reading the timing information which is why they are
                 incorrect for prepare and polarisation.
-                Click on one of the buttons and then on the link to open the log file. 
+                Click on one of the buttons and then on the link to open the log file.
                 You can use the search function of your browser to search the log files.
             </p>
         </div>\n
@@ -127,7 +127,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         timinginfo_table['beam'] == timinginfo_beam)]
 
                     # go through the pipeline steps
-                    #table_pipeline_steps = timinginfo_table_select['pipeline_steps']
+                    # table_pipeline_steps = timinginfo_table_select['pipeline_steps']
                     for pipeline_step in pipeline_step_list:
 
                         # get the index of the pipeline step in the table
@@ -157,29 +157,34 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
             # ++++++++++++++++++++++++++++++++++++++++++++++++
             if n_log_files != 0:
 
-                # go through the list of log files
-                for log_counter in range(n_log_files):
+                # get only the the log
+                log_file_list.sort()
 
-                    log_file_list.sort()
+                # get the log files with line
+                log_file_list_no_line = []
+                log_file_list_line = []
+                for log_file in log_file_list:
+                    if "line" in os.path.basename(log_file):
+                        log_file_list_line.append(log_file)
+                    else:
+                        log_file_list_no_line.append(log_file)
 
+                # go through the list of log files without line
+                for log_counter in range(len(log_file_list_no_line)):
+
+                    # create frame name
                     frame_name = "gallery_apercal_{0:s}_{1:d}".format(
                         node.split("-")[-1], log_counter)
 
+                    # check beam
                     beam = os.path.basename(log_file_list[log_counter]).split(
                         "_")[0].split("apercal")[-1]
 
                     if beam == "":
-                        if "line" in os.path.basename(log_file_list[log_counter]):
-                            log_button_name = "Apercal log for line"
-                        else:
-                            log_button_name = "Apercal log"
+                        log_button_name = "Apercal log"
                     else:
-                        if "line" in os.path.basename(log_file_list[log_counter]):
-                            log_button_name = "Apercal log for line for beam {0:s}".format(
-                                beam)
-                        else:
-                            log_button_name = "Apercal log for beam {0:s}".format(
-                                beam)
+                        log_button_name = "Apercal log for beam {0:s}".format(
+                            beam)
 
                     html_code += """
                         <div class="w3-container">
@@ -198,6 +203,85 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                             <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
                         </div>
                     </div>\n""".format(page_type, os.path.basename(log_file_list[log_counter]))
+
+                # go through the list of log files without line
+                for log_counter in range(len(log_file_list_line)):
+
+                    # create frame name
+                    frame_name = "gallery_apercal_{0:s}_{1:d}_line".format(
+                        node.split("-")[-1], log_counter)
+
+                    # check beam
+                    beam = os.path.basename(log_file_list[log_counter]).split(
+                        "_")[0].split("apercal")[-1]
+
+                    if beam == "":
+                        log_button_name = "Apercal log for line"
+                    else:
+                        log_button_name = "Apercal log for line for beam {0:s}".format(
+                            beam)
+
+                    html_code += """
+                        <div class="w3-container">
+                            <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                                {1:s}
+                            </button>
+                        </div>
+                         <div class="w3-container w3-margin-top w3-hide" name = "{0:s}" >
+                        """.format(frame_name, log_button_name)
+
+                    html_code += """
+                        <div class="w3-container w3-large">
+                            <a href="{0:s}/{1:s}">Click here to open the log file</a> if it is not shown below
+                        </div>
+                        <div class="w3-container">
+                            <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
+                        </div>
+                    </div>\n""".format(page_type, os.path.basename(log_file_list[log_counter]))
+
+                # # go through the list of log files
+                # for log_counter in range(n_log_files):
+
+                #     # get only the the log
+
+                #     log_file_list.sort()
+
+                #     frame_name = "gallery_apercal_{0:s}_{1:d}".format(
+                #         node.split("-")[-1], log_counter)
+
+                #     beam = os.path.basename(log_file_list[log_counter]).split(
+                #         "_")[0].split("apercal")[-1]
+
+                #     if beam == "":
+                #         if "line" in os.path.basename(log_file_list[log_counter]):
+                #             log_button_name = "Apercal log for line"
+                #         else:
+                #             log_button_name = "Apercal log"
+                #     else:
+                #         if "line" in os.path.basename(log_file_list[log_counter]):
+                #             log_button_name = "Apercal log for line for beam {0:s}".format(
+                #                 beam)
+                #         else:
+                #             log_button_name = "Apercal log for beam {0:s}".format(
+                #                 beam)
+
+                #     html_code += """
+                #         <div class="w3-container">
+                #             <button class="w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom" onclick="show_hide_plots('{0:s}')">
+                #                 {1:s}
+                #             </button>
+                #         </div>
+                #          <div class="w3-container w3-margin-top w3-hide" name = "{0:s}" >
+                #         """.format(frame_name, log_button_name)
+
+                #     html_code += """
+                #         <div class="w3-container w3-large">
+                #             <a href="{0:s}/{1:s}">Click here to open the log file</a> if it is not shown below
+                #         </div>
+                #         <div class="w3-container">
+                #             <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
+                #         </div>
+                #     </div>\n""".format(page_type, os.path.basename(log_file_list[log_counter]))
 
                     # # create iframe supbage
                     # html_code_iframe_page = """<!DOCTYPE HTML>
