@@ -177,7 +177,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         node.split("-")[-1], log_counter)
 
                     # check beam
-                    beam = os.path.basename(log_file_list[log_counter]).split(
+                    beam = os.path.basename(log_file_list_no_line[log_counter]).split(
                         "_")[0].split("apercal")[-1]
 
                     if beam == "":
@@ -202,7 +202,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         <div class="w3-container">
                             <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
                         </div>
-                    </div>\n""".format(page_type, os.path.basename(log_file_list[log_counter]))
+                    </div>\n""".format(page_type, os.path.basename(log_file_list_no_line[log_counter]))
 
                 # go through the list of log files without line
                 for log_counter in range(len(log_file_list_line)):
@@ -212,7 +212,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         node.split("-")[-1], log_counter)
 
                     # check beam
-                    beam = os.path.basename(log_file_list[log_counter]).split(
+                    beam = os.path.basename(log_file_list_line[log_counter]).split(
                         "_")[0].split("apercal")[-1]
 
                     if beam == "":
@@ -237,7 +237,7 @@ def write_obs_content_apercal_log(html_code, qa_report_obs_path, page_type):
                         <div class="w3-container">
                             <iframe class="w3-container" style="width:100%; height:1200px" src="{0:s}/{1:s}"></iframe>
                         </div>
-                    </div>\n""".format(page_type, os.path.basename(log_file_list[log_counter]))
+                    </div>\n""".format(page_type, os.path.basename(log_file_list_line[log_counter]))
 
                 # # go through the list of log files
                 # for log_counter in range(n_log_files):
