@@ -104,11 +104,18 @@ def run():
         flux_cal_text_value = obs_table['Flux_Calibrator'][0]
         flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0] + \
             ", " + obs_table_2['Flux_Calibrator_Obs_IDs'][0] + ", " + obs_table_3['Flux_Calibrator_Obs_IDs'][0] + ", " + obs_table_4['Flux_Calibrator_Obs_IDs'][0]
-        pol_cal_text_value = obs_table['Pol_Calibrator'][0]
-        pol_cal_obs_id_list = obs_table['Pol_Calibrator_Obs_IDs'][0] + \
-            ", " + obs_table_2['Pol_Calibrator_Obs_IDs'][0] + ", " + \
-            obs_table_3['Pol_Calibrator_Obs_IDs'][0] + ", " + \
-            obs_table_4['Pol_Calibrator_Obs_IDs'][0]
+        # in case the polarisation calibrator does not exists, the entries will be masked
+        if np.ma.is_masked(obs_table['Pol_Calibrator'][0]):
+            pol_name = "-"
+            pol_name_ids = "-"
+        else:
+            pol_name = obs_table['Pol_Calibrator'][0]
+            pol_name_ids = obs_table['Pol_Calibrator_Obs_IDs'][0] + \
+                ", " + obs_table_2['Pol_Calibrator_Obs_IDs'][0] + ", " + \
+                obs_table_3['Pol_Calibrator_Obs_IDs'][0] + ", " + \
+                obs_table_4['Pol_Calibrator_Obs_IDs'][0]
+        pol_cal_text_value = pol_name
+        pol_cal_obs_id_list = pol_name_ids
         prepare_status_value = 'Unchecked'
         prepare_notes_value = '-'
         preflag_status_value = 'Unchecked'
