@@ -944,12 +944,14 @@ class AutocorrData(ScanData):
                 'Autocorrelation of Beam {0:02d}'.format(beamnum), size=30)
 
             for a, ant in enumerate(ant_names):
-            
+                freq = self.freq[n]
+                amp_xx = self.amp[n][a, :, 0]
+                amp_yy = self.amp[n][a, :, 3]            
                 plt.subplot(ny, nx, a+1)
-                plt.scatter(self.freq[n], self.amp[n][a, :, 0],
+                plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
                             label='XX',
                             marker=',', s=1)
-                plt.scatter(self.freq[n], self.amp[n][a, :, 3],
+                plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0.)[0]],
                             label='YY',
                             marker=',', s=1)
                 plt.title('Antenna {0}'.format(ant))
