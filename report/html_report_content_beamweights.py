@@ -39,6 +39,7 @@ def write_obs_content_beamweights(html_code, qa_report_obs_path, page_type, obs_
                 Here you can inspect the beamweights per beam for different subbands for the calibrator used in this observation: {0:s}. For each individual beam, you can click your way through the subbands using the back and forward arrows. The thin top arrows allow you to step through every single image while the thick bottom arrows change between every 10th image. When you reach the last image, it starts at the beginning.
                 These plots should be the same for observations which used the same calibrator. 
             </p>
+            <h4> Note: Due to issues with getting the script to extract the beam weights, creating the beamweights plots has been temporarily disabled </h4>
         </div>\n
         """.format(source_list[1])
 

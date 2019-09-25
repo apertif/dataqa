@@ -31,6 +31,16 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
         output_path (str): Output path, None for default
         trigger_mode (bool): To run automatically after Apercal
     """
+
+    # Get autocorrelation plots
+    start_time_autocorr = time.time()
+    AC = AutocorrData(scan, fluxcal, trigger_mode)
+    AC.get_data()
+    AC.plot_autocorr_per_antenna(imagepath=output_path)
+    AC.plot_autocorr_per_beam(imagepath=output_path)
+    logger.info('Done with autocorrelation plots ({0:.0f}s)'.format(
+        time.time() - start_time_autocorr))
+
     # Get BP plots
     start_time_bp = time.time()
     BP = BPSols(scan, fluxcal, trigger_mode)
@@ -792,8 +802,160 @@ class ModelData(ScanData):
         #plt.clf()
         # to really close the plot, this will do
         plt.close('all')
-            
-        
+
+
+class AutocorrData(ScanData):
+    def __init__(self, scan, fluxcal, trigger_mode):
+        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
+        self.imagepathsuffix = "crosscal"
+        self.freq = np.empty(len(self.dirlist), dtype=np.ndarray)
+        self.ants = np.empty(len(self.dirlist), dtype=np.object)
+
+    def get_data(self):
+        for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
+            msfile = "{0}/raw/{1}.MS".format(path, self.sourcename)
+            taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
+            t = pt.taql(taql_antnames)
+            ant_names = t.getcol("NAME")
+
+            #then get frequencies:
+            taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(
+                msfile)
+            t = pt.taql(taql_freq)
+            freqs = t.getcol('CHAN_FREQ')[0, :]
+
+            #and number of stokes params
+            taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(
+                msfile)
+            t_pol = pt.taql(taql_stokes)
+            pol_array = t_pol.getcol('amp')
+            n_stokes = pol_array.shape[2]  # shape is time, one, nstokes
+
+            #take MS file and get calibrated data
+            amp_ant_array = np.empty(
+                (len(ant_names), len(freqs), n_stokes), dtype=object)
+            # phase_ant_array = np.empty(
+            #     (len(ant_names), len(freqs), n_stokes), dtype=object)
+
+            for ant in xrange(len(ant_names)):
+                try:
+                    taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp "
+                                    "FROM {0} "
+                                    "WHERE ANTENNA1==ANTENNA2 && (ANTENNA1={1} || ANTENNA2={1})").format(msfile, ant)
+                    t = pt.taql(taql_command)
+                    test = t.getcol('amp')
+                    amp_ant_array[ant, :, :] = t.getcol('amp')[0, :, :]
+                    #phase_ant_array[ant, :, :] = t.getcol('phase')[0, :, :]
+                except Exception as e:
+                    amp_ant_array[ant, :, :] = np.full(
+                        (len(freqs), n_stokes), np.nan)
+                    # phase_ant_array[ant, :, :] = np.full(
+                    #     (len(freqs), n_stokes), np.nan)
+                    logger.exception(e)
+
+            #self.phase[i] = phase_ant_array
+            self.amp[i] = amp_ant_array
+            self.freq[i] = freqs
+            self.ants[i] = ant_names
+
+    def plot_autocorr_per_antenna(self, imagepath=None):
+        """
+        Plot the autocorrelation for each antenna for all beams
+        """
+
+        logger.info("Creating plots for autocorrelation plots per antenna")
+
+        #first define imagepath if not given by user
+        imagepath = self.create_imagepath(imagepath)
+
+        #plot amplitude, one plot per antenna
+        #put plots in default place w/ default name
+        ant_names = self.ants[0]
+        #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
+        for a, ant in enumerate(ant_names):
+            #iterate through antennas
+            #set up for 8x5 plots (40 beams)
+            nx = 8
+            ny = 5
+            xsize = nx*4
+            ysize = ny*4
+            plt.figure(figsize=(xsize, ysize))
+            plt.suptitle(
+                'Autocorrelation of Antenna {0}'.format(ant), size=30)
+
+            for n, beam in enumerate(self.beamlist):
+                freq = self.freq[n]
+                amp_xx = self.amp[n][a, :, 0]
+                amp_yy = self.amp[n][a, :, 3]
+                beamnum = int(beam)
+                plt.subplot(ny, nx, beamnum+1)
+                plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
+                            label='XX',
+                            marker=',', s=1)
+                plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0)[0]],
+                            label='YY',
+                            marker=',', s=1)
+                # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)[0]],
+                #             label='XX',
+                #             marker=',', s=1)
+                # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)[0]],
+                #             label='YY',
+                #             marker=',', s=1)
+                plt.title('Beam {0}'.format(beam))
+                #plt.ylim(0, 30)
+            plt.legend(markerscale=3, fontsize=14)
+            plt.savefig(plt.savefig(
+                '{2}/Autocorrelation_Antenna_{0}_{1}.png'.format(ant, self.scan, imagepath)))
+            #plt.clf()
+            # to really close the plot, this will do
+            plt.close('all')
+
+    def plot_autocorr_per_beam(self, imagepath=None):
+        """
+        Plot the autocorrelation for each beam with all antennas
+        """
+
+        logger.info("Creating plots for autocorrelation plots per beam")
+
+        #first define imagepath if not given by user
+        imagepath = self.create_imagepath(imagepath)
+
+        #plot amplitude, one plot per antenna
+        #put plots in default place w/ default name
+        ant_names = self.ants[0]
+        #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
+        for n, beam in enumerate(self.beamlist):
+            beamnum = int(beam)
+            #iterate through antennas
+            #set up for 8x5 plots (40 beams)
+            nx = 4
+            ny = 3
+            xsize = nx*4
+            ysize = ny*4
+            plt.figure(figsize=(xsize, ysize))
+            plt.suptitle(
+                'Autocorrelation of Beam {0:02d}'.format(beamnum), size=30)
+
+            for a, ant in enumerate(ant_names):
+                freq = self.freq[n]
+                amp_xx = self.amp[n][a, :, 0]
+                amp_yy = self.amp[n][a, :, 3]            
+                plt.subplot(ny, nx, a+1)
+                plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
+                            label='XX',
+                            marker=',', s=1)
+                plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0.)[0]],
+                            label='YY',
+                            marker=',', s=1)
+                plt.title('Antenna {0}'.format(ant))
+                #plt.ylim(0, 30)
+            plt.legend(markerscale=3, fontsize=14)
+            plt.savefig(plt.savefig(
+                '{2}/Autocorrelation_Beam_{0:02d}_{1}.png'.format(beamnum, self.scan, imagepath)))
+            #plt.clf()
+            # to really close the plot, this will do
+            plt.close('all')
+       
 class CorrectedData(ScanData):
     def __init__(self,scan,fluxcal,trigger_mode):
         ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)

@@ -182,10 +182,10 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
     # ==========================
 
     # the different plots
-    categories = ["BP_amp", "BP_phase", "Gain_amp", "Gain_phase", "K_", "Df_amp", "Df_phase", "Kcross", "Xf_amp",
+    categories = ["Autocorrelation_Antenna", "Autocorrelation_Beam", "BP_amp", "BP_phase", "Gain_amp", "Gain_phase", "K_", "Df_amp", "Df_phase", "Kcross", "Xf_amp",
                   "Xf_phase", "Raw_amp", "Raw_phase", "Model_amp", "Model_phase", "Corrected_amp", "Corrected_phase"]
 
-    categories_titles = ["Bandpass Amplitude", "Bandpass Phase", "Gain factors Amplitude", "Gain factors Phase", "Global Delay", "Leakage Amplitude", "Leakage Phase", "Cross Hand Delay",
+    categories_titles = ["Autocorrelation per Antenna", "Autocorrelation per Beam", "Bandpass Amplitude", "Bandpass Phase", "Gain factors Amplitude", "Gain factors Phase", "Global Delay", "Leakage Amplitude", "Leakage Phase", "Cross Hand Delay",
                          "Polarization Angle Amplitude", "Polarization Angle Phase", "Raw visibility Amplitude", "Raw Visibility Phase", "Model Amplitude", "Model Phase", "Corrected Amplitude", "Corrected Phase"]
 
     n_cats = len(categories)
@@ -229,18 +229,32 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
                 img_counter = 0
 
                 for image in cat_plots:
-                    if img_counter % 3 == 0:
-                        html_code += """<div class="w3-row">\n"""
+                    if categories[k] == "Autocorrelation_Beam":
+                        if img_counter % 5 == 0:
+                            html_code += """<div class="w3-row">\n"""
 
-                    html_code += """
-                        <div class="w3-third w3-border">
-                            <a href="{0:s}/{1:s}">
-                                <img src="{0:s}/{1:s}" alt="No image", width="100%">
-                            </a>
-                        </div>\n""".format(page_type, os.path.basename(image))
+                        html_code += """
+                            <div class="w3-col w3-border style="width:20%">
+                                <a href="{0:s}/{1:s}">
+                                    <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                                </a>
+                            </div>\n""".format(page_type, os.path.basename(image))
 
-                    if img_counter % 3 == 2 or img_counter == len(cat_plots)-1:
-                        html_code += """</div>\n"""
+                        if img_counter % 5 == 4 or img_counter == len(cat_plots)-1:
+                            html_code += """</div>\n"""
+                    else:
+                        if img_counter % 3 == 0:
+                            html_code += """<div class="w3-row">\n"""
+
+                        html_code += """
+                            <div class="w3-third w3-border">
+                                <a href="{0:s}/{1:s}">
+                                    <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                                </a>
+                            </div>\n""".format(page_type, os.path.basename(image))
+
+                        if img_counter % 3 == 2 or img_counter == len(cat_plots)-1:
+                            html_code += """</div>\n"""
 
                     img_counter += 1
 
