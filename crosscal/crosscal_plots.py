@@ -892,10 +892,10 @@ class AutocorrData(ScanData):
             for n, beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
-                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)],
+                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)[0]],
                             label='XX',
                             marker=',', s=1)
-                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)],
+                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)[0]],
                             label='YY',
                             marker=',', s=1)
                 plt.title('Beam {0}'.format(beam))
