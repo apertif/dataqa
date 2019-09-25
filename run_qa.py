@@ -65,7 +65,11 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
     if steps is None:
         # steps = ['preflag', 'crosscal', 'selfcal',
         #          'continuum', 'line', 'mosaic', 'report']
-        steps = ['inspection_plots', 'beamweights', 'preflag', 'crosscal', 'selfcal',
+        # steps = ['inspection_plots', 'beamweights', 'preflag', 'crosscal', 'selfcal',
+        #          'continuum', 'line', 'report']
+
+        # due to isssue with beamweights script, this step is currently not performed
+        steps = ['inspection_plots', 'preflag', 'crosscal', 'selfcal',
                  'continuum', 'line', 'report']
 
     # Set up
