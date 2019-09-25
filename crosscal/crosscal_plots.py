@@ -846,8 +846,8 @@ class AutocorrData(ScanData):
 
             for ant in xrange(len(ant_names)):
                 try:
-                    taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp, "
-                                    "arg(gmeans(CORRECTED_DATA[FLAG])) AS phase FROM {0} "
+                    taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp "
+                                    "FROM {0} "
                                     "WHERE ANTENNA1==ANTENNA2").format(msfile)
                     t = pt.taql(taql_command)
                     test = t.getcol('amp')
@@ -892,10 +892,10 @@ class AutocorrData(ScanData):
             for n, beam in enumerate(self.beamlist):
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
-                plt.scatter(self.freq[n], self.amp[n][a, :, 0],
+                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)],
                             label='XX',
                             marker=',', s=1)
-                plt.scatter(self.freq[n], self.amp[n][a, :, 3],
+                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)],
                             label='YY',
                             marker=',', s=1)
                 plt.title('Beam {0}'.format(beam))
@@ -946,7 +946,7 @@ class AutocorrData(ScanData):
                 #plt.ylim(0, 30)
             plt.legend(markerscale=3, fontsize=14)
             plt.savefig(plt.savefig(
-                '{2}/Autocorrelation_Beam_{0:02d}_{1}.png'.format(ant, self.beamnum, imagepath)))
+                '{2}/Autocorrelation_Beam_{0:02d}_{1}.png'.format(beamnum, self.scan, imagepath)))
             #plt.clf()
             # to really close the plot, this will do
             plt.close('all')
