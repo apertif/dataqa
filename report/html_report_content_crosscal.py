@@ -229,18 +229,32 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
                 img_counter = 0
 
                 for image in cat_plots:
-                    if img_counter % 3 == 0:
-                        html_code += """<div class="w3-row">\n"""
+                    if categories[k] == "Autocorrelation_Beam":
+                        if img_counter % 5 == 0:
+                            html_code += """<div class="w3-row">\n"""
 
-                    html_code += """
-                        <div class="w3-third w3-border">
-                            <a href="{0:s}/{1:s}">
-                                <img src="{0:s}/{1:s}" alt="No image", width="100%">
-                            </a>
-                        </div>\n""".format(page_type, os.path.basename(image))
+                        html_code += """
+                            <div class="w3-col w3-border style="width:20%">
+                                <a href="{0:s}/{1:s}">
+                                    <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                                </a>
+                            </div>\n""".format(page_type, os.path.basename(image))
 
-                    if img_counter % 3 == 2 or img_counter == len(cat_plots)-1:
-                        html_code += """</div>\n"""
+                        if img_counter % 5 == 4 or img_counter == len(cat_plots)-1:
+                            html_code += """</div>\n"""
+                    else:
+                        if img_counter % 3 == 0:
+                            html_code += """<div class="w3-row">\n"""
+
+                        html_code += """
+                            <div class="w3-third w3-border">
+                                <a href="{0:s}/{1:s}">
+                                    <img src="{0:s}/{1:s}" alt="No image", width="100%">
+                                </a>
+                            </div>\n""".format(page_type, os.path.basename(image))
+
+                        if img_counter % 3 == 2 or img_counter == len(cat_plots)-1:
+                            html_code += """</div>\n"""
 
                     img_counter += 1
 
