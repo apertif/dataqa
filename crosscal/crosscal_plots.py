@@ -853,11 +853,12 @@ class AutocorrData(ScanData):
                     test = t.getcol('amp')
                     amp_ant_array[ant, :, :] = t.getcol('amp')[0, :, :]
                     phase_ant_array[ant, :, :] = t.getcol('phase')[0, :, :]
-                except:
+                except Exception as e:
                     amp_ant_array[ant, :, :] = np.full(
                         (len(freqs), n_stokes), np.nan)
                     phase_ant_array[ant, :, :] = np.full(
                         (len(freqs), n_stokes), np.nan)
+                    logger.exception(e)
 
             self.phase[i] = phase_ant_array
             self.amp[i] = amp_ant_array
