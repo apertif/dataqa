@@ -841,8 +841,8 @@ class AutocorrData(ScanData):
             #take MS file and get calibrated data
             amp_ant_array = np.empty(
                 (len(ant_names), len(freqs), n_stokes), dtype=object)
-            phase_ant_array = np.empty(
-                (len(ant_names), len(freqs), n_stokes), dtype=object)
+            # phase_ant_array = np.empty(
+            #     (len(ant_names), len(freqs), n_stokes), dtype=object)
 
             for ant in xrange(len(ant_names)):
                 try:
@@ -852,15 +852,15 @@ class AutocorrData(ScanData):
                     t = pt.taql(taql_command)
                     test = t.getcol('amp')
                     amp_ant_array[ant, :, :] = t.getcol('amp')[0, :, :]
-                    phase_ant_array[ant, :, :] = t.getcol('phase')[0, :, :]
+                    #phase_ant_array[ant, :, :] = t.getcol('phase')[0, :, :]
                 except Exception as e:
                     amp_ant_array[ant, :, :] = np.full(
                         (len(freqs), n_stokes), np.nan)
-                    phase_ant_array[ant, :, :] = np.full(
-                        (len(freqs), n_stokes), np.nan)
+                    # phase_ant_array[ant, :, :] = np.full(
+                    #     (len(freqs), n_stokes), np.nan)
                     logger.exception(e)
 
-            self.phase[i] = phase_ant_array
+            #self.phase[i] = phase_ant_array
             self.amp[i] = amp_ant_array
             self.freq[i] = freqs
             self.ants[i] = ant_names
@@ -899,10 +899,10 @@ class AutocorrData(ScanData):
                 logger.debug(np.min(amp_xx[np.where(amp_xx != 0.)[0]]))
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
-                plt.scatter(freq[np.where(amp_xx != 0.)], amp_xx[np.where(amp_xx != 0.)],
+                plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
                             label='XX',
                             marker=',', s=1)
-                plt.scatter(freq[np.where(amp_yy != 0.)], amp_yy[np.where(amp_yy != 0)],
+                plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0)[0]],
                             label='YY',
                             marker=',', s=1)
                 # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)[0]],
