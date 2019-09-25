@@ -36,12 +36,8 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     start_time_autocorr = time.time()
     AC = AutocorrData(scan, fluxcal, trigger_mode)
     AC.get_data()
-    # create a subdirectory for the autocorrelation plots
-    autocorr_plot_dir = os.path.join(output_path, "autocorrelation")
-    if not os.path.exists(autocorr_plot_dir):
-        os.mkdir(autocorr_plot_dir)
-    AC.plot_autocorr_per_antenna(imagepath=autocorr_plot_dir)
-    AC.plot_autocorr_per_beam(imagepath=autocorr_plot_dir)
+    AC.plot_autocorr_per_antenna(imagepath=output_path)
+    AC.plot_autocorr_per_beam(imagepath=output_path)
     logger.info('Done with autocorrelation plots ({0:.0f}s)'.format(
         time.time() - start_time_autocorr))
 
