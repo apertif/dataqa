@@ -890,14 +890,23 @@ class AutocorrData(ScanData):
                 'Autocorrelation of Antenna {0}'.format(ant), size=30)
 
             for n, beam in enumerate(self.beamlist):
+                freq = self.freq[n]
+                amp_xx = self.amp[n][a, :, 0]
+                amp_yy = self.amp[n][a, :, 3]
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
-                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)[0]],
+                plt.scatter(freq[np.where(amp_xx != 0.), amp_xx[np.where(amp_xx != 0.)],
                             label='XX',
                             marker=',', s=1)
-                plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)[0]],
+                plt.scatter(freq[np.where(amp_yy != 0.)], amp_yy[np.where(amp_yy != 0)],
                             label='YY',
                             marker=',', s=1)
+                # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)[0]],
+                #             label='XX',
+                #             marker=',', s=1)
+                # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)[0]],
+                #             label='YY',
+                #             marker=',', s=1)
                 plt.title('Beam {0}'.format(beam))
                 #plt.ylim(0, 30)
             plt.legend(markerscale=3, fontsize=14)
