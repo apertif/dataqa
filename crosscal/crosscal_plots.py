@@ -45,9 +45,6 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     logger.info('Done with autocorrelation plots ({0:.0f}s)'.format(
         time.time() - start_time_autocorr))
 
-    # just for debugging, remove when done.
-    return None
-
     # Get BP plots
     start_time_bp = time.time()
     BP = BPSols(scan, fluxcal, trigger_mode)
