@@ -895,7 +895,7 @@ class AutocorrData(ScanData):
                 amp_yy = self.amp[n][a, :, 3]
                 logger.debug(np.min(amp_xx))
                 logger.debug(np.max(amp_xx))
-                logger.debug(np.min(amp_xx[np.where(amp_xx != 0.)[0]))
+                logger.debug(np.min(amp_xx[np.where(amp_xx != 0.)[0]]))
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(freq[np.where(amp_xx != 0.)], amp_xx[np.where(amp_xx != 0.)],
