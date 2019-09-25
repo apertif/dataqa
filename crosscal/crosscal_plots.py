@@ -895,7 +895,7 @@ class AutocorrData(ScanData):
                 amp_yy = self.amp[n][a, :, 3]
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
-                plt.scatter(freq[np.where(amp_xx != 0.), amp_xx[np.where(amp_xx != 0.)],
+                plt.scatter(freq[np.where(amp_xx != 0.)], amp_xx[np.where(amp_xx != 0.)],
                             label='XX',
                             marker=',', s=1)
                 plt.scatter(freq[np.where(amp_yy != 0.)], amp_yy[np.where(amp_yy != 0)],
