@@ -848,7 +848,7 @@ class AutocorrData(ScanData):
                 try:
                     taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp "
                                     "FROM {0} "
-                                    "WHERE ANTENNA1==ANTENNA2").format(msfile)
+                                    "WHERE ANTENNA1==ANTENNA2 && (ANTENNA1={1} || ANTENNA2={1}").format(msfile, ant)
                     t = pt.taql(taql_command)
                     test = t.getcol('amp')
                     amp_ant_array[ant, :, :] = t.getcol('amp')[0, :, :]
