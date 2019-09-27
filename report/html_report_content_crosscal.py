@@ -234,7 +234,7 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
                             html_code += """<div class="w3-row">\n"""
 
                         html_code += """
-                            <div class="w3-col w3-border style="width:20%">
+                            <div class="w3-col w3-border" style="width:20%">
                                 <a href="{0:s}/{1:s}">
                                     <img src="{0:s}/{1:s}" alt="No image", width="100%">
                                 </a>
