@@ -33,6 +33,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     """
 
     # Get autocorrelation plots
+    logger.info("Autocorrelation plots")
     start_time_autocorr = time.time()
     AC = AutocorrData(scan, fluxcal, trigger_mode)
     AC.get_data()
@@ -42,6 +43,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
         time.time() - start_time_autocorr))
 
     # Get BP plots
+    logger.info("Bandpass plots")
     start_time_bp = time.time()
     BP = BPSols(scan, fluxcal, trigger_mode)
     BP.get_data()
@@ -50,6 +52,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     logger.info('Done with bandpass plots ({0:.0f}s)'.format(time.time() - start_time_bp))
 
     # Get Gain plots
+    logger.info("Gain plots")
     start_time_gain = time.time()
     Gain = GainSols(scan, fluxcal, trigger_mode)
     Gain.get_data()
@@ -58,6 +61,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     logger.info('Done with gainplots ({0:.0f}s)'.format(time.time() - start_time_gain))
 
     # Get Global Delay plots
+    logger.info("Global delay plots")
     start_time_gdelay = time.time()
     GD = GDSols(scan, fluxcal, trigger_mode)
     GD.get_data()
@@ -65,6 +69,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     logger.info('Done with global delay plots ({0:.0f}s)'.format(time.time() - start_time_gdelay))
 
     # Get polarisation leakage plots
+    logger.info("Leakage plots")
     start_time_leak = time.time()
     Leak = LeakSols(scan, fluxcal, trigger_mode)
     Leak.get_data()
@@ -73,6 +78,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     logger.info('Done with leakage plots ({0:.0f}s)'.format(time.time() - start_time_leak))
 
     # Get cross hand delay solutions
+    logger.info("Cross-hand delay plots")
     start_time_kcross = time.time()
     KCross = KCrossSols(scan, polcal, trigger_mode)
     KCross.get_data()
@@ -80,6 +86,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     logger.info('Done with cross hand delay plots ({0:.0f}s)'.format(time.time() - start_time_kcross))
 
     # Get polarisation angle plots
+    logger.info("Polarisation angle plots")
     start_time_polangle = time.time()
     Polangle = PolangleSols(scan, polcal, trigger_mode)
     Polangle.get_data()
@@ -88,6 +95,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     logger.info('Done with polarisation angle correction plots ({0:.0f}s)'.format(time.time() - start_time_polangle))
 
     # Get Raw data
+    logger.info("Raw data plots")
     start_time_raw = time.time()
     Raw = RawData(scan, fluxcal, trigger_mode)
     Raw.get_data()
@@ -97,6 +105,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
         time.time() - start_time_raw))
 
     # Get model data
+    logger.info("Model data plots")
     start_time_model = time.time()
     Model = ModelData(scan, fluxcal, trigger_mode)
     Model.get_data()
@@ -106,6 +115,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
         time.time() - start_time_model))
 
     # Get corrected data
+    logger.info("Corrected data plots")
     start_time_corrected = time.time()
     Corrected = CorrectedData(scan, fluxcal, trigger_mode)
     Corrected.get_data()
@@ -832,6 +842,9 @@ class AutocorrData(ScanData):
                     msfile)
                 t_pol = pt.taql(taql_stokes)
                 pol_array = t_pol.getcol('amp')
+                if not pol_array:
+                    logger.warning("Something wrong. No polarisation information. Continue with next beam")
+                    continue
                 n_stokes = pol_array.shape[2]  # shape is time, one, nstokes
 
                 #take MS file and get calibrated data
@@ -972,6 +985,7 @@ class CorrectedData(ScanData):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
             if os.path.isdir(msfile):
+                logger.info("Processing {}".format(msfile))
                 taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
                 t= pt.taql(taql_antnames)
                 ant_names=t.getcol("NAME")
@@ -985,6 +999,10 @@ class CorrectedData(ScanData):
                 taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
                 t_pol = pt.taql(taql_stokes)
                 pol_array = t_pol.getcol('amp')
+                if not pol_array:
+                    logger.warning(
+                        "Something wrong. No polarisation information. Continue with next beam")
+                    continue
                 n_stokes = pol_array.shape[2] #shape is time, one, nstokes
         
                 #take MS file and get calibrated data
@@ -1009,6 +1027,8 @@ class CorrectedData(ScanData):
                 self.amp[i] = amp_ant_array
                 self.freq[i] = freqs
                 self.ants[i] = ant_names
+            else:
+                logger.warning("Could not find {}".format(msfile))
             
     def plot_amp(self,imagepath=None):
 
@@ -1096,6 +1116,7 @@ class RawData(ScanData):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
             if os.path.isdir(msfile):
+                logger.info("Processing {}".format(msfile))
                 taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
                 t= pt.taql(taql_antnames)
                 ant_names=t.getcol("NAME")
@@ -1109,6 +1130,10 @@ class RawData(ScanData):
                 taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
                 t_pol = pt.taql(taql_stokes)
                 pol_array = t_pol.getcol('amp')
+                if not pol_array:
+                    logger.warning(
+                        "Something wrong. No polarisation information. Continue with next beam")
+                    continue
                 n_stokes = pol_array.shape[2] #shape is time, one, nstokes
         
                 #take MS file and get calibrated data
@@ -1133,6 +1158,8 @@ class RawData(ScanData):
                 self.amp[i] = amp_ant_array
                 self.freq[i] = freqs
                 self.ants[i] = ant_names
+            else:
+                logger.warning("Could not find {}".format(msfile))
             
     def plot_amp(self,imagepath=None):
         logger.info("Creating plots for raw amplitude")
