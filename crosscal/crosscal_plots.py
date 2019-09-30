@@ -1056,6 +1056,8 @@ class CorrectedData(ScanData):
             plt.suptitle('Corrected amplitude for Antenna {0} (baselines averaged)'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
+                if self.amp[n] is None:
+                    continue
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.amp[n][a,:,0],
@@ -1092,6 +1094,8 @@ class CorrectedData(ScanData):
             plt.suptitle('Corrected phase for Antenna {0} (baselines averaged)'.format(ant))
             
             for n,beam in enumerate(self.beamlist):
+                if self.amp[n] is None:
+                    continue
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.phase[n][a,:,0],
@@ -1184,6 +1188,8 @@ class RawData(ScanData):
             plt.suptitle('Raw amplitude for Antenna {0} (baselines averaged)'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
+                if self.amp[n] is None:
+                    continue
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.amp[n][a,:,0],
@@ -1221,6 +1227,8 @@ class RawData(ScanData):
             plt.suptitle('Raw phase for Antenna {0} (baselines averaged)'.format(ant),size=30)
             
             for n,beam in enumerate(self.beamlist):
+                if self.amp[n] is None:
+                    continue
                 beamnum = int(beam)
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(self.freq[n],self.phase[n][a,:,0],
