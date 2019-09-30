@@ -729,21 +729,22 @@ class ModelData(ScanData):
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
-            taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
-            t = pt.taql(taql_freq)
-            freqs = t.getcol('CHAN_FREQ')[0,:]
-            try:
-                taql_command = "SELECT abs(gmeans(MODEL_DATA)) AS amp, arg(gmeans(MODEL_DATA)) AS phase FROM {0}".format(msfile)
-                t = pt.taql(taql_command)
-                amp = t.getcol('amp')[0,:,:]
-                phase = t.getcol('phase')[0,:,:]
-            except:
-                amp = np.empty((len(freqs),4),np.nan)
-                phase = np.empty((len(freqs),4),np.nan)
-            
-            self.amp[i] = amp
-            self.phase[i] = phase
-            self.freq[i] = freqs
+            if os.path.isdir(msfile):
+                taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
+                t = pt.taql(taql_freq)
+                freqs = t.getcol('CHAN_FREQ')[0,:]
+                try:
+                    taql_command = "SELECT abs(gmeans(MODEL_DATA)) AS amp, arg(gmeans(MODEL_DATA)) AS phase FROM {0}".format(msfile)
+                    t = pt.taql(taql_command)
+                    amp = t.getcol('amp')[0,:,:]
+                    phase = t.getcol('phase')[0,:,:]
+                except:
+                    amp = np.empty((len(freqs),4),np.nan)
+                    phase = np.empty((len(freqs),4),np.nan)
+                
+                self.amp[i] = amp
+                self.phase[i] = phase
+                self.freq[i] = freqs
             
     def plot_amp(self,imagepath=None):
         """Plot amplitude, one subplot per beam"""
@@ -814,49 +815,50 @@ class AutocorrData(ScanData):
     def get_data(self):
         for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path, self.sourcename)
-            taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
-            t = pt.taql(taql_antnames)
-            ant_names = t.getcol("NAME")
+            if os.path.isdir(msfile):
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
+                t = pt.taql(taql_antnames)
+                ant_names = t.getcol("NAME")
 
-            #then get frequencies:
-            taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(
-                msfile)
-            t = pt.taql(taql_freq)
-            freqs = t.getcol('CHAN_FREQ')[0, :]
+                #then get frequencies:
+                taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(
+                    msfile)
+                t = pt.taql(taql_freq)
+                freqs = t.getcol('CHAN_FREQ')[0, :]
 
-            #and number of stokes params
-            taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(
-                msfile)
-            t_pol = pt.taql(taql_stokes)
-            pol_array = t_pol.getcol('amp')
-            n_stokes = pol_array.shape[2]  # shape is time, one, nstokes
+                #and number of stokes params
+                taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(
+                    msfile)
+                t_pol = pt.taql(taql_stokes)
+                pol_array = t_pol.getcol('amp')
+                n_stokes = pol_array.shape[2]  # shape is time, one, nstokes
 
-            #take MS file and get calibrated data
-            amp_ant_array = np.empty(
-                (len(ant_names), len(freqs), n_stokes), dtype=object)
-            # phase_ant_array = np.empty(
-            #     (len(ant_names), len(freqs), n_stokes), dtype=object)
+                #take MS file and get calibrated data
+                amp_ant_array = np.empty(
+                    (len(ant_names), len(freqs), n_stokes), dtype=object)
+                # phase_ant_array = np.empty(
+                #     (len(ant_names), len(freqs), n_stokes), dtype=object)
 
-            for ant in xrange(len(ant_names)):
-                try:
-                    taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp "
-                                    "FROM {0} "
-                                    "WHERE ANTENNA1==ANTENNA2 && (ANTENNA1={1} || ANTENNA2={1})").format(msfile, ant)
-                    t = pt.taql(taql_command)
-                    test = t.getcol('amp')
-                    amp_ant_array[ant, :, :] = t.getcol('amp')[0, :, :]
-                    #phase_ant_array[ant, :, :] = t.getcol('phase')[0, :, :]
-                except Exception as e:
-                    amp_ant_array[ant, :, :] = np.full(
-                        (len(freqs), n_stokes), np.nan)
-                    # phase_ant_array[ant, :, :] = np.full(
-                    #     (len(freqs), n_stokes), np.nan)
-                    logger.exception(e)
+                for ant in xrange(len(ant_names)):
+                    try:
+                        taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp "
+                                        "FROM {0} "
+                                        "WHERE ANTENNA1==ANTENNA2 && (ANTENNA1={1} || ANTENNA2={1})").format(msfile, ant)
+                        t = pt.taql(taql_command)
+                        test = t.getcol('amp')
+                        amp_ant_array[ant, :, :] = t.getcol('amp')[0, :, :]
+                        #phase_ant_array[ant, :, :] = t.getcol('phase')[0, :, :]
+                    except Exception as e:
+                        amp_ant_array[ant, :, :] = np.full(
+                            (len(freqs), n_stokes), np.nan)
+                        # phase_ant_array[ant, :, :] = np.full(
+                        #     (len(freqs), n_stokes), np.nan)
+                        logger.exception(e)
 
-            #self.phase[i] = phase_ant_array
-            self.amp[i] = amp_ant_array
-            self.freq[i] = freqs
-            self.ants[i] = ant_names
+                #self.phase[i] = phase_ant_array
+                self.amp[i] = amp_ant_array
+                self.freq[i] = freqs
+                self.ants[i] = ant_names
 
     def plot_autocorr_per_antenna(self, imagepath=None):
         """
@@ -966,43 +968,44 @@ class CorrectedData(ScanData):
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
-            taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
-            t= pt.taql(taql_antnames)
-            ant_names=t.getcol("NAME")
+            if os.path.isdir(msfile):
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
+                t= pt.taql(taql_antnames)
+                ant_names=t.getcol("NAME")
 
-            #then get frequencies:
-            taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
-            t = pt.taql(taql_freq)
-            freqs = t.getcol('CHAN_FREQ')[0,:]
-    
-            #and number of stokes params
-            taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
-            t_pol = pt.taql(taql_stokes)
-            pol_array = t_pol.getcol('amp')
-            n_stokes = pol_array.shape[2] #shape is time, one, nstokes
-    
-            #take MS file and get calibrated data
-            amp_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
-            phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
-    
-            for ant in xrange(len(ant_names)):
-                try:
-                    taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp, "
-                                    "arg(gmeans(CORRECTED_DATA[FLAG])) AS phase FROM {0} "
-                                    "WHERE ANTENNA1!=ANTENNA2 && "
-                                    "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
-                    t = pt.taql(taql_command)
-                    test=t.getcol('amp')
-                    amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
-                    phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
-                except:
-                    amp_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan)
-                    phase_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan)
-                
-            self.phase[i] = phase_ant_array
-            self.amp[i] = amp_ant_array
-            self.freq[i] = freqs
-            self.ants[i] = ant_names
+                #then get frequencies:
+                taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
+                t = pt.taql(taql_freq)
+                freqs = t.getcol('CHAN_FREQ')[0,:]
+        
+                #and number of stokes params
+                taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
+                t_pol = pt.taql(taql_stokes)
+                pol_array = t_pol.getcol('amp')
+                n_stokes = pol_array.shape[2] #shape is time, one, nstokes
+        
+                #take MS file and get calibrated data
+                amp_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
+                phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
+        
+                for ant in xrange(len(ant_names)):
+                    try:
+                        taql_command = ("SELECT abs(gmeans(CORRECTED_DATA[FLAG])) AS amp, "
+                                        "arg(gmeans(CORRECTED_DATA[FLAG])) AS phase FROM {0} "
+                                        "WHERE ANTENNA1!=ANTENNA2 && "
+                                        "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
+                        t = pt.taql(taql_command)
+                        test=t.getcol('amp')
+                        amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
+                        phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
+                    except:
+                        amp_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan)
+                        phase_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan)
+                    
+                self.phase[i] = phase_ant_array
+                self.amp[i] = amp_ant_array
+                self.freq[i] = freqs
+                self.ants[i] = ant_names
             
     def plot_amp(self,imagepath=None):
 
@@ -1089,43 +1092,44 @@ class RawData(ScanData):
     def get_data(self):
         for i, (path,beam) in enumerate(zip(self.dirlist,self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path,self.sourcename)
-            taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
-            t= pt.taql(taql_antnames)
-            ant_names=t.getcol("NAME")
+            if os.path.isdir(msfile):
+                taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
+                t= pt.taql(taql_antnames)
+                ant_names=t.getcol("NAME")
 
-            #then get frequencies:
-            taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
-            t = pt.taql(taql_freq)
-            freqs = t.getcol('CHAN_FREQ')[0,:]
-    
-            #and number of stokes params
-            taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
-            t_pol = pt.taql(taql_stokes)
-            pol_array = t_pol.getcol('amp')
-            n_stokes = pol_array.shape[2] #shape is time, one, nstokes
-    
-            #take MS file and get calibrated data
-            amp_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
-            phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
-    
-            for ant in xrange(len(ant_names)):
-                try:
-                    taql_command = ("SELECT abs(gmeans(DATA[FLAG])) AS amp, "
-                                    "arg(gmeans(DATA[FLAG])) AS phase FROM {0} "
-                                    "WHERE ANTENNA1!=ANTENNA2 && "
-                                    "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
-                    t = pt.taql(taql_command)
-                    test=t.getcol('amp')
-                    amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
-                    phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
-                except:
-                    amp_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan) #t.getcol('amp')[0,:,:]
-                    phase_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan) #t.getcol('phase')[0,:,:]
-                
-            self.phase[i] = phase_ant_array
-            self.amp[i] = amp_ant_array
-            self.freq[i] = freqs
-            self.ants[i] = ant_names
+                #then get frequencies:
+                taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
+                t = pt.taql(taql_freq)
+                freqs = t.getcol('CHAN_FREQ')[0,:]
+        
+                #and number of stokes params
+                taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
+                t_pol = pt.taql(taql_stokes)
+                pol_array = t_pol.getcol('amp')
+                n_stokes = pol_array.shape[2] #shape is time, one, nstokes
+        
+                #take MS file and get calibrated data
+                amp_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
+                phase_ant_array = np.empty((len(ant_names),len(freqs),n_stokes),dtype=object)
+        
+                for ant in xrange(len(ant_names)):
+                    try:
+                        taql_command = ("SELECT abs(gmeans(DATA[FLAG])) AS amp, "
+                                        "arg(gmeans(DATA[FLAG])) AS phase FROM {0} "
+                                        "WHERE ANTENNA1!=ANTENNA2 && "
+                                        "(ANTENNA1={1} || ANTENNA2={1})").format(msfile,ant)
+                        t = pt.taql(taql_command)
+                        test=t.getcol('amp')
+                        amp_ant_array[ant,:,:] = t.getcol('amp')[0,:,:]
+                        phase_ant_array[ant,:,:] = t.getcol('phase')[0,:,:]
+                    except:
+                        amp_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan) #t.getcol('amp')[0,:,:]
+                        phase_ant_array[ant,:,:] = np.full((len(freqs),n_stokes),np.nan) #t.getcol('phase')[0,:,:]
+                    
+                self.phase[i] = phase_ant_array
+                self.amp[i] = amp_ant_array
+                self.freq[i] = freqs
+                self.ants[i] = ant_names
             
     def plot_amp(self,imagepath=None):
         logger.info("Creating plots for raw amplitude")
