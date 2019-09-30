@@ -842,7 +842,7 @@ class AutocorrData(ScanData):
                     msfile)
                 t_pol = pt.taql(taql_stokes)
                 pol_array = t_pol.getcol('amp')
-                if not pol_array:
+                if pol_array is None:
                     logger.warning("Something wrong. No polarisation information. Continue with next beam")
                     continue
                 n_stokes = pol_array.shape[2]  # shape is time, one, nstokes
@@ -999,7 +999,7 @@ class CorrectedData(ScanData):
                 taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
                 t_pol = pt.taql(taql_stokes)
                 pol_array = t_pol.getcol('amp')
-                if not pol_array:
+                if pol_array is None:
                     logger.warning(
                         "Something wrong. No polarisation information. Continue with next beam")
                     continue
@@ -1130,7 +1130,7 @@ class RawData(ScanData):
                 taql_stokes = "SELECT abs(DATA) AS amp from {0} limit 1" .format(msfile)
                 t_pol = pt.taql(taql_stokes)
                 pol_array = t_pol.getcol('amp')
-                if not pol_array:
+                if pol_array is None:
                     logger.warning(
                         "Something wrong. No polarisation information. Continue with next beam")
                     continue
