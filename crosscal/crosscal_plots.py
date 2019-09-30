@@ -903,6 +903,8 @@ class AutocorrData(ScanData):
 
             for n, beam in enumerate(self.beamlist):
                 freq = self.freq[n]
+                if self.amp[n] is None:
+                    continue
                 amp_xx = self.amp[n][a, :, 0]
                 amp_yy = self.amp[n][a, :, 3]
                 beamnum = int(beam)
@@ -956,6 +958,8 @@ class AutocorrData(ScanData):
 
             for a, ant in enumerate(ant_names):
                 freq = self.freq[n]
+                if self.amp[n] is None:
+                    continue
                 amp_xx = self.amp[n][a, :, 0]
                 amp_yy = self.amp[n][a, :, 3]            
                 plt.subplot(ny, nx, a+1)
