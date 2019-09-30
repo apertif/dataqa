@@ -816,6 +816,7 @@ class AutocorrData(ScanData):
         for i, (path, beam) in enumerate(zip(self.dirlist, self.beamlist)):
             msfile = "{0}/raw/{1}.MS".format(path, self.sourcename)
             if os.path.isdir(msfile):
+                logger.info("Processing {}".format(msfile))
                 taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
                 t = pt.taql(taql_antnames)
                 ant_names = t.getcol("NAME")
@@ -859,6 +860,8 @@ class AutocorrData(ScanData):
                 self.amp[i] = amp_ant_array
                 self.freq[i] = freqs
                 self.ants[i] = ant_names
+            else:
+                logger.warning("Could not find {}".format(msfile))
 
     def plot_autocorr_per_antenna(self, imagepath=None):
         """
