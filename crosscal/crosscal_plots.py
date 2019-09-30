@@ -749,8 +749,8 @@ class ModelData(ScanData):
                     amp = t.getcol('amp')[0,:,:]
                     phase = t.getcol('phase')[0,:,:]
                 except:
-                    amp = np.empty((len(freqs),4),np.nan)
-                    phase = np.empty((len(freqs),4),np.nan)
+                    amp = np.full((len(freqs),4),np.nan)
+                    phase = np.full((len(freqs),4),np.nan)
                 
                 self.amp[i] = amp
                 self.phase[i] = phase
