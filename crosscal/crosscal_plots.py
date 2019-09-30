@@ -830,6 +830,9 @@ class AutocorrData(ScanData):
                 taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
                 t = pt.taql(taql_antnames)
                 ant_names = t.getcol("NAME")
+                if ant_names is None:
+                    logger.warning("Something wrong. No antenna names. Continue with next beam")
+                    continue
 
                 #then get frequencies:
                 taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(
@@ -888,7 +891,11 @@ class AutocorrData(ScanData):
 
         #plot amplitude, one plot per antenna
         #put plots in default place w/ default name
-        ant_names = self.ants[0]
+        for antennas in self.ants:
+            if not antennas is None:           
+                ant_names = antennas
+                break
+                #ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
         for a, ant in enumerate(ant_names):
             #iterate through antennas
@@ -942,7 +949,12 @@ class AutocorrData(ScanData):
 
         #plot amplitude, one plot per antenna
         #put plots in default place w/ default name
-        ant_names = self.ants[0]
+        for antennas in self.ants:
+            if not antennas is None:           
+                ant_names = antennas
+                break
+                #ant_names = self.ants[0]
+                #ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
         for n, beam in enumerate(self.beamlist):
             beamnum = int(beam)
@@ -993,6 +1005,10 @@ class CorrectedData(ScanData):
                 taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
                 t= pt.taql(taql_antnames)
                 ant_names=t.getcol("NAME")
+                if ant_names is None:
+                    logger.warning(
+                        "Something wrong. No antenna names. Continue with next beam")
+                    continue
 
                 #then get frequencies:
                 taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
@@ -1043,7 +1059,11 @@ class CorrectedData(ScanData):
 
         #plot amplitude, one plot per antenna
         #put plots in default place w/ default name
-        ant_names = self.ants[0]
+        for antennas in self.ants:
+            if not antennas is None:           
+                ant_names = antennas
+                break
+                #ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
         for a,ant in enumerate(ant_names):
             #iterate through antennas
@@ -1081,7 +1101,11 @@ class CorrectedData(ScanData):
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
-        ant_names = self.ants[0]
+        for antennas in self.ants:
+            if not antennas is None:           
+                ant_names = antennas
+                break
+                #ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
         for a,ant in enumerate(ant_names):
             #iterate through antennas
@@ -1128,6 +1152,10 @@ class RawData(ScanData):
                 taql_antnames = "SELECT NAME FROM {0}::ANTENNA".format(msfile)
                 t= pt.taql(taql_antnames)
                 ant_names=t.getcol("NAME")
+                if ant_names is None:
+                    logger.warning(
+                        "Something wrong. No antenna names. Continue with next beam")
+                    continue
 
                 #then get frequencies:
                 taql_freq = "SELECT CHAN_FREQ FROM {0}::SPECTRAL_WINDOW".format(msfile)
@@ -1175,7 +1203,11 @@ class RawData(ScanData):
         #plot amplitude, one plot per antenna
         imagepath = self.create_imagepath(imagepath)
         #put plots in default place w/ default name
-        ant_names = self.ants[0]
+        for antennas in self.ants:
+            if not antennas is None:           
+                ant_names = antennas
+                break
+                #ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
         for a,ant in enumerate(ant_names):
             #iterate through antennas
@@ -1214,7 +1246,11 @@ class RawData(ScanData):
         imagepath = self.create_imagepath(imagepath)
 
         #put plots in default place w/ default name
-        ant_names = self.ants[0]
+        for antennas in self.ants:
+            if not antennas is None:           
+                ant_names = antennas
+                break
+                #ant_names = self.ants[0]
         #figlist = ['fig_'+str(i) for i in range(len(ant_names))]
         for a,ant in enumerate(ant_names):
             #iterate through antennas
