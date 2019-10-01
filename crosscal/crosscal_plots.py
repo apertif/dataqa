@@ -886,6 +886,9 @@ class AutocorrData(ScanData):
 
         logger.info("Creating plots for autocorrelation plots per antenna")
 
+        y_min = 400
+        y_max = 1500
+
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
 
@@ -929,7 +932,7 @@ class AutocorrData(ScanData):
                 #             label='YY',
                 #             marker=',', s=1)
                 plt.title('Beam {0}'.format(beam))
-                #plt.ylim(0, 30)
+                plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
             plt.savefig(plt.savefig(
                 '{2}/Autocorrelation_Antenna_{0}_{1}.png'.format(ant, self.scan, imagepath)))
@@ -943,6 +946,9 @@ class AutocorrData(ScanData):
         """
 
         logger.info("Creating plots for autocorrelation plots per beam")
+
+        y_min = 400
+        y_max = 1500
 
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
@@ -982,7 +988,7 @@ class AutocorrData(ScanData):
                             label='YY',
                             marker=',', s=1)
                 plt.title('Antenna {0}'.format(ant))
-                #plt.ylim(0, 30)
+                plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
             plt.savefig(plt.savefig(
                 '{2}/Autocorrelation_Beam_{0:02d}_{1}.png'.format(beamnum, self.scan, imagepath)))
