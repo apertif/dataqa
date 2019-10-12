@@ -886,8 +886,8 @@ class AutocorrData(ScanData):
 
         logger.info("Creating plots for autocorrelation plots per antenna")
 
-        y_min = 450
-        y_max = 2000
+        y_min = 300
+        y_max = 1600
 
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
@@ -935,11 +935,11 @@ class AutocorrData(ScanData):
                 high_xx_values = np.where(amp_xx > y_max)[0]
                 high_yy_values = np.where(amp_yy > y_max)[0]
                 if len(high_xx_values) != 0:
-                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values), y_max - 100),
-                                marker=10, s=1, color='C0')
+                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values), y_max - 20),
+                                marker='|', s=1, label="XX>{0}".format(y_max), color='C0')
                 if len(high_yy_values) != 0:
-                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values), y_max - 100),
-                                marker=10, s=1, color='C1')
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values), y_max - 20),
+                                marker='|', s=1, label="YY>{0}".format(y_max), color='C1')
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
@@ -956,7 +956,7 @@ class AutocorrData(ScanData):
 
         logger.info("Creating plots for autocorrelation plots per beam")
 
-        y_min = 450
+        y_min = 200
         y_max = 2000
 
         #first define imagepath if not given by user
@@ -1000,11 +1000,11 @@ class AutocorrData(ScanData):
                 high_xx_values = np.where(amp_xx > y_max)[0]
                 high_yy_values = np.where(amp_yy > y_max)[0]
                 if len(high_xx_values) != 0:
-                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values),y_max - 100),
-                                marker = 10, s = 1, color='C0')
+                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values),y_max - 20),
+                                marker = '|', s = 1, label="XX>{0}".format(y_max), color='C0')
                 if len(high_yy_values) != 0:
-                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values),y_max - 100),
-                                marker=10, s=1, color='C1')
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values),y_max - 20),
+                                marker='|', s=1, label="YY>{0}".format(y_max), color='C1')
                 plt.title('Antenna {0}'.format(ant))
                 plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
