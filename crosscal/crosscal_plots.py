@@ -931,11 +931,14 @@ class AutocorrData(ScanData):
                 # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)[0]],
                 #             label='YY',
                 #             marker=',', s=1)
-                if len(amp_xx[np.where(amp_xx > y_max)[0]]) != 0:
-                    plt.scatter(freq[np.where(amp_xx > y_max)[0]], y_max - 100,
+                # values above plot maximum
+                high_xx_values = np.where(amp_xx > y_max)[0]
+                high_yy_values = np.where(amp_yy > y_max)[0]
+                if len(high_xx_values) != 0:
+                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values), y_max - 100),
                                 marker=10, s=1, color='C0')
-                if len(amp_yy[np.where(amp_yy > y_max)[0]]) != 0:
-                    plt.scatter(freq[np.where(amp_yy > y_max)[0]], y_max - 100,
+                if len(high_yy_values) != 0:
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values), y_max - 100),
                                 marker=10, s=1, color='C1')
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(y_min, y_max)
@@ -993,11 +996,14 @@ class AutocorrData(ScanData):
                 plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0.)[0]],
                             label='YY',
                             marker=',', s=1, color='C1')
-                if len(amp_xx[np.where(amp_xx > y_max)[0]]) != 0:
-                    plt.scatter(freq[np.where(amp_xx > y_max)[0]], y_max - 100,
+                # values above plot maximum
+                high_xx_values = np.where(amp_xx > y_max)[0]
+                high_yy_values = np.where(amp_yy > y_max)[0]
+                if len(high_xx_values) != 0:
+                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values),y_max - 100),
                                 marker = 10, s = 1, color='C0')
-                if len(amp_yy[np.where(amp_yy > y_max)[0]]) != 0:
-                    plt.scatter(freq[np.where(amp_yy > y_max)[0]], y_max - 100,
+                if len(high_yy_values) != 0:
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values),y_max - 100),
                                 marker=10, s=1, color='C1')
                 plt.title('Antenna {0}'.format(ant))
                 plt.ylim(y_min, y_max)
