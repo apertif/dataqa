@@ -886,8 +886,8 @@ class AutocorrData(ScanData):
 
         logger.info("Creating plots for autocorrelation plots per antenna")
 
-        y_min = 400
-        y_max = 1500
+        y_min = 450
+        y_max = 2000
 
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
@@ -947,8 +947,8 @@ class AutocorrData(ScanData):
 
         logger.info("Creating plots for autocorrelation plots per beam")
 
-        y_min = 400
-        y_max = 1500
+        y_min = 450
+        y_max = 2000
 
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
