@@ -886,6 +886,9 @@ class AutocorrData(ScanData):
 
         logger.info("Creating plots for autocorrelation plots per antenna")
 
+        y_min = 300
+        y_max = 1600
+
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
 
@@ -918,18 +921,27 @@ class AutocorrData(ScanData):
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
                             label='XX',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C0')
                 plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0)[0]],
                             label='YY',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C1')
                 # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)[0]],
                 #             label='XX',
                 #             marker=',', s=1)
                 # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)[0]],
                 #             label='YY',
                 #             marker=',', s=1)
+                # values above plot maximum
+                high_xx_values = np.where(amp_xx > y_max)[0]
+                high_yy_values = np.where(amp_yy > y_max)[0]
+                if len(high_xx_values) != 0:
+                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values), y_max - 20),
+                                marker=10, s=1, label="XX>{0}".format(y_max), color='C9')
+                if len(high_yy_values) != 0:
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values), y_max - 30),
+                                marker=10, s=1, label="YY>{0}".format(y_max), color='C3')
                 plt.title('Beam {0}'.format(beam))
-                #plt.ylim(0, 30)
+                plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
             plt.savefig(plt.savefig(
                 '{2}/Autocorrelation_Antenna_{0}_{1}.png'.format(ant, self.scan, imagepath)))
@@ -943,6 +955,9 @@ class AutocorrData(ScanData):
         """
 
         logger.info("Creating plots for autocorrelation plots per beam")
+
+        y_min = 200
+        y_max = 2000
 
         #first define imagepath if not given by user
         imagepath = self.create_imagepath(imagepath)
@@ -977,12 +992,21 @@ class AutocorrData(ScanData):
                 plt.subplot(ny, nx, a+1)
                 plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
                             label='XX',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C0')
                 plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0.)[0]],
                             label='YY',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C1')
+                # values above plot maximum
+                high_xx_values = np.where(amp_xx > y_max)[0]
+                high_yy_values = np.where(amp_yy > y_max)[0]
+                if len(high_xx_values) != 0:
+                    plt.scatter(freq[high_xx_values], np.full(len(high_xx_values),y_max - 20),
+                                marker = 10, s = 1, label="XX>{0}".format(y_max), color='C9')
+                if len(high_yy_values) != 0:
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values),y_max - 30),
+                                marker=10, s=1, label="YY>{0}".format(y_max), color='C3')
                 plt.title('Antenna {0}'.format(ant))
-                #plt.ylim(0, 30)
+                plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
             plt.savefig(plt.savefig(
                 '{2}/Autocorrelation_Beam_{0:02d}_{1}.png'.format(beamnum, self.scan, imagepath)))
