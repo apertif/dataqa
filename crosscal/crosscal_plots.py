@@ -936,10 +936,10 @@ class AutocorrData(ScanData):
                 high_yy_values = np.where(amp_yy > y_max)[0]
                 if len(high_xx_values) != 0:
                     plt.scatter(freq[high_xx_values], np.full(len(high_xx_values), y_max - 20),
-                                marker='|', s=2, label="XX>{0}".format(y_max), color='C9')
+                                marker=10, s=1, label="XX>{0}".format(y_max), color='C9')
                 if len(high_yy_values) != 0:
-                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values), y_max - 20),
-                                marker='|', s=2, label="YY>{0}".format(y_max), color='C3')
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values), y_max - 30),
+                                marker=10, s=1, label="YY>{0}".format(y_max), color='C3')
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
@@ -1001,10 +1001,10 @@ class AutocorrData(ScanData):
                 high_yy_values = np.where(amp_yy > y_max)[0]
                 if len(high_xx_values) != 0:
                     plt.scatter(freq[high_xx_values], np.full(len(high_xx_values),y_max - 20),
-                                marker = '|', s = 2, label="XX>{0}".format(y_max), color='C9')
+                                marker = 10, s = 1, label="XX>{0}".format(y_max), color='C9')
                 if len(high_yy_values) != 0:
-                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values),y_max - 20),
-                                marker='|', s=2, label="YY>{0}".format(y_max), color='C3')
+                    plt.scatter(freq[high_yy_values], np.full(len(high_yy_values),y_max - 30),
+                                marker=10, s=1, label="YY>{0}".format(y_max), color='C3')
                 plt.title('Antenna {0}'.format(ant))
                 plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
