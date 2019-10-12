@@ -921,16 +921,22 @@ class AutocorrData(ScanData):
                 plt.subplot(ny, nx, beamnum+1)
                 plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
                             label='XX',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C0')
                 plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0)[0]],
                             label='YY',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C1')
                 # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 0][np.where(self.amp[n][a, :, 0] != 0)[0]],
                 #             label='XX',
                 #             marker=',', s=1)
                 # plt.scatter(self.freq[n][np.where(self.amp[n][a, :, 0] != 0)[0]], self.amp[n][a, :, 3][np.where(self.amp[n][a, :, 0] != 0)[0]],
                 #             label='YY',
                 #             marker=',', s=1)
+                if len(amp_xx[np.where(amp_xx > y_max)[0]]) != 0:
+                    plt.scatter(freq[np.where(amp_xx > y_max)[0]], y_max - 100,
+                                marker=10, s=1, color='C0')
+                if len(amp_yy[np.where(amp_yy > y_max)[0]]) != 0:
+                    plt.scatter(freq[np.where(amp_yy > y_max)[0]], y_max - 100,
+                                marker=10, s=1, color='C1')
                 plt.title('Beam {0}'.format(beam))
                 plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
@@ -983,10 +989,16 @@ class AutocorrData(ScanData):
                 plt.subplot(ny, nx, a+1)
                 plt.scatter(freq[np.where(amp_xx != 0.)[0]], amp_xx[np.where(amp_xx != 0.)[0]],
                             label='XX',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C0')
                 plt.scatter(freq[np.where(amp_yy != 0.)[0]], amp_yy[np.where(amp_yy != 0.)[0]],
                             label='YY',
-                            marker=',', s=1)
+                            marker=',', s=1, color='C1')
+                if len(amp_xx[np.where(amp_xx > y_max)[0]]) != 0:
+                    plt.scatter(freq[np.where(amp_xx > y_max)[0]], y_max - 100,
+                                marker = 10, s = 1, color='C0')
+                if len(amp_yy[np.where(amp_yy > y_max)[0]]) != 0:
+                    plt.scatter(freq[np.where(amp_yy > y_max)[0]], y_max - 100,
+                                marker=10, s=1, color='C1')
                 plt.title('Antenna {0}'.format(ant))
                 plt.ylim(y_min, y_max)
             plt.legend(markerscale=3, fontsize=14)
