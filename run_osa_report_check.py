@@ -101,7 +101,7 @@ def osa_report_check(output_file=''):
         # now get the osa for a given date
         osa_match_taskid_list = []
         for taskid in data_taskid_without_report_list:
-            date_index_list = np.where(start_date_list <= int(taskid))[0]
+            date_index_list = np.where(start_date_list <= int(taskid[:6]))[0]
             if len(date_index_list) == 0:
                 osa_match_taskid_list.append("N/A")
             else:
