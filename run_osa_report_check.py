@@ -59,8 +59,8 @@ def osa_report_check(output_file=''):
     obs_list_4 = glob.glob(os.path.join(
         data_dir, "20[0-1][0-9][0-3][0-9][0-9][0-9][0-9]"))
 
-    obs_list = np.append(obs_list_1, [obs_list_2,
-                                      obs_list_3, obs_list_4])
+    obs_list = np.append(np.array(obs_list_1), [np.array(obs_list_2),
+                                                np.array(obs_list_3), np.array(obs_list_4)])
 
     # number of total taskids on disk
     n_obs = len(obs_list)
