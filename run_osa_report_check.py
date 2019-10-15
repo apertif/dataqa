@@ -8,6 +8,7 @@ import numpy as np
 import logging
 import socket
 import glob
+import argparse
 from apercal.libs import lib
 from apercal.subs import calmodels as subs_calmodels
 from astropy.table import Table
