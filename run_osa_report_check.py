@@ -31,7 +31,7 @@ def osa_report_check(output_file=''):
     data_dir = "/data/apertif"
 
     # the osa report backup path is fixed
-    osa_report_path = "/data/apertif/qa/osa_report"
+    osa_report_path = "/data/apertif/qa/OSA_reports"
 
     # get a list of existing osa reports
     osa_report_list = glob.glob(os.path.join(osa_report_path, "*.json"))
