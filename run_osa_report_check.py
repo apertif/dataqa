@@ -94,14 +94,15 @@ def osa_report_check(output_file=''):
         print("Found OSA master file. Getting OSA responsible for a taskid")
         osa_data = Table.read(osa_master_file, format="ascii.csv")
         # convert the start and end dates to the taskid format
-        start_date_list = np.array([int("".join(startdate.split("/")[::-1]).replace("20", ""))
+        start_date_list = np.array([int("".join(startdate.split("/")[::-1]))
                                     for startdate in osa_data['startdate']])
-        end_date_list = np.array([int("".join(enddate.split("/")[::-1]).replace("20", ""))
+        end_date_list = np.array([int("".join(enddate.split("/")[::-1]))
                                   for enddate in osa_data['enddate']])
         # now get the osa for a given date
         osa_match_taskid_list = []
         for taskid in data_taskid_without_report_list:
-            date_index_list = np.where(start_date_list <= int(taskid[:6]))[0]
+            date_index_list = np.where(
+                start_date_list <= int("20"+taskid[:6]))[0]
             if len(date_index_list) == 0:
                 osa_match_taskid_list.append("N/A")
             else:
