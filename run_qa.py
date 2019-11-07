@@ -320,7 +320,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
     # Crosscal QA
     # ===========
 
-    if 'crosscal' in steps and name_fluxcal != '' and name_polcal != '':
+    if 'crosscal' in steps and name_fluxcal != '':
 
         logger.info('#### Running crosscal QA ...')
 
@@ -328,7 +328,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             crosscal_msg = os.system(
-                'python /home/apercal/dataqa/run_ccal_plots.py {0:d} {1:s} {2:s} --trigger_mode'.format(taskid_target, name_fluxcal, name_polcal))
+                'python /home/apercal/dataqa/run_ccal_plots.py {0:d} "{1:s}" "{2:s}" --trigger_mode'.format(taskid_target, name_fluxcal, name_polcal))
             logger.info(
                 "Crosscal QA finished with msg {0}".format(crosscal_msg))
             logger.info("#### Running crosscal QA ... Done (time {0:.1f}s)".format(
