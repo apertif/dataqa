@@ -201,6 +201,8 @@ def write_obs_content_crosscal(html_code, qa_report_obs_path, page_type, obs_inf
             # get list of plots for this category
             cat_plots = [pl for pl in image_list if categories[k] in pl]
 
+            cat_plots.sort()
+
             div_name = "gallery{0:d}".format(k)
 
             if len(cat_plots) != 0:
