@@ -126,8 +126,9 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, basedir=None, t
 
 
 class BPSols(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode):
-        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
+    def __init__(self,scan,fluxcal,trigger_mode,basedir=None):
+        ScanData.__init__(self, scan, fluxcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.time = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -248,8 +249,9 @@ class BPSols(ScanData):
             
 
 class GainSols(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode):
-        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
+    def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, fluxcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.time = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -386,8 +388,9 @@ class GainSols(ScanData):
 
 
 class GDSols(ScanData):
-    def __init__(self, scan, fluxcal, trigger_mode):
-        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
+    def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, fluxcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -478,8 +481,9 @@ class GDSols(ScanData):
 
 
 class LeakSols(ScanData):
-    def __init__(self, scan, fluxcal, trigger_mode):
-        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
+    def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, fluxcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -578,8 +582,9 @@ class LeakSols(ScanData):
 
 
 class KCrossSols(ScanData):
-    def __init__(self, scan, polcal, trigger_mode):
-        ScanData.__init__(self, scan, polcal, trigger_mode=trigger_mode)
+    def __init__(self, scan, polcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, polcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.delays = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -635,8 +640,9 @@ class KCrossSols(ScanData):
 
 
 class PolangleSols(ScanData):
-    def __init__(self, scan, polcal, trigger_mode):
-        ScanData.__init__(self, scan, polcal, trigger_mode=trigger_mode)
+    def __init__(self, scan, polcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, polcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
@@ -731,8 +737,9 @@ class PolangleSols(ScanData):
 
 
 class ModelData(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode):
-        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
+    def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, fluxcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         
@@ -1015,8 +1022,9 @@ class AutocorrData(ScanData):
             plt.close('all')
        
 class CorrectedData(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode):
-        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
+    def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, fluxcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
@@ -1162,8 +1170,9 @@ class CorrectedData(ScanData):
 
 
 class RawData(ScanData):
-    def __init__(self,scan,fluxcal,trigger_mode):
-        ScanData.__init__(self,scan,fluxcal,trigger_mode=trigger_mode)
+    def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, fluxcal,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist),dtype=np.ndarray)
         self.ants = np.empty(len(self.dirlist),dtype=np.object)
