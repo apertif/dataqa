@@ -27,6 +27,9 @@ parser.add_argument("fluxcal", help='Fluxcal name')
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
 
+parser.add_argument('-b', '--basedir', default=None,
+                    help='Data directory')
+
 # this mode will make the script look only for the beams processed by Apercal on a given node
 parser.add_argument("--trigger_mode", action="store_true", default=False,
                     help='Set it to run Autocal triggering mode automatically after Apercal')
@@ -35,7 +38,7 @@ args = parser.parse_args()
 
 # If no path is given change to default QA path
 if args.path is None:
-    output_path = get_default_imagepath(args.taskID)
+    output_path = get_default_imagepath(args.taskID, basedir=args.basedir)
 
     # check that preflag qa directory exists
     output_path = "{0:s}preflag/".format(output_path)

@@ -24,6 +24,10 @@ parser.add_argument("target", help='Target name')
 
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
+
+parser.add_argument('-b', '--basedir', default=None,
+                    help='Data directory')
+
 parser.add_argument('-M', '--maps', default=True,
                     action='store_false', help='Do not generate selfcal maps')
 parser.add_argument('-P', '--phase', default=True,
@@ -39,10 +43,10 @@ args = parser.parse_args()
 
 # If no path is given change to default QA path
 if args.path is None:
-    output_path = get_default_imagepath(args.scan)
+    output_path = get_default_imagepath(args.scan, basedir=args.basedir)
 
     # check that selfcal qa directory exists
-    output_path = "{0:s}selfcal/".format(output_path)
+    output_path = os.path.join(output_path, "selfcal/")
 
     if not os.path.exists(output_path):
         os.mkdir(output_path)
