@@ -27,6 +27,9 @@ if __name__ == '__main__':
     parser.add_argument("obs_id", type=str,
                         help='Observation Number / Scan Number / TASK-ID')
 
+    parser.add_argument("-b", "--basedir", type=str,
+                        help='Data directory without taskid')
+
     # this mode will make the script look only for the beams processed by Apercal on a given node
     parser.add_argument("--trigger_mode", action="store_true", default=False,
                         help='Set it to run Autocal triggering mode automatically after Apercal')
@@ -37,7 +40,7 @@ if __name__ == '__main__':
     obs_id = args.obs_id
 
     # get the QA directory for this observation
-    qa_dir = get_default_imagepath(obs_id)
+    qa_dir = get_default_imagepath(obs_id, basedir=args.basedir)
 
     # get the line QA directory for this observation
     qa_line_dir = "{0:s}line".format(qa_dir)
