@@ -28,10 +28,13 @@ if __name__ == "__main__":
     parser.add_argument("--run_parallel", action="store_true", default=False,
                         help='Set to run the script in parallel')
 
+    parser.add_argument('-b', '--basedir', default=None,
+                        help='Data directory')
+
     args = parser.parse_args()
 
     # get the QA directory
-    qa_dir = get_default_imagepath(args.scan)
+    qa_dir = get_default_imagepath(args.scan, basedir=args.basedir)
 
     # start logging
     # Create logging file
