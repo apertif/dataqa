@@ -204,7 +204,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
             try:
                 inspection_plot_msg = os.system(
-                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s}'.format(taskid_target, name_target))
+                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} --basedir={2}'.format(taskid_target, name_target, basedir))
                 logger.info(
                     "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                 logger.info(
@@ -221,7 +221,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
             try:
                 inspection_plot_msg = os.system(
-                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal))
+                    'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d} --basedir={4}'.format(taskid_target, name_fluxcal, beamnr_cal, taskid_cal, basedir))
                 logger.info(
                     "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                 logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
@@ -240,7 +240,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
                 try:
                     inspection_plot_msg = os.system(
-                        'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d}'.format(taskid_target, name_polcal, beamnr_cal, taskid_cal))
+                        'python /home/apercal/dataqa/run_inspection_plot.py {0:d} {1:s} -c --beam={2:d} --cal_id={3:d} --basedir={4}'.format(taskid_target, name_polcal, beamnr_cal, taskid_cal, basedir))
                     logger.info(
                         "Getting inspection plots finished with msg {0}".format(inspection_plot_msg))
                     logger.info("#### Inspection plot QA for {0} beam {1} ... Done".format(
@@ -294,7 +294,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             preflag_msg = os.system(
-                'python /home/apercal/dataqa/run_preflag_qa.py {0:d}'.format(taskid_target))
+                'python /home/apercal/dataqa/run_preflag_qa.py {0:d} --basedir={1}'.format(taskid_target, basedir))
             logger.info(
                 "Preflag QA finished with msg {0}".format(preflag_msg))
             logger.info("#### Running preflag QA ... Done (time {0:.1f}s)".format(
@@ -328,7 +328,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             crosscal_msg = os.system(
-                'python /home/apercal/dataqa/run_ccal_plots.py {0:d} "{1:s}" "{2:s}" --trigger_mode'.format(taskid_target, name_fluxcal, name_polcal))
+                'python /home/apercal/dataqa/run_ccal_plots.py {0:d} "{1:s}" "{2:s}" --basedir={3} --trigger_mode'.format(taskid_target, name_fluxcal, name_polcal, basedir))
             logger.info(
                 "Crosscal QA finished with msg {0}".format(crosscal_msg))
             logger.info("#### Running crosscal QA ... Done (time {0:.1f}s)".format(
@@ -350,7 +350,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             selfcal_msg = os.system(
-                'python /home/apercal/dataqa/run_scal_plots.py {0:d} {1:s} --trigger_mode'.format(taskid_target, name_target))
+                'python /home/apercal/dataqa/run_scal_plots.py {0:d} {1:s} --basedir={2} --trigger_mode'.format(taskid_target, name_target, basedir))
             logger.info(
                 "Selfcal QA finished with msg {0}".format(selfcal_msg))
             logger.info("#### Running selfcal QA ... Done (time {0:.1f}s)".format(
@@ -416,7 +416,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
                 '## Get cube statistic ...')
             start_time_get_cube_stat = time.time()
             cube_stat_msg = os.system(
-                'python /home/apercal/dataqa/run_cube_stats.py {0:d} --trigger_mode'.format(taskid_target))
+                'python /home/apercal/dataqa/run_cube_stats.py {0:d} --basedir={1} --trigger_mode'.format(taskid_target, basedir))
             logger.info(
                 "Cube stat finished with msg {0}".format(cube_stat_msg))
             logger.info("## Get cube statistic ... Done (time {0:.1f}s)".format(
@@ -462,7 +462,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             continuum_msg = os.system(
-                'python /home/apercal/dataqa/run_continuum_validation.py {0:d} --trigger_mode'.format(taskid_target))
+                'python /home/apercal/dataqa/run_continuum_validation.py {0:d} --basedir={1} --trigger_mode'.format(taskid_target, basedir))
             logger.info(
                 "Continuum QA finished with msg {0}".format(continuum_msg))
             logger.info("#### Running continuum QA ... Done (time {0:.1f}s)".format(
@@ -486,7 +486,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
             try:
                 report_msg = os.system(
-                    'python /home/apercal/dataqa/run_merge_plots.py {0:d} --do_ccal --do_scal --run_parallel'.format(taskid_target))
+                    'python /home/apercal/dataqa/run_merge_plots.py {0:d} --basedir={1} --do_ccal --do_scal --run_parallel'.format(taskid_target, basedir))
                 logger.info(
                     "Merging finished with msg {0}".format(report_msg))
                 logger.info("#### Merge crosscal and selfcal plots ... Done (time {0:.1f}s)".format(
@@ -502,7 +502,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
 
         try:
             report_msg = os.system(
-                'python /home/apercal/dataqa/create_report.py {0:d} --trigger_mode'.format(taskid_target))
+                'python /home/apercal/dataqa/create_report.py {0:d} --basedir={1} --trigger_mode'.format(taskid_target, basedir))
             logger.info(
                 "Report finished with msg {0}".format(report_msg))
             logger.info("#### Create report ... Done (time {0:.1f}s)".format(
