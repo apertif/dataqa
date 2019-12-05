@@ -70,6 +70,9 @@ if __name__ == '__main__':
     parser.add_argument("-p", "--path", type=str, default=None,
                         help='Directory to store the output in')
 
+    parser.add_argument("-b", "--basedir", type=str, default=None,
+                        help='Data directory without taskid')
+
     # parser.add_argument("--n_processes", type=int, default=1,
     #                     help='Number of cores to use for processing')
 
@@ -103,7 +106,7 @@ if __name__ == '__main__':
 
     # directory where the output will be of pybdsf will be stored
     if args.path is None:
-        qa_dir = get_default_imagepath(obs_id)
+        qa_dir = get_default_imagepath(obs_id, basedir=args.basedir)
 
         # check that path exists
         if not os.path.exists(qa_dir):
