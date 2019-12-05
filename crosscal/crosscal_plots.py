@@ -20,7 +20,7 @@ from apercal.subs import misc
 
 logger = logging.getLogger(__name__)
 
-def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=False):
+def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, basedir=None, trigger_mode=False):
     """
     Create crosscal QA plots
 
@@ -35,7 +35,7 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, trigger_mode=Fa
     # Get autocorrelation plots
     logger.info("Autocorrelation plots")
     start_time_autocorr = time.time()
-    AC = AutocorrData(scan, fluxcal, trigger_mode)
+    AC = AutocorrData(scan, fluxcal, trigger_mode, basedir=basedir)
     AC.get_data()
     AC.plot_autocorr_per_antenna(imagepath=output_path)
     AC.plot_autocorr_per_beam(imagepath=output_path)
@@ -816,8 +816,8 @@ class ModelData(ScanData):
 
 
 class AutocorrData(ScanData):
-    def __init__(self, scan, fluxcal, trigger_mode):
-        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode)
+    def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
+        ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
         self.freq = np.empty(len(self.dirlist), dtype=np.ndarray)
         self.ants = np.empty(len(self.dirlist), dtype=np.object)
