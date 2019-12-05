@@ -25,6 +25,10 @@ parser.add_argument("polcal", help='Polcal name')
 parser.add_argument('-p', '--path', default=None,
                     help='Destination for images')
 
+parser.add_argument('-b', '--basedir', default=None,
+                    help='Data directory')
+
+
 # this mode will make the script look only for the beams processed by Apercal on a given node
 parser.add_argument("--trigger_mode", action="store_true", default=False,
                     help='Set it to run Autocal triggering mode automatically after Apercal.')
@@ -33,7 +37,7 @@ args = parser.parse_args()
 
 # If no path is given change to default QA path
 if args.path is None:
-    output_path = get_default_imagepath(args.scan)
+    output_path = get_default_imagepath(args.scan, basedir=args.basedir)
 
     # check that crosscal qa directory exists
     output_path = "{0:s}crosscal/".format(output_path)
