@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 # Create crosscal plots
 crosscal_plots.make_all_ccal_plots(
-    args.scan, args.fluxcal, args.polcal, output_path=output_path, trigger_mode=args.trigger_mode)
+    args.scan, args.fluxcal, args.polcal, output_path=output_path, basedir=args.basedir, trigger_mode=args.trigger_mode)
 
 end = timer()
 logger.info('Elapsed time to generate cross-calibration data QA inpection plots is {} minutes'.format(
