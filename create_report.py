@@ -278,7 +278,7 @@ def main():
                 try:
                     logger.info("Getting dish delay plot")
                     get_dish_delay_plots(
-                        obs_id, obs_info['Flux_Calibrator'][0])
+                        obs_id, obs_info['Flux_Calibrator'][0], basedir=args.basedir)
                 except Exception as e:
                     logger.warning("Getting dish delay plot ... Failed")
                     logger.exception(e)

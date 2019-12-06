@@ -43,8 +43,12 @@ def combine_cube_stats(obs_id, qa_dir, single_node=False):
         qa_line_dir, "{}_HI_cube_noise_statistics.ecsv".format(obs_id))
 
     # list of data directories
-    qa_line_dir_list = [qa_line_dir, qa_line_dir.replace(
-        "/data/", "/data2/"), qa_line_dir.replace("/data/", "/data3/"), qa_line_dir.replace("/data/", "/data4/")]
+    if "/data" in qa_line_dir:
+        qa_line_dir_list = [qa_line_dir, qa_line_dir.replace(
+            "/data/", "/data2/"), qa_line_dir.replace("/data/", "/data3/"), qa_line_dir.replace("/data/", "/data4/")]
+    else:
+        qa_line_dir_list = [qa_line_dir, qa_line_dir.replace(
+            "/tank/", "/tank2/"), qa_line_dir.replace("/tank/", "/tank3/"), qa_line_dir.replace("/tank/", "/tank4/")]
 
     # total number of expected beams
     # catching the host should make it work on other happilis, too
