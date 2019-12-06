@@ -239,7 +239,7 @@ def main():
                                 logger.info(
                                     "## Getting summary table for {}".format(page))
                                 make_nptabel_csv(
-                                    obs_id, page, output_path=os.path.join(qa_dir, page))
+                                    obs_id, page, qa_dir, output_path=os.path.join(qa_dir, page))
                             except Exception as e:
                                 logger.warning(
                                     "## Getting summary table for {} failed".format(page))

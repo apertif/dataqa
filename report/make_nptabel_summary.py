@@ -5,6 +5,7 @@ import os
 import numpy as np
 import logging
 import csv
+import socket
 
 # ----------------------------------------------
 # read data from np file
@@ -12,13 +13,13 @@ import csv
 logger = logging.getLogger(__name__)
 
 
-def find_sources(obs_id):
+def find_sources(obs_id, data_dir):
     """
     Identify preflag sources e.g. target name and calibrators
     """
 
     sources = []
-    logs = glob.glob('/data/apertif/'+str(obs_id)+'/param_01_preflag_*.npy')
+    logs = glob.glob(data_dir+'/'+str(obs_id)+'/param_01_preflag_*.npy')
 
     for i in range(len(logs)):
         sources.append(logs[i][41:-4])
@@ -39,10 +40,10 @@ def simplify_data(d, beamnum):
             if len(d[k]) == 12:
                 chunks = ''
                 for i in range(12):
-                	if d[k][i] == False:
-                		chunks = chunks+'F,'
-                	else:
-                		chunks = chunks+'T,'
+                    if d[k][i] == False:
+                        chunks = chunks+'F,'
+                    else:
+                        chunks = chunks+'T,'
                 dict.update({k: chunks})
         else:
             dict.update({k: d[k]})
@@ -123,7 +124,7 @@ def extract_beam(path, beamnum, module, source):
     return dict_cut
 
 
-def extract_all_beams(obs_id, module):
+def extract_all_beams(obs_id, module, qa_dir):
     """
     Combine data from all beams into a directory.
 
@@ -134,17 +135,46 @@ def extract_all_beams(obs_id, module):
     Returns
         a dictionary with information extracted from a numpy log file
     """
-    beams_1 = '/data/apertif/'+str(obs_id)+'/'
-    beams_2 = '/data2/apertif/'+str(obs_id)+'/'
-    beams_3 = '/data3/apertif/'+str(obs_id)+'/'
-    beams_4 = '/data4/apertif/'+str(obs_id)+'/'
+    if "data" in qa_dir:
+        # beams_1 = '/data/apertif/'+str(obs_id)+'/'
+        # beams_2 = '/data2/apertif/'+str(obs_id)+'/'
+        # beams_3 = '/data3/apertif/'+str(obs_id)+'/'
+        # beams_4 = '/data4/apertif/'+str(obs_id)+'/'
+
+        # if not on happili, asssume all beamse
+        # are on the same node. Not the best solution
+        # for this, but requires the least amount of
+        # changes to the logic below
+        if socket.gethostname == "happili-01":
+            # this gives /data/apertif/<taskid>
+            beams_1 = os.path.dirname(qa_dir) + "/"
+            beams_2 = os.path.dirname(qa_dir).replace("/data", "/data2") + "/"
+            beams_3 = os.path.dirname(qa_dir).replace("/data", "/data3") + "/"
+            beams_4 = os.path.dirname(qa_dir).replace("/data", "/data4") + "/"
+        else:
+            beams_1 = os.path.dirname(qa_dir) + "/"
+            beams_2 = os.path.dirname(qa_dir) + "/"
+            beams_3 = os.path.dirname(qa_dir) + "/"
+            beams_4 = os.path.dirname(qa_dir) + "/"
+
+    else:
+        if socket.gethostname == "happili-01":
+            beams_1 = os.path.dirname(qa_dir) + "/"
+            beams_2 = os.path.dirname(qa_dir).replace("/tank", "/tank2") + "/"
+            beams_3 = os.path.dirname(qa_dir).replace("/tank", "/tank3") + "/"
+            beams_4 = os.path.dirname(qa_dir).replace("/tank", "/tank4") + "/"
+        else:
+            beams_1 = os.path.dirname(qa_dir) + "/"
+            beams_2 = os.path.dirname(qa_dir) + "/"
+            beams_3 = os.path.dirname(qa_dir) + "/"
+            beams_4 = os.path.dirname(qa_dir) + "/"
 
     beamnum = np.arange(40)
 
     dict_beams = []
 
     if module == 'preflag':
-        source_list = find_sources(obs_id)
+        source_list = find_sources(obs_id, os.path.dirname(qa_dir))
         for j in range(len(source_list)):
             for i in beamnum:
                 if i < 10:
@@ -190,57 +220,57 @@ def extract_all_beams(obs_id, module):
     return dict_beams
 
 
-def make_nptabel_csv(obs_id, module, output_path=''):
-	"""
-	Creates a dictionary with the summary into
-	from the numpy files and saves it as a csv file.
+def make_nptabel_csv(obs_id, module, qa_dir, output_path=''):
+    """
+    Creates a dictionary with the summary into
+    from the numpy files and saves it as a csv file.
 
-	Args:
-			obs_id (str): ID of observation
-			module (str): Apercal module for which information are extracted
-			output_path (str): Optional path to where the information is save (default current directory)
-	"""
+    Args:
+                    obs_id (str): ID of observation
+                    module (str): Apercal module for which information are extracted
+                    output_path (str): Optional path to where the information is save (default current directory)
+    """
 
-	logger.info(
-		"Reading param information for {0} of {1}".format(module, obs_id))
-	summary_data = extract_all_beams(obs_id, module)
-	logger.info(
-		"Reading param information for {0} of {1}... Done".format(module, obs_id))
+    logger.info(
+        "Reading param information for {0} of {1}".format(module, obs_id))
+    summary_data = extract_all_beams(obs_id, module, qa_dir)
+    logger.info(
+        "Reading param information for {0} of {1}... Done".format(module, obs_id))
 
-	i = 0
-	if module == 'transfer':
-		while len(summary_data[i]) <= 1:
-			i += 1
-			if len(summary_data[i]) > 1:
-				break
+    i = 0
+    if module == 'transfer':
+        while len(summary_data[i]) <= 1:
+            i += 1
+            if len(summary_data[i]) > 1:
+                break
 
-	else:
-		while len(summary_data[i]) <= 2:
-			i += 1
-			if len(summary_data[i]) > 2:
-				break
+    else:
+        while len(summary_data[i]) <= 2:
+            i += 1
+            if len(summary_data[i]) > 2:
+                break
 
-	csv_columns = summary_data[i].keys()
+    csv_columns = summary_data[i].keys()
 
-	csv_columns.sort()
-	dict_data = summary_data
+    csv_columns.sort()
+    dict_data = summary_data
 
-	# save the file
-	if output_path == '':
-		csv_file = str(obs_id)+"_"+str(module)+"_summary.csv"
-	else:
-		csv_file = os.path.join(output_path, str(
-			obs_id)+"_"+str(module)+"_summary.csv")
+    # save the file
+    if output_path == '':
+        csv_file = str(obs_id)+"_"+str(module)+"_summary.csv"
+    else:
+        csv_file = os.path.join(output_path, str(
+            obs_id)+"_"+str(module)+"_summary.csv")
 
-	try:
-		with open(csv_file, 'w') as csvfile:
-			writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-			writer.writeheader()
-			for data in dict_data:
-				writer.writerow(data)
-	except Exception as e:
-		logger.warning("Creating file {} failed".format(csv_file))
-		logger.exception(e)
+    try:
+        with open(csv_file, 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+            writer.writeheader()
+            for data in dict_data:
+                writer.writerow(data)
+    except Exception as e:
+        logger.warning("Creating file {} failed".format(csv_file))
+        logger.exception(e)
 
-	# print("Created file: "+str(obs_id)+"_"+str(module)+"_summary.csv")
-	logger.info("Creating file: {} ... Done".format(csv_file))
+    # print("Created file: "+str(obs_id)+"_"+str(module)+"_summary.csv")
+    logger.info("Creating file: {} ... Done".format(csv_file))
