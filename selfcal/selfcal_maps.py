@@ -166,15 +166,29 @@ def get_selfcal_maps(obs_id, qa_selfcal_dir, trigger_mode=False):
         logger.warning("Please switch to happili-01")
 
     # get a list of data beam directories
-    if trigger_mode:
-        data_beam_dir_list = glob.glob(
-            "/data/apertif/{}/[0-3][0-9]".format(obs_id))
-    elif host_name != "happili-01" and not trigger_mode:
-        data_beam_dir_list = glob.glob(
-            "/data/apertif/{}/[0-3][0-9]".format(obs_id))
+    if "/data" in qa_selfcal_dir:
+        if trigger_mode:
+            data_beam_dir_list = glob.glob(
+                "/data/apertif/{}/[0-3][0-9]".format(obs_id))
+        elif host_name != "happili-01" and not trigger_mode:
+            data_beam_dir_list = glob.glob(
+                "/data/apertif/{}/[0-3][0-9]".format(obs_id))
+        else:
+            data_beam_dir_list = glob.glob(
+                "/data*/apertif/{}/[0-3][0-9]".format(obs_id))
     else:
-        data_beam_dir_list = glob.glob(
-            "/data*/apertif/{}/[0-3][0-9]".format(obs_id))
+        if trigger_mode:
+            data_beam_dir_list = glob.glob(
+                "/tank/apertif/{}/[0-3][0-9]".format(obs_id))
+        elif host_name != "happili-01" and not trigger_mode:
+            data_beam_dir_list = glob.glob(
+                "/tank/apertif/{}/[0-3][0-9]".format(obs_id))
+        else:
+            data_beam_dir_list = glob.glob(
+                "/tank/apertif/{}/[0-3][0-9]".format(obs_id)) + glob.glob(
+                "/tank2/apertif/{}/[0-3][0-9]".format(obs_id)) + glob.glob(
+                "/tank3/apertif/{}/[0-3][0-9]".format(obs_id)) + glob.glob(
+                "/tank4/apertif/{}/[0-3][0-9]".format(obs_id))
 
     if len(data_beam_dir_list) != 0:
 

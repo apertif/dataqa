@@ -79,7 +79,7 @@ if args.phase:
         logger.info("#### Creating phase plots")
         start_time_plots = time.time()
         PH = scplots.PHSols(args.scan, args.target,
-                            trigger_mode=args.trigger_mode)
+                            trigger_mode=args.trigger_mode, basedir=args.basedir)
         PH.get_data()
         PH.plot_phase(imagepath=output_path)
         logger.info('#### Done with phase plots ({0:.0f}s)'.format(
@@ -96,7 +96,7 @@ if args.amplitude:
         logger.info("#### Creating amplitude plots")
         start_time_plots = time.time()
         AMP = scplots.AMPSols(args.scan, args.target,
-                              trigger_mode=args.trigger_mode)
+                              trigger_mode=args.trigger_mode, basedir=args.basedir)
         AMP.get_data()
         AMP.plot_amp(imagepath=output_path)
         logger.info('#### Done with amplitude plots ({0:.0f}s)'.format(

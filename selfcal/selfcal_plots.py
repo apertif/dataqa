@@ -14,8 +14,9 @@ from scandata import ScanData
 
 
 class PHSols(ScanData):
-    def __init__(self, scan, target, trigger_mode=False):
-        ScanData.__init__(self, scan, target, trigger_mode=trigger_mode)
+    def __init__(self, scan, target, trigger_mode=False, basedir=None):
+        ScanData.__init__(self, scan, target,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.phants = np.empty(len(self.dirlist), dtype=np.object)
         self.phtimes = np.empty(len(self.dirlist), dtype=np.object)
         self.phases = np.empty(len(self.dirlist), dtype=np.ndarray)
@@ -90,8 +91,9 @@ class PHSols(ScanData):
 
 
 class AMPSols(ScanData):
-    def __init__(self, scan, target, trigger_mode=False):
-        ScanData.__init__(self, scan, target, trigger_mode=trigger_mode)
+    def __init__(self, scan, target, trigger_mode=False, basedir=None):
+        ScanData.__init__(self, scan, target,
+                          trigger_mode=trigger_mode, basedir=basedir)
         self.ampants = np.empty(len(self.dirlist), dtype=np.object)
         self.amptimes = np.empty(len(self.dirlist), dtype=np.object)
         self.amps = np.empty(len(self.dirlist), dtype=np.ndarray)
