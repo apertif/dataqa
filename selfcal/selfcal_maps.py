@@ -43,13 +43,13 @@ def plot_selfcal_maps(fits_name, qa_selfcal_beam_dir, plot_residuals=False):
     # create image
     if plot_residuals:
         fig = ax.imshow(img * 1.e3, norm=mc.Normalize(vmin=-
-                                                      .1, vmax=.1),  origin='lower')
+                                                      .05, vmax=.05),  origin='lower', cmap="hot")
         # fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-3,
         #                                                vmin=-1, vmax=1.),  origin='lower')
 
     else:
         fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-9,
-                                                       vmin=0.03, vmax=200.),  origin='lower')
+                                                       vmin=0.02, vmax=1.),  origin='lower', cmap="hot")
 
     cbar = plt.colorbar(fig)
     cbar.set_label('Flux Density [mJy/beam]')
