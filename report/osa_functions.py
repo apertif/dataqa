@@ -23,7 +23,8 @@ def run():
     obs_id = cwd.split("/")[-3]
 
     # hopefully this file is available
-    obs_file = "/data/apertif/{0}/qa/{0}_obs.ecsv".format(obs_id)
+    #obs_file = "/data/apertif/{0}/qa/{0}_obs.ecsv".format(obs_id)
+    obs_file = os.path.join(os.path.dirname(cwd),"{0}_obs.ecsv".format(obs_id))
     # if the report has already been created, then it should als be there
     osa_report_file = "{}_OSA_report.json".format(obs_id)
 
@@ -93,11 +94,18 @@ def run():
         obs_table = Table.read(obs_file, format="ascii.ecsv")
 
         # get the obs IDs from the other obs
-        obs_table_2 = Table.read(obs_file.replace("/data/","/data2/"), format="ascii.ecsv")
-        obs_table_3 = Table.read(obs_file.replace(
-            "/data/", "/data3/"), format="ascii.ecsv")
-        obs_table_4 = Table.read(obs_file.replace(
-            "/data/", "/data4/"), format="ascii.ecsv")
+        if "/data" in obs_file:
+            obs_table_2 = Table.read(obs_file.replace("/data/","/data2/"), format="ascii.ecsv")
+            obs_table_3 = Table.read(obs_file.replace(
+                "/data/", "/data3/"), format="ascii.ecsv")
+            obs_table_4 = Table.read(obs_file.replace(
+                "/data/", "/data4/"), format="ascii.ecsv")
+        else:
+            obs_table_2 = Table.read(obs_file.replace("/tank/","/tank2/"), format="ascii.ecsv")
+            obs_table_3 = Table.read(obs_file.replace(
+                "/tank/", "/tank3/"), format="ascii.ecsv")
+            obs_table_4 = Table.read(obs_file.replace(
+                "/tank/", "/tank4/"), format="ascii.ecsv")
 
         osa_text_value = obs_table['OSA'][0]
         target_text_value = obs_table['Target'][0]
