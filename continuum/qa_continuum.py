@@ -238,13 +238,15 @@ def qa_plot_pybdsf_images(fits_file_list, plot_name_list, plot_type_list, plot_f
 
         # create image
         if plot_type_list[k] == 'cont' or plot_type_list[k] == 'gaus_resid':
-            # using log norm here set to 0.1mJy/beam
+            # using log norm here set to 0.02mJy/beam
             fig = ax.imshow(
-                img * 1.e3, norm=mc.SymLogNorm(1.e-9, vmin=0.03, vmax=200),  origin='lower')
+                img * 1.e3, norm=mc.SymLogNorm(1.e-9, vmin=0.02, vmax=1),  origin='lower', cmap="hot")
+            # fig = ax.imshow(
+            #     img * 1.e3, norm=mc.SymLogNorm(1.e-9, vmin=0.02, vmax=1),  origin='lower', cmap="hot")
         elif plot_type_list[k] == 'gaus_model':
-            # using log norm here set to 0.1mJy/beam
+            # using log norm here set to 0.02mJy/beam
             fig = ax.imshow(
-                img * 1.e3, norm=mc.LogNorm(0.03),  origin='lower')
+                img * 1.e3, norm=mc.LogNorm(0.02),  origin='lower', cmap="hot")
         elif plot_type_list[k] == 'island_mask':
             fig = ax.imshow(img, origin='lower')
         else:
