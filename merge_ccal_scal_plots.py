@@ -19,10 +19,13 @@ def merge_plots(image_list):
     # will most likely overwrite the existing image
     new_image_name = image_list[0]
 
-    # check that the new image will be saved in /data/
-    if new_image_name.split("/")[1] != "data":
+    # check that the new image will be saved in /data/ or /tank/
+    if new_image_name.split("/")[1] != "data" and "/data" in new_image_name:
         new_image_name = new_image_name.replace(
             new_image_name.split("/")[1], "data")
+    else:
+        new_image_name = new_image_name.replace(
+            new_image_name.split("/")[1], "tank")
 
     # now go through the images and overlay them
     # ==========================================
@@ -89,8 +92,18 @@ def run_merge_plots(qa_dir, do_ccal, do_scal):
         qa_dir_crosscal = "{0:s}crosscal".format(qa_dir)
 
         # get a list all crosscal plots
-        ccal_plot_list = glob.glob(
-            "{0:s}/*.png".format(qa_dir_crosscal.replace("/data", "/data*")))
+        if "/data" in qa_dir_crosscal:
+            ccal_plot_list = glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal)) + glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal.replace("/data", "/data2"))) + glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal.replace("/data", "/data3"))) + glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal.replace("/data", "/data4")))
+        else:
+            ccal_plot_list = glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal)) + glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal.replace("/tank", "/tank2"))) + glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal.replace("/tank", "/tank3"))) + glob.glob(
+                "{0:s}/*.png".format(qa_dir_crosscal.replace("/tank", "/tank4")))
 
         if len(ccal_plot_list) == 0:
             logger.warning("No crosscal plots were found.")
@@ -106,12 +119,21 @@ def run_merge_plots(qa_dir, do_ccal, do_scal):
                 logging.info("Merging {0:s}".format(png_name))
 
                 # get a list of plots with this name
-                ccal_plot_list = glob.glob(
-                    "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data*"), png_name))
+                if "/data" in qa_dir:
+                    ccal_plot_list = glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir, png_name)) + glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data2"), png_name)) + glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data3"), png_name)) + glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir.replace("/data", "/data4"), png_name))
+                else:
+                    ccal_plot_list = glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir, png_name)) + glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir.replace("/tank", "/tank2"), png_name)) + glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir.replace("/tank", "/tank3"), png_name)) + glob.glob(
+                        "{0:s}/{1:s}".format(qa_dir.replace("/tank", "/tank4"), png_name))
 
                 # now merge the images
                 merge_plots(ccal_plot_list)
-
 
 
 if __name__ == "__main__":
@@ -127,10 +149,13 @@ if __name__ == "__main__":
     parser.add_argument("--do_scal", action="store_true", default=False,
                         help='Set to enable merging of only the crooscal plots')
 
+    parser.add_argument('-b', '--basedir', default=None,
+                        help='Data directory')
+
     args = parser.parse_args()
 
     # get the QA directory
-    qa_dir = get_default_imagepath(args.scan)
+    qa_dir = get_default_imagepath(args.scan, basedir=args.basedir)
 
     # start logging
     # Create logging file
