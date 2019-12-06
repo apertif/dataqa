@@ -171,10 +171,16 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
             plot_name = "{0}_HI_median_rms_cube{1}".format(
                 obs_id, cube_counter)
             # use a different range of good values for
-            if cube_counter < 7:
-                goodrange = [0, 2]
+            if len(n_cubes) > 4:
+                if cube_counter < 7:
+                    goodrange = [0, 2]
+                else:
+                    goodrange = [0, 3]
             else:
-                goodrange = [0, 3]
+                if cube_counter < 3:
+                    goodrange = [0, 2]
+                else:
+                    goodrange = [0, 3]
 
             try:
                 make_cb_plot_value(cube_data, "median_rms",
