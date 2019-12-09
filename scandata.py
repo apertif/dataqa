@@ -17,7 +17,7 @@ def get_default_imagepath(scan, basedir=None):
 
     Args:
         scan (int): scan (or task id), e.g. 190303084
-        basedir (str): based directory of the scan, default /tank/apertif/
+        basedir (str): based directory of the scan, default /data/apertif/
 
     Returns:
         str: Path for storing images
@@ -25,7 +25,7 @@ def get_default_imagepath(scan, basedir=None):
     if basedir is not None:
         return os.path.join(basedir, '{scan}/qa/'.format(scan=scan))
     else:
-        return '/tank/apertif/{scan}/qa/'.format(scan=scan)
+        return '/data/apertif/{scan}/qa/'.format(scan=scan)
 
 
 class ScanData(object):
@@ -59,7 +59,7 @@ class ScanData(object):
         if self.trigger_mode:
             logging.info(
                 "--> Running in trigger mode. Looking only for data processed by Apercal on {0:s} <--".format(hostname))
-            path = '/tank/apertif/{}'.format(self.scan)
+            path = '/data/apertif/{}'.format(self.scan)
             paths = [path]
         elif hostname != 'happili-01' and not trigger_mode:
             logging.info(
@@ -67,7 +67,7 @@ class ScanData(object):
             if basedir is not None:
                 path = os.path.join(basedir, "{}".format(self.scan))
             else:
-                path = '/tank/apertif/{}'.format(self.scan)
+                path = '/data/apertif/{}'.format(self.scan)
             paths = [path]
         elif hostname == 'happili-01' and basedir is not None:
             path = os.path.join(basedir, "{}".format(self.scan))
@@ -77,10 +77,10 @@ class ScanData(object):
             # ignoring happili-05 - may have to fix this eventually
             logging.info(
                 "Running on {0:s}. Search for data from all nodes".format(hostname))
-            paths += ['/tank/apertif/{}'.format(self.scan)]
-            paths += ['/tank2/apertif/{}'.format(self.scan)]
-            paths += ['/tank3/apertif/{}'.format(self.scan)]
-            paths += ['/tank4/apertif/{}'.format(self.scan)]
+            paths += ['/data/apertif/{}'.format(self.scan)]
+            paths += ['/data2/apertif/{}'.format(self.scan)]
+            paths += ['/data3/apertif/{}'.format(self.scan)]
+            paths += ['/data4/apertif/{}'.format(self.scan)]
 
         for path in paths:
             allfiles = os.listdir(path)
