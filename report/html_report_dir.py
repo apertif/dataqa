@@ -138,8 +138,12 @@ def create_report_dir_beamweights(qa_dir, qa_dir_report_obs_subpage, trigger_mod
     if socket.gethostname() != 'happili-01' or trigger_mode:
         qa_beamweights_dir_list = [default_qa_beamweights_dir]
     else:
-        qa_beamweights_dir_list = [default_qa_beamweights_dir, default_qa_beamweights_dir.replace(
-            "data", "data2"), default_qa_beamweights_dir.replace("data", "data3"), default_qa_beamweights_dir.replace("data", "data4")]
+        if "/data" in default_qa_beamweights_dir:
+            qa_beamweights_dir_list = [default_qa_beamweights_dir, default_qa_beamweights_dir.replace(
+                "data", "data2"), default_qa_beamweights_dir.replace("data", "data3"), default_qa_beamweights_dir.replace("data", "data4")]
+        else:
+            qa_beamweights_dir_list = [default_qa_beamweights_dir, default_qa_beamweights_dir.replace(
+                "tank", "tank2"), default_qa_beamweights_dir.replace("tank", "tank3"), default_qa_beamweights_dir.replace("tank", "tank4")]
 
     # Get every single beamweights plot
     # =============================
@@ -281,8 +285,12 @@ def create_report_dir_inspection_plots(qa_dir, qa_dir_report_obs_subpage, trigge
             elif src == obs_info['Target'][0]:
                 qa_plot_dir_list = [default_qa_plot_dir]
             else:
-                qa_plot_dir_list = [default_qa_plot_dir, default_qa_plot_dir.replace(
-                    "data", "data2"), default_qa_plot_dir.replace("data", "data3"), default_qa_plot_dir.replace("data", "data4")]
+                if "/data" in default_qa_plot_dir:
+                    qa_plot_dir_list = [default_qa_plot_dir, default_qa_plot_dir.replace(
+                        "data", "data2"), default_qa_plot_dir.replace("data", "data3"), default_qa_plot_dir.replace("data", "data4")]
+                else:
+                    qa_plot_dir_list = [default_qa_plot_dir, default_qa_plot_dir.replace(
+                        "tank", "tank2"), default_qa_plot_dir.replace("tank", "tank3"), default_qa_plot_dir.replace("tank", "tank4")]
 
             # now go through each of the plot directories from the differen nodes
             for qa_plot_dir in qa_plot_dir_list:
@@ -405,8 +413,12 @@ def create_report_dir_preflag(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
     if socket.gethostname() != 'happili-01' or trigger_mode:
         qa_preflag_dir_list=[default_qa_preflag_dir]
     else:
-        qa_preflag_dir_list=[default_qa_preflag_dir, default_qa_preflag_dir.replace(
-            "data", "data2"), default_qa_preflag_dir.replace("data", "data3"), default_qa_preflag_dir.replace("data", "data4")]
+        if "/data" in default_qa_preflag_dir:
+            qa_preflag_dir_list=[default_qa_preflag_dir, default_qa_preflag_dir.replace(
+                "data", "data2"), default_qa_preflag_dir.replace("data", "data3"), default_qa_preflag_dir.replace("data", "data4")]
+        else:
+            qa_preflag_dir_list = [default_qa_preflag_dir, default_qa_preflag_dir.replace(
+                "tank", "tank2"), default_qa_preflag_dir.replace("tank", "tank3"), default_qa_preflag_dir.replace("tank", "tank4")]
 
     # Get the summary file
     # ====================
@@ -673,8 +685,12 @@ def create_report_dir_selfcal(obs_id, qa_dir, qa_dir_report_obs_subpage, trigger
     if socket.gethostname() != 'happili-01' or trigger_mode:
         qa_selfcal_dir_list = [default_qa_selfcal_dir]
     else:
-        qa_selfcal_dir_list = [default_qa_selfcal_dir, default_qa_selfcal_dir.replace(
-            "data", "data2"), default_qa_selfcal_dir.replace("data", "data3"), default_qa_selfcal_dir.replace("data", "data4")]
+        if "/data" in default_qa_selfcal_dir:
+            qa_selfcal_dir_list = [default_qa_selfcal_dir, default_qa_selfcal_dir.replace(
+                "data", "data2"), default_qa_selfcal_dir.replace("data", "data3"), default_qa_selfcal_dir.replace("data", "data4")]
+        else:
+            qa_selfcal_dir_list = [default_qa_selfcal_dir, default_qa_selfcal_dir.replace(
+                "tank", "tank2"), default_qa_selfcal_dir.replace("tank", "tank3"), default_qa_selfcal_dir.replace("tank", "tank4")]
 
     for qa_selfcal_dir in qa_selfcal_dir_list:
 
@@ -914,8 +930,12 @@ def create_report_dir_continuum(obs_id, qa_dir, qa_dir_report_obs_subpage, trigg
     if socket.gethostname() != 'happili-01' or trigger_mode:
         qa_continuum_dir_list = [default_qa_continuum_dir]
     else:
-        qa_continuum_dir_list = [default_qa_continuum_dir, default_qa_continuum_dir.replace(
-            "data", "data2"), default_qa_continuum_dir.replace("data", "data3"), default_qa_continuum_dir.replace("data", "data4")]
+        if "/data" in default_qa_continuum_dir:
+            qa_continuum_dir_list = [default_qa_continuum_dir, default_qa_continuum_dir.replace(
+                "data", "data2"), default_qa_continuum_dir.replace("data", "data3"), default_qa_continuum_dir.replace("data", "data4")]
+        else:
+            qa_continuum_dir_list = [default_qa_continuum_dir, default_qa_continuum_dir.replace(
+                "tank", "tank2"), default_qa_continuum_dir.replace("tank", "tank3"), default_qa_continuum_dir.replace("tank", "tank4")]
 
     for qa_continuum_dir in qa_continuum_dir_list:
 
@@ -1026,8 +1046,12 @@ def create_report_dir_line(qa_dir, qa_dir_report_obs_subpage, trigger_mode=False
     if socket.gethostname() != 'happili-01' or trigger_mode:
         qa_line_dir_list = [default_qa_line_dir]
     else:
-        qa_line_dir_list = [default_qa_line_dir, default_qa_line_dir.replace(
-            "data", "data2"), default_qa_line_dir.replace("data", "data3"), default_qa_line_dir.replace("data", "data4")]
+        if "/data" in default_qa_line_dir:
+            qa_line_dir_list = [default_qa_line_dir, default_qa_line_dir.replace(
+                "data", "data2"), default_qa_line_dir.replace("data", "data3"), default_qa_line_dir.replace("data", "data4")]
+        else:
+            qa_line_dir_list = [default_qa_line_dir, default_qa_line_dir.replace(
+                "tank", "tank2"), default_qa_line_dir.replace("tank", "tank3"), default_qa_line_dir.replace("tank", "tank4")]
 
     for qa_line_dir in qa_line_dir_list:
 
@@ -1220,9 +1244,19 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         #     qa_dir.replace("qa/","apercal.log"), qa_dir.replace("qa/","apercal.log").replace("data", "data2"), qa_dir.replace("qa/","apercal.log").replace("data", "data3"), qa_dir.replace("qa/","apercal.log").replace("data", "data4")]
 
         # get the data directories
-        data_dir_search_name = qa_dir.split(
-            "qa/")[0].replace("/data", "/data*")
-        data_dir_list = glob.glob(data_dir_search_name)
+        data_dir_search_name = qa_dir.split("qa/")[0]
+        if "/data" in qa_dir:
+            data_dir_list = glob.glob(
+                data_dir_search_name.) + glob.glob(
+                data_dir_search_name.replace("/data", "/data2")) + glob.glob(
+                data_dir_search_name.replace("/data", "/data3")) + glob.glob(
+                data_dir_search_name.replace("/data", "/data4"))
+        else:
+            data_dir_list = glob.glob(
+                data_dir_search_name.) + glob.glob(
+                data_dir_search_name.replace("/tank", "/tank2")) + glob.glob(
+                data_dir_search_name.replace("/tank", "/tank3")) + glob.glob(
+                data_dir_search_name.replace("/tank", "/tank4"))
 
         if len(data_dir_list) != 0:
 
