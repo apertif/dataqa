@@ -83,7 +83,7 @@ def run_triggered_qa(targets, fluxcals, polcals, steps=None, basedir=None, osa='
         qa_dir = get_default_imagepath(taskid_target, basedir=basedir)
     else:
         qa_dir = get_default_imagepath(taskid_target)
-        basedir = os.path.dirname(qa_dir)
+        basedir = "/data/apertif"
 
     # check that path exists
     if not os.path.exists(qa_dir):
