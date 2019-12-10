@@ -65,6 +65,9 @@ def main():
     parser.add_argument("-b", "--basedir", type=str,
                         help='Base directory where the obs id is')
 
+    parser.add_argument("--tank", action="store_true", default=False,
+                        help='Create the report on new volume')
+
     parser.add_argument("-a", "--add_osa_report", action="store_true", default=False,
                         help='Add only the osa report to the webpage')
 
@@ -104,6 +107,11 @@ def main():
             print(
                 "Directory {0:s} does not exist and will be created".format(qa_dir))
             os.makedirs(qa_dir)
+
+    # change the base directory from /data to /tank
+    if args.tank and "/data" in qa_dir:
+        print("Switching to /tank")
+        qa_dir.replace("/data", "/tank")
 
     # check the mode to run the validation
     qa_report_dir = "{0:s}report".format(

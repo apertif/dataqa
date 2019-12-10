@@ -1247,13 +1247,13 @@ def create_report_dir_apercal_log(qa_dir, qa_dir_report_obs_subpage, trigger_mod
         data_dir_search_name = qa_dir.split("qa/")[0]
         if "/data" in qa_dir:
             data_dir_list = glob.glob(
-                data_dir_search_name.) + glob.glob(
+                data_dir_search_name) + glob.glob(
                 data_dir_search_name.replace("/data", "/data2")) + glob.glob(
                 data_dir_search_name.replace("/data", "/data3")) + glob.glob(
                 data_dir_search_name.replace("/data", "/data4"))
         else:
             data_dir_list = glob.glob(
-                data_dir_search_name.) + glob.glob(
+                data_dir_search_name) + glob.glob(
                 data_dir_search_name.replace("/tank", "/tank2")) + glob.glob(
                 data_dir_search_name.replace("/tank", "/tank3")) + glob.glob(
                 data_dir_search_name.replace("/tank", "/tank4"))
