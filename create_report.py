@@ -111,7 +111,7 @@ def main():
     # change the base directory from /data to /tank
     if args.tank and "/data" in qa_dir:
         print("Switching to /tank")
-        qa_dir.replace("/data", "/tank")
+        qa_dir = qa_dir.replace("/data", "/tank")
 
     # check the mode to run the validation
     qa_report_dir = "{0:s}report".format(
