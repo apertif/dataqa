@@ -34,7 +34,6 @@ from continuum.continuum_tables import merge_continuum_image_properties_table
 from cb_plots import make_cb_plots_for_report
 from crosscal.dish_delay_plot import get_dish_delay_plots
 from scandata import get_default_imagepath
-from merge_ccal_scal_plots import run_merge_plots
 
 
 def main():
