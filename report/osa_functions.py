@@ -10,7 +10,7 @@ import json
 from collections import OrderedDict
 
 
-def run():
+def run(obs_id = None):
 
     layout_select = Layout(width='30%')
     layout_area = Layout(width='60%', height='100px')
@@ -20,7 +20,8 @@ def run():
     # get the current director
     cwd = os.getcwd()
     # get the obs id
-    obs_id = cwd.split("/")[-3]
+    if obs_id is None:
+        obs_id = cwd.split("/")[-3]
 
     # hopefully this file is available
     #obs_file = "/data/apertif/{0}/qa/{0}_obs.ecsv".format(obs_id)
@@ -87,6 +88,12 @@ def run():
         summary_notes_value = report_json['Summary']['Notes']
         if summary_status_value == "Critical":
             summary_status_value = "Failed"
+        if report_json['Summary'].has_key("Pipeline_Status"):
+            summary_status_value_pipeline = report_json['Summary']['Pipeline_Status']
+            summary_notes_value_pipeline = report_json['Summary']['Pipeline_Notes']
+        else:
+            summary_status_value_pipeline = 'Unchecked'
+            summary_notes_value_pipeline = '-'
 
     # if the report does not yet exists try the observation table
     elif os.path.exists(obs_file):
@@ -140,6 +147,8 @@ def run():
         line_notes_value = '-'
         summary_status_value = 'Unchecked'
         summary_notes_value = '-'
+        summary_status_value_pipeline = 'Unchecked'
+        summary_notes_value_pipeline = '-'
 
     # otherwise leve most things empty
     else:
@@ -167,6 +176,8 @@ def run():
         line_notes_value = '-'
         summary_status_value = 'Unchecked'
         summary_notes_value = '-'
+        summary_status_value_pipeline = 'Unchecked'
+        summary_notes_value_pipeline = '-'
 
     # dropdown_options = ['unchecked', 'unknown',
     #                     'failed', 'bad', 'acceptable',  'good']
@@ -226,7 +237,7 @@ def run():
     # Prepare
     # =======
     prepare_label = widgets.HTML(
-        value="<h2 style='text-decoration: underline'> Prepare </h2>"
+        value="<h2 style='text-decoration: underline'> Prepare (Inspection Plots) </h2>"
     )
     display(prepare_label)
 
@@ -404,6 +415,10 @@ def run():
         value=status_legend_summary)
     display(summary_label_info)
 
+    summary_label_obs = widgets.HTML(
+        value="<h4> Observation </h4>")
+    display(summary_label_obs)
+
     summary_menu = widgets.Dropdown(options=dropdown_options,
                                     value=summary_status_value,
                                     description='Select:',
@@ -419,6 +434,26 @@ def run():
                                      disabled=False,
                                      layout=layout_area)
     display(summary_notes)
+
+    summary_label_pipeline = widgets.HTML(
+        value="<h4> Pipeline </h4>")
+    display(summary_label_pipeline)
+
+    summary_menu_pipeline = widgets.Dropdown(options=dropdown_options,
+                                    value=summary_status_value_pipeline,
+                                    description='Select:',
+                                    disabled=False,
+                                    layout=layout_select)
+    display(summary_menu_pipeline)
+
+    # notes_label = widgets.Label("#### Notes")
+    # display(notes_label)
+    summary_notes_pipeline = widgets.Textarea(value=summary_notes_value_pipeline,
+                                     placeholder='Nothing to add',
+                                     description='Notes:',
+                                     disabled=False,
+                                     layout=layout_area)
+    display(summary_notes_pipeline)
 
     btn = widgets.Button(description='Save', button_style='primary')
     display(btn)
@@ -527,6 +562,15 @@ def run():
             show_warning_label("Summary", request_info=True)
             report_complete = False
             #return -1
+        
+        if summary_menu_pipeline.value == 'Unchecked':
+            show_warning_label("Summary")
+            report_complete = False
+            #return -1
+        elif summary_menu_pipeline.value != 'Excellent' and summary_notes.value == "-":
+            show_warning_label("Summary", request_info=True)
+            report_complete = False
+            #return -1
 
         # save as json
         # OrderedDict to preserve order when dumping to json
@@ -564,6 +608,9 @@ def run():
         json_dict['Summary'] = OrderedDict()
         json_dict['Summary']['Status'] = summary_menu.value
         json_dict['Summary']['Notes'] = summary_notes.value
+        json_dict['Summary']['Pipeline_Status'] = summary_menu_pipeline.value
+        json_dict['Summary']['Pipeline_Notes'] = summary_notes_pipeline.value
+
 
         json_file_name = "{0}_OSA_report.json".format(obs_id)
 

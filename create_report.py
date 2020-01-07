@@ -26,6 +26,7 @@ import socket
 from apercal.libs import lib
 from report import html_report as hp
 from report import html_report_dir as hpd
+from report.merge_ccal_scal_plots import run_merge_plots
 from report.pipeline_run_time import get_pipeline_run_time
 from report.make_nptabel_summary import make_nptabel_csv
 from line.cube_stats import combine_cube_stats
@@ -73,6 +74,9 @@ def main():
 
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
+
+    parser.add_argument("--no_merge", action="store_true", default=False,
+                        help='Set to merge selfcal and crosscal plots')
 
     parser.add_argument("--do_not_read_timing", action="store_true", default=False,
                         help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
@@ -243,6 +247,7 @@ def main():
                     if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
                         # just run it on preflag for now
                         if page == "preflag" or page == "crosscal" or page == "convert" or page == "selfcal" or page == "continuum":
+                            # get information from numpy files
                             try:
                                 logger.info(
                                     "## Getting summary table for {}".format(page))
@@ -255,6 +260,21 @@ def main():
                             else:
                                 logger.info(
                                     "## Getting summary table for {} ... Done".format(page))
+
+                            # merge plots
+                            if not args.no_merge and not args.single_node:
+                                try:
+                                    logger.info(
+                                        "## Merging selfcal and crosscal plots")
+                                    run_merge_plots(
+                                        qa_dir, do_ccal=True, do_scal=True, run_parallel=True, n_cores=5)
+                                except Exception as e:
+                                    logger.warning(
+                                        "## Merging selfcal and crosscal plots ... Failed")
+                                    logger.exception(e)
+                                else:
+                                    logger.info(
+                                        "## Merging selfcal and crosscal plots ... Done")
 
                     # merge the continuum image properties
                     if page == 'continuum':

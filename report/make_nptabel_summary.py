@@ -73,6 +73,9 @@ def extract_beam(path, beamnum, module, source):
 
     if module == 'selfcal' or module == 'continuum' or module == 'transfer':
         f = glob.glob(os.path.join(path, 'param_{:02d}.npy'.format(beamnum)))
+    elif module == "crosscal":
+        f = glob.glob(os.path.join(
+            path, 'param_{:02d}_crosscal.npy'.format(beamnum)))
     else:
         f = glob.glob(os.path.join(
             path, 'param_{:02d}*{}*{}.npy'.format(beamnum, module, source)))
@@ -115,7 +118,7 @@ def extract_beam(path, beamnum, module, source):
 
     else:
         #print('No file for beam: ', i)
-        logger.info("No file for beam: {}".format(beamnum))
+        logger.info("No file for beam: {0} in {1}".format(beamnum, path))
 
     logger.info("Extracting data for beam {} ... Done".format(beamnum))
 
@@ -145,29 +148,30 @@ def extract_all_beams(obs_id, module, qa_dir):
         # are on the same node. Not the best solution
         # for this, but requires the least amount of
         # changes to the logic below
-        if socket.gethostname == "happili-01":
+        obs_dir = os.path.dirname(qa_dir.rstrip("/"))
+        if socket.gethostname() == "happili-01":
             # this gives /data/apertif/<taskid>
-            beams_1 = os.path.dirname(qa_dir) + "/"
-            beams_2 = os.path.dirname(qa_dir).replace("/data", "/data2") + "/"
-            beams_3 = os.path.dirname(qa_dir).replace("/data", "/data3") + "/"
-            beams_4 = os.path.dirname(qa_dir).replace("/data", "/data4") + "/"
+            beams_1 = obs_dir + "/"
+            beams_2 = obs_dir.replace("/data", "/data2") + "/"
+            beams_3 = obs_dir.replace("/data", "/data3") + "/"
+            beams_4 = obs_dir.replace("/data", "/data4") + "/"
         else:
-            beams_1 = os.path.dirname(qa_dir) + "/"
-            beams_2 = os.path.dirname(qa_dir) + "/"
-            beams_3 = os.path.dirname(qa_dir) + "/"
-            beams_4 = os.path.dirname(qa_dir) + "/"
+            beams_1 = obs_dir + "/"
+            beams_2 = obs_dir + "/"
+            beams_3 = obs_dir + "/"
+            beams_4 = obs_dir + "/"
 
     else:
-        if socket.gethostname == "happili-01":
-            beams_1 = os.path.dirname(qa_dir) + "/"
-            beams_2 = os.path.dirname(qa_dir).replace("/tank", "/tank2") + "/"
-            beams_3 = os.path.dirname(qa_dir).replace("/tank", "/tank3") + "/"
-            beams_4 = os.path.dirname(qa_dir).replace("/tank", "/tank4") + "/"
+        if socket.gethostname() == "happili-01":
+            beams_1 = obs_dir + "/"
+            beams_2 = obs_dir.replace("/tank", "/tank2") + "/"
+            beams_3 = obs_dir.replace("/tank", "/tank3") + "/"
+            beams_4 = obs_dir.replace("/tank", "/tank4") + "/"
         else:
-            beams_1 = os.path.dirname(qa_dir) + "/"
-            beams_2 = os.path.dirname(qa_dir) + "/"
-            beams_3 = os.path.dirname(qa_dir) + "/"
-            beams_4 = os.path.dirname(qa_dir) + "/"
+            beams_1 = obs_dir + "/"
+            beams_2 = obs_dir + "/"
+            beams_3 = obs_dir + "/"
+            beams_4 = obs_dir + "/"
 
     beamnum = np.arange(40)
 
@@ -243,7 +247,6 @@ def make_nptabel_csv(obs_id, module, qa_dir, output_path=''):
             i += 1
             if len(summary_data[i]) > 1:
                 break
-
     else:
         while len(summary_data[i]) <= 2:
             i += 1

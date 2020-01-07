@@ -171,7 +171,7 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
             plot_name = "{0}_HI_median_rms_cube{1}".format(
                 obs_id, cube_counter)
             # use a different range of good values for
-            if len(n_cubes) > 4:
+            if n_cubes > 4:
                 if cube_counter < 7:
                     goodrange = [0, 2]
                 else:

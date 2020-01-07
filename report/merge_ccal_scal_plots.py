@@ -69,7 +69,7 @@ def merge_plots(image_list, new_image_name=None):
     new_image.save(new_image_name, "PNG")
 
 
-def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_parallel=False):
+def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_parallel=False, n_cores=5):
     """ This function merges the crosscal and/or selfcal plots
     that are split by beam from the different data directories.
 
@@ -148,7 +148,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
             ccal_png_name_list = np.unique(ccal_png_name_list)
 
             if run_parallel:
-                with pymp.Parallel(40) as p:
+                with pymp.Parallel(n_cores) as p:
 
                     # go through all the images and merge them
                     for png_index in p.range(len(ccal_png_name_list)):
@@ -237,7 +237,7 @@ def run_merge_plots(qa_dir, do_ccal=True, do_scal=True, do_backup=True, run_para
 
             if run_parallel:
 
-                with pymp.Parallel(40) as p:
+                with pymp.Parallel(n_cores) as p:
 
                     # go through all the images and merge them
                     for png_index in p.range(len(scal_png_name_list)):

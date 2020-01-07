@@ -31,6 +31,9 @@ if __name__ == "__main__":
     parser.add_argument('-b', '--basedir', default=None,
                         help='Data directory')
 
+    parser.add_argument('--n_cores', default=5,
+                        help='Data directory')
+
     args = parser.parse_args()
 
     # get the QA directory
@@ -49,7 +52,7 @@ if __name__ == "__main__":
 
     try:
         run_merge_plots(
-            qa_dir, do_ccal=args.do_ccal, do_scal=args.do_scal, run_parallel=args.run_parallel)
+            qa_dir, do_ccal=args.do_ccal, do_scal=args.do_scal, run_parallel=args.run_parallel, n_cores=args.n_cores)
     except Exception as e:
         logger.warning("#### Merging plots ... Failed ({0:.0f}s)".format(
             time()-start_time))
