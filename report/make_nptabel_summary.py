@@ -73,6 +73,9 @@ def extract_beam(path, beamnum, module, source):
 
     if module == 'selfcal' or module == 'continuum' or module == 'transfer':
         f = glob.glob(os.path.join(path, 'param_{:02d}.npy'.format(beamnum)))
+    elif module == "crosscal":
+        f = glob.glob(os.path.join(
+            path, 'param_{:02d}_crosscal.npy'.format(beamnum)))
     else:
         f = glob.glob(os.path.join(
             path, 'param_{:02d}*{}*{}.npy'.format(beamnum, module, source)))
@@ -243,7 +246,6 @@ def make_nptabel_csv(obs_id, module, qa_dir, output_path=''):
             i += 1
             if len(summary_data[i]) > 1:
                 break
-
     else:
         while len(summary_data[i]) <= 2:
             i += 1
