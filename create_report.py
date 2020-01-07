@@ -26,6 +26,7 @@ import socket
 from apercal.libs import lib
 from report import html_report as hp
 from report import html_report_dir as hpd
+from report.merge_ccal_scal_plots import run_merge_plots
 from report.pipeline_run_time import get_pipeline_run_time
 from report.make_nptabel_summary import make_nptabel_csv
 from line.cube_stats import combine_cube_stats
@@ -33,6 +34,7 @@ from continuum.continuum_tables import merge_continuum_image_properties_table
 from cb_plots import make_cb_plots_for_report
 from crosscal.dish_delay_plot import get_dish_delay_plots
 from scandata import get_default_imagepath
+from merge_ccal_scal_plots import run_merge_plots
 
 
 def main():
@@ -73,6 +75,9 @@ def main():
 
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
+
+    parser.add_argument("--do_merge", action="store_true", default=True,
+                        help='Set to merge selfcal and crosscal plots)
 
     parser.add_argument("--do_not_read_timing", action="store_true", default=False,
                         help='Set to avoid reading timing information. Makes only sense if script is run multiple times or for debugging')
@@ -243,6 +248,7 @@ def main():
                     if page != "apercal_log" or page != "inspection_plots" or page != "summary" or page != "mosaic":
                         # just run it on preflag for now
                         if page == "preflag" or page == "crosscal" or page == "convert" or page == "selfcal" or page == "continuum":
+                            # get information from numpy files
                             try:
                                 logger.info(
                                     "## Getting summary table for {}".format(page))
@@ -255,6 +261,14 @@ def main():
                             else:
                                 logger.info(
                                     "## Getting summary table for {} ... Done".format(page))
+
+                            # merge plots
+                            if args.do_merge:
+                                try:
+                                    logger.info(
+                                        "## Merging selfcal and crosscal plots")
+                                    run_merge_plots(
+                                        qa_dir, do_ccal=True, do_scal=True, run_parallel=True, n_cores=5)
 
                     # merge the continuum image properties
                     if page == 'continuum':
