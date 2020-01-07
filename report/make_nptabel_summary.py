@@ -118,7 +118,7 @@ def extract_beam(path, beamnum, module, source):
 
     else:
         #print('No file for beam: ', i)
-        logger.info("No file for beam: {}".format(beamnum))
+        logger.info("No file for beam: {0} in {1}".format(beamnum, path))
 
     logger.info("Extracting data for beam {} ... Done".format(beamnum))
 
