@@ -149,7 +149,7 @@ def extract_all_beams(obs_id, module, qa_dir):
         # for this, but requires the least amount of
         # changes to the logic below
         obs_dir = os.path.dirname(qa_dir.rstrip("/"))
-        if socket.gethostname == "happili-01":
+        if socket.gethostname() == "happili-01":
             # this gives /data/apertif/<taskid>
             beams_1 = obs_dir + "/"
             beams_2 = obs_dir.replace("/data", "/data2") + "/"
@@ -162,7 +162,7 @@ def extract_all_beams(obs_id, module, qa_dir):
             beams_4 = obs_dir + "/"
 
     else:
-        if socket.gethostname == "happili-01":
+        if socket.gethostname() == "happili-01":
             beams_1 = obs_dir + "/"
             beams_2 = obs_dir.replace("/tank", "/tank2") + "/"
             beams_3 = obs_dir.replace("/tank", "/tank3") + "/"
