@@ -263,12 +263,19 @@ def main():
                                     "## Getting summary table for {} ... Done".format(page))
 
                             # merge plots
-                            if args.do_merge:
+                            if args.do_merge and not args.single_node:
                                 try:
                                     logger.info(
                                         "## Merging selfcal and crosscal plots")
                                     run_merge_plots(
                                         qa_dir, do_ccal=True, do_scal=True, run_parallel=True, n_cores=5)
+                                except Exception as e:
+                                    logger.warning(
+                                        "## Merging selfcal and crosscal plots ... Failed")
+                                    logger.exception(e)
+                                else:
+                                    logger.info(
+                                        "## Merging selfcal and crosscal plots ... Done")
 
                     # merge the continuum image properties
                     if page == 'continuum':
