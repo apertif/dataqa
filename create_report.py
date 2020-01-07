@@ -75,7 +75,7 @@ def main():
     parser.add_argument("-c", "--combine", action="store_true", default=False,
                         help='(Depracated) Set to create a combined report from all happilis on happili-01. It will overwrite the report on happili-01')
 
-    parser.add_argument("--do_merge", action="store_true", default=True,
+    parser.add_argument("--no_merge", action="store_true", default=False,
                         help='Set to merge selfcal and crosscal plots')
 
     parser.add_argument("--do_not_read_timing", action="store_true", default=False,
@@ -262,7 +262,7 @@ def main():
                                     "## Getting summary table for {} ... Done".format(page))
 
                             # merge plots
-                            if args.do_merge and not args.single_node:
+                            if not args.no_merge and not args.single_node:
                                 try:
                                     logger.info(
                                         "## Merging selfcal and crosscal plots")
