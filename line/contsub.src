@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for file in /data*/apertif/$1/??/line/cubes/HI_image_cube.fits ; do         
+  if [ -e "$file" ] ; then   
+     name=${file%.fits}
+     echo $name.mir
+     fits in=$file out=$name.mir op=xyin
+     contsub in=$name.mir mode=poly,1 "contchan=(1,800)" out=$name.contsub.mir
+     fits in=$name.contsub.mir out=$name.contsub.fits op=xyout
+     rm -rf $name.mir
+     rm -rf $name.contsub.mir
+  fi
+done

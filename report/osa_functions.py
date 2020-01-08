@@ -12,6 +12,19 @@ from collections import OrderedDict
 
 def run(obs_id = None):
 
+    """
+    Function to create the form for the OSA report.
+
+    It saves the OSA report (including a backup). It can also
+    load an existing (partial) report if the OSA wants to changes something
+    or wants to continue filling it out.
+
+    If the OSA is incomplete, it will be saved but warnings will appear
+
+    Args:
+        obs_id (str): Option to specify the taskid
+    """
+
     layout_select = Layout(width='30%')
     layout_area = Layout(width='60%', height='100px')
     style = {'description_width': 'initial'}
@@ -459,6 +472,10 @@ def run(obs_id = None):
     display(btn)
 
     def show_warning_label(module, request_info=False):
+        """
+        Function to get warning labels for different modules
+        """
+
         if request_info:
             warning_label = widgets.HTML(
                 value="<p style='font-size:large; color:red'> Warning: You have selected a status other then <i> Excellent </i> for <i>{0}</i>. Please provide the beam numbers and a short statement </p>".format(module))
@@ -469,6 +486,9 @@ def run(obs_id = None):
             display(warning_label)
 
     def save_info(b):
+        """
+        Function to save the OSA report
+        """
 
         save_try_label = widgets.HTML(
             value="<p style='font-size:large; color:black'> Trying to to save the report</p>")

@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module: scandata &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Script: run_rfinder" href="miscellaneous_run_rfinder.html" />
+    <link rel="prev" title="Miscellaneous" href="miscellaneous.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="miscellaneous_run_rfinder.html" title="Script: run_rfinder"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="miscellaneous.html" title="Miscellaneous"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="miscellaneous.html" accesskey="U">Miscellaneous</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Module: scandata</a><ul>
+<li><a class="reference internal" href="#module-scandata">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="miscellaneous.html"
+                        title="previous chapter">Miscellaneous</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="miscellaneous_run_rfinder.html"
+                        title="next chapter">Script: run_rfinder</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/miscellaneous_scandata.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-scandata">
+<h1>Module: scandata<a class="headerlink" href="#module-scandata" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-scandata">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-scandata" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scandata.ScanData">
+<em class="property">class </em><code class="descclassname">scandata.</code><code class="descname">ScanData</code><span class="sig-paren">(</span><em>scan</em>, <em>sourcename</em>, <em>basedir=None</em>, <em>trigger_mode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scandata.html#ScanData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scandata.ScanData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define object classes for holding data related to scans
+The key thing to specify an object is the scan of the target field
+Also need name of fluxcal (for cross-cal solutions)
+Want to add functionality for pol-cal for pol solutions (secondary)
+This specifies the location of all data, assuming setup of automatic pipeline
+(/data/apertif, distributed across happili nodes)</p>
+<p>Initialize with scan (taskid) and source name
+and place holders for phase and amplitude</p>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">scan (int): scan number, e.g. 190303083</div>
+<div class="line">sourcename (str): name of source, e.g. “3C48”</div>
+</div>
+</div>
+<dl class="method">
+<dt id="scandata.ScanData.create_imagepath">
+<code class="descname">create_imagepath</code><span class="sig-paren">(</span><em>imagepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scandata.html#ScanData.create_imagepath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scandata.ScanData.create_imagepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the image path. If imagepath is None, return a default one (and create it).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>imagepath (str): path where images should be stored (e.g. “/data/dijkema/190303084” or None)</dd>
+<dt>Returns:</dt>
+<dd>str: image path that was created. Will be equal to input imagepath, or a generated path</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scandata.ScanData.get_default_imagepath">
+<code class="descname">get_default_imagepath</code><span class="sig-paren">(</span><em>scan</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scandata.html#ScanData.get_default_imagepath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scandata.ScanData.get_default_imagepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around get_default_imagepath, this can be overridden in scal, ccal with a suffix</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scandata.get_default_imagepath">
+<code class="descclassname">scandata.</code><code class="descname">get_default_imagepath</code><span class="sig-paren">(</span><em>scan</em>, <em>basedir=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scandata.html#get_default_imagepath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scandata.get_default_imagepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the default path for saving images</p>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">scan (int): scan (or task id), e.g. 190303084</div>
+<div class="line">basedir (str): based directory of the scan, default /data/apertif/</div>
+</div>
+</div>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>str: Path for storing images</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="miscellaneous_run_rfinder.html" title="Script: run_rfinder"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="miscellaneous.html" title="Miscellaneous"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="miscellaneous.html" >Miscellaneous</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

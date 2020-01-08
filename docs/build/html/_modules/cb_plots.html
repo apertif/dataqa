@@ -1,0 +1,429 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cb_plots &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for cb_plots</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Compound beam overview plots of QA</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;E.A.K. Adams&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for producing compound beam plots</span>
+<span class="sd">showing an overview of data QA</span>
+
+<span class="sd">Contributions from R. Schulz</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">ascii</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Circle</span>
+<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="k">import</span> <span class="n">PatchCollection</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Globally define beam plotting parameters</span>
+<span class="c1"># So they are updated in one place</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># radius of beam to plot, in degrees</span>
+<span class="n">plotrange</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.75</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.75</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.75</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">]</span>  <span class="c1"># range to plot, RA runs backwards</span>
+<span class="n">offset_beam0_x</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">offset_beam0_y</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span>
+
+
+<div class="viewcode-block" id="make_cb_plots_for_report"><a class="viewcode-back" href="../report_cb_plots.html#cb_plots.make_cb_plots_for_report">[docs]</a><span class="k">def</span> <span class="nf">make_cb_plots_for_report</span><span class="p">(</span><span class="n">obs_id</span><span class="p">,</span> <span class="n">qa_dir</span><span class="p">,</span> <span class="n">plot_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to create the different cb plots for the web report.</span>
+
+<span class="sd">    | The function currently creates the following plots</span>
+<span class="sd">    | - phase selfcal done</span>
+<span class="sd">    | - amplitude selfcal done</span>
+<span class="sd">    | - continuum rms (range: 10-50 muJy/beam)</span>
+<span class="sd">    | - continuum minor axis (range: 10-15 arcsec)</span>
+
+<span class="sd">    | Args:</span>
+<span class="sd">    |     obs_id (int): ID of observation</span>
+<span class="sd">    |     qa_dir (str): Path to QA directory of the observation</span>
+<span class="sd">    |     plot_dir (str): Optional directory for the plots</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating summary cb plots&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create a directory to put all the plots in</span>
+    <span class="k">if</span> <span class="n">plot_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cb_plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">qa_dir</span><span class="p">,</span> <span class="s2">&quot;cb_plots&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cb_plot_dir</span> <span class="o">=</span> <span class="n">plot_dir</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cb_plot_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">cb_plot_dir</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating directory </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cb_plot_dir</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Directory </span><span class="si">{}</span><span class="s2"> already exists&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cb_plot_dir</span><span class="p">))</span>
+
+    <span class="c1"># get path for cboffset file</span>
+    <span class="n">package_name</span> <span class="o">=</span> <span class="vm">__name__</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;cb_offsets.txt&#39;</span>
+    <span class="n">cboffsets_file</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span>
+        <span class="n">package_name</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Using file </span><span class="si">{0}</span><span class="s2"> for compound beam offsets&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cboffsets_file</span><span class="p">))</span>
+
+    <span class="c1"># first create the compound beam plot</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotting compound beams&quot;</span><span class="p">)</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">cb_plot_dir</span>
+    <span class="n">plot_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_cb_overview&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">)</span>
+    <span class="n">make_cb_beam_plot</span><span class="p">(</span><span class="n">outputdir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span>
+                      <span class="n">cboffsets</span><span class="o">=</span><span class="n">cboffsets_file</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotting compound beams ... Done&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create selfcal plots</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for selfcal&quot;</span><span class="p">)</span>
+    <span class="n">selfcal_summary_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">qa_dir</span><span class="p">,</span> <span class="s2">&quot;selfcal/</span><span class="si">{}</span><span class="s2">_selfcal_summary.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">selfcal_summary_file</span><span class="p">):</span>
+        <span class="c1"># first plot phase selfcal</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">plot_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_selfcal_phase&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">)</span>
+            <span class="n">make_cb_plot_value</span><span class="p">(</span><span class="n">selfcal_summary_file</span><span class="p">,</span> <span class="s2">&quot;targetbeams_phase_status&quot;</span><span class="p">,</span>
+                               <span class="n">boolean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">cboffsets</span><span class="o">=</span><span class="n">cboffsets_file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for selfcal phase ... Failed&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for selfcal phase ... Done&quot;</span><span class="p">)</span>
+
+        <span class="c1"># now plot amplitude selfcal</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">plot_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_selfcal_amp&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">)</span>
+            <span class="n">make_cb_plot_value</span><span class="p">(</span><span class="n">selfcal_summary_file</span><span class="p">,</span> <span class="s2">&quot;targetbeams_amp_status&quot;</span><span class="p">,</span>
+                               <span class="n">boolean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">cboffsets</span><span class="o">=</span><span class="n">cboffsets_file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for selfcal amplitude ... Failed&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for selfcal amplitude ... Done&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not find </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">selfcal_summary_file</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for selfcal ... Failed&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create continuum plots</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for continuum&quot;</span><span class="p">)</span>
+    <span class="n">continuum_summary_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">qa_dir</span><span class="p">,</span> <span class="s2">&quot;continuum/</span><span class="si">{}</span><span class="s2">_combined_continuum_image_properties.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">continuum_summary_file</span><span class="p">):</span>
+        <span class="c1"># plot rms</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">plot_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_continuum_rms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">)</span>
+            <span class="n">make_cb_plot_value</span><span class="p">(</span><span class="n">continuum_summary_file</span><span class="p">,</span> <span class="s2">&quot;RMS&quot;</span><span class="p">,</span>
+                               <span class="n">goodrange</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">cboffsets</span><span class="o">=</span><span class="n">cboffsets_file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for continuum rms ... Failed&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for continuum rms ... Done&quot;</span><span class="p">)</span>
+
+        <span class="c1"># plot minor beam axis</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">plot_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_continuum_beam_min&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">)</span>
+            <span class="n">make_cb_plot_value</span><span class="p">(</span><span class="n">continuum_summary_file</span><span class="p">,</span> <span class="s2">&quot;BMIN&quot;</span><span class="p">,</span>
+                               <span class="n">goodrange</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">cboffsets</span><span class="o">=</span><span class="n">cboffsets_file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Creating cb plot for continuum beam min ... Failed&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for continuum beam min ... Done&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not find </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">continuum_summary_file</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for continuum ... Failed&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create line plots</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plots for line&quot;</span><span class="p">)</span>
+    <span class="n">line_summary_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">qa_dir</span><span class="p">,</span> <span class="s2">&quot;line/</span><span class="si">{}</span><span class="s2">_HI_cube_noise_statistics.ecsv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">line_summary_file</span><span class="p">):</span>
+
+        <span class="c1"># read the file</span>
+        <span class="n">line_summary_data</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">line_summary_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ascii.ecsv&quot;</span><span class="p">)</span>
+
+        <span class="c1"># number of cubes</span>
+        <span class="n">n_cubes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">line_summary_data</span><span class="p">[</span><span class="s1">&#39;cube&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># go through the cubes and create plots for each one</span>
+        <span class="k">for</span> <span class="n">cube_counter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cubes</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotting cube </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cube_counter</span><span class="p">))</span>
+
+            <span class="n">cube_data</span> <span class="o">=</span> <span class="n">line_summary_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">line_summary_data</span><span class="p">[</span><span class="s1">&#39;cube&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">cube_counter</span><span class="p">)]</span>
+
+            <span class="c1"># remove non-existing beams</span>
+            <span class="n">cube_data</span><span class="p">[</span><span class="s1">&#39;median_rms&#39;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">cube_data</span><span class="p">[</span><span class="s1">&#39;median_rms&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+            <span class="c1"># convert median rms into mJy</span>
+            <span class="n">cube_data</span><span class="p">[</span><span class="s1">&#39;median_rms&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">1.e3</span>
+
+            <span class="c1"># plot name</span>
+            <span class="n">plot_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_HI_median_rms_cube</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">obs_id</span><span class="p">,</span> <span class="n">cube_counter</span><span class="p">)</span>
+            <span class="c1"># use a different range of good values for</span>
+            <span class="k">if</span> <span class="n">n_cubes</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cube_counter</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+                    <span class="n">goodrange</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">goodrange</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cube_counter</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">goodrange</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">goodrange</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">make_cb_plot_value</span><span class="p">(</span><span class="n">cube_data</span><span class="p">,</span> <span class="s2">&quot;median_rms&quot;</span><span class="p">,</span>
+                                   <span class="n">goodrange</span><span class="o">=</span><span class="n">goodrange</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="n">plot_name</span><span class="p">,</span> <span class="n">cboffsets</span><span class="o">=</span><span class="n">cboffsets_file</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for line ... Failed&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for line ... Done&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not find </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line_summary_file</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating cb plot for line ... Failed&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating summary cb plots ... Done&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_cb_beam_plot"><a class="viewcode-back" href="../report_cb_plots.html#cb_plots.make_cb_beam_plot">[docs]</a><span class="k">def</span> <span class="nf">make_cb_beam_plot</span><span class="p">(</span><span class="n">cboffsets</span><span class="o">=</span><span class="s1">&#39;cb_offsets.txt&#39;</span><span class="p">,</span>
+                      <span class="n">outputdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function specifically makes a plot of only</span>
+<span class="sd">    the compound beams, labelling and numbering them</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get paths and names set</span>
+    <span class="k">if</span> <span class="n">outname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outname</span> <span class="o">=</span> <span class="s1">&#39;CB_overview&#39;</span>
+    <span class="k">if</span> <span class="n">outputdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputdir</span><span class="p">,</span> <span class="n">outname</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">outname</span>  <span class="c1"># write to current directory</span>
+    <span class="c1"># get the beams</span>
+    <span class="n">cbpos</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cboffsets</span><span class="p">)</span>
+    <span class="c1"># open figure</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">plotrange</span><span class="p">)</span>  <span class="c1"># RA axis runs backwards</span>
+    <span class="c1"># set up beams</span>
+    <span class="n">beams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cbpos</span><span class="p">))</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">radius</span>  <span class="c1"># beam size</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cbpos</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span> <span class="n">cbpos</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># offset beam 0</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">offset_beam0_x</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">offset_beam0_y</span>
+        <span class="c1"># set circle</span>
+        <span class="n">circle</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">),</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle</span><span class="p">)</span>
+        <span class="c1"># beams.append(circle)</span>
+        <span class="c1"># write text with value</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;CB</span><span class="si">{0:02}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beams</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">)</span>
+    <span class="c1"># p=PatchCollection(beams, alpha=0.4)</span>
+    <span class="c1"># ax.add_collection(p)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;RA offset, deg&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Dec offset, deg&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outname</span><span class="p">),</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outpath</span><span class="p">),</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_cb_plot_value"><a class="viewcode-back" href="../report_cb_plots.html#cb_plots.make_cb_plot_value">[docs]</a><span class="k">def</span> <span class="nf">make_cb_plot_value</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">goodrange</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">boolean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cboffsets</span><span class="o">=</span><span class="s1">&#39;cb_offsets.txt&#39;</span><span class="p">,</span>
+                       <span class="n">outputdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take a csv file or a table object and produce the plots.</span>
+<span class="sd">    Provide the column name to plot.</span>
+<span class="sd">    Optionally provide a range of good values that</span>
+<span class="sd">    will have beams plotted in green.</span>
+<span class="sd">    Or set boolean=True to plot colors based on a boolean value.</span>
+<span class="sd">    Lack of data in plotted in grey.</span>
+<span class="sd">    Default is to plot as red.</span>
+<span class="sd">    Color scheme should be updated to</span>
+<span class="sd">    take into account colorblindness.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check if file name is a string</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># read the csv file</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;csv&#39;</span><span class="p">)</span>
+    <span class="c1"># otherwise assume a table object as been given</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">filename</span>
+    <span class="c1"># print(table.colnames)</span>
+    <span class="c1"># check that column name exists:</span>
+    <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># select a column, assume first column is beams</span>
+        <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;Warning! Column name </span><span class="si">{0}</span><span class="s1"> not found.&#39;</span>
+               <span class="s1">&#39; Using third column of csv, </span><span class="si">{1}</span><span class="s1"> as default.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="p">,</span>
+                                                                    <span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># gets paths and names set</span>
+    <span class="k">if</span> <span class="n">outname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outname</span> <span class="o">=</span> <span class="n">column</span>
+    <span class="k">if</span> <span class="n">outputdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outputdir</span><span class="p">,</span> <span class="n">outname</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">outname</span>  <span class="c1"># write to current directory</span>
+    <span class="c1"># check automatically if a column is boolean</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="s1">&#39;False&#39;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">):</span>
+        <span class="n">boolean</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># make an array to hold colors:</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="c1"># colors = np.array([&#39;r&#39; for k in range(40)])</span>
+    <span class="c1"># find empty beams</span>
+    <span class="c1"># not all tables have this so do as try/except</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># &#39;exist&#39; column is read as strings</span>
+        <span class="n">nanind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;exist&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;False&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">colors</span><span class="p">[</span><span class="n">nanind</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># assume that the columns have NaNs</span>
+        <span class="k">if</span> <span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+            <span class="n">nanind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">])</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">colors</span><span class="p">[</span><span class="n">nanind</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+    <span class="c1"># find &quot;good&quot; values</span>
+    <span class="k">if</span> <span class="n">goodrange</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">goodrange</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># first turn good data into floats:</span>
+            <span class="n">goodind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">goodrange</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                              <span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">goodrange</span><span class="p">[</span><span class="mi">1</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># goodind = np.where(table[column]&gt;=goodrange[0])[0]</span>
+            <span class="c1"># print(goodind)</span>
+            <span class="n">colors</span><span class="p">[</span><span class="n">goodind</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span>
+    <span class="k">if</span> <span class="n">boolean</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># assume column array is true/false</span>
+        <span class="c1"># find trues and make green</span>
+        <span class="n">goodind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">colors</span><span class="p">[</span><span class="n">goodind</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span>
+        <span class="c1"># in this case, also make sure to overwrite anything done by exist column</span>
+        <span class="n">badind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;False&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">colors</span><span class="p">[</span><span class="n">badind</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span>
+    <span class="c1"># get the beams</span>
+    <span class="n">cbpos</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cboffsets</span><span class="p">)</span>
+    <span class="c1"># open figure</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">plotrange</span><span class="p">)</span>  <span class="c1"># RA axis runs backwards</span>
+    <span class="c1"># set up beams</span>
+    <span class="n">beams</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">radius</span>  <span class="c1"># beam size</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cbpos</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span> <span class="n">cbpos</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># offset beam 0</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">offset_beam0_x</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">offset_beam0_y</span>
+        <span class="c1"># set circle</span>
+        <span class="n">circle</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">),</span> <span class="n">r</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle</span><span class="p">)</span>
+        <span class="c1"># beams.append(circle)</span>
+
+        <span class="c1"># only add text if the color is not grey:</span>
+        <span class="k">if</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;k&#39;</span><span class="p">:</span>
+            <span class="c1"># write text with value</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+                <span class="n">value_label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:.1f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value_label</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value_label</span><span class="p">),</span>
+                    <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                    <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                    <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">)</span>
+    <span class="c1"># p=PatchCollection(beams, alpha=0.4)</span>
+    <span class="c1"># ax.add_collection(p)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;RA offset, deg&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Dec offset, deg&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outname</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outpath</span><span class="p">),</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

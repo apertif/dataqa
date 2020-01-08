@@ -7,5 +7,6 @@ Get QA metrics and plots after crosscal has been performed.
    :maxdepth: 2
    :caption: Contents:
 
-   crosscal_plots
    crosscal_run_ccal_plots
+   crosscal_plots
+   crosscal_dish_delay_plots

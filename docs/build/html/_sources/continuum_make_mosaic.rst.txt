@@ -4,8 +4,8 @@
 **This script is deprecated and no longer used for QA purposes.
 Apercal contains a dedicated module to create mosaics.**
 
-Description
------------
+Reference
+---------
 
 .. automodule:: mosaic.make_mosaic_image
    :members:

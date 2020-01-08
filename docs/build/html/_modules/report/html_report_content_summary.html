@@ -1,0 +1,328 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>report.html_report_content_summary &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for report.html_report_content_summary</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="write_obs_content_summary"><a class="viewcode-back" href="../../report_html_report_content_summary.html#report.html_report_content_summary.write_obs_content_summary">[docs]</a><span class="k">def</span> <span class="nf">write_obs_content_summary</span><span class="p">(</span><span class="n">html_code</span><span class="p">,</span> <span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">,</span> <span class="n">obs_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">osa_report</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to create the html page for summary</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        html_code (str): HTML code with header and title</span>
+<span class="sd">        qa_report_obs_path (str): Path to the report directory</span>
+<span class="sd">        page_type (str): The type of report page</span>
+<span class="sd">        obs_info (dict): Information about the observation</span>
+<span class="sd">        add_osa_report (bool): To add the osa report</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        html_code (str): Body of HTML code for this page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing html code for page </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">))</span>
+
+    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;w3-container w3-large&quot;&gt;</span>
+<span class="s2">            &lt;p&gt;Here you will find a summary of the observation.&lt;/p&gt;</span>
+<span class="s2">        &lt;/div&gt;</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create html code for the summary table</span>
+    <span class="c1"># ======================================</span>
+
+    <span class="k">if</span> <span class="n">obs_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">obs_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fluxcal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">polcal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">osa</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">obs_id</span> <span class="o">=</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Obs_ID&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Target&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fluxcal</span> <span class="o">=</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Flux_Calibrator&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">polcal</span> <span class="o">=</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Pol_Calibrator&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">osa</span> <span class="o">=</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;OSA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;w3-container w3-center&quot;&gt;</span>
+<span class="s2">            &lt;div class=&quot;w3-responsive&quot;&gt;</span>
+<span class="s2">                &lt;table class=&quot;w3-table-all&quot;&gt;</span>
+<span class="s2">                    &lt;tr class=&quot;w3-amber&quot;&gt;</span>
+<span class="s2">                        &lt;th&gt;Obs ID&lt;/th&gt;</span>
+<span class="s2">                        &lt;th&gt;Target&lt;/th&gt;</span>
+<span class="s2">                        &lt;th&gt;Flux calibrator&lt;/th&gt;</span>
+<span class="s2">                        &lt;th&gt;Pol calibrator&lt;/th&gt;</span>
+<span class="s2">                        &lt;th&gt;OSA&lt;/th&gt;</span>
+<span class="s2">                    &lt;/tr&gt;</span>
+<span class="s2">                    &lt;tr&gt;</span>
+<span class="s2">                        &lt;td&gt;</span><span class="si">{0}</span><span class="s2">&lt;/td&gt;</span>
+<span class="s2">                        &lt;td&gt;</span><span class="si">{1}</span><span class="s2">&lt;/td&gt;</span>
+<span class="s2">                        &lt;td&gt;</span><span class="si">{2}</span><span class="s2">&lt;/td&gt;</span>
+<span class="s2">                        &lt;td&gt;</span><span class="si">{3}</span><span class="s2">&lt;/td&gt;</span>
+<span class="s2">                        &lt;td&gt;</span><span class="si">{4}</span><span class="s2">&lt;/td&gt;</span>
+<span class="s2">                    &lt;/tr&gt;</span>
+<span class="s2">                &lt;/table&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">        &lt;/div&gt;</span><span class="se">\n\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">polcal</span><span class="p">,</span> <span class="n">osa</span><span class="p">)</span>
+
+    <span class="c1"># Create html code for the osa report table</span>
+    <span class="c1"># =========================================</span>
+
+    <span class="k">if</span> <span class="n">osa_report</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">pass</span>
+        <span class="c1"># check that osa report really exists:</span>
+
+        <span class="c1"># if os.path.exist:</span>
+        <span class="c1">#     obs_id = &quot;&quot;</span>
+        <span class="c1">#     target = &quot;&quot;</span>
+        <span class="c1">#     fluxcal = &quot;&quot;</span>
+        <span class="c1">#     polcal = &quot;&quot;</span>
+        <span class="c1">#     osa = &quot;&quot;</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     obs_id = obs_info[&#39;Obs_ID&#39;][0]</span>
+        <span class="c1">#     target = obs_info[&#39;Target&#39;][0]</span>
+        <span class="c1">#     fluxcal = obs_info[&#39;Flux_Calibrator&#39;][0]</span>
+        <span class="c1">#     polcal = obs_info[&#39;Pol_Calibrator&#39;][0]</span>
+        <span class="c1">#     osa = obs_info[&#39;OSA&#39;][0]</span>
+
+        <span class="c1"># html_code += &quot;&quot;&quot;</span>
+        <span class="c1">#     &lt;div class=&quot;w3-container w3-center&quot;&gt;</span>
+        <span class="c1">#         &lt;div class=&quot;w3-responsive&quot;&gt;</span>
+        <span class="c1">#             &lt;table class=&quot;w3-table-all&quot;&gt;</span>
+        <span class="c1">#                 &lt;tr class=&quot;w3-amber&quot;&gt;</span>
+        <span class="c1">#                     &lt;th&gt;Obs ID&lt;/th&gt;</span>
+        <span class="c1">#                     &lt;th&gt;Target&lt;/th&gt;</span>
+        <span class="c1">#                     &lt;th&gt;Flux calibrator&lt;/th&gt;</span>
+        <span class="c1">#                     &lt;th&gt;Pol calibrator&lt;/th&gt;</span>
+        <span class="c1">#                     &lt;th&gt;OSA&lt;/th&gt;</span>
+        <span class="c1">#                 &lt;/tr&gt;</span>
+        <span class="c1">#                     &lt;td&gt;{0:s}&lt;/td&gt;</span>
+        <span class="c1">#                     &lt;td&gt;{1:s}&lt;/td&gt;</span>
+        <span class="c1">#                     &lt;td&gt;{2:s}&lt;/td&gt;</span>
+        <span class="c1">#                     &lt;td&gt;{3:s}&lt;/td&gt;</span>
+        <span class="c1">#                     &lt;td&gt;{4:s}&lt;/td&gt;</span>
+        <span class="c1">#             &lt;/table&gt;</span>
+        <span class="c1">#         &lt;/div&gt;</span>
+        <span class="c1">#     &lt;/div&gt;\n\n&quot;&quot;&quot;.format(obs_id, target, fluxcal, polcal, osa)</span>
+
+    <span class="c1"># Create html code for summary plot</span>
+    <span class="c1"># =================================</span>
+    <span class="c1"># get images</span>
+    <span class="n">image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/*.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="n">image_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="c1"># Make gallery for selfcal</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;div class=&quot;w3-container w3-margin-top w3-show&quot;&gt;</span>
+<span class="s2">                    &lt;h3&gt; Selfcal CB plots &lt;/h3&gt;</span>
+<span class="s2">                    &lt;p&gt; These plots summarise the selfcal step of the pipeline for each of the compound beams. The left plot shows the beam numbers for reference. The middle and right plots shows whether amplitude and phase selfcalibration was performed. A missing beam would be gray. Amplitude selfcalibration is only turned on if the SNR is high enough. Phase selfcalibration is always done which is why only this plot shows if a beam failed on selfcal. Have a look at the selfcal page for further information on a given beam.&lt;/p&gt;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container w3-large&quot;&gt;</span>
+<span class="s2">                    </span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="n">image_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;cb_overview&quot;</span> <span class="ow">in</span> <span class="n">image</span> <span class="ow">or</span> <span class="s2">&quot;selfcal&quot;</span> <span class="ow">in</span> <span class="n">image</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">image_counter</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-third w3-border&quot;&gt;</span>
+<span class="s2">                        &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                            &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot; alt=&quot;No image&quot; style=&quot;width:100%&quot;&gt;</span>
+<span class="s2">                        &lt;/a&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">image_counter</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">image_counter</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">image_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="c1"># Make gallery for continuum</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;div class=&quot;w3-container w3-margin-top w3-show&quot;&gt;</span>
+<span class="s2">                    &lt;h3&gt; Continuum CB plots &lt;/h3&gt;</span>
+<span class="s2">                    &lt;p&gt; These plots summarise the continuum step of the pipeline for each of the compound beams. The left plot shows the beam numbers for reference. The middle and right plots shows the minor beam axis and continuum rms, respectively. A missing beam would be gray. Red indicates the beam has failed if the rms is above 50mJy/beam or the minor axis above 15arcsec. Have a look at the continuum page for further information on a given beam and the image gallery from all beams.&lt;/p&gt;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container w3-large&quot;&gt;</span>
+<span class="s2">                    </span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="n">image_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;cb_overview&quot;</span> <span class="ow">in</span> <span class="n">image</span> <span class="ow">or</span> <span class="s2">&quot;continuum&quot;</span> <span class="ow">in</span> <span class="n">image</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">image_counter</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-third w3-border&quot;&gt;</span>
+<span class="s2">                        &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                            &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot; alt=&quot;No image&quot; style=&quot;width:100%&quot;&gt;</span>
+<span class="s2">                        &lt;/a&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">image_counter</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">image_counter</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">image_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="c1"># Make gallery for line</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;div class=&quot;w3-container w3-margin-top w3-show&quot;&gt;</span>
+<span class="s2">                    &lt;h3&gt; Line CB plots &lt;/h3&gt;</span>
+<span class="s2">                    &lt;p&gt; These plots summarise the line step of the pipeline for each of the compound beams. The first one shows the beam numbers for reference. The other 8 plots show the median rms for each cube. A missing/failed cube for a beam would be gray. Red indicates a failed cube if the median rms is above 2mJy/beam for the cubes 0-6 (which are 3-channel averaged) and above 3mJy/beam for cube 7 (which has the full spectral resolution). It is important to check even good cubes in a beam for systematic affects (subband edges, slopes, etc.). Have a look at the line page to view the noise spectra for all cubes from all beams.&lt;/p&gt;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container w3-large&quot;&gt;</span>
+<span class="s2">                    </span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+
+            <span class="c1"># make the reference plots in an extra line</span>
+            <span class="k">if</span> <span class="s2">&quot;cb_overview&quot;</span> <span class="ow">in</span> <span class="n">image</span><span class="p">:</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-quarter w3-border&quot;&gt;</span>
+<span class="s2">                        &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                            &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot; alt=&quot;No image&quot; style=&quot;width:100%&quot;&gt;</span>
+<span class="s2">                        &lt;/a&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="n">image_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;cube&quot;</span> <span class="ow">in</span> <span class="n">image</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">image_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-quarter w3-border&quot;&gt;</span>
+<span class="s2">                        &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                            &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot; alt=&quot;No image&quot; style=&quot;width:100%&quot;&gt;</span>
+<span class="s2">                        &lt;/a&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">image_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">image_counter</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">image_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No summary plots found&quot;</span><span class="p">)</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;w3-container w3-large w3-text-red&quot;&gt;</span>
+<span class="s2">            &lt;p&gt;</span>
+<span class="s2">                No plots were found for summary</span>
+<span class="s2">            &lt;/p&gt;</span>
+<span class="s2">        &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">html_code</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

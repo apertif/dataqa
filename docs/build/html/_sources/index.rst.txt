@@ -7,18 +7,22 @@ Welcome to DataQA's documentation!
 ##################################
 
 Documentation of the DataQA package which contains functionality to perform
-quality assessment of APERTIF data processed by Apercal
+quality assessment of Apertif imaging survey data processed by Apercal (`Github link <https://github.com/apertif/apercal>`_)
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   pipeline
+   report
+   osa
+   prepare
+   preflag
    crosscal
    continuum
-   line
    selfcal
-   report
-   pipeline
+   line
+   miscellaneous
 
 
 Indices and tables

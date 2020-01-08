@@ -1,0 +1,356 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>report.html_report_content_inspection_plots &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for report.html_report_content_inspection_plots</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="write_obs_content_inspection_plots"><a class="viewcode-back" href="../../report_html_report_content_inspection_plots.html#report.html_report_content_inspection_plots.write_obs_content_inspection_plots">[docs]</a><span class="k">def</span> <span class="nf">write_obs_content_inspection_plots</span><span class="p">(</span><span class="n">html_code</span><span class="p">,</span> <span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">,</span> <span class="n">obs_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to create the html page for inspection plots</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        html_code (str): HTML code with header and title</span>
+<span class="sd">        qa_report_obs_path (str): Path to the report directory</span>
+<span class="sd">        page_type (str): The type of report page</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        html_code (str): Body of HTML code for this page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing html code for page </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">))</span>
+
+    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;w3-container w3-large&quot;&gt;</span>
+<span class="s2">            &lt;p&gt;Here you can go through the inspection plots.&lt;/p&gt;</span>
+<span class="s2">        &lt;/div&gt;</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+    <span class="n">qa_report_obs_path_page</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">)</span>
+
+    <span class="c1"># Create html code for inspection plots</span>
+    <span class="c1"># =====================================</span>
+    <span class="c1"># assume that they are in the main directory if no obs infor are given</span>
+    <span class="k">if</span> <span class="n">obs_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># get images</span>
+        <span class="n">image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">qa_report_obs_path_page</span><span class="p">,</span> <span class="s2">&quot;*.png&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># sort the list</span>
+            <span class="n">image_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container w3-margin-top&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+            <span class="n">img_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-quarter w3-border&quot;&gt;</span>
+<span class="s2">                        &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                            &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot; alt=&quot;No image&quot; style=&quot;width:100%&quot;&gt;</span>
+<span class="s2">                        &lt;/a&gt;</span>
+<span class="s2">                        &lt;!--&lt;div class=&quot;w3-container w3-center&quot;&gt;</span>
+<span class="s2">                            &lt;h5&gt;</span><span class="si">{1:s}</span><span class="s2">&lt;/h5&gt;</span>
+<span class="s2">                        &lt;/div&gt;--!&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">img_counter</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">img_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No inspection plots found&quot;</span><span class="p">)</span>
+            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;div class=&quot;w3-container w3-large w3-text-red&quot;&gt;</span>
+<span class="s2">                &lt;p&gt;</span>
+<span class="s2">                    No plots were found for preflag</span>
+<span class="s2">                &lt;/p&gt;</span>
+<span class="s2">            &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+    <span class="c1"># otherwise use the information</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Pol_Calibrator&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">src_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Target&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Flux_Calibrator&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">src_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Target&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Flux_Calibrator&#39;</span><span class="p">]</span>
+                        <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Pol_Calibrator&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="c1"># now go through the list of sources</span>
+        <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">src_name</span><span class="p">:</span>
+
+            <span class="n">qa_report_obs_path_page_src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">qa_report_obs_path_page</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+
+            <span class="n">button_src_name</span> <span class="o">=</span> <span class="s2">&quot;plot_</span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+            <span class="c1"># for the target get the images that are in the directory</span>
+            <span class="k">if</span> <span class="n">src</span> <span class="o">==</span> <span class="n">obs_info</span><span class="p">[</span><span class="s1">&#39;Target&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+
+                <span class="n">image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">qa_report_obs_path_page_src</span><span class="p">,</span> <span class="s2">&quot;*.png&quot;</span><span class="p">))</span>
+
+                <span class="c1"># check that there are actually images</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="c1"># sort the list</span>
+                    <span class="n">image_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+                    <span class="c1"># create container for gallery</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                           &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                                &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                                </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                                &lt;/button&gt;</span>
+<span class="s2">                            &lt;/div&gt;</span>
+<span class="s2">                            &lt;div class=&quot;w3-container w3-margin-top w3-hide&quot; name=&quot;</span><span class="si">{0:s}</span><span class="s2">&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">button_src_name</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+
+                    <span class="c1"># to count the plots for the gallery</span>
+                    <span class="n">img_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="c1"># go through the images</span>
+                    <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+
+                        <span class="c1"># use 4 plots per row</span>
+                        <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                        <span class="c1"># no caption need for the image</span>
+                        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                            &lt;div class=&quot;w3-quarter w3-border&quot;&gt;</span>
+<span class="s2">                                &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                                    &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">&quot; alt=&quot;No image&quot; style=&quot;width:100%&quot;&gt;</span>
+<span class="s2">                                &lt;/a&gt;</span>
+<span class="s2">                            &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+
+                        <span class="c1"># to close a row after four images or when there are no more images</span>
+                        <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">img_counter</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                        <span class="n">img_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># close the gallery div</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="c1"># otherwise create a disabled button</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No inspection plots found for target </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">src</span><span class="p">))</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                        &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                            </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                        &lt;/button&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">button_src_name</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+
+            <span class="c1"># for the calibrator, the plots in beam directories</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># get a list of beams instead of getting all plots</span>
+                <span class="c1"># because they will be separated in polarization</span>
+                <span class="n">beam_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">qa_report_obs_path_page_src</span><span class="p">,</span> <span class="s2">&quot;[0-3][0-9]&quot;</span><span class="p">)))</span>
+
+                <span class="c1"># check that there are images</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">beam_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="c1"># an array of just the beams</span>
+                    <span class="n">beam_nr_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">beam</span><span class="p">)</span> <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beam_list</span><span class="p">])</span>
+
+                    <span class="c1"># a reference list of beams</span>
+                    <span class="n">beam_nr_list_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                        <span class="p">[</span><span class="s1">&#39;</span><span class="si">{0:02d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="p">)</span> <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">)])</span>
+
+                    <span class="c1"># the list of polarisation of the plots</span>
+                    <span class="n">pol_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;xx&#39;</span><span class="p">,</span> <span class="s1">&#39;yy&#39;</span><span class="p">]</span>
+
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                            &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                                &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                                </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                                &lt;/button&gt;</span>
+<span class="s2">                            &lt;/div&gt;</span>
+<span class="s2">                            &lt;div class=&quot;w3-container w3-margin-top w3-hide&quot; name=&quot;</span><span class="si">{0:s}</span><span class="s2">&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">button_src_name</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+
+                    <span class="c1"># now go through each of the polarisations</span>
+                    <span class="k">for</span> <span class="n">pol</span> <span class="ow">in</span> <span class="n">pol_list</span><span class="p">:</span>
+                        <span class="n">div_name_pol</span> <span class="o">=</span> <span class="s2">&quot;insplot_gallery_</span><span class="si">{0:s}</span><span class="s2">_</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">src</span><span class="p">,</span> <span class="n">pol</span><span class="p">)</span>
+
+                        <span class="c1"># get a list of images</span>
+                        <span class="n">image_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">qa_report_obs_path_page_src</span><span class="p">,</span> <span class="s2">&quot;[0-3][0-9]/*</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pol</span><span class="p">))))</span>
+
+                        <span class="c1"># check that there are images</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                                        &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom&quot;  onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                                            </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                                        &lt;/button&gt;</span>
+<span class="s2">                                    &lt;/div&gt;</span>
+<span class="s2">                                    &lt;div class=&quot;w3-container w3-margin-top w3-hide&quot; name=&quot;</span><span class="si">{0:s}</span><span class="s2">&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">div_name_pol</span><span class="p">,</span> <span class="n">pol</span><span class="p">)</span>
+
+                            <span class="n">img_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+                            <span class="c1"># go through all reference beams</span>
+                            <span class="k">for</span> <span class="n">beam_nr</span> <span class="ow">in</span> <span class="n">beam_nr_list_ref</span><span class="p">:</span>
+
+                                <span class="c1"># to properly make the gallery with 5 images in a row</span>
+                                <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                                <span class="c1"># get the image from the list if one exists for this beam</span>
+                                <span class="k">if</span> <span class="n">beam_nr</span> <span class="ow">in</span> <span class="n">beam_nr_list</span><span class="p">:</span>
+                                    <span class="n">image</span> <span class="o">=</span> <span class="n">image_list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                                        <span class="n">beam_nr_list</span> <span class="o">==</span> <span class="n">beam_nr</span><span class="p">)[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+                                    <span class="n">image_exists</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">image_exists</span> <span class="o">=</span> <span class="kc">False</span>
+
+                                <span class="c1"># if there is an image plot it</span>
+                                <span class="k">if</span> <span class="n">image_exists</span><span class="p">:</span>
+                                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                        &lt;div class=&quot;w3-col w3-border&quot; style=&quot;width:20%&quot;&gt;</span>
+<span class="s2">                                            &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">/</span><span class="si">{3:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                                                &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">/</span><span class="si">{3:s}</span><span class="s2">&quot; alt=&quot;No image&quot;, width=&quot;100%&quot;&gt;</span>
+<span class="s2">                                            &lt;/a&gt;</span>
+<span class="s2">                                            &lt;div class=&quot;w3-container w3-center&quot;&gt;</span>
+<span class="s2">                                                &lt;h5&gt;Beam </span><span class="si">{2:s}</span><span class="s2">&lt;/h5&gt;</span>
+<span class="s2">                                            &lt;/div&gt;</span>
+<span class="s2">                                        &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">beam_nr</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+                                <span class="c1"># if not put an empty one there</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                        &lt;div class=&quot;w3-col&quot; style=&quot;width:20%&quot;&gt;</span>
+<span class="s2">                                            &lt;img src=&quot;&quot; alt=&quot;No image for beam </span><span class="si">{0:s}</span><span class="s2">&quot;, width=&quot;100%&quot;&gt;</span>
+<span class="s2">                                        &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam_nr</span><span class="p">)</span>
+
+                                <span class="c1"># closing the row</span>
+                                <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">img_counter</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">beam_nr_list_ref</span><span class="p">):</span>
+                                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                                <span class="n">img_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                            <span class="c1"># close div for this plot</span>
+                            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                        <span class="c1"># add a disabled button</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                <span class="s2">&quot;No plots found for polarisation </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pol</span><span class="p">))</span>
+                            <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                            &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                                &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                                    </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                                &lt;/button&gt;</span>
+<span class="s2">                            &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">div_name_pol</span><span class="p">,</span> <span class="n">pol</span><span class="p">)</span>
+
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                            &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="c1"># otherwise create a disabled button</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No inspection plots found for calibrator </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">src</span><span class="p">))</span>
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class = &quot;w3-container&quot; &gt;</span>
+<span class="s2">                        &lt;button class = &quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled&quot; onclick = &quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot; &gt;</span>
+<span class="s2">                            </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                        &lt;/button&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">button_src_name</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">html_code</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

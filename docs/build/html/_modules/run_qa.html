@@ -72,31 +72,33 @@
 <div class="viewcode-block" id="run_triggered_qa"><a class="viewcode-back" href="../pipeline_run_qa.html#run_qa.run_triggered_qa">[docs]</a><span class="k">def</span> <span class="nf">run_triggered_qa</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">fluxcals</span><span class="p">,</span> <span class="n">polcals</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">osa</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function to run all QA steps.</span>
 
-<span class="sd">    Function is called as</span>
-<span class="sd">    return_msg = run_triggered_qa(</span>
-<span class="sd">        tdict[&#39;target&#39;], tdict[&#39;cal1&#39;], tdict[&#39;cal2&#39;])</span>
+<span class="sd">    | Args:</span>
+<span class="sd">    |   target (list(int, str, list(str))): the target field to be reduced</span>
+<span class="sd">    |   fluxcals (list(int, str, int)): the flux calibrators for the beams to be reduced</span>
+<span class="sd">    |   polcals (list(int, str, int)): the polarisation calibrator for the beams to be reduced</span>
+<span class="sd">    |   steps (list(str)): The QA steps that should be exectuted</span>
+<span class="sd">    |   basedir (str): The directory where the taskid is located</span>
+<span class="sd">    |   osa (str): The OSA of the given taskid</span>
 
-<span class="sd">    With the first three variables defined (the same way as autocal) as</span>
-<span class="sd">        targets = (190505048, &#39;LH_WSRT&#39;, array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))</span>
+<span class="sd">    | Function is called from autocal as</span>
+<span class="sd">    |   ``run_triggered_qa(tdict[&#39;target&#39;], tdict[&#39;cal1&#39;], tdict[&#39;cal2&#39;])``</span>
 
-<span class="sd">        fluxcals = [(190505017, &#39;3C147_9&#39;, 9), (190505016, &#39;3C147_8&#39;, 8), (190505015, &#39;3C147_7&#39;, 7), (190505014, &#39;3C147_6&#39;, 6), (190505013, &#39;3C147_5&#39;, 5),</span>
-<span class="sd">                     (190505012, &#39;3C147_4&#39;, 4), (190505011, &#39;3C147_3&#39;, 3), (190505010, &#39;3C147_2&#39;, 2), (190505009, &#39;3C147_1&#39;, 1), (190505008, &#39;3C147_0&#39;, 0)]</span>
+<span class="sd">    | With the first three variables defined (the same way as autocal) as</span>
+<span class="sd">    |    targets = (190505048, &#39;LH_WSRT&#39;, array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))</span>
 
-<span class="sd">        polcals = [(190506001, &#39;3C286_0&#39;, 0), (190506002, &#39;3C286_1&#39;, 1), (190506003, &#39;3C286_2&#39;, 2), (190506004, &#39;3C286_3&#39;, 3), (190506005, &#39;3C286_4&#39;, 4),</span>
-<span class="sd">                    (190506006, &#39;3C286_5&#39;, 5), (190506007, &#39;3C286_6&#39;, 6), (190506008, &#39;3C286_7&#39;, 7), (190506009, &#39;3C286_8&#39;, 8), (190506010, &#39;3C286_9&#39;, 9)]</span>
+<span class="sd">        fluxcals = [(190505017, &#39;3C147_9&#39;, 9), (190505016, &#39;3C147_8&#39;, 8), (190505015, &#39;3C147_7&#39;, 7), (190505014, &#39;3C147_6&#39;, 6), (190505013, &#39;3C147_5&#39;, 5), (190505012, &#39;3C147_4&#39;, 4), (190505011, &#39;3C147_3&#39;, 3), (190505010, &#39;3C147_2&#39;, 2), (190505009, &#39;3C147_1&#39;, 1), (190505008, &#39;3C147_0&#39;, 0)]</span>
 
-<span class="sd">    If steps is not provided then all steps except mosaic will be performed:</span>
-<span class="sd">        steps = [&#39;preflag&#39;, &#39;crosscal&#39;, &#39;selfcal&#39;,</span>
-<span class="sd">                 &#39;continuum&#39;, &#39;line&#39;, &#39;mosaic&#39;, &#39;report&#39;]</span>
-<span class="sd">    For all steps including mosaic:</span>
-<span class="sd">        steps = [&#39;preflag&#39;, &#39;crosscal&#39;, &#39;selfcal&#39;,</span>
-<span class="sd">                 &#39;continuum&#39;, &#39;line&#39;, &#39;mosaic&#39;, &#39;report&#39;]</span>
-<span class="sd">    It is possible to select a certain step:</span>
-<span class="sd">        steps = [&#39;mosaic&#39;]</span>
+<span class="sd">        polcals = [(190506001, &#39;3C286_0&#39;, 0), (190506002, &#39;3C286_1&#39;, 1), (190506003, &#39;3C286_2&#39;, 2), (190506004, &#39;3C286_3&#39;, 3), (190506005,&#39;3C286_4&#39;, 4), (190506006, &#39;3C286_5&#39;, 5), (190506007, &#39;3C286_6&#39;, 6), (190506008, &#39;3C286_7&#39;, 7), (190506009, &#39;3C286_8&#39;, 8), (190506010, &#39;3C286_9&#39;, 9)]</span>
 
-<span class="sd">    test call can look like this: </span>
-<span class="sd">        from dataqa.run_qa import run_triggered_qa</span>
-<span class="sd">        run_triggered_qa((190505048, &#39;LH_WSRT&#39;, [0]), [(190505048, &#39;3C147_10&#39;, 10)], [(190505048, &#39;3C286_10&#39;, 10)], steps=[&#39;report&#39;])</span>
+<span class="sd">    | If steps is not provided then all steps except mosaic will be performed:</span>
+<span class="sd">    |    steps = [&#39;inspection_plots&#39;, &#39;preflag&#39;, &#39;crosscal&#39;, &#39;selfcal&#39;, &#39;continuum&#39;, &#39;line&#39;, &#39;report&#39;]</span>
+
+<span class="sd">    | It is possible to select a certain step:</span>
+<span class="sd">    |    steps = [&#39;inspection_plots&#39;]</span>
+
+<span class="sd">    | test call can look like this: </span>
+<span class="sd">    |    ``from dataqa.run_qa import run_triggered_qa``</span>
+<span class="sd">    |    ``run_triggered_qa((190505048, &#39;LH_WSRT&#39;, [0]), [(190505048, &#39;3C147_10&#39;, 10)], [(190505048, &#39;3C286_10&#39;, 10)], steps=[&#39;report&#39;])``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># for time measurement</span>

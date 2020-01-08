@@ -16,7 +16,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Script: make_mosaic_image" href="continuum_make_mosaic.html" />
+    <link rel="next" title="(Deprecated) Script: make_mosaic_image" href="continuum_make_mosaic.html" />
     <link rel="prev" title="Module: qa_continuum" href="continuum_qa_continuum.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="continuum_make_mosaic.html" title="Script: make_mosaic_image"
+          <a href="continuum_make_mosaic.html" title="(Deprecated) Script: make_mosaic_image"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="continuum_qa_continuum.html" title="Module: qa_continuum"
@@ -40,12 +40,20 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Script: run_continuum_validation</a><ul>
+<li><a class="reference internal" href="#module-run_continuum_validation">Reference</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="continuum_qa_continuum.html"
                         title="previous chapter">Module: qa_continuum</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="continuum_make_mosaic.html"
-                        title="next chapter">Script: make_mosaic_image</a></p>
+                        title="next chapter">(Deprecated) Script: make_mosaic_image</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -73,17 +81,20 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-run_continuum_validation">
-<span id="script-run-continuum-validation"></span><h1>Script: run_continuum_validation<a class="headerlink" href="#module-run_continuum_validation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="script-run-continuum-validation">
+<h1>Script: run_continuum_validation<a class="headerlink" href="#script-run-continuum-validation" title="Permalink to this headline">¶</a></h1>
+<p>This script executes the continuum QA.
+By default, it is executed as part of the pipeline QA,
+but can be run independently.</p>
+<p><em>Note:</em> PyBDSF can take a long time to run if the image quality is bad.</p>
+<div class="section" id="module-run_continuum_validation">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-run_continuum_validation" title="Permalink to this headline">¶</a></h2>
 <p>This script contains functionality to run pybdsf on continuum data
 for the QA</p>
 <p>It does can run on a single image for the mosaic QA or an observation
 number alone for the continuum QA. In the latter case, it will go through
 all the beams.</p>
-<p>There will be a log file either in
-/home/&lt;user&gt;/qa_science_demo_2019/&lt;obs_id&gt;/continuum/&lt;beam&gt;/pybdsf
-or
-/home/&lt;user&gt;/qa_science_demo_2019/&lt;obs_id&gt;/mosaic/pybdsf</p>
+</div>
 </div>
 
 
@@ -102,7 +113,7 @@ or
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="continuum_make_mosaic.html" title="Script: make_mosaic_image"
+          <a href="continuum_make_mosaic.html" title="(Deprecated) Script: make_mosaic_image"
              >next</a> |</li>
         <li class="right" >
           <a href="continuum_qa_continuum.html" title="Module: qa_continuum"

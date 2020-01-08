@@ -1,0 +1,331 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>report.html_report_content_line &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for report.html_report_content_line</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="write_obs_content_line"><a class="viewcode-back" href="../../report_html_report_content_line.html#report.html_report_content_line.write_obs_content_line">[docs]</a><span class="k">def</span> <span class="nf">write_obs_content_line</span><span class="p">(</span><span class="n">html_code</span><span class="p">,</span> <span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to create the html page for line</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        html_code (str): HTML code with header and title</span>
+<span class="sd">        qa_report_obs_path (str): Path to the report directory</span>
+<span class="sd">        page_type (str): The type of report page</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        html_code (str): Body of HTML code for this page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing html code for page </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">))</span>
+
+    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;w3-container w3-large&quot;&gt;</span>
+<span class="s2">            &lt;p&gt;</span>
+<span class="s2">                This page provides information on the performance of the line module. You can find the following information here: </span>
+<span class="s2">            &lt;/p&gt;</span>
+<span class="s2">            &lt;div class=&quot;w3-container w3-large&quot;&gt;</span>
+<span class="s2">                1. A summary table (not yet available)&lt;br&gt;</span>
+<span class="s2">                2. For each cube, the spectra of the channal rms per beam. This allows you to look for difference between beams&lt;br&gt;</span>
+<span class="s2">                3. For each beam, the spectra of the channal rms per cube. &lt;br&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">        &lt;/div&gt;</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create html code for summary table</span>
+    <span class="c1"># ==================================</span>
+
+    <span class="n">table_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">table_found</span><span class="p">:</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                    &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom&quot; onclick=&quot;show_hide_plots(&#39;gallery-1&#39;)&quot;&gt;</span>
+<span class="s2">                        Line summary table</span>
+<span class="s2">                    &lt;/button&gt;</span>
+<span class="s2">                &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;w3-container w3-margin-top w3-show&quot; name=&quot;gallery-1&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;p&gt; No table here yet.</span>
+<span class="s2">            &lt;/p&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No line table found&quot;</span><span class="p">)</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled&quot; onclick=&quot;show_hide_plots(&#39;gallery-1&#39;)&quot;&gt;</span>
+<span class="s2">                    Line summary table</span>
+<span class="s2">                &lt;/button&gt;</span>
+<span class="s2">            &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+    <span class="c1"># Create html code for cube gallery</span>
+    <span class="c1"># =================================</span>
+
+    <span class="c1"># get beams</span>
+    <span class="n">beam_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">))</span>
+
+    <span class="c1"># total number of expected beams</span>
+    <span class="n">n_beams</span> <span class="o">=</span> <span class="mi">40</span>
+
+    <span class="c1"># total number of expected cubes per beam</span>
+    <span class="n">n_cubes</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="k">if</span> <span class="n">beam_list</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                &lt;/button&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;w3-container w3-margin-top w3-hide&quot; name=&quot;</span><span class="si">{0:s}</span><span class="s2">&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;gallery_cubes&quot;</span><span class="p">,</span> <span class="s2">&quot;Cubes&quot;</span><span class="p">)</span>
+
+        <span class="c1"># go through the list of cubes</span>
+        <span class="k">for</span> <span class="n">cube_counter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cubes</span><span class="p">):</span>
+
+            <span class="c1"># get a list of cubes</span>
+            <span class="n">cube_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/[0-3][0-9]/*cube</span><span class="si">{2:d}</span><span class="s2">*.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">,</span> <span class="n">cube_counter</span><span class="p">))</span>
+
+            <span class="n">div_name</span> <span class="o">=</span> <span class="s2">&quot;gallery_cube_</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cube_counter</span><span class="p">)</span>
+
+            <span class="c1"># if there plots for this cube, create the gallery</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="n">cube_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+                <span class="n">cube_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube_list</span><span class="p">)</span>
+
+                <span class="c1"># create button for source</span>
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                            &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-dark-gray w3-hover-gray w3-margin-bottom&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                                Cube </span><span class="si">{1:d}</span><span class="s2"></span>
+<span class="s2">                            &lt;/button&gt;</span>
+<span class="s2">                        &lt;/div&gt;</span>
+<span class="s2">                        &lt;div class=&quot;w3-container w3-margin-bottom w3-hide&quot; name=&quot;</span><span class="si">{0}</span><span class="s2">&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">div_name</span><span class="p">,</span> <span class="n">cube_counter</span><span class="p">)</span>
+
+                <span class="c1"># get a list of beams with cubes</span>
+                <span class="n">beam_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">cube</span> <span class="ow">in</span> <span class="n">cube_list</span><span class="p">])</span>
+
+                <span class="k">for</span> <span class="n">beam_nr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams</span><span class="p">):</span>
+
+                    <span class="n">image</span> <span class="o">=</span> <span class="n">cube_list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">beam_list</span> <span class="o">==</span> <span class="n">beam_nr</span><span class="p">)]</span>
+
+                    <span class="k">if</span> <span class="n">beam_nr</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                    <span class="c1"># if there is a cube for this beam add it to gallery</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                &lt;div class=&quot;w3-col w3-border&quot; style=&quot;width:20%&quot;&gt;</span>
+<span class="s2">                                    &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:02d}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                                        &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:02d}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">&quot; alt=&quot;No image for beam </span><span class="si">{1:02d}</span><span class="s2">&quot;, width=&quot;100%&quot;&gt;</span>
+<span class="s2">                                    &lt;/a&gt;</span>
+<span class="s2">                                    &lt;div class=&quot;w3-container&quot;&gt;&lt;h5&gt;Beam </span><span class="si">{1:02d}</span><span class="s2">&lt;/h5&gt;&lt;/div&gt;</span>
+<span class="s2">                                &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">beam_nr</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="c1"># otherwise keep it empty</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                &lt;div class=&quot;w3-col&quot; style=&quot;width:20%&quot;&gt;</span>
+<span class="s2">                                    &lt;a href=&quot;#&quot;&gt;</span>
+<span class="s2">                                        &lt;img src=&quot;#&quot; alt=&quot;No image for beam </span><span class="si">{0:02d}</span><span class="s2">&quot;, width=&quot;100%&quot;&gt;</span>
+<span class="s2">                                    &lt;/a&gt;</span>
+<span class="s2">                                &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam_nr</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">beam_nr</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">beam_nr</span> <span class="o">==</span> <span class="n">n_beams</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                            &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                                Cube </span><span class="si">{1:d}</span><span class="s2"></span>
+<span class="s2">                            &lt;/button&gt;</span>
+<span class="s2">                        &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">div_name</span><span class="p">,</span> <span class="n">cube_counter</span><span class="p">)</span>
+
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No beams found for line cube gallery&quot;</span><span class="p">)</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">            </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                &lt;/button&gt;</span>
+<span class="s2">            &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;gallery_cubes&quot;</span><span class="p">,</span> <span class="s2">&quot;Cubes&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create html code for image gallery</span>
+    <span class="c1"># ==================================</span>
+
+    <span class="c1"># get beams</span>
+    <span class="n">beam_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_report_obs_path</span><span class="p">,</span> <span class="n">page_type</span><span class="p">))</span>
+
+    <span class="n">n_beams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">beam_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_beams</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="n">beam_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams</span><span class="p">):</span>
+
+            <span class="c1"># get the images</span>
+            <span class="n">images_in_beam</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/*png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam_list</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+            <span class="n">div_name</span> <span class="o">=</span> <span class="s2">&quot;gallery</span><span class="si">{0:d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images_in_beam</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="n">images_in_beam</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                        &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                            Beam </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                        &lt;/button&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container w3-margin-top w3-hide&quot; name=&quot;</span><span class="si">{0:s}</span><span class="s2">&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">div_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">beam_list</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+                <span class="n">img_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images_in_beam</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;div class=&quot;w3-row&quot;&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                    <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        &lt;div class=&quot;w3-quarter w3-border&quot;&gt;</span>
+<span class="s2">                            &lt;a href=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">&quot;&gt;</span>
+<span class="s2">                                &lt;img src=&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">/</span><span class="si">{2:s}</span><span class="s2">&quot; alt=&quot;No cube available for beam </span><span class="si">{1:s}</span><span class="s2">&quot;, width=&quot;100%&quot;&gt;</span>
+<span class="s2">                            &lt;/a&gt;</span>
+<span class="s2">                            &lt;div class=&quot;w3-container w3-center&quot;&gt;&lt;h5&gt;</span><span class="si">{2:s}</span><span class="s2">&lt;/h5&gt;&lt;/div&gt;</span>
+<span class="s2">                        &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">page_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">beam_list</span><span class="p">[</span><span class="n">k</span><span class="p">]),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="n">img_counter</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">img_counter</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">images_in_beam</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+                    <span class="n">img_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No plot for cube in beam </span><span class="si">{0:s}</span><span class="s2"> found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">beam_list</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+                <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;div class=&quot;w3-container&quot;&gt;</span>
+<span class="s2">                        &lt;button class=&quot;w3-btn w3-large w3-center w3-block w3-border-gray w3-amber w3-hover-yellow w3-margin-bottom w3-disabled&quot; onclick=&quot;show_hide_plots(&#39;</span><span class="si">{0:s}</span><span class="s2">&#39;)&quot;&gt;</span>
+<span class="s2">                            Beam </span><span class="si">{1:s}</span><span class="s2"></span>
+<span class="s2">                        &lt;/button&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">div_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">beam_list</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+                <span class="c1"># html_code += &quot;&quot;&quot;</span>
+                <span class="c1">#     &lt;div class=&quot;gallery&quot; name=&quot;{0:s}&quot;&gt;</span>
+                <span class="c1">#         &lt;p class=&quot;warning&quot;&gt;</span>
+                <span class="c1">#             No plots were found for {1:s}</span>
+                <span class="c1">#         &lt;/p&gt;</span>
+                <span class="c1">#     &lt;/div&gt;\n&quot;&quot;&quot;.format(div_name, page_type)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No beams found for cube found&quot;</span><span class="p">)</span>
+        <span class="n">html_code</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;w3-container w3-large w3-text-red&quot;&gt;</span>
+<span class="s2">            &lt;p&gt;</span>
+<span class="s2">                No plots were found for cube</span>
+<span class="s2">            &lt;/p&gt;</span>
+<span class="s2">        &lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+
+    <span class="c1"># html_code += &quot;&quot;&quot;</span>
+    <span class="c1">#     &lt;p class=&quot;info&quot;&gt;</span>
+    <span class="c1">#         The overview does not cover line QA yet</span>
+    <span class="c1">#     &lt;/p&gt;\n0</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">html_code</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

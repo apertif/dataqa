@@ -1,0 +1,165 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module: cb_plots &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module: Pipeline_Run_Time" href="report_pipeline_run_time.html" />
+    <link rel="prev" title="Script: create_report" href="report_create_report.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="report_pipeline_run_time.html" title="Module: Pipeline_Run_Time"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="report_create_report.html" title="Script: create_report"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="report.html" accesskey="U">Oveview Report</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Module: cb_plots</a><ul>
+<li><a class="reference internal" href="#module-cb_plots">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="report_create_report.html"
+                        title="previous chapter">Script: create_report</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="report_pipeline_run_time.html"
+                        title="next chapter">Module: Pipeline_Run_Time</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/report_cb_plots.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cb-plots">
+<h1>Module: cb_plots<a class="headerlink" href="#module-cb-plots" title="Permalink to this headline">¶</a></h1>
+<p>This module contains functionality to create compound-beam overview cb_plots
+for the summary page of the QA overview.</p>
+<div class="section" id="module-cb_plots">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-cb_plots" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cb_plots.make_cb_beam_plot">
+<code class="descclassname">cb_plots.</code><code class="descname">make_cb_beam_plot</code><span class="sig-paren">(</span><em>cboffsets='cb_offsets.txt'</em>, <em>outputdir=None</em>, <em>outname=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cb_plots.html#make_cb_beam_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cb_plots.make_cb_beam_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function specifically makes a plot of only
+the compound beams, labelling and numbering them</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cb_plots.make_cb_plot_value">
+<code class="descclassname">cb_plots.</code><code class="descname">make_cb_plot_value</code><span class="sig-paren">(</span><em>filename</em>, <em>column</em>, <em>goodrange=None</em>, <em>boolean=False</em>, <em>cboffsets='cb_offsets.txt'</em>, <em>outputdir=None</em>, <em>outname=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cb_plots.html#make_cb_plot_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cb_plots.make_cb_plot_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a csv file or a table object and produce the plots.
+Provide the column name to plot.
+Optionally provide a range of good values that
+will have beams plotted in green.
+Or set boolean=True to plot colors based on a boolean value.
+Lack of data in plotted in grey.
+Default is to plot as red.
+Color scheme should be updated to
+take into account colorblindness.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cb_plots.make_cb_plots_for_report">
+<code class="descclassname">cb_plots.</code><code class="descname">make_cb_plots_for_report</code><span class="sig-paren">(</span><em>obs_id</em>, <em>qa_dir</em>, <em>plot_dir=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cb_plots.html#make_cb_plots_for_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cb_plots.make_cb_plots_for_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the different cb plots for the web report.</p>
+<div class="line-block">
+<div class="line">The function currently creates the following plots</div>
+<div class="line">- phase selfcal done</div>
+<div class="line">- amplitude selfcal done</div>
+<div class="line">- continuum rms (range: 10-50 muJy/beam)</div>
+<div class="line">- continuum minor axis (range: 10-15 arcsec)</div>
+</div>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">obs_id (int): ID of observation</div>
+<div class="line">qa_dir (str): Path to QA directory of the observation</div>
+<div class="line">plot_dir (str): Optional directory for the plots</div>
+</div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="report_pipeline_run_time.html" title="Module: Pipeline_Run_Time"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="report_create_report.html" title="Script: create_report"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="report.html" >Oveview Report</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

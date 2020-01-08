@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module: make_nptable_summary &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module: HTML_Report_Content" href="report_html_report_content.html" />
+    <link rel="prev" title="Module: Pipeline_Run_Time" href="report_pipeline_run_time.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="report_html_report_content.html" title="Module: HTML_Report_Content"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="report_pipeline_run_time.html" title="Module: Pipeline_Run_Time"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="report.html" accesskey="U">Oveview Report</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Module: make_nptable_summary</a><ul>
+<li><a class="reference internal" href="#module-report.make_nptabel_summary">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="report_pipeline_run_time.html"
+                        title="previous chapter">Module: Pipeline_Run_Time</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="report_html_report_content.html"
+                        title="next chapter">Module: HTML_Report_Content</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/report_make_nptable_summary.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-make-nptable-summary">
+<h1>Module: make_nptable_summary<a class="headerlink" href="#module-make-nptable-summary" title="Permalink to this headline">¶</a></h1>
+<p>This module contains functionality to extract information from the numpy-files
+used by Apercal</p>
+<div class="section" id="module-report.make_nptabel_summary">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-report.make_nptabel_summary" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="report.make_nptabel_summary.extract_all_beams">
+<code class="descclassname">report.make_nptabel_summary.</code><code class="descname">extract_all_beams</code><span class="sig-paren">(</span><em>obs_id</em>, <em>module</em>, <em>qa_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/make_nptabel_summary.html#extract_all_beams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.make_nptabel_summary.extract_all_beams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine data from all beams into a directory.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>obs_id (str): Directory of the data
+module (str): name of the apercal module e.g. ‘preflag’, ‘convert’, ‘croscal’</dd>
+<dt>Returns</dt>
+<dd>a dictionary with information extracted from a numpy log file</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.make_nptabel_summary.extract_beam">
+<code class="descclassname">report.make_nptabel_summary.</code><code class="descname">extract_beam</code><span class="sig-paren">(</span><em>path</em>, <em>beamnum</em>, <em>module</em>, <em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/make_nptabel_summary.html#extract_beam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.make_nptabel_summary.extract_beam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to return numpy files contents as a dictionary filtered for certain keys</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>path (str): Directory of the data
+beamnum (int): Beam number
+module (str): name of the apercal module e.g. ‘preflag’, ‘convert’, ‘croscal’
+source (str): name of the source or calibrators for preflag, for other modules it should be an empty string (‘’)</dd>
+<dt>Returns:</dt>
+<dd>a dictionary with information extracted from a numpy log file</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.make_nptabel_summary.find_sources">
+<code class="descclassname">report.make_nptabel_summary.</code><code class="descname">find_sources</code><span class="sig-paren">(</span><em>obs_id</em>, <em>data_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/make_nptabel_summary.html#find_sources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.make_nptabel_summary.find_sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify preflag sources e.g. target name and calibrators</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.make_nptabel_summary.make_nptabel_csv">
+<code class="descclassname">report.make_nptabel_summary.</code><code class="descname">make_nptabel_csv</code><span class="sig-paren">(</span><em>obs_id</em>, <em>module</em>, <em>qa_dir</em>, <em>output_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/make_nptabel_summary.html#make_nptabel_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.make_nptabel_summary.make_nptabel_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a dictionary with the summary into
+from the numpy files and saves it as a csv file.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>obs_id (str): ID of observation
+module (str): Apercal module for which information are extracted
+output_path (str): Optional path to where the information is save (default current directory)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.make_nptabel_summary.simplify_data">
+<code class="descclassname">report.make_nptabel_summary.</code><code class="descname">simplify_data</code><span class="sig-paren">(</span><em>d</em>, <em>beamnum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/make_nptabel_summary.html#simplify_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.make_nptabel_summary.simplify_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>select relevant beam value from a list in a dictionary</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="report_html_report_content.html" title="Module: HTML_Report_Content"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="report_pipeline_run_time.html" title="Module: Pipeline_Run_Time"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="report.html" >Oveview Report</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

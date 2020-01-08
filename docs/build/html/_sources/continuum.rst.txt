@@ -7,6 +7,7 @@ Get QA metrics and plots for continuum and mosaic images created by Apercal.
    :maxdepth: 2
    :caption: Content
 
-   continuum_qa_continuum
    continuum_run_continuum_validation
-   continuum_make_mosaic
+   continuum_qa_continuum
+   continuum_make_mosaic_image
+   continuum_qa_mosaic

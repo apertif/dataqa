@@ -16,8 +16,8 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Script: run_cube_stats" href="line_run_cube_stats.html" />
-    <link rel="prev" title="Module: line_cube_stats" href="line_cube_stats.html" /> 
+    <link rel="next" title="(Deprecated) Module: cube_stats_cont" href="line_cube_stats_cont.html" />
+    <link rel="prev" title="Script: run_cube_stats" href="line_run_cube_stats.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -29,10 +29,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="line_run_cube_stats.html" title="Script: run_cube_stats"
+          <a href="line_cube_stats_cont.html" title="(Deprecated) Module: cube_stats_cont"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="line_cube_stats.html" title="Module: line_cube_stats"
+          <a href="line_run_cube_stats.html" title="Script: run_cube_stats"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="line.html" accesskey="U">Line QA</a> &#187;</li> 
@@ -40,12 +40,20 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">(Deprecated) Script: subtract_continuum</a><ul>
+<li><a class="reference internal" href="#module-line.subtract_continuum">Reference</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="line_cube_stats.html"
-                        title="previous chapter">Module: line_cube_stats</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="line_run_cube_stats.html"
-                        title="next chapter">Script: run_cube_stats</a></p>
+                        title="previous chapter">Script: run_cube_stats</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="line_cube_stats_cont.html"
+                        title="next chapter">(Deprecated) Module: cube_stats_cont</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -73,8 +81,12 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-line.subtract_continuum">
-<span id="deprecated-script-subtract-continuum"></span><h1>(Deprecated) Script: subtract_continuum<a class="headerlink" href="#module-line.subtract_continuum" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="deprecated-script-subtract-continuum">
+<h1>(Deprecated) Script: subtract_continuum<a class="headerlink" href="#deprecated-script-subtract-continuum" title="Permalink to this headline">¶</a></h1>
+<p><strong>This script is deprecated and no longer used for QA purposes.
+The line module in Apercal performs the continuum subtraction.</strong></p>
+<div class="section" id="module-line.subtract_continuum">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-line.subtract_continuum" title="Permalink to this headline">¶</a></h2>
 <p>This script does continuum subtraction on line cubes.</p>
 <ul class="simple">
 <li>It creates a new fits file in: ‘/data*/apertif/&lt;obs_id&gt;/&lt;beam&gt;/line/cubes/HI_image_cube_contsub.fits’</li>
@@ -89,6 +101,7 @@
 <dt>Example:</dt>
 <dd>python subtract_continuum.py obs_id</dd>
 </dl>
+</div>
 </div>
 
 
@@ -107,10 +120,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="line_run_cube_stats.html" title="Script: run_cube_stats"
+          <a href="line_cube_stats_cont.html" title="(Deprecated) Module: cube_stats_cont"
              >next</a> |</li>
         <li class="right" >
-          <a href="line_cube_stats.html" title="Module: line_cube_stats"
+          <a href="line_run_cube_stats.html" title="Script: run_cube_stats"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="line.html" >Line QA</a> &#187;</li> 

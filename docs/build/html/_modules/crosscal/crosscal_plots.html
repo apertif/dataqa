@@ -79,12 +79,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create crosscal QA plots</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        scan (int): Task id of target, e.g. 190311152</span>
-<span class="sd">        fluxcal (str): Name of fluxcal, e.g. &quot;3C147&quot;</span>
-<span class="sd">        polcal(str): Name of the polcal, e.g. &quot;3C286&quot;</span>
-<span class="sd">        output_path (str): Output path, None for default</span>
-<span class="sd">        trigger_mode (bool): To run automatically after Apercal</span>
+<span class="sd">    | Args:</span>
+<span class="sd">    |     scan (int): Task id of target, e.g. 190311152</span>
+<span class="sd">    |     fluxcal (str): Name of fluxcal, e.g. &quot;3C147&quot;</span>
+<span class="sd">    |     polcal(str): Name of the polcal, e.g. &quot;3C286&quot;</span>
+<span class="sd">    |     output_path (str): Output path, None for default</span>
+<span class="sd">    |     trigger_mode (bool): To run automatically after Apercal</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Get autocorrelation plots</span>
@@ -180,7 +180,11 @@
         <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time_corrected</span><span class="p">))</span></div>
 
 
-<span class="k">class</span> <span class="nc">BPSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="BPSols"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.BPSols">[docs]</a><span class="k">class</span> <span class="nc">BPSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the bandpass solutions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scan</span><span class="p">,</span><span class="n">fluxcal</span><span class="p">,</span><span class="n">trigger_mode</span><span class="p">,</span><span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -231,7 +235,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">amp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
             
-    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BPSols.plot_amp"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.BPSols.plot_amp">[docs]</a>    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot amplitude, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for bandpass amplitude&quot;</span><span class="p">)</span>
@@ -265,9 +269,9 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/BP_amp_</span><span class="si">{ant}</span><span class="s1">_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="o">=</span><span class="n">ant</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
             
-    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BPSols.plot_phase"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.BPSols.plot_phase">[docs]</a>    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot phase, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for bandpass phase&quot;</span><span class="p">)</span>
@@ -300,10 +304,14 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/BP_phase_</span><span class="si">{ant}</span><span class="s1">_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="o">=</span><span class="n">ant</span><span class="p">,</span><span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
             
 
-<span class="k">class</span> <span class="nc">GainSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="GainSols"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.GainSols">[docs]</a><span class="k">class</span> <span class="nc">GainSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the gain solutions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -369,7 +377,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
             
-    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GainSols.plot_amp"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.GainSols.plot_amp">[docs]</a>    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot amplitude, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for gain amplitude&quot;</span><span class="p">)</span>
@@ -404,9 +412,9 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/Gain_amp_</span><span class="si">{ant}</span><span class="s1">_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="o">=</span><span class="n">ant</span><span class="p">,</span><span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">)))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
             
-    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GainSols.plot_phase"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.GainSols.plot_phase">[docs]</a>    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot phase, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for gain phase&quot;</span><span class="p">)</span>
@@ -439,10 +447,14 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{2}</span><span class="s1">/Gain_phase_</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span><span class="n">imagepath</span><span class="p">)))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">GDSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="GDSols"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.GDSols">[docs]</a><span class="k">class</span> <span class="nc">GDSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the global delay</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -470,7 +482,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">ants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">create_antnames</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delays</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">plot_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GDSols.plot_delay"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.GDSols.plot_delay">[docs]</a>    <span class="k">def</span> <span class="nf">plot_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot amplitude, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for global delay&quot;</span><span class="p">)</span>
@@ -497,10 +509,10 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">markerscale</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/K_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">)))</span>
         <span class="c1"># to really close the plot, this will do</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">plot_dish_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GDSols.plot_dish_delay"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.GDSols.plot_dish_delay">[docs]</a>    <span class="k">def</span> <span class="nf">plot_dish_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot global delays, dish-based views&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating dish-based plots for global delay&quot;</span><span class="p">)</span>
@@ -532,10 +544,14 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Delay, nanoseconds&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/K_dish_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">)))</span>
         <span class="c1"># to really close the plot, this will do</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">LeakSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="LeakSols"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.LeakSols">[docs]</a><span class="k">class</span> <span class="nc">LeakSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the leakage solutions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -579,7 +595,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">amp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LeakSols.plot_amp"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.LeakSols.plot_amp">[docs]</a>    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot leakage, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for amplitude leakage&quot;</span><span class="p">)</span>
@@ -605,9 +621,9 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">markerscale</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/Df_amp_</span><span class="si">{ant}</span><span class="s1">_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="o">=</span><span class="n">ant</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">))</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LeakSols.plot_phase"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.LeakSols.plot_phase">[docs]</a>    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot leakage, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for phase leakage&quot;</span><span class="p">)</span>
@@ -633,10 +649,14 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">markerscale</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/Df_phase_</span><span class="si">{ant}</span><span class="s1">_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="o">=</span><span class="n">ant</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">))</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">KCrossSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="KCrossSols"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.KCrossSols">[docs]</a><span class="k">class</span> <span class="nc">KCrossSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the cross hand delay solutions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">polcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">polcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -664,7 +684,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">ants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">create_antnames</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delays</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">plot_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="KCrossSols.plot_delay"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.KCrossSols.plot_delay">[docs]</a>    <span class="k">def</span> <span class="nf">plot_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot amplitude, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for cross hand delay&quot;</span><span class="p">)</span>
@@ -691,10 +711,14 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">markerscale</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/Kcross_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">)))</span>
         <span class="c1"># to really close the plot, this will do</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">PolangleSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="PolangleSols"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.PolangleSols">[docs]</a><span class="k">class</span> <span class="nc">PolangleSols</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the polarisation angle solutions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">polcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">polcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -738,7 +762,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">amp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PolangleSols.plot_amp"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.PolangleSols.plot_amp">[docs]</a>    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot leakage, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for amplitude polarisation angle corrections&quot;</span><span class="p">)</span>
@@ -762,9 +786,9 @@
                 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Beam </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="p">))</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/Xf_amp_</span><span class="si">{ant}</span><span class="s1">_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="o">=</span><span class="n">ant</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">))</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PolangleSols.plot_phase"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.PolangleSols.plot_phase">[docs]</a>    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot leakage, one plot per antenna&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for phase polarisation angle corrections&quot;</span><span class="p">)</span>
@@ -788,10 +812,14 @@
                 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Beam </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="p">))</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{imagepath}</span><span class="s1">/Xf_phase_</span><span class="si">{ant}</span><span class="s1">_</span><span class="si">{scan}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="o">=</span><span class="n">ant</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="n">imagepath</span><span class="p">))</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">ModelData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelData"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.ModelData">[docs]</a><span class="k">class</span> <span class="nc">ModelData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the baseline-average model data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -818,7 +846,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">freqs</span>
             
-    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelData.plot_amp"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.ModelData.plot_amp">[docs]</a>    <span class="k">def</span> <span class="nf">plot_amp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot amplitude, one subplot per beam&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for model amplitude&quot;</span><span class="p">)</span>
@@ -845,9 +873,9 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">/Model_amp_</span><span class="si">{0}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span><span class="n">imagepath</span><span class="p">)))</span>
         <span class="c1">#plt.clf()</span>
         <span class="c1"># to really close the plot, this will do</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
             
-    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelData.plot_phase"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.ModelData.plot_phase">[docs]</a>    <span class="k">def</span> <span class="nf">plot_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot amplitude, one subplot per beam&quot;&quot;&quot;</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating plots for model phase&quot;</span><span class="p">)</span>
@@ -874,10 +902,14 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{1}</span><span class="s1">/Model_phase_</span><span class="si">{0}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span><span class="n">imagepath</span><span class="p">)))</span>
         <span class="c1">#plt.clf()</span>
         <span class="c1"># to really close the plot, this will do</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">AutocorrData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="AutocorrData"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.AutocorrData">[docs]</a><span class="k">class</span> <span class="nc">AutocorrData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting autocorrelation amplitude.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">imagepathsuffix</span> <span class="o">=</span> <span class="s2">&quot;crosscal&quot;</span>
@@ -941,7 +973,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not find </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msfile</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">plot_autocorr_per_antenna</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AutocorrData.plot_autocorr_per_antenna"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.AutocorrData.plot_autocorr_per_antenna">[docs]</a>    <span class="k">def</span> <span class="nf">plot_autocorr_per_antenna</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the autocorrelation for each antenna for all beams</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1009,9 +1041,9 @@
                 <span class="s1">&#39;</span><span class="si">{2}</span><span class="s1">/Autocorrelation_Antenna_</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="p">)))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">plot_autocorr_per_beam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AutocorrData.plot_autocorr_per_beam"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.AutocorrData.plot_autocorr_per_beam">[docs]</a>    <span class="k">def</span> <span class="nf">plot_autocorr_per_beam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the autocorrelation for each beam with all antennas</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1074,9 +1106,13 @@
                 <span class="s1">&#39;</span><span class="si">{2}</span><span class="s1">/Autocorrelation_Beam_</span><span class="si">{0:02d}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beamnum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span> <span class="n">imagepath</span><span class="p">)))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div></div>
        
-<span class="k">class</span> <span class="nc">CorrectedData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="CorrectedData"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.CorrectedData">[docs]</a><span class="k">class</span> <span class="nc">CorrectedData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the baseline-averaged corrected data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -1221,10 +1257,14 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{2}</span><span class="s1">/Corrected_phase_</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span><span class="n">imagepath</span><span class="p">)))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
 
 
-<span class="k">class</span> <span class="nc">RawData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+<div class="viewcode-block" id="RawData"><a class="viewcode-back" href="../../crosscal_plots.html#crosscal.crosscal_plots.RawData">[docs]</a><span class="k">class</span> <span class="nc">RawData</span><span class="p">(</span><span class="n">ScanData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for extracting and plotting the baseline-averaged raw data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ScanData</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">fluxcal</span><span class="p">,</span>
                           <span class="n">trigger_mode</span><span class="o">=</span><span class="n">trigger_mode</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
@@ -1367,7 +1407,7 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{2}</span><span class="s1">/Raw_phase_</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ant</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">,</span><span class="n">imagepath</span><span class="p">)))</span>
             <span class="c1">#plt.clf()</span>
             <span class="c1"># to really close the plot, this will do</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

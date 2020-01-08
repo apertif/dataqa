@@ -36,6 +36,14 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Script: run_qa</a><ul>
+<li><a class="reference internal" href="#module-run_qa">Reference</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="pipeline.html"
                         title="previous chapter">Automated Pipeline QA</a></p>
@@ -66,47 +74,66 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-run_qa">
-<span id="script-run-qa"></span><h1>Script: run_qa<a class="headerlink" href="#module-run_qa" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="script-run-qa">
+<h1>Script: run_qa<a class="headerlink" href="#script-run-qa" title="Permalink to this headline">¶</a></h1>
+<p>This script is used by the automated pipeline (<em>autocal</em>) to execute
+the QA steps.</p>
+<div class="section" id="module-run_qa">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-run_qa" title="Permalink to this headline">¶</a></h2>
 <p>This script contains functionality to run all QA automatically after being triggered at the end of apercal</p>
 <dl class="function">
 <dt id="run_qa.run_triggered_qa">
 <code class="descclassname">run_qa.</code><code class="descname">run_triggered_qa</code><span class="sig-paren">(</span><em>targets</em>, <em>fluxcals</em>, <em>polcals</em>, <em>steps=None</em>, <em>basedir=None</em>, <em>osa=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_qa.html#run_triggered_qa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#run_qa.run_triggered_qa" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run all QA steps.</p>
-<p>Function is called as
-return_msg = run_triggered_qa(</p>
+<div class="line-block">
+<div class="line">Args:</div>
+<div class="line-block">
+<div class="line">target (list(int, str, list(str))): the target field to be reduced</div>
+<div class="line">fluxcals (list(int, str, int)): the flux calibrators for the beams to be reduced</div>
+<div class="line">polcals (list(int, str, int)): the polarisation calibrator for the beams to be reduced</div>
+<div class="line">steps (list(str)): The QA steps that should be exectuted</div>
+<div class="line">basedir (str): The directory where the taskid is located</div>
+<div class="line">osa (str): The OSA of the given taskid</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">Function is called from autocal as</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">run_triggered_qa(tdict['target'],</span> <span class="pre">tdict['cal1'],</span> <span class="pre">tdict['cal2'])</span></code></div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">With the first three variables defined (the same way as autocal) as</div>
+<div class="line-block">
+<div class="line">targets = (190505048, ‘LH_WSRT’, array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))</div>
+</div>
+</div>
 <blockquote>
-<div>tdict[‘target’], tdict[‘cal1’], tdict[‘cal2’])</div></blockquote>
-<dl class="docutils">
-<dt>With the first three variables defined (the same way as autocal) as</dt>
-<dd><p class="first">targets = (190505048, ‘LH_WSRT’, array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))</p>
-<dl class="last docutils">
-<dt>fluxcals = [(190505017, ‘3C147_9’, 9), (190505016, ‘3C147_8’, 8), (190505015, ‘3C147_7’, 7), (190505014, ‘3C147_6’, 6), (190505013, ‘3C147_5’, 5),</dt>
-<dd>(190505012, ‘3C147_4’, 4), (190505011, ‘3C147_3’, 3), (190505010, ‘3C147_2’, 2), (190505009, ‘3C147_1’, 1), (190505008, ‘3C147_0’, 0)]</dd>
-<dt>polcals = [(190506001, ‘3C286_0’, 0), (190506002, ‘3C286_1’, 1), (190506003, ‘3C286_2’, 2), (190506004, ‘3C286_3’, 3), (190506005, ‘3C286_4’, 4),</dt>
-<dd>(190506006, ‘3C286_5’, 5), (190506007, ‘3C286_6’, 6), (190506008, ‘3C286_7’, 7), (190506009, ‘3C286_8’, 8), (190506010, ‘3C286_9’, 9)]</dd>
-</dl>
-</dd>
-<dt>If steps is not provided then all steps except mosaic will be performed:</dt>
-<dd><dl class="first last docutils">
-<dt>steps = [‘preflag’, ‘crosscal’, ‘selfcal’,</dt>
-<dd>‘continuum’, ‘line’, ‘mosaic’, ‘report’]</dd>
-</dl>
-</dd>
-<dt>For all steps including mosaic:</dt>
-<dd><dl class="first last docutils">
-<dt>steps = [‘preflag’, ‘crosscal’, ‘selfcal’,</dt>
-<dd>‘continuum’, ‘line’, ‘mosaic’, ‘report’]</dd>
-</dl>
-</dd>
-<dt>It is possible to select a certain step:</dt>
-<dd>steps = [‘mosaic’]</dd>
-<dt>test call can look like this: </dt>
-<dd>from dataqa.run_qa import run_triggered_qa
-run_triggered_qa((190505048, ‘LH_WSRT’, [0]), [(190505048, ‘3C147_10’, 10)], [(190505048, ‘3C286_10’, 10)], steps=[‘report’])</dd>
-</dl>
+<div><p>fluxcals = [(190505017, ‘3C147_9’, 9), (190505016, ‘3C147_8’, 8), (190505015, ‘3C147_7’, 7), (190505014, ‘3C147_6’, 6), (190505013, ‘3C147_5’, 5), (190505012, ‘3C147_4’, 4), (190505011, ‘3C147_3’, 3), (190505010, ‘3C147_2’, 2), (190505009, ‘3C147_1’, 1), (190505008, ‘3C147_0’, 0)]</p>
+<p>polcals = [(190506001, ‘3C286_0’, 0), (190506002, ‘3C286_1’, 1), (190506003, ‘3C286_2’, 2), (190506004, ‘3C286_3’, 3), (190506005,‘3C286_4’, 4), (190506006, ‘3C286_5’, 5), (190506007, ‘3C286_6’, 6), (190506008, ‘3C286_7’, 7), (190506009, ‘3C286_8’, 8), (190506010, ‘3C286_9’, 9)]</p>
+</div></blockquote>
+<div class="line-block">
+<div class="line">If steps is not provided then all steps except mosaic will be performed:</div>
+<div class="line-block">
+<div class="line">steps = [‘inspection_plots’, ‘preflag’, ‘crosscal’, ‘selfcal’, ‘continuum’, ‘line’, ‘report’]</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">It is possible to select a certain step:</div>
+<div class="line-block">
+<div class="line">steps = [‘inspection_plots’]</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">test call can look like this: </div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">dataqa.run_qa</span> <span class="pre">import</span> <span class="pre">run_triggered_qa</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">run_triggered_qa((190505048,</span> <span class="pre">'LH_WSRT',</span> <span class="pre">[0]),</span> <span class="pre">[(190505048,</span> <span class="pre">'3C147_10',</span> <span class="pre">10)],</span> <span class="pre">[(190505048,</span> <span class="pre">'3C286_10',</span> <span class="pre">10)],</span> <span class="pre">steps=['report'])</span></code></div>
+</div>
+</div>
 </dd></dl>
 
+</div>
 </div>
 
 

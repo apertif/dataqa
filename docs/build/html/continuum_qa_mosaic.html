@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>(Inactive) Module: qa_mosaic &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Selfcal QA" href="selfcal.html" />
+    <link rel="prev" title="(Depracted) Module: make_mosaic_image" href="continuum_make_mosaic_image.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="selfcal.html" title="Selfcal QA"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="continuum_make_mosaic_image.html" title="(Depracted) Module: make_mosaic_image"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="continuum.html" accesskey="U">Continuum and Mosaic QA</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">(Inactive) Module: qa_mosaic</a><ul>
+<li><a class="reference internal" href="#module-mosaic.qa_mosaic">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="continuum_make_mosaic_image.html"
+                        title="previous chapter">(Depracted) Module: make_mosaic_image</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="selfcal.html"
+                        title="next chapter">Selfcal QA</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/continuum_qa_mosaic.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="inactive-module-qa-mosaic">
+<h1>(Inactive) Module: qa_mosaic<a class="headerlink" href="#inactive-module-qa-mosaic" title="Permalink to this headline">¶</a></h1>
+<p>This module contains functionality to get QA information on mosaics.</p>
+<p><strong>Note: The mosaic module in Apercal already runs the continuum validation
+tool on the mosaics that are created with it.</strong></p>
+<div class="section" id="module-mosaic.qa_mosaic">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-mosaic.qa_mosaic" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mosaic.qa_mosaic.qa_mosaic_run_validation">
+<code class="descclassname">mosaic.qa_mosaic.</code><code class="descname">qa_mosaic_run_validation</code><span class="sig-paren">(</span><em>mosaic_name</em>, <em>qa_validation_dir</em>, <em>output_name=''</em>, <em>overwrite=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mosaic/qa_mosaic.html#qa_mosaic_run_validation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.qa_mosaic.qa_mosaic_run_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function runs pybdsf on a mosaic image.</p>
+<p>It can also be used to run pybdsf on a single image.</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>The function assumes that the mosaic image is a fits file</dd>
+<dt>Parameter:</dt>
+<dd><dl class="first last docutils">
+<dt>mosaic_name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Name of the mosaic image fits</dd>
+<dt>qa_validation_dir <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The directory of the QA where the output will be saved.
+Most likely this is /home/&lt;user&gt;/qa_science_demo_2019/mosaic/pybdsf/</dd>
+<dt>output_name <span class="classifier-delimiter">:</span> <span class="classifier">str (default ‘’)</span></dt>
+<dd>Set the name of the output image</dd>
+<dt>overwrite <span class="classifier-delimiter">:</span> <span class="classifier">bool (default True)</span></dt>
+<dd>Set whether existing pybdsf files should be overwritten</dd>
+</dl>
+</dd>
+<dt>Return:</dt>
+<dd><dl class="first last docutils">
+<dt>run_mosaic_validation_status <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Status of how well this function performed</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="selfcal.html" title="Selfcal QA"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="continuum_make_mosaic_image.html" title="(Depracted) Module: make_mosaic_image"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="continuum.html" >Continuum and Mosaic QA</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

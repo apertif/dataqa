@@ -1,0 +1,282 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>mosaic.qa_mosaic &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mosaic.qa_mosaic</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">bdsf</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">from</span> <span class="nn">apercal.libs</span> <span class="k">import</span> <span class="n">lib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
+<span class="kn">from</span> <span class="nn">astropy.wcs</span> <span class="k">import</span> <span class="n">WCS</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">dataqa.continuum.validation_tool</span> <span class="k">import</span> <span class="n">validation</span>
+<span class="kn">from</span> <span class="nn">dataqa.continuum.qa_continuum</span> <span class="k">import</span> <span class="n">qa_plot_pybdsf_images</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># def qa_mosaic_plot_pybdsf_images(fits_file_list, plot_name_list, plot_format=&quot;png&quot;):</span>
+<span class="c1">#     &quot;&quot;&quot;This function creates quick plots of the diagnostic fits files</span>
+
+<span class="c1">#     Note:</span>
+<span class="c1">#         By default the images are created in png format with 400dpi, but it</span>
+<span class="c1">#         is possible to choose pdf</span>
+
+<span class="c1">#     Parameter:</span>
+<span class="c1">#         fits_file_list : list</span>
+<span class="c1">#             A list of strings with the file names of the fits files</span>
+<span class="c1">#         plot_name : list</span>
+<span class="c1">#             A list of strings with the names of the plots to save</span>
+<span class="c1">#         plot_format : str (default png)</span>
+<span class="c1">#             The format of the plot for matplotlib</span>
+
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     # number of files</span>
+<span class="c1">#     n_fits_files = len(fits_file_list)</span>
+
+<span class="c1">#     print(&quot;Plotting PyBDSF diagnostic plots&quot;)</span>
+
+<span class="c1">#     # go through the types of images and plot them</span>
+<span class="c1">#     for k in range(n_fits_files):</span>
+
+<span class="c1">#         fits_hdulist = fits.open(fits_file_list[k])</span>
+
+<span class="c1">#         # get WCS header of cube</span>
+<span class="c1">#         wcs = WCS(fits_hdulist[0].header)</span>
+
+<span class="c1">#         if wcs.naxis == 4:</span>
+<span class="c1">#             wcs = wcs.dropaxis(3)</span>
+<span class="c1">#             wcs = wcs.dropaxis(2)</span>
+<span class="c1">#             img = fits_hdulist[0].data[0][0]</span>
+<span class="c1">#         elif wcs.naxis == 3:</span>
+<span class="c1">#             wcs = wcs.dropaxis(2)</span>
+<span class="c1">#             img = fits_hdulist[0].data[0]</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             img = fits_hdulist[0].data</span>
+
+<span class="c1">#         # set up plot</span>
+<span class="c1">#         ax = plt.subplot(projection=wcs)</span>
+
+<span class="c1">#         # create image</span>
+<span class="c1">#         fig = ax.imshow(img * 1.e3, origin=&#39;lower&#39;)</span>
+
+<span class="c1">#         cbar = plt.colorbar(fig)</span>
+<span class="c1">#         cbar.set_label(&#39;Flux Density [mJy/beam]&#39;)</span>
+
+<span class="c1">#         ax.coords[0].set_axislabel(&#39;Right Ascension&#39;)</span>
+<span class="c1">#         ax.coords[1].set_axislabel(&#39;Declination&#39;)</span>
+<span class="c1">#         ax.coords[0].set_major_formatter(&#39;hh:mm&#39;)</span>
+<span class="c1">#         ax.set_title(&quot;{0:s}&quot;.format(os.path.basename(fits_file_list[k])))</span>
+
+<span class="c1">#         output = plot_name_list[k]</span>
+
+<span class="c1">#         if plot_format == &quot;pdf&quot;:</span>
+<span class="c1">#             plt.savefig(output.replace(&quot;.png&quot;, &quot;.pdf&quot;),</span>
+<span class="c1">#                         overwrite=True, bbox_inches=&#39;tight&#39;)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             plt.savefig(output, overwrite=True, bbox_inches=&#39;tight&#39;, dpi=400)</span>
+
+<span class="c1">#         plt.close(&quot;all&quot;)</span>
+
+<span class="c1">#     print(&quot;Plotting PyBDSF diagnostic plots. Done&quot;)</span>
+
+
+<div class="viewcode-block" id="qa_mosaic_run_validation"><a class="viewcode-back" href="../../continuum_qa_mosaic.html#mosaic.qa_mosaic.qa_mosaic_run_validation">[docs]</a><span class="k">def</span> <span class="nf">qa_mosaic_run_validation</span><span class="p">(</span><span class="n">mosaic_name</span><span class="p">,</span> <span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function runs pybdsf on a mosaic image.</span>
+
+<span class="sd">    It can also be used to run pybdsf on a single image.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The function assumes that the mosaic image is a fits file</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">        mosaic_name : str</span>
+<span class="sd">            Name of the mosaic image fits</span>
+
+<span class="sd">        qa_validation_dir : str</span>
+<span class="sd">            The directory of the QA where the output will be saved.</span>
+<span class="sd">            Most likely this is /home/&lt;user&gt;/qa_science_demo_2019/mosaic/pybdsf/</span>
+
+<span class="sd">        output_name : str (default &#39;&#39;)</span>
+<span class="sd">            Set the name of the output image</span>
+
+<span class="sd">        overwrite : bool (default True)</span>
+<span class="sd">            Set whether existing pybdsf files should be overwritten</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        run_mosaic_validation_status : int</span>
+<span class="sd">            Status of how well this function performed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># # change the working directory to where the qa directory</span>
+    <span class="c1"># os.chdir(qa_validation_dir)</span>
+
+    <span class="c1"># # Create a link to the fits file so that the pybdsf log file is stored in the qa directory</span>
+    <span class="c1"># image_name = os.path.basename(mosaic_name)</span>
+
+    <span class="c1"># if not os.path.exists(image_name):</span>
+    <span class="c1">#     os.symlink(mosaic_name, image_name)</span>
+
+    <span class="n">image_name</span> <span class="o">=</span> <span class="n">mosaic_name</span>
+
+    <span class="c1"># try:</span>
+    <span class="c1">#     os.symlink(mosaic_name, image_name)</span>
+    <span class="c1"># except Exception e:</span>
+    <span class="c1">#     return -1</span>
+
+    <span class="c1"># # Check/create catalogue name</span>
+    <span class="c1"># if output_name == &#39;&#39;:</span>
+    <span class="c1">#     cat_file = &quot;{0:s}/{1:s}&quot;.format(</span>
+    <span class="c1">#         qa_validation_dir, os.path.basename(image_name).replace(&quot;fits&quot;, &quot;_pybdsf_cat.fits&quot;))</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     cat_file = output_name</span>
+
+    <span class="c1"># assuming pybdsf will work</span>
+    <span class="n">run_mosaic_validation_status</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># Run pybdsf on the input image</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running pybdsf&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="c1"># change into the directory where the QA products should be produced</span>
+        <span class="c1"># This is necessary for the current implementation of the validation tool</span>
+        <span class="c1"># Should it return to the initial directory?</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">qa_validation_dir</span><span class="p">)</span>
+
+        <span class="c1"># run validation tool and pybdsf combined</span>
+        <span class="n">validation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
+
+        <span class="c1"># img = bdsf.process_image(image_name, quiet=True)</span>
+        <span class="c1"># # img = bdsf.process_image(image_name, quiet=True, output_opts=True, plot_allgaus=True, plot_islands=True,</span>
+        <span class="c1"># #                          savefits_meanim=True, savefits_normim=True, savefits_rankim=True, savefits_residim=True, savefits_rmsim=True)</span>
+
+        <span class="c1"># # Write catalogue as csv file</span>
+        <span class="c1"># logging.info(&quot;#### Writing catalogue&quot;)</span>
+        <span class="c1"># img.write_catalog(outfile=cat_file, format=&#39;fits&#39;, clobber=True)</span>
+
+        <span class="c1"># # Save plots</span>
+        <span class="c1"># logging.info(&quot;#### Saving pybdsf plots&quot;)</span>
+        <span class="c1"># plot_type_list = [&#39;rms&#39;, &#39;mean&#39;,</span>
+        <span class="c1">#                   &#39;gaus_model&#39;, &#39;gaus_resid&#39;, &#39;island_mask&#39;]</span>
+        <span class="c1"># fits_names = [cat_file.replace(</span>
+        <span class="c1">#     &quot;.fits&quot;, &quot;_{0:s}.fits&quot;.format(plot)) for plot in plot_type_list]</span>
+        <span class="c1"># plot_names = [fits.replace(</span>
+        <span class="c1">#     &quot;.fits&quot;, &quot;.png&quot;) for fits in fits_names]</span>
+        <span class="c1"># # plot_type_list = [&#39;gaus_model&#39;, &#39;gaus_resid&#39;, &#39;island_mask&#39;]</span>
+
+        <span class="c1"># # number of plots</span>
+        <span class="c1"># n_plots = len(plot_type_list)</span>
+
+        <span class="c1"># for k in range(n_plots):</span>
+        <span class="c1">#     img.export_image(outfile=fits_names[k],</span>
+        <span class="c1">#                      clobber=overwrite, img_type=plot_type_list[k])</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;PyBDSF and validation tool failed on image </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_name</span><span class="p">))</span>
+        <span class="n">run_mosaic_validation_status</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="n">plot_type_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gaus_model&#39;</span><span class="p">,</span> <span class="s1">&#39;gaus_resid&#39;</span><span class="p">,</span> <span class="s1">&#39;rms&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;island_mask&#39;</span><span class="p">]</span>
+    <span class="n">fits_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">image_name</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+        <span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;_pybdsf_</span><span class="si">{0:s}</span><span class="s2">.fits&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot</span><span class="p">))</span> <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">plot_type_list</span><span class="p">]</span>
+    <span class="n">plot_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">fits</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+        <span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">fits</span> <span class="ow">in</span> <span class="n">fits_names</span><span class="p">]</span>
+
+    <span class="c1"># add the continuum image</span>
+    <span class="n">fits_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
+    <span class="n">plot_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span>
+        <span class="n">image_name</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">))</span>
+    <span class="n">plot_type_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;cont&quot;</span><span class="p">)</span>
+
+    <span class="c1"># create images without a lot of adjusting</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">qa_plot_pybdsf_images</span><span class="p">(</span><span class="n">fits_names</span><span class="p">,</span> <span class="n">plot_names</span><span class="p">,</span> <span class="n">plot_type_list</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Plotting PyBDSF diagnostic images failed&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">run_mosaic_validation_status</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>
