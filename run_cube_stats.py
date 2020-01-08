@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+"""
+Script to automatically get spectral-line cube statistics and plots.
+
+Requires a scan number. 
+
+Full list of options available with
+    
+    ``python run_cube_stats.py -h``
+"""
+
 import numpy as np
 import sys
 import os

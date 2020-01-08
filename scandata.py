@@ -1,23 +1,15 @@
 import os
 import numpy as np
 import logging
-"""
-Define object classes for holding data related to scans
-The key thing to specify an object is the scan of the target field
-Also need name of fluxcal (for cross-cal solutions)
-Want to add functionality for pol-cal for pol solutions (secondary)
-This specifies the location of all data, assuming setup of automatic pipeline
-(/tank/apertif, distributed across happili nodes)
-"""
 
 
 def get_default_imagepath(scan, basedir=None):
     """
     Get the default path for saving images
 
-    Args:
-        scan (int): scan (or task id), e.g. 190303084
-        basedir (str): based directory of the scan, default /data/apertif/
+    | Args:
+    |     scan (int): scan (or task id), e.g. 190303084
+    |     basedir (str): based directory of the scan, default /data/apertif/
 
     Returns:
         str: Path for storing images
@@ -29,13 +21,23 @@ def get_default_imagepath(scan, basedir=None):
 
 
 class ScanData(object):
+    """
+    Define object classes for holding data related to scans
+    The key thing to specify an object is the scan of the target field
+    Also need name of fluxcal (for cross-cal solutions)
+    Want to add functionality for pol-cal for pol solutions (secondary)
+    This specifies the location of all data, assuming setup of automatic pipeline
+    (/data/apertif, distributed across happili nodes)
+    """
+
     def __init__(self, scan, sourcename, basedir=None, trigger_mode=False):
         """
         Initialize with scan (taskid) and source name
         and place holders for phase and amplitude
-        Args:
-            scan (int): scan number, e.g. 190303083
-            sourcename (str): name of source, e.g. "3C48"
+
+        | Args:
+        |     scan (int): scan number, e.g. 190303083
+        |     sourcename (str): name of source, e.g. "3C48"
         """
         self.scan = scan
         self.sourcename = sourcename

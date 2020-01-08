@@ -1,5 +1,8 @@
+#!/usr/bin/env python
 """
-This script contains functionality to check the OSA report
+Script to check which OSA reports exit
+    
+    ``python run_osa_report_check.py -h``
 """
 
 import os

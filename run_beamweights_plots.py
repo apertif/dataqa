@@ -23,6 +23,9 @@ import time
 
 
 def parse_args():
+    """
+    Function to handle input arguments
+    """
 
     parser = ArgumentParser(description="Plot beam weights for a given scan.",
                             formatter_class=RawTextHelpFormatter)
@@ -48,6 +51,7 @@ def parse_args():
 
 def convert_weights(mat):
     """Converts 2x64 array to 11x11 array with apertif numbering"""
+
     # test = np.chararray((11,11), itemsize=3)
     converted_mat = np.zeros((11, 11), dtype=np.complex64)
     for el_num in range(61):
@@ -63,13 +67,14 @@ def convert_weights(mat):
 def give_coord(x_or_y, el_num):
     """Give the x and y position for an apertif antenna element
 
-    Args:
-        x_or_y (str): Polarization 'X' or 'Y'
-        el_num (int): antenna number from 0 to 61 (X) or 60 (Y)
+    | Args:
+    |     x_or_y (str): Polarization 'X' or 'Y'
+    |     el_num (int): antenna number from 0 to 61 (X) or 60 (Y)
 
-    Returns:
-        Tuple[int, int]: y and x coordinates
+    | Returns:
+    |     Tuple[int, int]: y and x coordinates
     """
+
     if el_num < 55:
         y_coord = (el_num % 11)
         if y_coord % 2 == 0:
@@ -85,6 +90,11 @@ def give_coord(x_or_y, el_num):
 
 
 def main():
+    """
+    Function to get the beamweight plots
+
+    NOTE: This functions needs fixing. The extracted plots are not correct.
+    """
 
     start_time = time.time()
 

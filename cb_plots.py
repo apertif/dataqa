@@ -23,11 +23,8 @@ import pkg_resources
 
 logger = logging.getLogger(__name__)
 
-"""
-Globally define beam plotting parameters
-So they are updated in one place
-"""
-
+# Globally define beam plotting parameters
+# So they are updated in one place
 radius = 0.2  # radius of beam to plot, in degrees
 plotrange = [1.75, -1.75, -1.75, 1.4]  # range to plot, RA runs backwards
 offset_beam0_x = 1.5
@@ -38,16 +35,16 @@ def make_cb_plots_for_report(obs_id, qa_dir, plot_dir=None):
     """
     Function to create the different cb plots for the web report.
 
-    The function currently creates the following plots
-    - phase selfcal done
-    - amplitude selfcal done
-    - continuum rms (range: 10-50 muJy/beam)
-    - continuum minor axis (range: 10-15 arcsec)
+    | The function currently creates the following plots
+    | - phase selfcal done
+    | - amplitude selfcal done
+    | - continuum rms (range: 10-50 muJy/beam)
+    | - continuum minor axis (range: 10-15 arcsec)
 
-    Args:
-        obs_id (int): ID of observation
-        qa_dir (str): Path to QA directory of the observation
-        plot_dir (str): Optional directory for the plots
+    | Args:
+    |     obs_id (int): ID of observation
+    |     qa_dir (str): Path to QA directory of the observation
+    |     plot_dir (str): Optional directory for the plots
     """
 
     logger.info("Creating summary cb plots")
@@ -244,15 +241,15 @@ def make_cb_plot_value(filename, column, goodrange=None,
                        boolean=False, cboffsets='cb_offsets.txt',
                        outputdir=None, outname=None):
     """
-    Take a csv file or a table object and produce the plots
-    Provide the column name to plot
+    Take a csv file or a table object and produce the plots.
+    Provide the column name to plot.
     Optionally provide a range of good values that
-    will have beams plotted in green
-    Or set boolean=True to plot colors based on a boolean value
-    Lack of data in plotted in grey
-    Default is to plot as red
+    will have beams plotted in green.
+    Or set boolean=True to plot colors based on a boolean value.
+    Lack of data in plotted in grey.
+    Default is to plot as red.
     Color scheme should be updated to
-    take into account colorblindness
+    take into account colorblindness.
     """
     # check if file name is a string
     if type(filename) == str:

@@ -7,11 +7,6 @@ for the QA
 It does can run on a single image for the mosaic QA or an observation
 number alone for the continuum QA. In the latter case, it will go through
 all the beams.
-
-There will be a log file either in
-/home/<user>/qa_science_demo_2019/<obs_id>/continuum/<beam>/pybdsf
-or
-/home/<user>/qa_science_demo_2019/<obs_id>/mosaic/pybdsf
 """
 
 import argparse

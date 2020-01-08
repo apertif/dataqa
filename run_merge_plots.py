@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+"""
+Script to merge selfcal and crosscal plots from
+different happilis
+
+Requires a scan number
+
+Full list of options available with
+    
+    ``python run_merge_plots.py -h``
+"""
+
 from scandata import get_default_imagepath
 import argparse
 import time

@@ -1,7 +1,12 @@
+#!/usr/bin/env python
 """
 Script to automatically run crosscal plots
+
 Requires a scan number
-Optionally takes a directory for writing plots
+
+Full list of options available with
+
+``python run_scal_plots.py - h``
 """
 
 import os

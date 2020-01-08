@@ -1,10 +1,14 @@
+#!/usr/bin/env python
 """
 Script to automatically run preflag qa
 
 Combines the preflag plots
 
 Requires a scan number
-Optionally takes a directory for writing plots
+
+Full list of options available with
+    
+    ``python run_preflag_qa.py -h``
 """
 
 import os
@@ -17,55 +21,57 @@ import time
 from apercal.libs import lib
 import logging
 
-start = timer()
+if __name__ == "__main__":
 
-parser = argparse.ArgumentParser(description='Combine preflag QA plots')
+    start = timer()
 
-# 1st argument: File name
-parser.add_argument("scan", help='Scan of target field')
+    parser = argparse.ArgumentParser(description='Combine preflag QA plots')
 
-# path options
-parser.add_argument('-p', '--path', default=None,
-                    help='Destination for images')
-parser.add_argument('-b', '--basedir', default=None,
-                    help='Directory where scan is located')
+    # 1st argument: File name
+    parser.add_argument("scan", help='Scan of target field')
 
-# this mode will make the script look only for the beams processed by Apercal on a given node
-parser.add_argument("--trigger_mode", action="store_true", default=False,
-                    help='Set it to run Autocal triggering mode automatically after Apercal.')
+    # path options
+    parser.add_argument('-p', '--path', default=None,
+                        help='Destination for images')
+    parser.add_argument('-b', '--basedir', default=None,
+                        help='Directory where scan is located')
 
-args = parser.parse_args()
+    # this mode will make the script look only for the beams processed by Apercal on a given node
+    parser.add_argument("--trigger_mode", action="store_true", default=False,
+                        help='Set it to run Autocal triggering mode automatically after Apercal.')
 
-# If no path is given change to default QA path
-if args.path is None:
-    if args.basedir is not None:
-        qa_dir = get_default_imagepath(args.scan, basedir=args.basedir)
+    args = parser.parse_args()
+
+    # If no path is given change to default QA path
+    if args.path is None:
+        if args.basedir is not None:
+            qa_dir = get_default_imagepath(args.scan, basedir=args.basedir)
+        else:
+            qa_dir = get_default_imagepath(args.scan)
+
+        # check that selfcal qa directory exists
+        qa_preflag_dir = os.path.join(qa_dir, "preflag")
+
+        if not os.path.exists(qa_preflag_dir):
+            os.mkdir(qa_preflag_dir)
     else:
-        qa_dir = get_default_imagepath(args.scan)
+        qa_preflag_dir = args.path
 
-    # check that selfcal qa directory exists
-    qa_preflag_dir = os.path.join(qa_dir, "preflag")
+    # Create log file
+    lib.setup_logger(
+        'info', logfile=os.path.join(qa_preflag_dir, 'run_preflag_qa.log'))
+    logger = logging.getLogger(__name__)
 
-    if not os.path.exists(qa_preflag_dir):
-        os.mkdir(qa_preflag_dir)
-else:
-    qa_preflag_dir = args.path
+    logger.info("Running preflag QA")
 
-# Create log file
-lib.setup_logger(
-    'info', logfile=os.path.join(qa_preflag_dir, 'run_preflag_qa.log'))
-logger = logging.getLogger(__name__)
-
-logger.info("Running preflag QA")
-
-# now combine the plots
-try:
-    start_time = time.time()
-    preflag_plots.combine_preflag_plots(
-        qa_preflag_dir, trigger_mode=args.trigger_mode)
-except Exception as e:
-    logger.warning("Running preflag QA failed")
-    logger.exception(e)
-else:
-    logger.warning("Running preflag QA ... Done ({0:.0f}s)".format(
-        time.time()-start_time))
+    # now combine the plots
+    try:
+        start_time = time.time()
+        preflag_plots.combine_preflag_plots(
+            qa_preflag_dir, trigger_mode=args.trigger_mode)
+    except Exception as e:
+        logger.warning("Running preflag QA failed")
+        logger.exception(e)
+    else:
+        logger.warning("Running preflag QA ... Done ({0:.0f}s)".format(
+            time.time()-start_time))

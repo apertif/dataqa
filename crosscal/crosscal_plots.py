@@ -24,12 +24,12 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, basedir=None, t
     """
     Create crosscal QA plots
 
-    Args:
-        scan (int): Task id of target, e.g. 190311152
-        fluxcal (str): Name of fluxcal, e.g. "3C147"
-        polcal(str): Name of the polcal, e.g. "3C286"
-        output_path (str): Output path, None for default
-        trigger_mode (bool): To run automatically after Apercal
+    | Args:
+    |     scan (int): Task id of target, e.g. 190311152
+    |     fluxcal (str): Name of fluxcal, e.g. "3C147"
+    |     polcal(str): Name of the polcal, e.g. "3C286"
+    |     output_path (str): Output path, None for default
+    |     trigger_mode (bool): To run automatically after Apercal
     """
 
     # Get autocorrelation plots
@@ -126,6 +126,10 @@ def make_all_ccal_plots(scan, fluxcal, polcal, output_path=None, basedir=None, t
 
 
 class BPSols(ScanData):
+    """
+    Class for extracting and plotting the bandpass solutions
+    """
+
     def __init__(self,scan,fluxcal,trigger_mode,basedir=None):
         ScanData.__init__(self, scan, fluxcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -249,6 +253,10 @@ class BPSols(ScanData):
             
 
 class GainSols(ScanData):
+    """
+    Class for extracting and plotting the gain solutions
+    """
+
     def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, fluxcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -388,6 +396,10 @@ class GainSols(ScanData):
 
 
 class GDSols(ScanData):
+    """
+    Class for extracting and plotting the global delay
+    """
+
     def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, fluxcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -481,6 +493,10 @@ class GDSols(ScanData):
 
 
 class LeakSols(ScanData):
+    """
+    Class for extracting and plotting the leakage solutions
+    """
+
     def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, fluxcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -582,6 +598,10 @@ class LeakSols(ScanData):
 
 
 class KCrossSols(ScanData):
+    """
+    Class for extracting and plotting the cross hand delay solutions
+    """
+
     def __init__(self, scan, polcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, polcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -640,6 +660,10 @@ class KCrossSols(ScanData):
 
 
 class PolangleSols(ScanData):
+    """
+    Class for extracting and plotting the polarisation angle solutions
+    """
+
     def __init__(self, scan, polcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, polcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -737,6 +761,10 @@ class PolangleSols(ScanData):
 
 
 class ModelData(ScanData):
+    """
+    Class for extracting and plotting the baseline-average model data
+    """
+
     def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, fluxcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -823,6 +851,10 @@ class ModelData(ScanData):
 
 
 class AutocorrData(ScanData):
+    """
+    Class for extracting and plotting autocorrelation amplitude.
+    """
+
     def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, fluxcal, trigger_mode=trigger_mode, basedir=basedir)
         self.imagepathsuffix = "crosscal"
@@ -1022,6 +1054,10 @@ class AutocorrData(ScanData):
             plt.close('all')
        
 class CorrectedData(ScanData):
+    """
+    Class for extracting and plotting the baseline-averaged corrected data
+    """
+
     def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, fluxcal,
                           trigger_mode=trigger_mode, basedir=basedir)
@@ -1170,6 +1206,10 @@ class CorrectedData(ScanData):
 
 
 class RawData(ScanData):
+    """
+    Class for extracting and plotting the baseline-averaged raw data.
+    """
+
     def __init__(self, scan, fluxcal, trigger_mode, basedir=None):
         ScanData.__init__(self, scan, fluxcal,
                           trigger_mode=trigger_mode, basedir=basedir)

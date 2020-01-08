@@ -1,8 +1,13 @@
+#!/usr/bin/env python
 """
 Script to automatically retrieve inspection plots from ALTA
 for the QA
+
 Requires a scan number
-Optionally takes a directory for writing plots
+
+Full list of options available with
+    
+    ``python run_inspection_plot.py -h``
 """
 
 import os
