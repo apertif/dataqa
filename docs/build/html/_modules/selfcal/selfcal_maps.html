@@ -1,0 +1,380 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>selfcal.selfcal_maps &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for selfcal.selfcal_maps</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This script contains functionality to plot the selfcal images</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">apercal.libs</span> <span class="k">import</span> <span class="n">lib</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
+<span class="kn">from</span> <span class="nn">astropy.wcs</span> <span class="k">import</span> <span class="n">WCS</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Agg&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mc</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="plot_selfcal_maps"><a class="viewcode-back" href="../../selfcal_maps.html#selfcal.selfcal_maps.plot_selfcal_maps">[docs]</a><span class="k">def</span> <span class="nf">plot_selfcal_maps</span><span class="p">(</span><span class="n">fits_name</span><span class="p">,</span> <span class="n">qa_selfcal_beam_dir</span><span class="p">,</span> <span class="n">plot_residuals</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function plots the selfcal maps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fits_hdulist</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_name</span><span class="p">)</span>
+
+    <span class="c1"># get WCS header of cube</span>
+    <span class="n">wcs</span> <span class="o">=</span> <span class="n">WCS</span><span class="p">(</span><span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="c1"># remove unnecessary axis</span>
+    <span class="k">if</span> <span class="n">wcs</span><span class="o">.</span><span class="n">naxis</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">dropaxis</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">dropaxis</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">wcs</span><span class="o">.</span><span class="n">naxis</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">dropaxis</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="c1"># set up plot</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">wcs</span><span class="p">)</span>
+
+    <span class="c1"># create image</span>
+    <span class="k">if</span> <span class="n">plot_residuals</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span> <span class="o">*</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">mc</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span>
+                                                      <span class="o">.</span><span class="mi">05</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=.</span><span class="mi">05</span><span class="p">),</span>  <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+        <span class="c1"># fig = ax.imshow(img * 1.e3, norm=mc.SymLogNorm(1.e-3,</span>
+        <span class="c1">#                                                vmin=-1, vmax=1.),  origin=&#39;lower&#39;)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span> <span class="o">*</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">mc</span><span class="o">.</span><span class="n">SymLogNorm</span><span class="p">(</span><span class="mf">1.e-9</span><span class="p">,</span>
+                                                       <span class="n">vmin</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.</span><span class="p">),</span>  <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Flux Density [mJy/beam]&#39;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_axislabel</span><span class="p">(</span><span class="s1">&#39;Right Ascension&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_axislabel</span><span class="p">(</span><span class="s1">&#39;Declination&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="s1">&#39;hh:mm&#39;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Selfcal </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fits_name</span><span class="p">))</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_selfcal_beam_dir</span><span class="p">,</span>
+                                  <span class="n">fits_name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+    <span class="c1"># if plot_format == &quot;pdf&quot;:</span>
+    <span class="c1">#     plt.savefig(output.replace(&quot;.png&quot;, &quot;.pdf&quot;),</span>
+    <span class="c1">#                 overwrite=True, bbox_inches=&#39;tight&#39;)</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     plt.savefig(output, overwrite=True, bbox_inches=&#39;tight&#39;, dpi=300)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_mir2fits"><a class="viewcode-back" href="../../selfcal_maps.html#selfcal.selfcal_maps.convert_mir2fits">[docs]</a><span class="k">def</span> <span class="nf">convert_mir2fits</span><span class="p">(</span><span class="n">mir_name</span><span class="p">,</span> <span class="n">fits_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function converts a miriad image to fits</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fits</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">miriad</span><span class="p">(</span><span class="s1">&#39;fits&#39;</span><span class="p">)</span>
+    <span class="n">fits</span><span class="o">.</span><span class="n">in_</span> <span class="o">=</span> <span class="n">mir_name</span>
+    <span class="n">fits</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">fits_name</span>
+    <span class="n">fits</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="s1">&#39;xyout&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">go</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_selfcal_maps"><a class="viewcode-back" href="../../selfcal_maps.html#selfcal.selfcal_maps.create_selfcal_maps">[docs]</a><span class="k">def</span> <span class="nf">create_selfcal_maps</span><span class="p">(</span><span class="n">mir_image_list</span><span class="p">,</span> <span class="n">qa_selfcal_beam_dir</span><span class="p">,</span> <span class="n">plot_residuals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">selfcal_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function creates plots for the selfcal maps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># go through the list of images</span>
+    <span class="k">for</span> <span class="n">mir_image</span> <span class="ow">in</span> <span class="n">mir_image_list</span><span class="p">:</span>
+
+        <span class="c1"># create link to the miriad image</span>
+        <span class="n">link_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">mir_image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">link_name</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">mir_image</span><span class="p">,</span> <span class="n">link_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">link_name</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">mir_image</span><span class="p">,</span> <span class="n">link_name</span><span class="p">)</span>
+
+        <span class="c1"># get the major cycle</span>
+        <span class="n">major_cycle</span> <span class="o">=</span> <span class="n">mir_image</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">minor_cycle</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">mir_image</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">fits_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">_</span><span class="si">{1:s}</span><span class="s2">_</span><span class="si">{2:s}</span><span class="s2">_</span><span class="si">{3:s}</span><span class="s2">.fits&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">selfcal_type</span><span class="p">,</span> <span class="n">major_cycle</span><span class="p">,</span> <span class="n">minor_cycle</span><span class="p">,</span> <span class="n">link_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">convert_mir2fits</span><span class="p">(</span><span class="n">link_name</span><span class="p">,</span> <span class="n">fits_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Converting </span><span class="si">{0:s}</span><span class="s2"> failed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mir_image</span><span class="p">))</span>
+
+        <span class="c1"># plot image if it exists</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fits_name</span><span class="p">):</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotting </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mir_image</span><span class="p">))</span>
+
+            <span class="n">plot_selfcal_maps</span><span class="p">(</span><span class="n">fits_name</span><span class="p">,</span> <span class="n">qa_selfcal_beam_dir</span><span class="p">,</span>
+                              <span class="n">plot_residuals</span><span class="o">=</span><span class="n">plot_residuals</span><span class="p">)</span>
+
+            <span class="c1"># remove the fits file</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fits_name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not remove </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fits_name</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_selfcal_maps"><a class="viewcode-back" href="../../selfcal_maps.html#selfcal.selfcal_maps.get_selfcal_maps">[docs]</a><span class="k">def</span> <span class="nf">get_selfcal_maps</span><span class="p">(</span><span class="n">obs_id</span><span class="p">,</span> <span class="n">qa_selfcal_dir</span><span class="p">,</span> <span class="n">trigger_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function goes through the images available and plots them.</span>
+
+<span class="sd">    It will convert the miriad images temporarily into fits. The fits files</span>
+<span class="sd">    will be delelted afterwards.</span>
+<span class="sd">    At the moment only the image and residual is taken into account.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># creating a temporary directory for conversion</span>
+    <span class="n">tmp_convert_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">tmp_conv/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_selfcal_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_convert_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">tmp_convert_dir</span><span class="p">)</span>
+
+    <span class="c1"># get current working directory to go back to at the end of this function</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+    <span class="c1"># change to this directory for shorter path lengths for miriad</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">tmp_convert_dir</span><span class="p">)</span>
+
+    <span class="c1"># check host name</span>
+    <span class="n">host_name</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">trigger_mode</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;--&gt; Running selfcal QA in trigger mode. Looking only for data processed by Apercal on </span><span class="si">{0:s}</span><span class="s2"> &lt;--&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host_name</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">host_name</span> <span class="o">!=</span> <span class="s2">&quot;happili-01&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trigger_mode</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;You are not working on happili-01.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The script will not process all beams&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Please switch to happili-01&quot;</span><span class="p">)</span>
+
+    <span class="c1"># get a list of data beam directories</span>
+    <span class="k">if</span> <span class="s2">&quot;/data&quot;</span> <span class="ow">in</span> <span class="n">qa_selfcal_dir</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">trigger_mode</span><span class="p">:</span>
+            <span class="n">data_beam_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/data/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">host_name</span> <span class="o">!=</span> <span class="s2">&quot;happili-01&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trigger_mode</span><span class="p">:</span>
+            <span class="n">data_beam_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/data/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_beam_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/data*/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">trigger_mode</span><span class="p">:</span>
+            <span class="n">data_beam_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/tank/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">host_name</span> <span class="o">!=</span> <span class="s2">&quot;happili-01&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trigger_mode</span><span class="p">:</span>
+            <span class="n">data_beam_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/tank/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_beam_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/tank/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span> <span class="o">+</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/tank2/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span> <span class="o">+</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/tank3/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span> <span class="o">+</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;/tank4/apertif/</span><span class="si">{}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs_id</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_beam_dir_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="n">data_beam_dir_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="c1"># go through the beam directories found</span>
+        <span class="k">for</span> <span class="n">data_beam_dir</span> <span class="ow">in</span> <span class="n">data_beam_dir_list</span><span class="p">:</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;## Going through </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_beam_dir</span><span class="p">))</span>
+
+            <span class="n">beam</span> <span class="o">=</span> <span class="n">data_beam_dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># create beam directory in selfcal QA dir</span>
+            <span class="n">qa_selfcal_beam_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_selfcal_dir</span><span class="p">,</span> <span class="n">beam</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">qa_selfcal_beam_dir</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">qa_selfcal_beam_dir</span><span class="p">)</span>
+
+            <span class="c1"># Phase selfcal</span>
+            <span class="c1"># =============</span>
+
+            <span class="c1"># get major cycles</span>
+            <span class="n">major_cycle_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/selfcal/[0-9][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_beam_dir</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">major_cycle_dir_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="c1"># go through the major cycle directories:</span>
+                <span class="k">for</span> <span class="n">major_cycle_dir</span> <span class="ow">in</span> <span class="n">major_cycle_dir_list</span><span class="p">:</span>
+
+                    <span class="c1"># get all images for this major cycle:</span>
+                    <span class="n">mir_image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/image*&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">major_cycle_dir</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mir_image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                        <span class="c1"># create plots for miriad selfcal images</span>
+                        <span class="n">create_selfcal_maps</span><span class="p">(</span>
+                            <span class="n">mir_image_list</span><span class="p">,</span> <span class="n">qa_selfcal_beam_dir</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;No images found in </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">major_cycle_dir</span><span class="p">))</span>
+
+                    <span class="c1"># get all residuals for this major cycle:</span>
+                    <span class="n">mir_image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/residual*&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">major_cycle_dir</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mir_image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                        <span class="c1"># create plots for miriad selfcal residuals</span>
+                        <span class="n">create_selfcal_maps</span><span class="p">(</span>
+                            <span class="n">mir_image_list</span><span class="p">,</span> <span class="n">qa_selfcal_beam_dir</span><span class="p">,</span> <span class="n">plot_residuals</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;No residual found in </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">major_cycle_dir</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;No major selfcal cycles found for </span><span class="si">{0:s}</span><span class="s2">/selfcal/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_beam_dir</span><span class="p">))</span>
+
+            <span class="c1"># Amplitude selfcal</span>
+            <span class="c1"># =================</span>
+
+            <span class="c1"># amplitude selfcal directory</span>
+            <span class="n">data_beam_dir_amp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_beam_dir</span><span class="p">,</span> <span class="s2">&quot;selfcal/amp&quot;</span><span class="p">)</span>
+
+            <span class="c1"># create images only if directory exists (thus amplitude selfcal ran)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_beam_dir_amp</span><span class="p">):</span>
+
+                <span class="c1"># get all images for this major cycle:</span>
+                <span class="n">mir_image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_beam_dir_amp</span><span class="p">,</span> <span class="s2">&quot;image*&quot;</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mir_image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="c1"># create plots for miriad selfcal images</span>
+                    <span class="n">create_selfcal_maps</span><span class="p">(</span>
+                        <span class="n">mir_image_list</span><span class="p">,</span> <span class="n">qa_selfcal_beam_dir</span><span class="p">,</span> <span class="n">selfcal_type</span><span class="o">=</span><span class="s2">&quot;amplitude&quot;</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;No images found in </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">major_cycle_dir</span><span class="p">))</span>
+
+                <span class="c1"># get all residuals for this major cycle:</span>
+                <span class="n">mir_image_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_beam_dir_amp</span><span class="p">,</span> <span class="s2">&quot;residual*&quot;</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mir_image_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="c1"># create plots for miriad selfcal residuals</span>
+                    <span class="n">create_selfcal_maps</span><span class="p">(</span>
+                        <span class="n">mir_image_list</span><span class="p">,</span> <span class="n">qa_selfcal_beam_dir</span><span class="p">,</span> <span class="n">selfcal_type</span><span class="o">=</span><span class="s2">&quot;amplitude&quot;</span><span class="p">,</span> <span class="n">plot_residuals</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;No residual found in </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">major_cycle_dir</span><span class="p">))</span>
+
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;No amplitude selfcal directory found in </span><span class="si">{0:s}</span><span class="s2">/selfcal/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_beam_dir</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not find any beams for selfcal QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># switch back to working directory</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

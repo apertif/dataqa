@@ -1,0 +1,139 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Script: run_qa &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Automated Pipeline QA" href="pipeline.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pipeline.html" title="Automated Pipeline QA"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="pipeline.html" accesskey="U">Automated Pipeline QA</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pipeline.html"
+                        title="previous chapter">Automated Pipeline QA</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pipeline_run_qa.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-run_qa">
+<span id="script-run-qa"></span><h1>Script: run_qa<a class="headerlink" href="#module-run_qa" title="Permalink to this headline">¶</a></h1>
+<p>This script contains functionality to run all QA automatically after being triggered at the end of apercal</p>
+<dl class="function">
+<dt id="run_qa.run_triggered_qa">
+<code class="descclassname">run_qa.</code><code class="descname">run_triggered_qa</code><span class="sig-paren">(</span><em>targets</em>, <em>fluxcals</em>, <em>polcals</em>, <em>steps=None</em>, <em>basedir=None</em>, <em>osa=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_qa.html#run_triggered_qa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#run_qa.run_triggered_qa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to run all QA steps.</p>
+<p>Function is called as
+return_msg = run_triggered_qa(</p>
+<blockquote>
+<div>tdict[‘target’], tdict[‘cal1’], tdict[‘cal2’])</div></blockquote>
+<dl class="docutils">
+<dt>With the first three variables defined (the same way as autocal) as</dt>
+<dd><p class="first">targets = (190505048, ‘LH_WSRT’, array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))</p>
+<dl class="last docutils">
+<dt>fluxcals = [(190505017, ‘3C147_9’, 9), (190505016, ‘3C147_8’, 8), (190505015, ‘3C147_7’, 7), (190505014, ‘3C147_6’, 6), (190505013, ‘3C147_5’, 5),</dt>
+<dd>(190505012, ‘3C147_4’, 4), (190505011, ‘3C147_3’, 3), (190505010, ‘3C147_2’, 2), (190505009, ‘3C147_1’, 1), (190505008, ‘3C147_0’, 0)]</dd>
+<dt>polcals = [(190506001, ‘3C286_0’, 0), (190506002, ‘3C286_1’, 1), (190506003, ‘3C286_2’, 2), (190506004, ‘3C286_3’, 3), (190506005, ‘3C286_4’, 4),</dt>
+<dd>(190506006, ‘3C286_5’, 5), (190506007, ‘3C286_6’, 6), (190506008, ‘3C286_7’, 7), (190506009, ‘3C286_8’, 8), (190506010, ‘3C286_9’, 9)]</dd>
+</dl>
+</dd>
+<dt>If steps is not provided then all steps except mosaic will be performed:</dt>
+<dd><dl class="first last docutils">
+<dt>steps = [‘preflag’, ‘crosscal’, ‘selfcal’,</dt>
+<dd>‘continuum’, ‘line’, ‘mosaic’, ‘report’]</dd>
+</dl>
+</dd>
+<dt>For all steps including mosaic:</dt>
+<dd><dl class="first last docutils">
+<dt>steps = [‘preflag’, ‘crosscal’, ‘selfcal’,</dt>
+<dd>‘continuum’, ‘line’, ‘mosaic’, ‘report’]</dd>
+</dl>
+</dd>
+<dt>It is possible to select a certain step:</dt>
+<dd>steps = [‘mosaic’]</dd>
+<dt>test call can look like this: </dt>
+<dd>from dataqa.run_qa import run_triggered_qa
+run_triggered_qa((190505048, ‘LH_WSRT’, [0]), [(190505048, ‘3C147_10’, 10)], [(190505048, ‘3C286_10’, 10)], steps=[‘report’])</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pipeline.html" title="Automated Pipeline QA"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="pipeline.html" >Automated Pipeline QA</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+Module: HTML_Report
+***************************
+
+.. automodule:: report.html_report
+   :members:

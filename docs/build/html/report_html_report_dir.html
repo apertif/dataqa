@@ -1,0 +1,314 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module: HTML_Report_Dir &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module: HTML_Report" href="report_html_report.html" />
+    <link rel="prev" title="Module: HTML_Report_Content" href="report_html_report_content.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="report_html_report.html" title="Module: HTML_Report"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="report_html_report_content.html" title="Module: HTML_Report_Content"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="report.html" accesskey="U">Oveview Report</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="report_html_report_content.html"
+                        title="previous chapter">Module: HTML_Report_Content</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="report_html_report.html"
+                        title="next chapter">Module: HTML_Report</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/report_html_report_dir.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-report.html_report_dir">
+<span id="module-html-report-dir"></span><h1>Module: HTML_Report_Dir<a class="headerlink" href="#module-report.html_report_dir" title="Permalink to this headline">¶</a></h1>
+<p>This file contains functionality to create the directory structure for the report.
+Instead of copying files, they are linked.</p>
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_apercal_log">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_apercal_log</code><span class="sig-paren">(</span><em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_apercal_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_apercal_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the apercal log directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All four apercal.log file will be linked to this directory, but
+for better processing they will be renamed to .txt files.
+This function already collects information from different 
+happilis.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_beamweights">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_beamweights</code><span class="sig-paren">(</span><em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_beamweights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_beamweights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the beamweights directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the QA directory. Currently, it only reads the 
+compound beam plots</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_continuum">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_continuum</code><span class="sig-paren">(</span><em>obs_id</em>, <em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_continuum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_continuum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the continuum directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the continuum QA directory.
+No need to addd combine parameter as it will try to look
+into all happili nodes.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_crosscal">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_crosscal</code><span class="sig-paren">(</span><em>obs_id</em>, <em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em>, <em>do_combine=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_crosscal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_crosscal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the create directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the crosscal QA directory.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node
+do_combine (bool): Set to combine the QA information from different happilis</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_inspection_plots">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_inspection_plots</code><span class="sig-paren">(</span><em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em>, <em>obs_info=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_inspection_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_inspection_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the inspection plot directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the inspection plot QA directory.
+It is not necessary to add the combine-parameter, because
+the inspection plots are only created on happili-01 unless ran manually.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node
+obs_info (dict): Information about the observation such as the source names</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_line">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_line</code><span class="sig-paren">(</span><em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the line directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the line QA directory.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_mosaic">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_mosaic</code><span class="sig-paren">(</span><em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_mosaic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_mosaic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the mosaic directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the mosaic QA directory.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_observing_log">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_observing_log</code><span class="sig-paren">(</span><em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_observing_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_observing_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the observing log  for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the observing log QA directory</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_preflag">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_preflag</code><span class="sig-paren">(</span><em>obs_id</em>, <em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_preflag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_preflag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the preflag directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the preflag QA directory.
+It is not necessary to add the combine-parameter, because
+the preflag files are already distributed among the nodes.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_selfcal">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_selfcal</code><span class="sig-paren">(</span><em>obs_id</em>, <em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em>, <em>do_combine=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_selfcal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_selfcal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the selfcal directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the selfcal QA directory.</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node
+do_combine (bool): Set to combine the QA information from different happilis</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dir_summary">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dir_summary</code><span class="sig-paren">(</span><em>qa_dir</em>, <em>qa_dir_report_obs_subpage</em>, <em>trigger_mode=False</em>, <em>single_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dir_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dir_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the summary directory for the report</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>All necessary files will be linked to this directory
+from the QA directory. Currently, it only reads the 
+compound beam plots</dd>
+<dt>Args:</dt>
+<dd>qa_dir (str): Directory of the QA
+qa_dir_report_obs_subpage (str): Directory of the subpage
+trigger_mode (bool): Set for when automatically run after Apercal on a single node</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.html_report_dir.create_report_dirs">
+<code class="descclassname">report.html_report_dir.</code><code class="descname">create_report_dirs</code><span class="sig-paren">(</span><em>obs_id</em>, <em>qa_dir</em>, <em>subpages</em>, <em>css_file=''</em>, <em>js_file=''</em>, <em>trigger_mode=False</em>, <em>single_node=False</em>, <em>do_combine=False</em>, <em>obs_info=None</em>, <em>osa_files=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/report/html_report_dir.html#create_report_dirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.html_report_dir.create_report_dirs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create the directory structure of the report document</p>
+<p>Files that are required will be linked to there.</p>
+<p>The function can create the directory for the pages:
+summary, inspection plots, preflag, crosscal, selfcal, continuum,
+line, mosaic and apercal log.</p>
+<p>The option to combine QA information from different happilis does not
+do anything with inspection plots and preflag. The former is only available
+from happili-01 in triggered mode and the latter is already distributed.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>obs_id (str): ID of observation (scan/task_id)
+qa_dir (str): Directory of QA
+subpages (list(str)): List of pages to be created
+css_file (str): Path to local css file (deprecated as w3css is now used)
+js_file (str): Path to javascript file
+trigger_mode (bool): In trigger mode the report is created only for the data on the given happili
+do_combine (bool): Combine the information from different happilis.
+obs_info (dict): Additional information about the observation (target name, fluxcal, and polcal)</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="report_html_report.html" title="Module: HTML_Report"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="report_html_report_content.html" title="Module: HTML_Report_Content"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="report.html" >Oveview Report</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

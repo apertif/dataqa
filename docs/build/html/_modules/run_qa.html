@@ -1,0 +1,603 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>run_qa &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for run_qa</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This script contains functionality to run all QA automatically after being triggered at the end of apercal</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">from</span> <span class="nn">apercal.libs</span> <span class="k">import</span> <span class="n">lib</span>
+<span class="kn">from</span> <span class="nn">apercal.subs</span> <span class="k">import</span> <span class="n">calmodels</span> <span class="k">as</span> <span class="n">subs_calmodels</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+
+<span class="kn">from</span> <span class="nn">dataqa.scandata</span> <span class="k">import</span> <span class="n">get_default_imagepath</span>
+
+
+<div class="viewcode-block" id="run_triggered_qa"><a class="viewcode-back" href="../pipeline_run_qa.html#run_qa.run_triggered_qa">[docs]</a><span class="k">def</span> <span class="nf">run_triggered_qa</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">fluxcals</span><span class="p">,</span> <span class="n">polcals</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">osa</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to run all QA steps.</span>
+
+<span class="sd">    Function is called as</span>
+<span class="sd">    return_msg = run_triggered_qa(</span>
+<span class="sd">        tdict[&#39;target&#39;], tdict[&#39;cal1&#39;], tdict[&#39;cal2&#39;])</span>
+
+<span class="sd">    With the first three variables defined (the same way as autocal) as</span>
+<span class="sd">        targets = (190505048, &#39;LH_WSRT&#39;, array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))</span>
+
+<span class="sd">        fluxcals = [(190505017, &#39;3C147_9&#39;, 9), (190505016, &#39;3C147_8&#39;, 8), (190505015, &#39;3C147_7&#39;, 7), (190505014, &#39;3C147_6&#39;, 6), (190505013, &#39;3C147_5&#39;, 5),</span>
+<span class="sd">                     (190505012, &#39;3C147_4&#39;, 4), (190505011, &#39;3C147_3&#39;, 3), (190505010, &#39;3C147_2&#39;, 2), (190505009, &#39;3C147_1&#39;, 1), (190505008, &#39;3C147_0&#39;, 0)]</span>
+
+<span class="sd">        polcals = [(190506001, &#39;3C286_0&#39;, 0), (190506002, &#39;3C286_1&#39;, 1), (190506003, &#39;3C286_2&#39;, 2), (190506004, &#39;3C286_3&#39;, 3), (190506005, &#39;3C286_4&#39;, 4),</span>
+<span class="sd">                    (190506006, &#39;3C286_5&#39;, 5), (190506007, &#39;3C286_6&#39;, 6), (190506008, &#39;3C286_7&#39;, 7), (190506009, &#39;3C286_8&#39;, 8), (190506010, &#39;3C286_9&#39;, 9)]</span>
+
+<span class="sd">    If steps is not provided then all steps except mosaic will be performed:</span>
+<span class="sd">        steps = [&#39;preflag&#39;, &#39;crosscal&#39;, &#39;selfcal&#39;,</span>
+<span class="sd">                 &#39;continuum&#39;, &#39;line&#39;, &#39;mosaic&#39;, &#39;report&#39;]</span>
+<span class="sd">    For all steps including mosaic:</span>
+<span class="sd">        steps = [&#39;preflag&#39;, &#39;crosscal&#39;, &#39;selfcal&#39;,</span>
+<span class="sd">                 &#39;continuum&#39;, &#39;line&#39;, &#39;mosaic&#39;, &#39;report&#39;]</span>
+<span class="sd">    It is possible to select a certain step:</span>
+<span class="sd">        steps = [&#39;mosaic&#39;]</span>
+
+<span class="sd">    test call can look like this: </span>
+<span class="sd">        from dataqa.run_qa import run_triggered_qa</span>
+<span class="sd">        run_triggered_qa((190505048, &#39;LH_WSRT&#39;, [0]), [(190505048, &#39;3C147_10&#39;, 10)], [(190505048, &#39;3C286_10&#39;, 10)], steps=[&#39;report&#39;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># for time measurement</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Process input parameters</span>
+    <span class="c1"># (same as in start_apercal_pipeline)</span>
+    <span class="c1"># ========================</span>
+
+    <span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">name_target</span><span class="p">,</span> <span class="n">beamlist_target</span><span class="p">)</span> <span class="o">=</span> <span class="n">targets</span>
+
+    <span class="k">if</span> <span class="n">fluxcals</span><span class="p">:</span>
+        <span class="n">name_fluxcal</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fluxcals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">name_fluxcal</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">polcals</span><span class="p">:</span>
+        <span class="n">name_polcal</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">polcals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">name_polcal</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># steps = [&#39;preflag&#39;, &#39;crosscal&#39;, &#39;selfcal&#39;,</span>
+        <span class="c1">#          &#39;continuum&#39;, &#39;line&#39;, &#39;mosaic&#39;, &#39;report&#39;]</span>
+        <span class="c1"># steps = [&#39;inspection_plots&#39;, &#39;beamweights&#39;, &#39;preflag&#39;, &#39;crosscal&#39;, &#39;selfcal&#39;,</span>
+        <span class="c1">#          &#39;continuum&#39;, &#39;line&#39;, &#39;report&#39;]</span>
+
+        <span class="c1"># due to isssue with beamweights script, this step is currently not performed</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;inspection_plots&#39;</span><span class="p">,</span> <span class="s1">&#39;preflag&#39;</span><span class="p">,</span> <span class="s1">&#39;crosscal&#39;</span><span class="p">,</span> <span class="s1">&#39;selfcal&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;continuum&#39;</span><span class="p">,</span> <span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="s1">&#39;report&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Set up</span>
+    <span class="c1"># ======</span>
+
+    <span class="c1"># Get host name</span>
+    <span class="n">host_name</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
+
+    <span class="c1"># QA directory</span>
+    <span class="k">if</span> <span class="n">basedir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">qa_dir</span> <span class="o">=</span> <span class="n">get_default_imagepath</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">basedir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">qa_dir</span> <span class="o">=</span> <span class="n">get_default_imagepath</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">)</span>
+        <span class="n">basedir</span> <span class="o">=</span> <span class="s2">&quot;/data/apertif&quot;</span>
+
+    <span class="c1"># check that path exists</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">qa_dir</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Directory </span><span class="si">{0:s}</span><span class="s2"> does not exist and will be created&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_dir</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">qa_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="c1"># start log file</span>
+    <span class="c1"># logging.basicConfig(format=&#39;%(asctime)s %(levelname)s:%(message)s&#39;,</span>
+    <span class="c1">#                     filename=&#39;{0:s}{1:s}_triggered_qa.log&#39;.format(qa_dir, host_name), level=logging.DEBUG)</span>
+
+    <span class="n">lib</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">(</span>
+        <span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="n">logfile</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{0:s}{1:s}</span><span class="s1">_triggered_qa.log&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_dir</span><span class="p">,</span> <span class="n">host_name</span><span class="p">))</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#######################&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Input parameters:&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;target=</span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">targets</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;fluxcals=</span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fluxcals</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;polcals=</span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">polcals</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#######################&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#######################&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Running all QA steps on </span><span class="si">{0:s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host_name</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#######################&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If both fluxcal and polcal polarized, remove polcal</span>
+    <span class="c1"># (taken from start_pipeline)</span>
+    <span class="k">if</span> <span class="n">subs_calmodels</span><span class="o">.</span><span class="n">is_polarised</span><span class="p">(</span><span class="n">name_polcal</span><span class="p">)</span> <span class="ow">and</span> <span class="n">subs_calmodels</span><span class="o">.</span><span class="n">is_polarised</span><span class="p">(</span><span class="n">name_fluxcal</span><span class="p">):</span>
+        <span class="n">name_polcal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">fluxcals</span> <span class="ow">and</span> <span class="n">fluxcals</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">polcals</span> <span class="ow">and</span> <span class="n">polcals</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fluxcals</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">polcals</span><span class="p">))</span>
+
+    <span class="c1"># avoid symmetry bias, if there is only a polcal but no fluxcal, switch them</span>
+    <span class="k">if</span> <span class="n">fluxcals</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">polcals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Only polcal was provided. Setting polcal </span><span class="si">{}</span><span class="s2"> to fluxcal&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_polcal</span><span class="p">))</span>
+        <span class="n">fluxcals</span><span class="p">,</span> <span class="n">polcals</span> <span class="o">=</span> <span class="n">polcals</span><span class="p">,</span> <span class="n">fluxcals</span>
+        <span class="n">name_fluxcal</span><span class="p">,</span> <span class="n">name_polcal</span> <span class="o">=</span> <span class="n">name_polcal</span><span class="p">,</span> <span class="n">name_fluxcal</span>
+        <span class="n">name_polcal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># Exchange polcal and fluxcal if specified in the wrong order</span>
+    <span class="c1"># (taken from start_pipeline)</span>
+    <span class="c1"># (except for how the names are switched)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">subs_calmodels</span><span class="o">.</span><span class="n">is_polarised</span><span class="p">(</span><span class="n">name_polcal</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name_polcal</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">subs_calmodels</span><span class="o">.</span><span class="n">is_polarised</span><span class="p">(</span><span class="n">name_fluxcal</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Switching polcal and fluxcal because &quot;</span> <span class="o">+</span> <span class="n">name_polcal</span> <span class="o">+</span>
+                         <span class="s2">&quot; is not polarised&quot;</span><span class="p">)</span>
+            <span class="n">fluxcals</span><span class="p">,</span> <span class="n">polcals</span> <span class="o">=</span> <span class="n">polcals</span><span class="p">,</span> <span class="n">fluxcals</span>
+            <span class="n">name_fluxcal</span><span class="p">,</span> <span class="n">name_polcal</span> <span class="o">=</span> <span class="n">name_polcal</span><span class="p">,</span> <span class="n">name_fluxcal</span>
+            <span class="c1">#name_polcal = str(polcals[0][1]).strip()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting polcal to &#39;&#39; since &quot;</span> <span class="o">+</span>
+                         <span class="n">name_polcal</span> <span class="o">+</span> <span class="s2">&quot; is not polarised&quot;</span><span class="p">)</span>
+            <span class="n">name_polcal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">name_polcal</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Polcal &quot;</span> <span class="o">+</span> <span class="n">name_polcal</span> <span class="o">+</span> <span class="s2">&quot; is polarised, all good&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;## Observation of target: </span><span class="si">{0:s}</span><span class="s2">, flux calibrator: </span><span class="si">{1:s}</span><span class="s2">, polarisation calibrator: </span><span class="si">{2:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">name_target</span><span class="p">,</span> <span class="n">name_fluxcal</span><span class="p">,</span> <span class="n">name_polcal</span><span class="p">))</span>
+
+    <span class="c1"># Write information about the observation into a txt file for later</span>
+    <span class="c1"># This information is important for the OSA report</span>
+    <span class="c1"># =================================================================</span>
+
+    <span class="c1"># flux calibrator tid list</span>
+    <span class="n">flux_cal_tid_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cal</span> <span class="ow">in</span> <span class="n">fluxcals</span><span class="p">]</span>
+
+    <span class="c1"># pol calibrator tid list</span>
+    <span class="k">if</span> <span class="n">name_polcal</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">pol_cal_tid_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cal</span> <span class="ow">in</span> <span class="n">polcals</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pol_cal_tid_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">summary_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">taskid_target</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">name_target</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">name_fluxcal</span><span class="p">],</span>
+        <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">flux_cal_tid_list</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">name_polcal</span><span class="p">],</span>
+        <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pol_cal_tid_list</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">osa</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span>
+        <span class="s1">&#39;Obs_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;Target&#39;</span><span class="p">,</span> <span class="s1">&#39;Flux_Calibrator&#39;</span><span class="p">,</span> <span class="s1">&#39;Flux_Calibrator_Obs_IDs&#39;</span><span class="p">,</span> <span class="s1">&#39;Pol_Calibrator&#39;</span><span class="p">,</span> <span class="s1">&#39;Pol_Calibrator_Obs_IDs&#39;</span><span class="p">,</span> <span class="s1">&#39;OSA&#39;</span><span class="p">))</span>
+
+    <span class="n">table_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_obs.ecsv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">)</span>
+
+    <span class="n">table_name_with_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">qa_dir</span><span class="p">,</span> <span class="n">table_name</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">summary_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">table_name_with_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.ecsv&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Saving observation information in </span><span class="si">{0}</span><span class="s2"> failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">table_name_with_path</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;Saving observation information in </span><span class="si">{0}</span><span class="s2"> ... Done.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_name_with_path</span><span class="p">)))</span>
+
+    <span class="c1"># Inspection Plots</span>
+    <span class="c1"># ================</span>
+
+    <span class="k">if</span> <span class="s1">&#39;inspection_plots&#39;</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+
+        <span class="n">start_time_inspection_plot</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="c1"># for the target it is enough to do it only for happili-01</span>
+        <span class="c1"># as they do not depend on the beam</span>
+        <span class="c1"># for the flux and pol calibrator, they have to be run on every node</span>
+
+        <span class="c1"># get inspection plots for target</span>
+        <span class="k">if</span> <span class="n">host_name</span> <span class="o">==</span> <span class="s2">&quot;happili-01&quot;</span><span class="p">:</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;#### Inspection plot QA for </span><span class="si">{}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_target</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">inspection_plot_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                    <span class="s1">&#39;python /home/apercal/dataqa/run_inspection_plot.py </span><span class="si">{0:d}</span><span class="s1"> </span><span class="si">{1:s}</span><span class="s1"> --basedir=</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">name_target</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Getting inspection plots finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inspection_plot_msg</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;#### Inspection plot QA </span><span class="si">{0}</span><span class="s2">... Done &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_target</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Inspection plot QA for </span><span class="si">{}</span><span class="s2"> failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_target</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># get inspection plot for flux calibrator</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Inspection plot QA for </span><span class="si">{}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_fluxcal</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">taskid_cal</span><span class="p">,</span> <span class="n">name_cal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fluxcals</span><span class="p">:</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">inspection_plot_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                    <span class="s1">&#39;python /home/apercal/dataqa/run_inspection_plot.py </span><span class="si">{0:d}</span><span class="s1"> </span><span class="si">{1:s}</span><span class="s1"> -c --beam=</span><span class="si">{2:d}</span><span class="s1"> --cal_id=</span><span class="si">{3:d}</span><span class="s1"> --basedir=</span><span class="si">{4}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">name_fluxcal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">,</span> <span class="n">taskid_cal</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Getting inspection plots finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inspection_plot_msg</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Inspection plot QA for </span><span class="si">{0}</span><span class="s2"> beam </span><span class="si">{1}</span><span class="s2"> ... Done&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">name_fluxcal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Inspection plot QA for </span><span class="si">{}</span><span class="s2"> beam </span><span class="si">{1}</span><span class="s2"> failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_fluxcal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># get inspection plot for pol calibrator if it exists</span>
+        <span class="k">if</span> <span class="n">name_polcal</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;#### Inspection plot QA for </span><span class="si">{}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_polcal</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">taskid_cal</span><span class="p">,</span> <span class="n">name_cal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">)</span> <span class="ow">in</span> <span class="n">polcals</span><span class="p">:</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">inspection_plot_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                        <span class="s1">&#39;python /home/apercal/dataqa/run_inspection_plot.py </span><span class="si">{0:d}</span><span class="s1"> </span><span class="si">{1:s}</span><span class="s1"> -c --beam=</span><span class="si">{2:d}</span><span class="s1"> --cal_id=</span><span class="si">{3:d}</span><span class="s1"> --basedir=</span><span class="si">{4}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">name_polcal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">,</span> <span class="n">taskid_cal</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;Getting inspection plots finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inspection_plot_msg</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Inspection plot QA for </span><span class="si">{0}</span><span class="s2"> beam </span><span class="si">{1}</span><span class="s2"> ... Done&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">name_polcal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Inspection plot QA for </span><span class="si">{}</span><span class="s2"> beam </span><span class="si">{1}</span><span class="s2"> failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_polcal</span><span class="p">,</span> <span class="n">beamnr_cal</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Inspection plot QA ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_inspection_plot</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform inspection plot QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Beamweights Plots</span>
+    <span class="c1"># =================</span>
+
+    <span class="k">if</span> <span class="s1">&#39;beamweights&#39;</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+
+        <span class="n">start_time_beamweights</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="c1"># this needs to run on every node</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;#### Beamweights QA for </span><span class="si">{}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_fluxcal</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">beamweights_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                <span class="s1">&#39;python /home/apercal/dataqa/run_beamweights_plots.py </span><span class="si">{0:d}</span><span class="s1"> </span><span class="si">{1:s}</span><span class="s1"> -t 20&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">name_fluxcal</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Getting Beamweightss finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beamweights_msg</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Beamweights QA for </span><span class="si">{}</span><span class="s2"> failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name_fluxcal</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Beamweights QA ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_beamweights</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform Beamweights QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Preflag QA</span>
+    <span class="c1"># ==========</span>
+
+    <span class="k">if</span> <span class="s1">&#39;preflag&#39;</span> <span class="ow">in</span> <span class="n">steps</span> <span class="ow">and</span> <span class="n">host_name</span> <span class="o">==</span> <span class="s2">&quot;happili-01&quot;</span><span class="p">:</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running preflag QA ...&quot;</span><span class="p">)</span>
+
+        <span class="n">start_time_preflag</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">preflag_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                <span class="s1">&#39;python /home/apercal/dataqa/run_preflag_qa.py </span><span class="si">{0:d}</span><span class="s1"> --basedir=</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Preflag QA finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">preflag_msg</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running preflag QA ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_preflag</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Preflag QA failed. Continue with next QA&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># Disabled rfinder</span>
+        <span class="c1"># try:</span>
+        <span class="c1">#     preflag_msg = os.system(</span>
+        <span class="c1">#         &#39;python /home/apercal/dataqa/run_rfinder.py {0:d} {1:s} --trigger_mode&#39;.format(taskid_target, name_fluxcal))</span>
+        <span class="c1">#     logger.info(</span>
+        <span class="c1">#         &quot;Preflag QA finished with msg {0}&quot;.format(preflag_msg))</span>
+        <span class="c1">#     logger.info(&quot;#### Running preflag QA ... Done (time {0:.1f}s)&quot;.format(</span>
+        <span class="c1">#         time.time()-start_time_preflag))</span>
+        <span class="c1"># except Exception as e:</span>
+        <span class="c1">#     logger.warning(&quot;Preflag QA failed. Continue with next QA&quot;)</span>
+        <span class="c1">#     logger.exception(e)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform preflag QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Crosscal QA</span>
+    <span class="c1"># ===========</span>
+
+    <span class="k">if</span> <span class="s1">&#39;crosscal&#39;</span> <span class="ow">in</span> <span class="n">steps</span> <span class="ow">and</span> <span class="n">name_fluxcal</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Running crosscal QA ...&#39;</span><span class="p">)</span>
+
+        <span class="n">start_time_crosscal</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">crosscal_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                <span class="s1">&#39;python /home/apercal/dataqa/run_ccal_plots.py </span><span class="si">{0:d}</span><span class="s1"> &quot;</span><span class="si">{1:s}</span><span class="s1">&quot; &quot;</span><span class="si">{2:s}</span><span class="s1">&quot; --basedir=</span><span class="si">{3}</span><span class="s1"> --trigger_mode&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">name_fluxcal</span><span class="p">,</span> <span class="n">name_polcal</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Crosscal QA finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crosscal_msg</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running crosscal QA ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_crosscal</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Crosscal QA failed. Continue with next QA&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform crosscal QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Selfcal QA</span>
+    <span class="c1"># ==========</span>
+
+    <span class="k">if</span> <span class="s1">&#39;selfcal&#39;</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Running selfcal QA ...&#39;</span><span class="p">)</span>
+
+        <span class="n">start_time_selfcal</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">selfcal_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                <span class="s1">&#39;python /home/apercal/dataqa/run_scal_plots.py </span><span class="si">{0:d}</span><span class="s1"> </span><span class="si">{1:s}</span><span class="s1"> --basedir=</span><span class="si">{2}</span><span class="s1"> --trigger_mode&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">name_target</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Selfcal QA finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">selfcal_msg</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running selfcal QA ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_selfcal</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Selfcal QA failed. Continue with next QA&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform selfcal QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Mosaic QA</span>
+    <span class="c1"># ==========</span>
+
+    <span class="k">if</span> <span class="s1">&#39;mosaic&#39;</span> <span class="ow">in</span> <span class="n">steps</span> <span class="ow">and</span> <span class="n">host_name</span> <span class="o">==</span> <span class="s1">&#39;happili-01&#39;</span><span class="p">:</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Mosaic QA is currently not available ...&#39;</span><span class="p">)</span>
+
+        <span class="c1"># logger.info(&#39;#### Running mosaic QA ...&#39;)</span>
+
+        <span class="c1"># start_time_mosaic = time.time()</span>
+
+        <span class="c1"># try:</span>
+        <span class="c1">#     # Create the mosaic</span>
+        <span class="c1">#     logger.info(&#39;## Making the mosaic ...&#39;)</span>
+        <span class="c1">#     start_time_make_mosaic = time.time()</span>
+        <span class="c1">#     make_mosaic_msg = os.system(</span>
+        <span class="c1">#         &#39;python /home/apercal/dataqa/make_mosaic_image.py {0:d}&#39;.format(taskid_target))</span>
+        <span class="c1">#     logger.info(</span>
+        <span class="c1">#         &quot;Making mosaic finished with msg {0}&quot;.format(make_mosaic_msg))</span>
+        <span class="c1">#     logger.info(&quot;## Making the mosaic ... Done (time {0:.1f}s)&quot;.format(</span>
+        <span class="c1">#         time.time()-start_time_make_mosaic))</span>
+
+        <span class="c1">#     # Run the validation tool</span>
+        <span class="c1">#     logger.info(&#39;## Run validation ...&#39;)</span>
+        <span class="c1">#     start_time_mosaic_validation = time.time()</span>
+        <span class="c1">#     mosaic_validation_msg = os.system(</span>
+        <span class="c1">#         &#39;python /home/apercal/dataqa/run_continuum_validation.py {0:d} --for_mosaic&#39;.format(taskid_target))</span>
+        <span class="c1">#     logger.info(</span>
+        <span class="c1">#         &quot;Mosaic validation finished with msg {0}&quot;.format(mosaic_validation_msg))</span>
+        <span class="c1">#     logger.info(&quot;## Run validation ... Done (time {0:.1f}s)&quot;.format(</span>
+        <span class="c1">#         time.time()-start_time_mosaic_validation))</span>
+
+        <span class="c1">#     logger.info(&quot;#### Running mosaic QA ... Done (time {0:.1f}s)&quot;.format(</span>
+        <span class="c1">#         time.time()-start_time_mosaic))</span>
+        <span class="c1"># except Exception as e:</span>
+        <span class="c1">#     logger.warning(&quot;Mosaic QA failed. Continue with next QA&quot;)</span>
+        <span class="c1">#     logger.exception(e)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform mosaic QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Line QA</span>
+    <span class="c1"># =======</span>
+
+    <span class="k">if</span> <span class="s1">&#39;line&#39;</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Running line QA ...&#39;</span><span class="p">)</span>
+
+        <span class="n">start_time_line</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get cube statistic without continuum subtraction</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s1">&#39;## Get cube statistic ...&#39;</span><span class="p">)</span>
+            <span class="n">start_time_get_cube_stat</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">cube_stat_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                <span class="s1">&#39;python /home/apercal/dataqa/run_cube_stats.py </span><span class="si">{0:d}</span><span class="s1"> --basedir=</span><span class="si">{1}</span><span class="s1"> --trigger_mode&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Cube stat finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cube_stat_msg</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;## Get cube statistic ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_get_cube_stat</span><span class="p">))</span>
+
+            <span class="c1"># Subtract continuum</span>
+            <span class="c1"># logger.info(&#39;## Subtract continuum ...&#39;)</span>
+            <span class="c1"># start_time_subtract_continuum = time.time()</span>
+            <span class="c1"># subtract_cont_msg = os.system(</span>
+            <span class="c1">#     &#39;python /home/apercal/dataqa/subtract_continuum.py {0:d} --trigger_mode&#39;.format(taskid_target))</span>
+            <span class="c1"># logger.info(</span>
+            <span class="c1">#     &quot;Continuum subtraction finished with msg {0}&quot;.format(subtract_cont_msg))</span>
+            <span class="c1"># logger.info(&quot;## Subtract continuum ... Done (time {0:.1f}s)&quot;.format(</span>
+            <span class="c1">#     time.time()-start_time_subtract_continuum))</span>
+
+            <span class="c1"># # Get cube statistic after continuum subtraction</span>
+            <span class="c1"># logger.info(</span>
+            <span class="c1">#     &#39;## Get cube statistic after continuum subtraction ...&#39;)</span>
+            <span class="c1"># start_time_get_cube_stat_cont = time.time()</span>
+            <span class="c1"># get_cube_stat_cont_msg = os.system(</span>
+            <span class="c1">#     &#39;python /home/apercal/dataqa/run_cube_stats_cont.py {0:d} --trigger_mode&#39;.format(taskid_target))</span>
+            <span class="c1"># logger.info(</span>
+            <span class="c1">#     &quot;Cube stat cont finished with msg {0}&quot;.format(get_cube_stat_cont_msg))</span>
+            <span class="c1"># logger.info(&quot;## Get cube statistic after continuum subtraction ... Done (time {0:.1f}s)&quot;.format(</span>
+            <span class="c1">#     time.time()-start_time_get_cube_stat_cont))</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running line QA ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_line</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Line QA failed. Continue with next QA&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform line QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Continuum QA</span>
+    <span class="c1"># ============</span>
+
+    <span class="k">if</span> <span class="s1">&#39;continuum&#39;</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Running continuum QA ...&#39;</span><span class="p">)</span>
+
+        <span class="n">start_time_continuum</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">continuum_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                <span class="s1">&#39;python /home/apercal/dataqa/run_continuum_validation.py </span><span class="si">{0:d}</span><span class="s1"> --basedir=</span><span class="si">{1}</span><span class="s1"> --trigger_mode&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Continuum QA finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">continuum_msg</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running continuum QA ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_continuum</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Continuum QA failed. Continue with next QA&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not perform continuum QA&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create report</span>
+    <span class="c1"># =============</span>
+
+    <span class="k">if</span> <span class="s1">&#39;report&#39;</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+
+        <span class="c1"># merge the crosscal and selfcal plots for the report</span>
+        <span class="k">if</span> <span class="n">host_name</span> <span class="o">==</span> <span class="s1">&#39;happili-01&#39;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Merge crosscal and selfcal plots...&#39;</span><span class="p">)</span>
+
+            <span class="n">start_time_merge</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">report_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                    <span class="s1">&#39;python /home/apercal/dataqa/run_merge_plots.py </span><span class="si">{0:d}</span><span class="s1"> --basedir=</span><span class="si">{1}</span><span class="s1"> --do_ccal --do_scal --run_parallel&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Merging finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">report_msg</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Merge crosscal and selfcal plots ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_merge</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Merge crosscal and selfcal plots failed.&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># now create the report</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#### Create report ...&#39;</span><span class="p">)</span>
+
+        <span class="n">start_time_report</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">report_msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                <span class="s1">&#39;python /home/apercal/dataqa/create_report.py </span><span class="si">{0:d}</span><span class="s1"> --basedir=</span><span class="si">{1}</span><span class="s1"> --trigger_mode&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">taskid_target</span><span class="p">,</span> <span class="n">basedir</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Report finished with msg </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">report_msg</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Create report ... Done (time </span><span class="si">{0:.1f}</span><span class="s2">s)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time_report</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Creating report failed.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#### Did not create a report&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Finish</span>
+    <span class="c1"># ======</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#######################&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">&#39;#### Running all QA steps on </span><span class="si">{0:s}</span><span class="s1"> ... Done (time </span><span class="si">{1:.1f}</span><span class="s1">s)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host_name</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start_time</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;#######################&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

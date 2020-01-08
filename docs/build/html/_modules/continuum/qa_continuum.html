@@ -1,0 +1,646 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>continuum.qa_continuum &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for continuum.qa_continuum</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This script contains function to run pybdsf for the continuum QA.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Agg&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mc</span>
+<span class="kn">from</span> <span class="nn">astropy.wcs</span> <span class="k">import</span> <span class="n">WCS</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">bdsf</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">from</span> <span class="nn">apercal.libs</span> <span class="k">import</span> <span class="n">lib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">dataqa.continuum.validation_tool</span> <span class="k">import</span> <span class="n">validation</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_image_from_fits"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.get_image_from_fits">[docs]</a><span class="k">def</span> <span class="nf">get_image_from_fits</span><span class="p">(</span><span class="n">fits_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to get the image from a fits file</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">        fits_file : str</span>
+<span class="sd">            File name of the image fits file</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        img : array</span>
+<span class="sd">            The image from the fits file of an array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fits_file</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span>
+
+    <span class="c1"># check the number image axis</span>
+    <span class="n">wcs</span> <span class="o">=</span> <span class="n">WCS</span><span class="p">(</span><span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">wcs</span><span class="o">.</span><span class="n">naxis</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">wcs</span><span class="o">.</span><span class="n">naxis</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="c1"># close the fits file</span>
+    <span class="n">fits_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+<div class="viewcode-block" id="qa_check_image_gaussianity"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.qa_check_image_gaussianity">[docs]</a><span class="k">def</span> <span class="nf">qa_check_image_gaussianity</span><span class="p">(</span><span class="n">fits_file</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.e-2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if an image has gaussian distribution</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Function was taken from apercal.subs.qa.checkimagegaussianity</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">        fits_file : str</span>
+<span class="sd">            The name of the fits image to process</span>
+<span class="sd">        alpha : float (default 1e-2)</span>
+<span class="sd">            Parameter to judge the gaussianity, default taken from apercal conifg</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if image is ok, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">get_image_from_fits</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span>
+
+    <span class="c1"># determin gaussianity</span>
+    <span class="n">k2</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">normaltest</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">nan_policy</span><span class="o">=</span><span class="s1">&#39;omit&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="qa_get_image_dr"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.qa_get_image_dr">[docs]</a><span class="k">def</span> <span class="nf">qa_get_image_dr</span><span class="p">(</span><span class="n">fits_file</span><span class="p">,</span> <span class="n">rms</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to determine the image dynamic range</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        fits_file : str</span>
+<span class="sd">            The name of the fits image to process</span>
+<span class="sd">        rms : float</span>
+<span class="sd">            The noise level of the image</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        image_dr : float</span>
+<span class="sd">            The image dynamic range</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">get_image_from_fits</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span>
+
+    <span class="n">image_dr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="o">/</span> <span class="n">rms</span>
+
+    <span class="k">return</span> <span class="n">image_dr</span></div>
+
+
+<div class="viewcode-block" id="qa_get_source_cat_dr"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.qa_get_source_cat_dr">[docs]</a><span class="k">def</span> <span class="nf">qa_get_source_cat_dr</span><span class="p">(</span><span class="n">fits_file</span><span class="p">,</span> <span class="n">rms</span><span class="p">,</span> <span class="n">qa_validation_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to determine the dynamic range in the source catalog</span>
+
+<span class="sd">    NOT FINISHED</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        fits_file : str</span>
+<span class="sd">            The name of the fits image to process</span>
+<span class="sd">        rms : float</span>
+<span class="sd">            The noise level of the image</span>
+<span class="sd">        qa_validation_dir : str</span>
+<span class="sd">            The path to the directory where the QA (and pybdsft output) is stored</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        source_cat_dr : float</span>
+<span class="sd">            The dynamic range in the source catalogue</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get name of source catalogue</span>
+    <span class="n">source_cat_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span>
+        <span class="n">fits_file</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;_pybdsf_cat.csv&quot;</span><span class="p">))</span>
+
+    <span class="c1"># read pybdsf catalog</span>
+    <span class="n">cat_data</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source_cat_name</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">source_cat_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+        <span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">header_start</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">data_start</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1"># search for dynamic range in catalogue</span>
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="qa_get_image_noise_dr_gaussianity"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.qa_get_image_noise_dr_gaussianity">[docs]</a><span class="k">def</span> <span class="nf">qa_get_image_noise_dr_gaussianity</span><span class="p">(</span><span class="n">fits_file</span><span class="p">,</span> <span class="n">qa_validation_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This functions determines additional image QA informaiton.</span>
+
+<span class="sd">    NOT FINISHED</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The function determines the image noise, the local dynamic range and gaussianity of an image</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">        fits_file : str</span>
+<span class="sd">            The file name of the fits image to process</span>
+<span class="sd">        qa_validation_dir : str</span>
+<span class="sd">            The directory of the continuum or mosaic QA where the output should be saved to</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;# Performing additional QA tests...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Checking noise noise</span>
+    <span class="c1"># +++++++++++++++++++</span>
+
+    <span class="c1"># get the residual continuum image</span>
+    <span class="n">rms</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># Checking image dynamic range</span>
+    <span class="c1"># ++++++++++++++++++++++++++++</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Determining image dynamic range ...&quot;</span><span class="p">)</span>
+    <span class="n">image_dyanmic_range</span> <span class="o">=</span> <span class="n">qa_get_image_dr</span><span class="p">(</span><span class="n">fits_file</span><span class="p">,</span> <span class="n">rms</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Image dynamic range is: </span><span class="si">{0:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_dyanmic_range</span><span class="p">))</span>
+
+    <span class="c1"># Checking source dynamic range</span>
+    <span class="c1"># +++++++++++++++++++++++++++++</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Determining source catalogue dynamic range ...&quot;</span><span class="p">)</span>
+    <span class="n">source_cat_dyanmic_range</span> <span class="o">=</span> <span class="n">qa_get_source_cat_dr</span><span class="p">(</span>
+        <span class="n">fits_file</span><span class="p">,</span> <span class="n">rms</span><span class="p">,</span> <span class="n">qa_validation_dir</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Source catalogue dynamic range is: </span><span class="si">{0:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">source_cat_dyanmic_range</span><span class="p">))</span>
+
+    <span class="c1"># Checking local dynamic range</span>
+    <span class="c1"># ++++++++++++++++++++++++++++</span>
+
+    <span class="c1"># Checkking gaussianity</span>
+    <span class="c1"># +++++++++++++++++++++</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Testing Gaussianity ...&quot;</span><span class="p">)</span>
+
+    <span class="n">gaussianity_confirm</span> <span class="o">=</span> <span class="n">qa_check_image_gaussianity</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Image fullfills gaussianity: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gaussianity_confirm</span><span class="p">))</span>
+
+    <span class="c1"># Write output file as xml</span>
+    <span class="c1"># ++++++++++++++++++++++++</span>
+    <span class="n">output_file_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;QA_info.xml&quot;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="qa_plot_pybdsf_images"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.qa_plot_pybdsf_images">[docs]</a><span class="k">def</span> <span class="nf">qa_plot_pybdsf_images</span><span class="p">(</span><span class="n">fits_file_list</span><span class="p">,</span> <span class="n">plot_name_list</span><span class="p">,</span> <span class="n">plot_type_list</span><span class="p">,</span> <span class="n">plot_format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function creates quick plots of the diagnostic fits files</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        By default the images are created in png format with 400dpi, but it</span>
+<span class="sd">        is possible to choose pdf</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">        fits_file_list : list</span>
+<span class="sd">            A list of strings with the file names of the fits files</span>
+<span class="sd">        plot_name_list : list</span>
+<span class="sd">            A list of strings with the names of the plots to save</span>
+<span class="sd">        plot_type_list : list</span>
+<span class="sd">            List of the types of plots which controls some plot settings.</span>
+<span class="sd">        plot_format : str (default png)</span>
+<span class="sd">            The format of the plot for matplotlib</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># number of files</span>
+    <span class="n">n_fits_files</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fits_file_list</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotting PyBDSF diagnostic plots&quot;</span><span class="p">)</span>
+
+    <span class="c1"># go through the types of images and plot them</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_fits_files</span><span class="p">):</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotting </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fits_file_list</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+        <span class="n">fits_hdulist</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_file_list</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
+        <span class="c1"># get WCS header of cube</span>
+        <span class="n">wcs</span> <span class="o">=</span> <span class="n">WCS</span><span class="p">(</span><span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="c1"># remove unnecessary axis</span>
+        <span class="k">if</span> <span class="n">wcs</span><span class="o">.</span><span class="n">naxis</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">dropaxis</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">dropaxis</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">wcs</span><span class="o">.</span><span class="n">naxis</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">dropaxis</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">fits_hdulist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="c1"># set up plot</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">wcs</span><span class="p">)</span>
+
+        <span class="c1"># create image</span>
+        <span class="k">if</span> <span class="n">plot_type_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cont&#39;</span> <span class="ow">or</span> <span class="n">plot_type_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;gaus_resid&#39;</span><span class="p">:</span>
+            <span class="c1"># using log norm here set to 0.02mJy/beam</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+                <span class="n">img</span> <span class="o">*</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">mc</span><span class="o">.</span><span class="n">SymLogNorm</span><span class="p">(</span><span class="mf">1.e-9</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+            <span class="c1"># fig = ax.imshow(</span>
+            <span class="c1">#     img * 1.e3, norm=mc.SymLogNorm(1.e-9, vmin=0.02, vmax=1),  origin=&#39;lower&#39;, cmap=&quot;hot&quot;)</span>
+        <span class="k">elif</span> <span class="n">plot_type_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;gaus_model&#39;</span><span class="p">:</span>
+            <span class="c1"># using log norm here set to 0.02mJy/beam</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+                <span class="n">img</span> <span class="o">*</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">mc</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>  <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">plot_type_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;island_mask&#39;</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span> <span class="o">*</span> <span class="mf">1.e3</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+
+        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_type_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;island_mask&#39;</span><span class="p">:</span>
+            <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Flux Density [mJy/beam]&#39;</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_axislabel</span><span class="p">(</span><span class="s1">&#39;Right Ascension&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_axislabel</span><span class="p">(</span><span class="s1">&#39;Declination&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="s1">&#39;hh:mm&#39;</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fits_file_list</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">plot_name_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">plot_format</span> <span class="o">==</span> <span class="s2">&quot;pdf&quot;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">),</span>
+                        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotting PyBDSF diagnostic plots. Done&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_continuum_fits_images"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.get_continuum_fits_images">[docs]</a><span class="k">def</span> <span class="nf">get_continuum_fits_images</span><span class="p">(</span><span class="n">data_basedir_list</span><span class="p">,</span> <span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">save_table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function that gets the list of existing continuum fits images for each beam.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The function goes through the four data directories and collects all fits image</span>
+<span class="sd">        it finds for the beams. It accounts for missing fits images.</span>
+<span class="sd">        It always looks for 40 beams no matter on which happili node.</span>
+<span class="sd">        Therefore, the output table contains the two columns &quot;beam_exists&quot;</span>
+<span class="sd">        and &quot;fits_image_exists&quot;. The first one will be True if a beam is</span>
+<span class="sd">        available on a particular node and the last one if a continuum image</span>
+<span class="sd">        exists. &quot;fits_image_exists&quot; can be False if &quot;beam_exists&quot; is True if</span>
+<span class="sd">        no continuum image was found for an existing beam.</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">        data_basedir_list : list</span>
+<span class="sd">            The data directories on happili</span>
+<span class="sd">        qa_validation_dir : str</span>
+<span class="sd">            Directory where the QA is stored</span>
+<span class="sd">        save_table : bool (default True)</span>
+<span class="sd">            Save the list of fits files to the QA directory</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        fits_file_table : Astropy Table</span>
+<span class="sd">            The beams and path to the continuum image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># this is how many beams there should be</span>
+    <span class="n">n_beams_total</span> <span class="o">=</span> <span class="mi">40</span>
+
+    <span class="c1"># create table with columns of a beam id, the actual beam name, and the fits image path</span>
+    <span class="n">beam_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_beams_total</span><span class="p">)</span>
+    <span class="n">beam_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{0:02d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams_total</span><span class="p">)])</span>
+    <span class="n">beam_exists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span> <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams_total</span><span class="p">)])</span>
+    <span class="n">fits_image_exists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span> <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams_total</span><span class="p">)])</span>
+    <span class="n">fits_file_path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span> <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams_total</span><span class="p">)])</span>
+
+    <span class="c1"># create astropy table</span>
+    <span class="n">fits_file_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([</span><span class="n">beam_id</span><span class="p">,</span> <span class="n">beam_names</span><span class="p">,</span> <span class="n">fits_file_path</span><span class="p">,</span> <span class="n">beam_exists</span><span class="p">,</span> <span class="n">fits_image_exists</span><span class="p">],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span>
+        <span class="s1">&#39;beam_id&#39;</span><span class="p">,</span> <span class="s1">&#39;beam_name&#39;</span><span class="p">,</span> <span class="s1">&#39;fits_image_path&#39;</span><span class="p">,</span> <span class="s1">&#39;beam_exists&#39;</span><span class="p">,</span> <span class="s1">&#39;fits_image_exists&#39;</span><span class="p">))</span>
+
+    <span class="c1"># count how many beams and fits files were found</span>
+    <span class="n">n_beams_found_total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n_fits_images_found</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Getting a list of continuum fits images&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Go through all the different data directories</span>
+    <span class="k">for</span> <span class="n">data_basedir</span> <span class="ow">in</span> <span class="n">data_basedir_list</span><span class="p">:</span>
+
+        <span class="c1"># get the beams in this directory</span>
+        <span class="n">beam_data_dir_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/[0-3][0-9]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_basedir</span><span class="p">))</span>
+        <span class="n">beam_data_dir_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="c1"># number of beams</span>
+        <span class="n">n_beams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">beam_data_dir_list</span><span class="p">)</span>
+
+        <span class="c1"># total number of beams found</span>
+        <span class="n">n_beams_found_total</span> <span class="o">+=</span> <span class="n">n_beams</span>
+
+        <span class="c1"># check that beams exists</span>
+        <span class="k">if</span> <span class="n">n_beams</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;No beams found in </span><span class="si">{0:s}</span><span class="s2">. Go to next data directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_basedir</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{0:d}</span><span class="s2"> beams in </span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">n_beams</span><span class="p">,</span> <span class="n">data_basedir</span><span class="p">))</span>
+
+        <span class="c1"># Now go through each beam</span>
+        <span class="k">for</span> <span class="n">beam_dir</span> <span class="ow">in</span> <span class="n">beam_data_dir_list</span><span class="p">:</span>
+
+            <span class="c1"># get the beam from the directory</span>
+            <span class="n">beam</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">beam_dir</span><span class="p">)</span>
+
+            <span class="c1"># get the index for the table where path should be stored</span>
+            <span class="n">table_beam_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">beam</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_exists&#39;</span><span class="p">][</span><span class="n">table_beam_index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># directory of continuum images</span>
+            <span class="n">continuum_image_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/continuum&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam_dir</span><span class="p">)</span>
+
+            <span class="c1"># Get the fits image</span>
+            <span class="n">fits_image</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/image_mf_*.fits&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">continuum_image_dir</span><span class="p">))</span>
+
+            <span class="c1"># check whether no fits file was found, one or more fits file</span>
+            <span class="c1"># the latter case should not exists, but I do not want it to stop</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fits_image</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;fits_image_path&#39;</span><span class="p">][</span><span class="n">table_beam_index</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Did not find any fits image for beam </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">fits_image</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">fits_image</span> <span class="o">=</span> <span class="n">fits_image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">n_fits_images_found</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fits_image</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Found more than one fits image for beam </span><span class="si">{0:s}</span><span class="s2">. Take the last one&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="p">))</span>
+                <span class="n">fits_image</span> <span class="o">=</span> <span class="n">fits_image</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">n_fits_images_found</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># there should always be a match, but just in case</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;fits_image_path&#39;</span><span class="p">][</span><span class="n">table_beam_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">fits_image</span>
+                <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;fits_image_exists&#39;</span><span class="p">][</span><span class="n">table_beam_index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;Could not match beam </span><span class="si">{0:s}</span><span class="s2"> to table of fits images&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="p">))</span>
+
+    <span class="c1"># set all image paths to &quot;-&quot; for which no image exists</span>
+    <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;fits_image_path&#39;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;fits_image_exists&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Check how many beams failed</span>
+    <span class="k">if</span> <span class="n">n_beams_found_total</span> <span class="o">&lt;</span> <span class="n">n_beams_total</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{0:d}</span><span class="s2"> out of </span><span class="si">{1:d}</span><span class="s2"> beams&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">n_beams_found_total</span><span class="p">,</span> <span class="n">n_beams_total</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found all </span><span class="si">{0:d}</span><span class="s2"> beams&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_beams_found_total</span><span class="p">))</span>
+
+    <span class="c1"># check how many fits files were found</span>
+    <span class="k">if</span> <span class="n">n_fits_images_found</span> <span class="o">&lt;</span> <span class="n">n_beams_found_total</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Found </span><span class="si">{0:d}</span><span class="s2"> fits images out of </span><span class="si">{1:d}</span><span class="s2"> available beams&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_fits_images_found</span><span class="p">,</span> <span class="n">n_beams_found_total</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found a fits file for each of the </span><span class="si">{0:d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">n_beams_found_total</span><span class="p">))</span>
+
+    <span class="c1"># save the file</span>
+    <span class="k">if</span> <span class="n">save_table</span><span class="p">:</span>
+        <span class="n">save_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/fits_image_list.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_validation_dir</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving table with fits images to </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">save_name</span><span class="p">))</span>
+        <span class="n">fits_file_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">save_name</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+
+    <span class="c1"># return the table</span>
+    <span class="k">return</span> <span class="n">fits_file_table</span></div>
+
+
+<span class="k">def</span> <span class="nf">print_summary</span><span class="p">(</span><span class="n">sdict</span><span class="p">):</span>
+
+    <span class="n">beams</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:02d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">)]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">beams</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RMS&#39;</span><span class="p">,</span> <span class="s1">&#39;IDR&#39;</span><span class="p">,</span> <span class="s1">&#39;LDR&#39;</span><span class="p">,</span> <span class="s1">&#39;BMAJ&#39;</span><span class="p">,</span> <span class="s1">&#39;BMIN&#39;</span><span class="p">,</span> <span class="s1">&#39;BPA&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">beam</span> <span class="ow">in</span> <span class="n">sdict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span> <span class="o">=</span> <span class="n">sdict</span><span class="p">[</span><span class="n">beam</span><span class="p">]</span>
+
+    <span class="c1"># print(df.to_csv(sys.stdout, index=False))</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;beam&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;RMS&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;IDR&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;LDR&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;BMAJ&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;BMIN&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;BPA&#39;</span><span class="p">]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s1">&#39;Success&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Success&#39;</span><span class="p">][</span><span class="n">df</span><span class="o">.</span><span class="n">RMS</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BMAJ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BMAJ&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BMIN&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BMIN&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BPA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;BPA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;../../continuum_image_properties.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="qa_continuum_run_validation"><a class="viewcode-back" href="../../continuum_qa_continuum.html#continuum.qa_continuum.qa_continuum_run_validation">[docs]</a><span class="k">def</span> <span class="nf">qa_continuum_run_validation</span><span class="p">(</span><span class="n">data_basedir_list</span><span class="p">,</span> <span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function runs pybdsf on the continuum image of each beam</span>
+
+<span class="sd">    This function will create a new directory for each beam. In this sub-directory</span>
+<span class="sd">    the fits image and the pybdsf output will be saved.</span>
+<span class="sd">    In the end the function will provide information on how many directories, beams,</span>
+<span class="sd">    or pybdsf runs failed.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The function will always overwrite existing files.</span>
+
+<span class="sd">    Parameter:</span>
+<span class="sd">        data_basedir_list : list</span>
+<span class="sd">            List of data directories on the happili node</span>
+
+<span class="sd">        qa_validation_dir : str</span>
+<span class="sd">            The directory of the QA where the output will be saved.</span>
+<span class="sd">            Most likely this is /home/&lt;user&gt;/qa_science_demo_2019/continuum/</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        run_pybdsf_status : int</span>
+<span class="sd">            Status of how well this function performed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;#### Running validation for each beam&quot;</span><span class="p">)</span>
+
+    <span class="c1"># get the available fits images for the available beams</span>
+    <span class="n">fits_file_table</span> <span class="o">=</span> <span class="n">get_continuum_fits_images</span><span class="p">(</span>
+        <span class="n">data_basedir_list</span><span class="p">,</span> <span class="n">qa_validation_dir</span><span class="p">)</span>
+
+    <span class="c1"># # Get only the rwos of the table for which beams exists</span>
+    <span class="c1"># fits_file_table = fits_file_table[np.where(fits_file_table[&#39;beam_exists&#39;]==True)]</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">beam_index</span> <span class="ow">in</span> <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_id&#39;</span><span class="p">]:</span>
+
+        <span class="c1"># if a beam does not exists go directly to the next one</span>
+        <span class="k">if</span> <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_exists&#39;</span><span class="p">][</span><span class="n">beam_index</span><span class="p">]:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found beam </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_name&#39;</span><span class="p">][</span><span class="n">beam_index</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No beam </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_name&#39;</span><span class="p">][</span><span class="n">beam_index</span><span class="p">]))</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># create a subdirectory for the beam in the qa directory</span>
+        <span class="n">qa_validation_beam_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">qa_validation_dir</span><span class="p">,</span> <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_name&#39;</span><span class="p">][</span><span class="n">beam_index</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">qa_validation_beam_dir</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_validation_beam_dir</span><span class="p">))</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">qa_validation_beam_dir</span><span class="p">)</span>
+
+        <span class="c1"># get the path to the fits image</span>
+        <span class="n">fits_image</span> <span class="o">=</span> <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;fits_image_path&#39;</span><span class="p">][</span><span class="n">beam_index</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">fits_image</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No fits image for beam </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">fits_file_table</span><span class="p">[</span><span class="s1">&#39;beam_name&#39;</span><span class="p">][</span><span class="n">beam_index</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># run pybdsf</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;## Running validation tool and pybdsf&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="c1"># change into the directory where the QA products should be produced</span>
+                <span class="c1"># This is necessary for the current implementation of the validation tool</span>
+                <span class="c1"># Should it return to the initial directory?</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">qa_validation_beam_dir</span><span class="p">)</span>
+
+                <span class="c1"># run validation tool and pybdsf combined</span>
+
+                <span class="n">img</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">rep</span> <span class="o">=</span> <span class="n">validation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">fits_image</span><span class="p">)</span>
+
+                <span class="n">img_rms</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cat</span><span class="o">.</span><span class="n">img_rms</span><span class="p">)</span>
+                <span class="n">idr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cat</span><span class="o">.</span><span class="n">dynamic_range</span><span class="p">)</span>
+                <span class="n">ldr_min</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">local_dynrange</span>
+                <span class="n">ldr_min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ldr_min</span><span class="p">)</span>
+                <span class="n">bmaj</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">bmaj</span>
+                <span class="n">bmin</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">bmin</span>
+                <span class="n">bpa</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">bpa</span>
+
+                <span class="n">summary</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;</span><span class="si">{:02d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam_index</span><span class="p">)</span>
+                               <span class="p">:</span> <span class="p">[</span><span class="n">img_rms</span><span class="p">,</span> <span class="n">idr</span><span class="p">,</span> <span class="n">ldr_min</span><span class="p">,</span> <span class="n">bmaj</span><span class="p">,</span> <span class="n">bmin</span><span class="p">,</span> <span class="n">bpa</span><span class="p">]})</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;## Running validation tool. Done&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;## Running validation tool failed.&quot;</span><span class="p">)</span>
+                <span class="n">img_rms</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">idr</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">ldr_min</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+                <span class="n">bmaj</span> <span class="o">=</span> <span class="n">bmin</span> <span class="o">=</span> <span class="n">bpa</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">summary</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;</span><span class="si">{:02d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam_index</span><span class="p">)</span>
+                               <span class="p">:</span> <span class="p">[</span><span class="n">img_rms</span><span class="p">,</span> <span class="n">idr</span><span class="p">,</span> <span class="n">ldr_min</span><span class="p">,</span> <span class="n">bmaj</span><span class="p">,</span> <span class="n">bmin</span><span class="p">,</span> <span class="n">bpa</span><span class="p">]})</span>
+
+            <span class="n">plot_type_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gaus_model&#39;</span><span class="p">,</span> <span class="s1">&#39;gaus_resid&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;rms&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;island_mask&#39;</span><span class="p">]</span>
+            <span class="n">fits_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_validation_beam_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fits_image</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;_pybdsf_</span><span class="si">{0:s}</span><span class="s2">.fits&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plot</span><span class="p">))</span> <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">plot_type_list</span><span class="p">]</span>
+
+            <span class="n">plot_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">fits</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">fits</span> <span class="ow">in</span> <span class="n">fits_names</span><span class="p">]</span>
+
+            <span class="c1"># add the continuum image</span>
+            <span class="n">fits_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fits_image</span><span class="p">)</span>
+            <span class="n">plot_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:s}</span><span class="s2">/</span><span class="si">{1:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qa_validation_beam_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span>
+                <span class="n">fits_image</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">))</span>
+            <span class="n">plot_type_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;cont&quot;</span><span class="p">)</span>
+
+            <span class="c1"># create images without a lot of adjusting</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qa_plot_pybdsf_images</span><span class="p">(</span><span class="n">fits_names</span><span class="p">,</span> <span class="n">plot_names</span><span class="p">,</span> <span class="n">plot_type_list</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;## Plotting PyBDSF diagnostic images failed&quot;</span><span class="p">)</span>
+
+    <span class="n">print_summary</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

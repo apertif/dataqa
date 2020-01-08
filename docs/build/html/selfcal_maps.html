@@ -1,0 +1,138 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module: selfcal_maps &#8212; DataQA 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module: selfcal_plots" href="selfcal_plots.html" />
+    <link rel="prev" title="Selfcal QA" href="selfcal.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="selfcal_plots.html" title="Module: selfcal_plots"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="selfcal.html" title="Selfcal QA"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="selfcal.html" accesskey="U">Selfcal QA</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="selfcal.html"
+                        title="previous chapter">Selfcal QA</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="selfcal_plots.html"
+                        title="next chapter">Module: selfcal_plots</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/selfcal_maps.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-selfcal.selfcal_maps">
+<span id="module-selfcal-maps"></span><h1>Module: selfcal_maps<a class="headerlink" href="#module-selfcal.selfcal_maps" title="Permalink to this headline">¶</a></h1>
+<p>This script contains functionality to plot the selfcal images</p>
+<dl class="function">
+<dt id="selfcal.selfcal_maps.convert_mir2fits">
+<code class="descclassname">selfcal.selfcal_maps.</code><code class="descname">convert_mir2fits</code><span class="sig-paren">(</span><em>mir_name</em>, <em>fits_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selfcal/selfcal_maps.html#convert_mir2fits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#selfcal.selfcal_maps.convert_mir2fits" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function converts a miriad image to fits</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="selfcal.selfcal_maps.create_selfcal_maps">
+<code class="descclassname">selfcal.selfcal_maps.</code><code class="descname">create_selfcal_maps</code><span class="sig-paren">(</span><em>mir_image_list</em>, <em>qa_selfcal_beam_dir</em>, <em>plot_residuals=False</em>, <em>selfcal_type='phase'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selfcal/selfcal_maps.html#create_selfcal_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#selfcal.selfcal_maps.create_selfcal_maps" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates plots for the selfcal maps.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="selfcal.selfcal_maps.get_selfcal_maps">
+<code class="descclassname">selfcal.selfcal_maps.</code><code class="descname">get_selfcal_maps</code><span class="sig-paren">(</span><em>obs_id</em>, <em>qa_selfcal_dir</em>, <em>trigger_mode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selfcal/selfcal_maps.html#get_selfcal_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#selfcal.selfcal_maps.get_selfcal_maps" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function goes through the images available and plots them.</p>
+<p>It will convert the miriad images temporarily into fits. The fits files
+will be delelted afterwards.
+At the moment only the image and residual is taken into account.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="selfcal.selfcal_maps.plot_selfcal_maps">
+<code class="descclassname">selfcal.selfcal_maps.</code><code class="descname">plot_selfcal_maps</code><span class="sig-paren">(</span><em>fits_name</em>, <em>qa_selfcal_beam_dir</em>, <em>plot_residuals=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/selfcal/selfcal_maps.html#plot_selfcal_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#selfcal.selfcal_maps.plot_selfcal_maps" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function plots the selfcal maps</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="selfcal_plots.html" title="Module: selfcal_plots"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="selfcal.html" title="Selfcal QA"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DataQA 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="selfcal.html" >Selfcal QA</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Apertif Imaging Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>
