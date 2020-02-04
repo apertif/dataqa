@@ -20,6 +20,7 @@ import logging
 from apercal.libs import lib
 from dataqa.scandata import get_default_imagepath
 from dataqa.line.cube_stats import get_cube_stats
+from dataqa.line.cube_peak_maps import get_cube_peak_maps
 
 
 import matplotlib.pyplot as plt
@@ -86,6 +87,12 @@ if __name__ == '__main__':
     # +++++++++++++++++++++++++++++++++++++++++++
     try:
         get_cube_stats(qa_line_dir, data_base_dir_list)
+    except Exception as e:
+        logger.exception(e)
+
+    # run function to get moment -2 maps
+    try:
+        get_cube_peak_maps(qa_line_dir, data_base_dir_list)
     except Exception as e:
         logger.exception(e)
 
