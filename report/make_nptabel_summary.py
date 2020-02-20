@@ -70,6 +70,8 @@ def extract_beam(path, beamnum, module, source):
     continuum_filters = ['targetbeams_mf_status', 'targetbeams_chunk_status']
     selfcal_filters = ['targetbeams_average', 'targetbeams_flagline',
                        'targetbeams_parametric', 'targetbeams_phase_status', 'targetbeams_amp_status']
+    crosscal_filters = ['calibration_calibrator_finished', 'calibration_restart', 'calibration_try_counter', 'fluxcal_apgains', 'fluxcal_bandpass', 'fluxcal_calibration_restart', 'fluxcal_calibration_try_counter',
+                        'fluxcal_globaldelay', 'fluxcal_initialphase', 'fluxcal_leakage', 'fluxcal_model', 'fluxcal_transfer', 'polcal_crosshanddelay', 'polcal_model', 'polcal_polarisationangle', 'polcal_transfer', 'targetbeams_transfer']
 
     if module == 'selfcal' or module == 'continuum' or module == 'transfer':
         f = glob.glob(os.path.join(path, 'param_{:02d}.npy'.format(beamnum)))
@@ -96,7 +98,10 @@ def extract_beam(path, beamnum, module, source):
                 res.update({k: d[k]})
 
             if module == 'crosscal':
-                res.update({k: d[k]})
+                for j in range(len(crosscal_filters)):
+                    if crosscal_filters[j] in k:
+                        res.update({crosscal_filters[j]: d[k]})
+                #res.update({k: d[k]})
 
             if module == 'convert' and "UVFITS2MIRIAD" in k:
                 res.update({k: d[k]})
