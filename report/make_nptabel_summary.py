@@ -76,6 +76,9 @@ def extract_beam(path, beamnum, module, source):
     elif module == "crosscal":
         f = glob.glob(os.path.join(
             path, 'param_{:02d}_crosscal.npy'.format(beamnum)))
+        if len(f) == 0:
+            f = glob.glob(os.path.join(
+                path, 'param_{:02d}.npy'.format(beamnum)))
     else:
         f = glob.glob(os.path.join(
             path, 'param_{:02d}*{}*{}.npy'.format(beamnum, module, source)))
@@ -230,9 +233,9 @@ def make_nptabel_csv(obs_id, module, qa_dir, output_path=''):
     from the numpy files and saves it as a csv file.
 
     Args:
-                    obs_id (str): ID of observation
-                    module (str): Apercal module for which information are extracted
-                    output_path (str): Optional path to where the information is save (default current directory)
+        obs_id (str): ID of observation
+        module (str): Apercal module for which information are extracted
+        output_path (str): Optional path to where the information is save (default current directory)
     """
 
     logger.info(
