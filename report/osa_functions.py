@@ -10,7 +10,7 @@ import json
 from collections import OrderedDict
 
 
-def run(obs_id = None):
+def run(obs_id=None, single_node=False):
 
     layout_select = Layout(width='30%')
     layout_area = Layout(width='60%', height='100px')
@@ -25,7 +25,8 @@ def run(obs_id = None):
 
     # hopefully this file is available
     #obs_file = "/data/apertif/{0}/qa/{0}_obs.ecsv".format(obs_id)
-    obs_file = os.path.join(os.path.dirname(cwd),"{0}_obs.ecsv".format(obs_id))
+    obs_file = os.path.join(os.path.dirname(
+        cwd), "{0}_obs.ecsv".format(obs_id))
     # if the report has already been created, then it should als be there
     osa_report_file = "{}_OSA_report.json".format(obs_id)
 
@@ -46,7 +47,7 @@ def run(obs_id = None):
     if os.path.exists(osa_report_file):
         with open(osa_report_file, "r") as f:
             report_data = f.read()
-        
+
         report_json = json.loads(report_data)
 
         osa_text_value = report_json['OSA']
@@ -101,34 +102,48 @@ def run(obs_id = None):
         obs_table = Table.read(obs_file, format="ascii.ecsv")
 
         # get the obs IDs from the other obs
-        if "/data" in obs_file:
-            obs_table_2 = Table.read(obs_file.replace("/data/","/data2/"), format="ascii.ecsv")
-            obs_table_3 = Table.read(obs_file.replace(
-                "/data/", "/data3/"), format="ascii.ecsv")
-            obs_table_4 = Table.read(obs_file.replace(
-                "/data/", "/data4/"), format="ascii.ecsv")
-        else:
-            obs_table_2 = Table.read(obs_file.replace("/tank/","/tank2/"), format="ascii.ecsv")
-            obs_table_3 = Table.read(obs_file.replace(
-                "/tank/", "/tank3/"), format="ascii.ecsv")
-            obs_table_4 = Table.read(obs_file.replace(
-                "/tank/", "/tank4/"), format="ascii.ecsv")
+        # unless they should be on a single node
+        if not single_node:
+            if "/data" in obs_file:
+                obs_table_2 = Table.read(obs_file.replace(
+                    "/data/", "/data2/"), format="ascii.ecsv")
+                obs_table_3 = Table.read(obs_file.replace(
+                    "/data/", "/data3/"), format="ascii.ecsv")
+                obs_table_4 = Table.read(obs_file.replace(
+                    "/data/", "/data4/"), format="ascii.ecsv")
+            else:
+                obs_table_2 = Table.read(obs_file.replace(
+                    "/tank/", "/tank2/"), format="ascii.ecsv")
+                obs_table_3 = Table.read(obs_file.replace(
+                    "/tank/", "/tank3/"), format="ascii.ecsv")
+                obs_table_4 = Table.read(obs_file.replace(
+                    "/tank/", "/tank4/"), format="ascii.ecsv")
 
         osa_text_value = obs_table['OSA'][0]
         target_text_value = obs_table['Target'][0]
         flux_cal_text_value = obs_table['Flux_Calibrator'][0]
-        flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0] + \
-            ", " + obs_table_2['Flux_Calibrator_Obs_IDs'][0] + ", " + obs_table_3['Flux_Calibrator_Obs_IDs'][0] + ", " + obs_table_4['Flux_Calibrator_Obs_IDs'][0]
+        # in case information is on a single node
+        if single_node:
+            flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0]
+        else:
+            flux_cal_obs_id_list = obs_table['Flux_Calibrator_Obs_IDs'][0] + \
+                ", " + obs_table_2['Flux_Calibrator_Obs_IDs'][0] + ", " + \
+                obs_table_3['Flux_Calibrator_Obs_IDs'][0] + ", " + \
+                obs_table_4['Flux_Calibrator_Obs_IDs'][0]
         # in case the polarisation calibrator does not exists, the entries will be masked
         if np.ma.is_masked(obs_table['Pol_Calibrator'][0]):
             pol_name = "Not available"
             pol_name_ids = "Not available"
         else:
             pol_name = obs_table['Pol_Calibrator'][0]
-            pol_name_ids = obs_table['Pol_Calibrator_Obs_IDs'][0] + \
-                ", " + obs_table_2['Pol_Calibrator_Obs_IDs'][0] + ", " + \
-                obs_table_3['Pol_Calibrator_Obs_IDs'][0] + ", " + \
-                obs_table_4['Pol_Calibrator_Obs_IDs'][0]
+            # in case information is on a single node
+            if single_node:
+                pol_name_ids = obs_table['Pol_Calibrator_Obs_IDs'][0]
+            else:
+                pol_name_ids = obs_table['Pol_Calibrator_Obs_IDs'][0] + \
+                    ", " + obs_table_2['Pol_Calibrator_Obs_IDs'][0] + ", " + \
+                    obs_table_3['Pol_Calibrator_Obs_IDs'][0] + ", " + \
+                    obs_table_4['Pol_Calibrator_Obs_IDs'][0]
         pol_cal_text_value = pol_name
         pol_cal_obs_id_list = pol_name_ids
         prepare_status_value = 'Unchecked'
@@ -440,19 +455,19 @@ def run(obs_id = None):
     display(summary_label_pipeline)
 
     summary_menu_pipeline = widgets.Dropdown(options=dropdown_options,
-                                    value=summary_status_value_pipeline,
-                                    description='Select:',
-                                    disabled=False,
-                                    layout=layout_select)
+                                             value=summary_status_value_pipeline,
+                                             description='Select:',
+                                             disabled=False,
+                                             layout=layout_select)
     display(summary_menu_pipeline)
 
     # notes_label = widgets.Label("#### Notes")
     # display(notes_label)
     summary_notes_pipeline = widgets.Textarea(value=summary_notes_value_pipeline,
-                                     placeholder='Nothing to add',
-                                     description='Notes:',
-                                     disabled=False,
-                                     layout=layout_area)
+                                              placeholder='Nothing to add',
+                                              description='Notes:',
+                                              disabled=False,
+                                              layout=layout_area)
     display(summary_notes_pipeline)
 
     btn = widgets.Button(description='Save', button_style='primary')
@@ -483,94 +498,94 @@ def run(obs_id = None):
                 value="<p style='font-size:large; color:red'> Warning: Obs ID is missing. Please enter your Obs ID </p>")
             display(warning_label)
             report_complete = False
-            #return -1
+            # return -1
         if osa_text.value == '':
             warning_label = widgets.HTML(
                 value="<p style='font-size:large; color:red'> Warning: OSA name is missing. Please enter your name </p>")
             display(warning_label)
             report_complete = False
-            #return -1
+            # return -1
 
         if prepare_menu.value == 'Unchecked':
             show_warning_label("Prepare")
             report_complete = False
-            #return -1
+            # return -1
         elif prepare_menu.value != 'Excellent' and prepare_notes.value == "-":
             show_warning_label("Prepare", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         if preflag_menu.value == 'Unchecked':
             show_warning_label("Preflag")
             report_complete = False
-            #return -1
+            # return -1
         elif preflag_menu.value != 'Excellent' and preflag_notes.value == "-":
             show_warning_label("Preflag", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         if crosscal_menu.value == 'Unchecked':
             show_warning_label("Crosscal")
             report_complete = False
-            #return -1
+            # return -1
         elif crosscal_menu.value != 'Excellent' and crosscal_notes.value == "-":
             show_warning_label("Crosscal", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         if selfcal_menu.value == 'Unchecked':
             show_warning_label("Selfcal")
             report_complete = False
-            #return -1
+            # return -1
         elif selfcal_menu.value != 'Excellent' and selfcal_notes.value == "-":
             show_warning_label("Selfcal", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         if continuum_menu.value == 'Unchecked':
             show_warning_label("Continuum")
             report_complete = False
-            #return -1
+            # return -1
         elif continuum_menu.value != 'Excellent' and continuum_notes.value == "-":
             show_warning_label("Continuum", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         if polarisation_menu.value == 'Unchecked':
             show_warning_label("Polarisation")
             report_complete = False
-            #return -1
+            # return -1
         elif polarisation_menu.value != 'Excellent' and polarisation_notes.value == "-":
             show_warning_label("Polarisation", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         if line_menu.value == 'Unchecked':
             show_warning_label("Line")
             report_complete = False
-            #return -1
+            # return -1
         elif line_menu.value != 'Excellent' and line_notes.value == "-":
             show_warning_label("Line", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         if summary_menu.value == 'Unchecked':
             show_warning_label("Summary")
             report_complete = False
-            #return -1
+            # return -1
         elif summary_menu.value != 'Excellent' and summary_notes.value == "-":
             show_warning_label("Summary", request_info=True)
             report_complete = False
-            #return -1
-        
+            # return -1
+
         if summary_menu_pipeline.value == 'Unchecked':
             show_warning_label("Summary")
             report_complete = False
-            #return -1
+            # return -1
         elif summary_menu_pipeline.value != 'Excellent' and summary_notes.value == "-":
             show_warning_label("Summary", request_info=True)
             report_complete = False
-            #return -1
+            # return -1
 
         # save as json
         # OrderedDict to preserve order when dumping to json
@@ -611,7 +626,6 @@ def run(obs_id = None):
         json_dict['Summary']['Pipeline_Status'] = summary_menu_pipeline.value
         json_dict['Summary']['Pipeline_Notes'] = summary_notes_pipeline.value
 
-
         json_file_name = "{0}_OSA_report.json".format(obs_id)
 
         try:
@@ -648,6 +662,5 @@ def run(obs_id = None):
                 copy_json_label = widgets.HTML(
                     value="<p style='font-size:large; color:orange'> Created backup of incomplete OSA report.</p>")
                 display(copy_json_label)
-
 
     btn.on_click(save_info)
